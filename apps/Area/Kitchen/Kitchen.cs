@@ -1,17 +1,23 @@
 using HomeAssistantGenerated;
 using HomeAutomation.apps.Helpers;
 using NetDaemon.HassModel.Entities;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reactive.Disposables;
 
 namespace HomeAutomation.apps.Area.Kitchen;
 
 [NetDaemonApp]
-public class Kitchen
+public class Kitchen : IDisposable
 {
     private readonly BinarySensorEntity _motionSensor;
     private readonly BinarySensorEntity _powerPlug;
     private readonly LightEntity _light;
     private readonly NumberEntity _sensorDelay;
     private readonly SwitchEntity _enableMotionSensor;
+    private CompositeDisposable? _automations;
+    private IDisposable? _switchSubscription;
 
     public Kitchen(Entities entities, IHaContext ha)
     {
@@ -21,49 +27,85 @@ public class Kitchen
         _sensorDelay = entities.Number.Ld2410Esp325StillTargetDelay;
         _enableMotionSensor = entities.Switch.KitchenMotionSensor;
 
-        SetupMotionTriggeredLighting();
-        SetupSensorDelayAdjustment();
+        SubscribeToEnableSwitch();
+        ApplyAutomationState();
         SetupMotionSensorReactivation();
     }
-
-    /// <summary>
-    /// Turns on the light after 5 seconds of motion and off after 10 seconds of no motion.
-    /// </summary>
-    private void SetupMotionTriggeredLighting()
+    private void ApplyAutomationState()
     {
-        _motionSensor
+        if (IsSwitchOn())
+        {
+            EnableAutomations();
+        }
+        else
+        {
+            DisableAutomations();
+        }
+    }
+
+    public void EnableAutomations()
+    {
+        if (_automations != null)
+        {
+            return;
+        }
+
+        _automations = [.. SetupMotionTriggeredLighting()
+            .Concat(SetupSensorDelayAdjustment())];
+    }
+
+    public void DisableAutomations()
+    {
+        _automations?.Dispose();
+        _automations = null;
+    }
+
+    public void Dispose()
+    {
+        DisableAutomations();
+        _switchSubscription?.Dispose();
+    }
+
+    private void SubscribeToEnableSwitch()
+    {
+        _switchSubscription = _enableMotionSensor
+            .StateChanges()
+            .Subscribe(e => ApplyAutomationState());
+    }
+
+    private bool IsSwitchOn() => _enableMotionSensor.State == HaEntityStates.ON;
+
+    private IEnumerable<IDisposable> SetupMotionTriggeredLighting()
+    {
+        yield return _motionSensor
             .StateChanges()
             .WhenStateIsForSeconds(HaEntityStates.ON, 5)
             .Subscribe(_ => _light.TurnOn());
 
-        _motionSensor
+        yield return _motionSensor
             .StateChanges()
             .IsOff()
             .Subscribe(_ => _light.TurnOff());
     }
 
-    /// <summary>
-    /// Adjusts the still target delay if motion is sustained for 25 seconds or the power plug turns on.
-    /// </summary>
-    private void SetupSensorDelayAdjustment()
+    private IEnumerable<IDisposable> SetupSensorDelayAdjustment()
     {
-        _motionSensor
+        yield return _motionSensor
             .StateChanges()
             .WhenStateIsForSeconds(HaEntityStates.ON, 25)
-            .Subscribe(_ => _sensorDelay.SetValue(15));
-        _motionSensor
+            .Subscribe(_ => _sensorDelay.CallService("set_value", new { value = 15 }));
+
+        yield return _motionSensor
             .StateChanges()
             .WhenStateIsForSeconds(HaEntityStates.OFF, 30)
-            .Subscribe(_ => _sensorDelay.SetValue(1));
-        _powerPlug
+            .Subscribe(_ => _sensorDelay.CallService("set_value", new { value = 1 }));
+
+        yield return _powerPlug
             .StateChanges()
             .IsOn()
-            .Subscribe(_ => _sensorDelay.SetValue(15));
+            .Subscribe(_ => _sensorDelay.CallService("set_value", new { value = 15 }));
     }
 
-    /// <summary>
-    /// Turns on the motion sensor enable switch after 1 hour of no motion.
-    /// </summary>
     private void SetupMotionSensorReactivation()
     {
         _motionSensor
