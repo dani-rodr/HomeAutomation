@@ -19,6 +19,8 @@ public class Bathroom : MotionAutomationBase
         _motionSensor = entities.BinarySensor.BathroomPresenceSensors;
         _light = entities.Light.BathroomLights;
         _sensorDelay = entities.Number.ZEsp32C62StillTargetDelay;
+
+        UpdateAutomationsBasedOnSwitch();
     }
 
     protected override IEnumerable<IDisposable> GetAutomations()

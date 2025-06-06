@@ -21,6 +21,7 @@ public class Kitchen : MotionAutomationBase
         _enableMotionSensor = entities.Switch.KitchenMotionSensor;
 
         SetupMotionSensorReactivation();
+        UpdateAutomationsBasedOnSwitch();
     }
 
     protected override IEnumerable<IDisposable> GetAutomations()

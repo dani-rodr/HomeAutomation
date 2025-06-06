@@ -12,11 +12,14 @@ public abstract class MotionAutomationBase : IDisposable
     protected MotionAutomationBase(SwitchEntity enableSwitch)
     {
         _enableSwitch = enableSwitch;
-        _switchSubscription = _enableSwitch.StateChanges().Subscribe(_ => ApplyAutomationState());
-        ApplyAutomationState();
+        _switchSubscription = _enableSwitch.StateChanges().Subscribe(_ => UpdateAutomationsBasedOnSwitch());
+        // Do not call UpdateAutomationsBasedOnSwitch() here!
     }
 
-    private void ApplyAutomationState()
+    /// <summary>
+    /// Must be called at the end of the derived class constructor after all fields are initialized.
+    /// </summary>
+    protected void UpdateAutomationsBasedOnSwitch()
     {
         if (_enableSwitch.State == HaEntityStates.ON)
         {
