@@ -1,5 +1,6 @@
 using System.Linq;
 using System.Reactive.Concurrency;
+using HomeAssistantGenerated;
 using NetDaemon.HassModel.Entities;
 
 namespace HomeAutomation.apps.Helpers;
@@ -42,4 +43,12 @@ public static class StateChangeObservableExtensions
         return source.WhenStateIsFor(s => s?.State == desiredState, TimeSpan.FromHours(hours), Scheduler.Default);
     }
 
+}
+
+public static class NumberEntityExtensions
+{
+    public static void SetNumericValue(this NumberEntity entity, double value)
+    {
+        entity.CallService("set_value", new { value });
+    }
 }

@@ -90,20 +90,24 @@ public class Kitchen : IDisposable
 
     private IEnumerable<IDisposable> SetupSensorDelayAdjustment()
     {
-        yield return _motionSensor
-            .StateChanges()
-            .WhenStateIsForSeconds(HaEntityStates.ON, 25)
-            .Subscribe(_ => _sensorDelay.CallService("set_value", new { value = 15 }));
+        const int MotionSustainedDuration = 30;
+        const int DelayWhenActive = 15;
+        const int DelayWhenInactive = 1;
 
         yield return _motionSensor
             .StateChanges()
-            .WhenStateIsForSeconds(HaEntityStates.OFF, 30)
-            .Subscribe(_ => _sensorDelay.CallService("set_value", new { value = 1 }));
+            .WhenStateIsForSeconds(HaEntityStates.ON, MotionSustainedDuration)
+            .Subscribe(_ => _sensorDelay.SetNumericValue(DelayWhenActive));
+
+        yield return _motionSensor
+            .StateChanges()
+            .WhenStateIsForSeconds(HaEntityStates.OFF, MotionSustainedDuration)
+            .Subscribe(_ => _sensorDelay.SetNumericValue(DelayWhenInactive));
 
         yield return _powerPlug
             .StateChanges()
             .IsOn()
-            .Subscribe(_ => _sensorDelay.CallService("set_value", new { value = 15 }));
+            .Subscribe(_ => _sensorDelay.SetNumericValue(DelayWhenActive));
     }
 
     private void SetupMotionSensorReactivation()
