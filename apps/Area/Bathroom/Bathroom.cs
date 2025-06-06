@@ -11,7 +11,7 @@ public class Bathroom : MotionAutomationBase
                entities.Light.BathroomLights,
                entities.Number.ZEsp32C62StillTargetDelay)
     {
-        InitializeAutomations();
+        InitializeMotionAutomation();
     }
 
     protected override IEnumerable<IDisposable> GetAutomations()

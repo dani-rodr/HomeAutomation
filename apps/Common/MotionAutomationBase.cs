@@ -5,12 +5,12 @@ using System.Threading.Tasks;
 
 namespace HomeAutomation.apps.Common;
 
-public abstract class MotionAutomationBase : IDisposable
+public abstract class MotionAutomationBase(SwitchEntity enableSwitch, BinarySensorEntity motionSensor, LightEntity light, NumberEntity sensorDelay) : IDisposable
 {
-    protected readonly BinarySensorEntity _motionSensor;
-    protected readonly LightEntity _light;
-    protected readonly SwitchEntity _enableSwitch;
-    protected readonly NumberEntity _sensorDelay;
+    protected readonly BinarySensorEntity _motionSensor = motionSensor;
+    protected readonly LightEntity _light = light;
+    protected readonly SwitchEntity _enableSwitch = enableSwitch;
+    protected readonly NumberEntity _sensorDelay = sensorDelay;
     protected abstract IEnumerable<IDisposable> GetAutomations();
     protected virtual int SensorWaitTime => 15;
     protected virtual int SensorDelayValueActive => 5;
@@ -19,7 +19,7 @@ public abstract class MotionAutomationBase : IDisposable
     private CompositeDisposable? _automations;
     private CancellationTokenSource? _cancelPendingLightTurnOff;
 
-    protected bool ShouldDimLights(int dimThreshold) => (_sensorDelay.State ?? 0) > dimThreshold;
+    private bool ShouldDimLights(int dimThreshold) => (_sensorDelay.State ?? 0) > dimThreshold;
 
     protected virtual void OnMotionDetected()
     {
@@ -53,7 +53,6 @@ public abstract class MotionAutomationBase : IDisposable
             // Ignore cancellation
         }
     }
-
     protected void CancelPendingTurnOff()
     {
         _cancelPendingLightTurnOff?.Cancel();
@@ -61,22 +60,12 @@ public abstract class MotionAutomationBase : IDisposable
         _cancelPendingLightTurnOff = null;
     }
 
-    // Update constructor to accept BinarySensorEntity
-    protected MotionAutomationBase(SwitchEntity enableSwitch, BinarySensorEntity motionSensor, LightEntity light, NumberEntity sensorDelay)
+    protected void InitializeMotionAutomation()
     {
-        _enableSwitch = enableSwitch;
-        _motionSensor = motionSensor;
-        _light = light;
-        _sensorDelay = sensorDelay;
-
-        _enableSwitch.StateChanges().Subscribe(_ => InitializeAutomations());
-        // Do not call UpdateAutomationsBasedOnSwitch() here!
+        ToggleMotionAutomationBasedOnSwitch();
+        _enableSwitch.StateChangesWithCurrent().Subscribe(_ => ToggleMotionAutomationBasedOnSwitch());
     }
-
-    /// <summary>
-    /// Must be called at the end of the derived class constructor after all fields are initialized.
-    /// </summary>
-    protected void InitializeAutomations()
+    private void ToggleMotionAutomationBasedOnSwitch()
     {
         if (_enableSwitch.State != HaEntityStates.ON)
         {
@@ -99,7 +88,6 @@ public abstract class MotionAutomationBase : IDisposable
                 break;
         }
     }
-
     private void EnableAutomations()
     {
         if (_automations != null)

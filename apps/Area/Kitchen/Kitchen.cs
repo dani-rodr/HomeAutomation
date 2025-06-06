@@ -17,7 +17,7 @@ public class Kitchen : MotionAutomationBase
         _powerPlug = entities.BinarySensor.SmartPlug3PowerExceedsThreshold;
 
         SetupMotionSensorReactivation();
-        InitializeAutomations();
+        InitializeMotionAutomation();
     }
 
     protected override IEnumerable<IDisposable> GetAutomations()
