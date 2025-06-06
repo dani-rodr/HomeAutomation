@@ -1,36 +1,30 @@
-using System.Collections.Generic;
-using System.Reactive.Disposables;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace HomeAutomation.apps.Common;
 
 public abstract class MotionAutomationBase(
-    SwitchEntity enableSwitch,
+    SwitchEntity masterSwitch,
     BinarySensorEntity motionSensor,
     LightEntity light,
     NumberEntity sensorDelay,
     ILogger logger
-) : AutomationBase(logger), IDisposable
+) : AutomationBase(logger, masterSwitch), IDisposable
 {
     protected readonly BinarySensorEntity MotionSensor = motionSensor;
     protected readonly LightEntity Light = light;
-    protected readonly SwitchEntity EnableSwitch = enableSwitch;
     protected readonly NumberEntity SensorDelay = sensorDelay;
-    protected abstract IEnumerable<IDisposable> GetAutomations();
     protected virtual int SensorWaitTime => 15;
     protected virtual int SensorDelayValueActive => 5;
     protected virtual int SensorDelayValueInactive => 1;
 
-    private CompositeDisposable? Automations;
     private CancellationTokenSource? LightTurnOffCancellationToken;
 
     private bool ShouldDimLights(int dimThreshold) => (SensorDelay.State ?? 0) > dimThreshold;
 
-    protected void InitializeMotionAutomation()
+    public override void StartAutomation()
     {
-        ToggleMotionAutomationBasedOnSwitch();
-        EnableSwitch.StateChanges().Subscribe(_ => ToggleMotionAutomationBasedOnSwitch());
+        base.StartAutomation();
         Light.StateChanges().Subscribe(e => HandleLightToggleSwitch(e));
     }
 
@@ -80,23 +74,17 @@ public abstract class MotionAutomationBase(
         var userId = evt.New?.Context?.UserId;
         if (state == HaEntityStates.ON && HaIdentity.IsKnownUser(userId))
         {
-            EnableSwitch.TurnOff();
+            MasterSwitch?.TurnOff();
         }
         else if (state == HaEntityStates.OFF && HaIdentity.IsKnownUser(userId))
         {
-            EnableSwitch.TurnOn();
+            MasterSwitch?.TurnOn();
         }
     }
 
-    private void ToggleMotionAutomationBasedOnSwitch()
+    protected override void ToggleAutomation()
     {
-        if (EnableSwitch.State != HaEntityStates.ON)
-        {
-            DisableAutomations();
-            return;
-        }
-
-        EnableAutomations();
+        base.ToggleAutomation();
         UpdateLightStateBasedOnMotion();
     }
 
@@ -116,25 +104,10 @@ public abstract class MotionAutomationBase(
         }
     }
 
-    private void EnableAutomations()
-    {
-        if (Automations != null)
-        {
-            return;
-        }
-        Automations = [.. GetAutomations()];
-    }
-
-    private void DisableAutomations()
-    {
-        Automations?.Dispose();
-        Automations = null;
-    }
-
-    public virtual void Dispose()
+    public override void Dispose()
     {
         CancelPendingTurnOff();
-        DisableAutomations();
+        base.Dispose();
         GC.SuppressFinalize(this);
     }
 }

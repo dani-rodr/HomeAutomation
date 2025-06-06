@@ -1,4 +1,4 @@
-using System.Reactive.Concurrency;
+using System.Collections.Generic;
 
 namespace HomeAutomation.apps.Area.Kitchen.Automations;
 
@@ -17,6 +17,8 @@ public class CookingAutomation(Entities entities, ILogger logger) : AutomationBa
         AutoTurnOffRiceCookerOnIdle(minutes: 10);
         AutoTurnOffInductionOnIdle(minutes: 12);
     }
+
+    protected override IEnumerable<IDisposable> SwitchableAutomations() => [];
 
     private void AutoTurnOffInductionOnIdle(int minutes)
     {

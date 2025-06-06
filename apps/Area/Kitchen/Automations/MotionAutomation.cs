@@ -15,11 +15,11 @@ public class MotionAutomation(Entities entities, ILogger<Kitchen> logger)
 
     public override void StartAutomation()
     {
+        base.StartAutomation();
         SetupMotionSensorReactivation();
-        InitializeMotionAutomation();
     }
 
-    protected override IEnumerable<IDisposable> GetAutomations()
+    protected override IEnumerable<IDisposable> SwitchableAutomations()
     {
         // Lighting automation
         yield return MotionSensor
@@ -45,6 +45,6 @@ public class MotionAutomation(Entities entities, ILogger<Kitchen> logger)
 
     private void SetupMotionSensorReactivation()
     {
-        MotionSensor.StateChanges().WhenStateIsForHours(HaEntityStates.OFF, 1).Subscribe(_ => EnableSwitch.TurnOn());
+        MotionSensor.StateChanges().WhenStateIsForHours(HaEntityStates.OFF, 1).Subscribe(_ => MasterSwitch?.TurnOn());
     }
 }
