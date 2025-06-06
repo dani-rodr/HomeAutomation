@@ -5,6 +5,7 @@ namespace HomeAutomation.apps.Area.Kitchen;
 [NetDaemonApp]
 public class Kitchen : MotionAutomationBase
 {
+    protected override int SensorWaitTime => 30;
     private readonly BinarySensorEntity _powerPlug;
 
     public Kitchen(Entities entities)
@@ -21,10 +22,6 @@ public class Kitchen : MotionAutomationBase
 
     protected override IEnumerable<IDisposable> GetAutomations()
     {
-        const int SensorWaitTime = 30;
-        const int SensorDelayValueActive = 15;
-        const int SensorDelayValueInactive = 1;
-
         // Lighting automation
         yield return _motionSensor.StateChanges().WhenStateIsForSeconds(HaEntityStates.ON, 5).Subscribe(_ => _light.TurnOn());
         yield return _motionSensor.StateChanges().IsOff().Subscribe(_ => _light.TurnOff());
