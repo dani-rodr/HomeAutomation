@@ -12,7 +12,7 @@ public class Bathroom : IDisposable
     private readonly LightEntity _light;
     private readonly NumberEntity _sensorDelay;
     private CancellationTokenSource? _cancelPendingLightTurnOff;
-    private readonly List<IDisposable> _subscriptions = [];
+    private List<IDisposable>? _motionSubscriptions;
     private bool ShouldDimLights() => (_sensorDelay.State ?? 0) > 2;
 
     public Bathroom(Entities entities, IHaContext ha)
@@ -22,15 +22,52 @@ public class Bathroom : IDisposable
         _light = entities.Light.BathroomLights;
         _sensorDelay = entities.Number.ZEsp32C62StillTargetDelay;
 
-        Initialize();
+        _enableMotionSensor.StateChanges().Subscribe(_ => SetMotionAutomationsBySwitchState());
+        SetMotionAutomationsBySwitchState();
     }
 
-    private void Initialize()
+    private void SetMotionAutomationsBySwitchState()
     {
-        _subscriptions.Add(_motionSensor.StateChanges().IsOn().Subscribe(_ => OnMotionDetected()));
-        _subscriptions.Add(_motionSensor.StateChanges().IsOff().Subscribe(async _ => await OnMotionStoppedAsync()));
-        _subscriptions.Add(_motionSensor.StateChanges().WhenStateIsForSeconds(HaEntityStates.ON, 15).Subscribe(_ => _sensorDelay.SetNumericValue(5)));
-        _subscriptions.Add(_motionSensor.StateChanges().WhenStateIsForSeconds(HaEntityStates.OFF, 5).Subscribe(_ => _sensorDelay.SetNumericValue(1)));
+        if (_enableMotionSensor.State == HaEntityStates.ON)
+        {
+            EnableMotionAutomations();
+            if (_motionSensor.State == HaEntityStates.ON)
+            {
+                _light.TurnOn(brightnessPct: 100);
+            }
+            else
+            {
+                _light.TurnOff();
+            }
+        }
+        else if (_enableMotionSensor.State == HaEntityStates.OFF)
+        {
+            DisableMotionAutomations();
+            _light.TurnOff();
+        }
+    }
+
+    private void EnableMotionAutomations()
+    {
+        DisableMotionAutomations();
+        _motionSubscriptions =
+        [
+            _motionSensor.StateChanges().IsOn().Subscribe(_ => OnMotionDetected()),
+            _motionSensor.StateChanges().IsOff().Subscribe(async _ => await OnMotionStoppedAsync()),
+            _motionSensor.StateChanges().WhenStateIsForSeconds(HaEntityStates.ON, 15).Subscribe(_ => _sensorDelay.SetNumericValue(5)),
+            _motionSensor.StateChanges().WhenStateIsForSeconds(HaEntityStates.OFF, 5).Subscribe(_ => _sensorDelay.SetNumericValue(1))
+        ];
+    }
+
+    private void DisableMotionAutomations()
+    {
+        if (_motionSubscriptions != null)
+        {
+            foreach (var sub in _motionSubscriptions)
+                sub.Dispose();
+            _motionSubscriptions.Clear();
+            _motionSubscriptions = null;
+        }
     }
 
     private void OnMotionDetected()
@@ -76,8 +113,6 @@ public class Bathroom : IDisposable
     public void Dispose()
     {
         CancelPendingTurnOff();
-        foreach (var sub in _subscriptions)
-            sub.Dispose();
-        _subscriptions.Clear();
+        DisableMotionAutomations();
     }
 }
