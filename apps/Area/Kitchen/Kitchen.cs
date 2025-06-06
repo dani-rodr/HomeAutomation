@@ -5,23 +5,18 @@ namespace HomeAutomation.apps.Area.Kitchen;
 [NetDaemonApp]
 public class Kitchen : MotionAutomationBase
 {
-    private readonly BinarySensorEntity _motionSensor;
     private readonly BinarySensorEntity _powerPlug;
-    private readonly LightEntity _light;
-    private readonly NumberEntity _sensorDelay;
-    private readonly SwitchEntity _enableMotionSensor;
 
-    public Kitchen(Entities entities, IHaContext ha)
-        : base(entities.Switch.KitchenMotionSensor)
+    public Kitchen(Entities entities)
+        : base(entities.Switch.KitchenMotionSensor,
+               entities.BinarySensor.KitchenMotionSensors,
+               entities.Light.RgbLightStrip,
+               entities.Number.Ld2410Esp325StillTargetDelay)
     {
-        _motionSensor = entities.BinarySensor.KitchenMotionSensors;
         _powerPlug = entities.BinarySensor.SmartPlug3PowerExceedsThreshold;
-        _light = entities.Light.RgbLightStrip;
-        _sensorDelay = entities.Number.Ld2410Esp325StillTargetDelay;
-        _enableMotionSensor = entities.Switch.KitchenMotionSensor;
 
         SetupMotionSensorReactivation();
-        UpdateAutomationsBasedOnSwitch();
+        InitializeAutomations();
     }
 
     protected override IEnumerable<IDisposable> GetAutomations()
@@ -42,6 +37,6 @@ public class Kitchen : MotionAutomationBase
 
     private void SetupMotionSensorReactivation()
     {
-        _motionSensor.StateChanges().WhenStateIsForHours(HaEntityStates.OFF, 1).Subscribe(_ => _enableMotionSensor.TurnOn());
+        _motionSensor.StateChanges().WhenStateIsForHours(HaEntityStates.OFF, 1).Subscribe(_ => _enableSwitch.TurnOn());
     }
 }

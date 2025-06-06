@@ -7,27 +7,24 @@ namespace HomeAutomation.apps.Area.Bathroom;
 [NetDaemonApp]
 public class Bathroom : MotionAutomationBase
 {
-    private readonly BinarySensorEntity _motionSensor;
-    private readonly LightEntity _light;
-    private readonly NumberEntity _sensorDelay;
     private CancellationTokenSource? _cancelPendingLightTurnOff;
-    private bool ShouldDimLights() => (_sensorDelay.State ?? 0) > 2;
+    private bool ShouldDimLights() => (_sensorDelay.State ?? 0) > SensorDelayValueInactive;
+    private const int SensorWaitTime = 15;
+    private const int SensorDelayValueActive = 5;
+    private const int SensorDelayValueInactive = 1;
 
-    public Bathroom(Entities entities, IHaContext ha)
-        : base(entities.Switch.BathroomMotionSensor)
+    public Bathroom(Entities entities)
+        : base(entities.Switch.BathroomMotionSensor,
+               entities.BinarySensor.BathroomPresenceSensors,
+               entities.Light.BathroomLights,
+               entities.Number.ZEsp32C62StillTargetDelay)
     {
-        _motionSensor = entities.BinarySensor.BathroomPresenceSensors;
-        _light = entities.Light.BathroomLights;
-        _sensorDelay = entities.Number.ZEsp32C62StillTargetDelay;
-
-        UpdateAutomationsBasedOnSwitch();
+        InitializeAutomations();
     }
 
     protected override IEnumerable<IDisposable> GetAutomations()
     {
-        const int SensorWaitTime = 15;
-        const int SensorDelayValueActive = 5;
-        const int SensorDelayValueInactive = 1;
+
         // Lighting automation
         yield return _motionSensor.StateChanges().IsOn().Subscribe(_ => OnMotionDetected());
         yield return _motionSensor.StateChanges().IsOff().Subscribe(async _ => await OnMotionStoppedAsync());

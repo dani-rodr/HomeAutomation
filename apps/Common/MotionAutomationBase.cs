@@ -5,29 +5,47 @@ namespace HomeAutomation.apps.Common;
 
 public abstract class MotionAutomationBase : IDisposable
 {
-    private readonly SwitchEntity _enableSwitch;
+    protected readonly BinarySensorEntity _motionSensor;
+    protected readonly LightEntity _light;
+    protected readonly SwitchEntity _enableSwitch;
+    protected readonly NumberEntity _sensorDelay;
+    protected abstract IEnumerable<IDisposable> GetAutomations();
+
     private IDisposable? _switchSubscription;
     private CompositeDisposable? _automations;
 
-    protected MotionAutomationBase(SwitchEntity enableSwitch)
+
+    // Update constructor to accept BinarySensorEntity
+    protected MotionAutomationBase(SwitchEntity enableSwitch, BinarySensorEntity motionSensor, LightEntity light, NumberEntity sensorDelay)
     {
         _enableSwitch = enableSwitch;
-        _switchSubscription = _enableSwitch.StateChanges().Subscribe(_ => UpdateAutomationsBasedOnSwitch());
+        _motionSensor = motionSensor;
+        _light = light;
+        _sensorDelay = sensorDelay;
+
+        _switchSubscription = _enableSwitch.StateChanges().Subscribe(_ => InitializeAutomations());
         // Do not call UpdateAutomationsBasedOnSwitch() here!
     }
 
     /// <summary>
     /// Must be called at the end of the derived class constructor after all fields are initialized.
     /// </summary>
-    protected void UpdateAutomationsBasedOnSwitch()
+    protected void InitializeAutomations()
     {
-        if (_enableSwitch.State == HaEntityStates.ON)
+        if (_enableSwitch.State != HaEntityStates.ON)
         {
-            EnableAutomations();
+            DisableAutomations();
+            return;
+        }
+
+        EnableAutomations();
+        if (_motionSensor.State == HaEntityStates.ON)
+        {
+            _light.TurnOn();
         }
         else
         {
-            DisableAutomations();
+            _light.TurnOff();
         }
     }
 
@@ -45,8 +63,6 @@ public abstract class MotionAutomationBase : IDisposable
         _automations?.Dispose();
         _automations = null;
     }
-
-    protected abstract IEnumerable<IDisposable> GetAutomations();
 
     public virtual void Dispose()
     {
