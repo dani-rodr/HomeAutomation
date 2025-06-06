@@ -1,7 +1,5 @@
 using System.Linq;
 using System.Reactive.Concurrency;
-using HomeAssistantGenerated;
-using NetDaemon.HassModel.Entities;
 
 namespace HomeAutomation.apps.Helpers;
 

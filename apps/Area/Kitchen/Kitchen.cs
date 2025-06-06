@@ -1,7 +1,3 @@
-using HomeAssistantGenerated;
-using HomeAutomation.apps.Helpers;
-using NetDaemon.HassModel.Entities;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reactive.Disposables;
