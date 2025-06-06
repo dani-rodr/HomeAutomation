@@ -1,12 +1,12 @@
 using System.Collections.Generic;
 
-namespace HomeAutomation.apps.Area.Kitchen;
+namespace HomeAutomation.apps.Area.Pantry;
 
 [NetDaemonApp]
 public class Pantry : MotionAutomationBase
 {
     protected override int SensorWaitTime => 10;
-    private readonly BinarySensorEntity _miScaleStepSensor;
+    private readonly BinarySensorEntity _miScalePresenceSensor;
     private readonly LightEntity _mirrorLight;
     public Pantry(Entities entities, ILogger<Pantry> logger)
         : base(entities.Switch.PantryMotionSensor,
@@ -15,24 +15,29 @@ public class Pantry : MotionAutomationBase
                entities.Number.ZEsp32C63StillTargetDelay,
                logger)
     {
-        _miScaleStepSensor = entities.BinarySensor.Esp32PresenceBedroomMiScalePresence;
+        _miScalePresenceSensor = entities.BinarySensor.Esp32PresenceBedroomMiScalePresence;
         _mirrorLight = entities.Light.ControllerRgbDf1c0d;
 
-        InitializeMotionAutomation();
+        StartAutomation();
     }
 
     protected override IEnumerable<IDisposable> GetAutomations()
     {
         // Lighting automation
-        yield return _motionSensor.StateChanges().IsOn().Subscribe(_ => _light.TurnOn());
-        yield return _motionSensor.StateChanges().IsOff().Subscribe(_ =>
+        yield return MotionSensor.StateChanges().IsOn().Subscribe(_ => Light.TurnOn());
+        yield return MotionSensor.StateChanges().IsOff().Subscribe(_ =>
         {
-            _light.TurnOff();
+            Light.TurnOff();
             _mirrorLight.TurnOff();
         });
-        yield return _miScaleStepSensor.StateChanges().IsOn().Subscribe(_ => _mirrorLight.TurnOn());
+        yield return _miScalePresenceSensor.StateChanges().IsOn().Subscribe(_ => _mirrorLight.TurnOn());
         // Sensor delay automation
-        yield return _motionSensor.StateChanges().WhenStateIsForSeconds(HaEntityStates.ON, SensorWaitTime).Subscribe(_ => _sensorDelay.SetNumericValue(SensorDelayValueActive));
-        yield return _motionSensor.StateChanges().WhenStateIsForSeconds(HaEntityStates.OFF, SensorWaitTime).Subscribe(_ => _sensorDelay.SetNumericValue(SensorDelayValueInactive));
+        yield return MotionSensor.StateChanges().WhenStateIsForSeconds(HaEntityStates.ON, SensorWaitTime).Subscribe(_ => SensorDelay.SetNumericValue(SensorDelayValueActive));
+        yield return MotionSensor.StateChanges().WhenStateIsForSeconds(HaEntityStates.OFF, SensorWaitTime).Subscribe(_ => SensorDelay.SetNumericValue(SensorDelayValueInactive));
+    }
+
+    public override void StartAutomation()
+    {
+        InitializeMotionAutomation();
     }
 }

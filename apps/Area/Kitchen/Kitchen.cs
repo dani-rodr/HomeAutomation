@@ -1,40 +1,19 @@
-using System.Collections.Generic;
+using HomeAutomation.apps.Area.Kitchen.Automations;
 
 namespace HomeAutomation.apps.Area.Kitchen;
 
+// The Kitchen class uses composition to instantiate and manage MotionAutomation and CookingAutomation
+// instead of inheriting from a base class like MotionAutomationBase. This design choice improves modularity
+// and allows for more flexible reuse of automation components.
+
 [NetDaemonApp]
-public class Kitchen : MotionAutomationBase
+public class Kitchen
 {
-    protected override int SensorWaitTime => 30;
-    private readonly BinarySensorEntity _powerPlug;
-
     public Kitchen(Entities entities, ILogger<Kitchen> logger)
-        : base(entities.Switch.KitchenMotionSensor,
-               entities.BinarySensor.KitchenMotionSensors,
-               entities.Light.RgbLightStrip,
-               entities.Number.Ld2410Esp325StillTargetDelay,
-               logger)
     {
-        _powerPlug = entities.BinarySensor.SmartPlug3PowerExceedsThreshold;
-
-        SetupMotionSensorReactivation();
-        InitializeMotionAutomation();
-    }
-
-    protected override IEnumerable<IDisposable> GetAutomations()
-    {
-        // Lighting automation
-        yield return _motionSensor.StateChanges().WhenStateIsForSeconds(HaEntityStates.ON, 5).Subscribe(_ => _light.TurnOn());
-        yield return _motionSensor.StateChanges().IsOff().Subscribe(_ => _light.TurnOff());
-
-        // Sensor delay automation
-        yield return _motionSensor.StateChanges().WhenStateIsForSeconds(HaEntityStates.ON, SensorWaitTime).Subscribe(_ => _sensorDelay.SetNumericValue(SensorDelayValueActive));
-        yield return _motionSensor.StateChanges().WhenStateIsForSeconds(HaEntityStates.OFF, SensorWaitTime).Subscribe(_ => _sensorDelay.SetNumericValue(SensorDelayValueInactive));
-        yield return _powerPlug.StateChanges().IsOn().Subscribe(_ => _sensorDelay.SetNumericValue(SensorDelayValueActive));
-    }
-
-    private void SetupMotionSensorReactivation()
-    {
-        _motionSensor.StateChanges().WhenStateIsForHours(HaEntityStates.OFF, 1).Subscribe(_ => _enableSwitch.TurnOn());
+        var motionAutomation = new MotionAutomation(entities, logger);
+        var cookingAutomation = new CookingAutomation(entities, logger);
+        motionAutomation.StartAutomation();
+        cookingAutomation.StartAutomation();
     }
 }
