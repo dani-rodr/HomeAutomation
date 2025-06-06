@@ -4,7 +4,6 @@ using NetDaemon.Extensions.Logging;
 using NetDaemon.Extensions.Scheduler;
 using NetDaemon.Extensions.Tts;
 using NetDaemon.Runtime;
-using HomeAssistantGenerated;
 
 #pragma warning disable CA1812
 
