@@ -5,69 +5,33 @@ using System.Threading.Tasks;
 namespace HomeAutomation.apps.Area.Bathroom;
 
 [NetDaemonApp]
-public class Bathroom : IDisposable
+public class Bathroom : MotionAutomationBase
 {
-    private readonly SwitchEntity _enableMotionSensor;
     private readonly BinarySensorEntity _motionSensor;
     private readonly LightEntity _light;
     private readonly NumberEntity _sensorDelay;
     private CancellationTokenSource? _cancelPendingLightTurnOff;
-    private List<IDisposable>? _motionSubscriptions;
     private bool ShouldDimLights() => (_sensorDelay.State ?? 0) > 2;
 
     public Bathroom(Entities entities, IHaContext ha)
+        : base(entities.Switch.BathroomMotionSensor)
     {
-        _enableMotionSensor = entities.Switch.BathroomMotionSensor;
         _motionSensor = entities.BinarySensor.BathroomPresenceSensors;
         _light = entities.Light.BathroomLights;
         _sensorDelay = entities.Number.ZEsp32C62StillTargetDelay;
-
-        _enableMotionSensor.StateChanges().Subscribe(_ => SetMotionAutomationsBySwitchState());
-        SetMotionAutomationsBySwitchState();
     }
 
-    private void SetMotionAutomationsBySwitchState()
+    protected override IEnumerable<IDisposable> GetAutomations()
     {
-        if (_enableMotionSensor.State == HaEntityStates.ON)
-        {
-            EnableMotionAutomations();
-            if (_motionSensor.State == HaEntityStates.ON)
-            {
-                _light.TurnOn(brightnessPct: 100);
-            }
-            else
-            {
-                _light.TurnOff();
-            }
-        }
-        else if (_enableMotionSensor.State == HaEntityStates.OFF)
-        {
-            DisableMotionAutomations();
-            _light.TurnOff();
-        }
-    }
-
-    private void EnableMotionAutomations()
-    {
-        DisableMotionAutomations();
-        _motionSubscriptions =
-        [
-            _motionSensor.StateChanges().IsOn().Subscribe(_ => OnMotionDetected()),
-            _motionSensor.StateChanges().IsOff().Subscribe(async _ => await OnMotionStoppedAsync()),
-            _motionSensor.StateChanges().WhenStateIsForSeconds(HaEntityStates.ON, 15).Subscribe(_ => _sensorDelay.SetNumericValue(5)),
-            _motionSensor.StateChanges().WhenStateIsForSeconds(HaEntityStates.OFF, 5).Subscribe(_ => _sensorDelay.SetNumericValue(1))
-        ];
-    }
-
-    private void DisableMotionAutomations()
-    {
-        if (_motionSubscriptions != null)
-        {
-            foreach (var sub in _motionSubscriptions)
-                sub.Dispose();
-            _motionSubscriptions.Clear();
-            _motionSubscriptions = null;
-        }
+        const int SensorWaitTime = 15;
+        const int SensorDelayValueActive = 5;
+        const int SensorDelayValueInactive = 1;
+        // Lighting automation
+        yield return _motionSensor.StateChanges().IsOn().Subscribe(_ => OnMotionDetected());
+        yield return _motionSensor.StateChanges().IsOff().Subscribe(async _ => await OnMotionStoppedAsync());
+        // Sensor delay automation
+        yield return _motionSensor.StateChanges().WhenStateIsForSeconds(HaEntityStates.ON, SensorWaitTime).Subscribe(_ => _sensorDelay.SetNumericValue(SensorDelayValueActive));
+        yield return _motionSensor.StateChanges().WhenStateIsForSeconds(HaEntityStates.OFF, SensorWaitTime).Subscribe(_ => _sensorDelay.SetNumericValue(SensorDelayValueInactive));
     }
 
     private void OnMotionDetected()
@@ -110,9 +74,9 @@ public class Bathroom : IDisposable
         _cancelPendingLightTurnOff = null;
     }
 
-    public void Dispose()
+    public override void Dispose()
     {
         CancelPendingTurnOff();
-        DisableMotionAutomations();
+        base.Dispose();
     }
 }
