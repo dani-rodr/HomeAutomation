@@ -76,6 +76,23 @@ public static class StateChangeObservableExtensions
     }
 }
 
+public static class StateExtensions
+{
+    public static string UserId<T, TState>(this StateChange<T, TState> e)
+        where T : Entity
+        where TState : EntityState
+    {
+        return e.New?.Context?.UserId ?? string.Empty;
+    }
+
+    public static string State<T, TState>(this StateChange<T, TState> e)
+        where T : Entity
+        where TState : EntityState
+    {
+        return e.New?.State ?? string.Empty;
+    }
+}
+
 public static class NumberEntityExtensions
 {
     public static void SetNumericValue(this NumberEntity entity, double value)

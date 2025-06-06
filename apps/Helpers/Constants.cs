@@ -16,10 +16,12 @@ public static class HaIdentity
     public const string DANIEL_RODRIGUEZ = "7512fc7c361e45879df43f9f0f34fc57";
     public const string MIPAD5 = "b02831abf0e44536ad8fc552aede48c4";
     public const string SUPERVISOR = "f389ce79e38841e4bfd26c9685ffa784";
+    public const string MANUAL = "";
 
-    public static bool IsKnownUser(string? userId) => userId is not null && KnownUsers.Contains(userId);
+    public static bool IsManuallyOperated(string? userId) =>
+        string.IsNullOrEmpty(userId?.Trim()) || KnownUsers.Contains(userId.Trim());
 
     public static bool IsAutomated(string? userId) => userId is not null && (userId == SUPERVISOR);
 
-    private static readonly HashSet<string> KnownUsers = [ATHENA_BEZOS, DANIEL_RODRIGUEZ, MIPAD5];
+    private static readonly HashSet<string> KnownUsers = [ATHENA_BEZOS, DANIEL_RODRIGUEZ, MIPAD5, MANUAL];
 }

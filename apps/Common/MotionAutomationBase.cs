@@ -86,11 +86,11 @@ public abstract class MotionAutomationBase(
     {
         var state = evt.New?.State;
         var userId = evt.New?.Context?.UserId;
-        if (state == HaEntityStates.ON && HaIdentity.IsKnownUser(userId))
+        if (state == HaEntityStates.ON && HaIdentity.IsManuallyOperated(userId))
         {
             MasterSwitch?.TurnOff();
         }
-        else if (state == HaEntityStates.OFF && HaIdentity.IsKnownUser(userId))
+        else if (state == HaEntityStates.OFF && HaIdentity.IsManuallyOperated(userId))
         {
             MasterSwitch?.TurnOn();
         }
