@@ -25,7 +25,21 @@ public abstract class MotionAutomationBase(
     public override void StartAutomation()
     {
         base.StartAutomation();
-        Light.StateChanges().Subscribe(e => HandleLightToggleSwitch(e));
+        Light.StateChanges().Subscribe(e => ControlMasterSwitchOnLightChange(e));
+        MasterSwitch
+            ?.StateChanges()
+            .IsOn()
+            .Subscribe(_ =>
+            {
+                if (MotionSensor.State == HaEntityStates.ON)
+                {
+                    Light.TurnOn();
+                }
+                else
+                {
+                    Light.TurnOff();
+                }
+            });
     }
 
     protected virtual void OnMotionDetected()
@@ -68,7 +82,7 @@ public abstract class MotionAutomationBase(
         LightTurnOffCancellationToken = null;
     }
 
-    private void HandleLightToggleSwitch(StateChange<LightEntity, EntityState<LightAttributes>> evt)
+    private void ControlMasterSwitchOnLightChange(StateChange<LightEntity, EntityState<LightAttributes>> evt)
     {
         var state = evt.New?.State;
         var userId = evt.New?.Context?.UserId;
@@ -79,28 +93,6 @@ public abstract class MotionAutomationBase(
         else if (state == HaEntityStates.OFF && HaIdentity.IsKnownUser(userId))
         {
             MasterSwitch?.TurnOn();
-        }
-    }
-
-    protected override void ToggleAutomation()
-    {
-        base.ToggleAutomation();
-        UpdateLightStateBasedOnMotion();
-    }
-
-    private void UpdateLightStateBasedOnMotion()
-    {
-        switch (MotionSensor.State)
-        {
-            case HaEntityStates.ON:
-                Light.TurnOn();
-                break;
-            case HaEntityStates.OFF:
-                Light.TurnOff();
-                break;
-            case HaEntityStates.UNAVAILABLE:
-            case HaEntityStates.UNKNOWN:
-                break;
         }
     }
 

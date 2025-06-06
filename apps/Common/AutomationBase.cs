@@ -32,7 +32,7 @@ public abstract class AutomationBase(ILogger logger, SwitchEntity? masterSwitch 
         _automations = null;
     }
 
-    protected virtual void ToggleAutomation()
+    private void ToggleAutomation()
     {
         if (MasterSwitch?.State != HaEntityStates.ON)
         {
