@@ -4,10 +4,10 @@ namespace HomeAutomation.apps.Area.Bathroom.Automations;
 
 public class MotionAutomation(Entities entities, ILogger<Bathroom> logger)
     : MotionAutomationBase(
-        entities.Switch.PantryMotionSensor,
-        entities.BinarySensor.PantryMotionSensors,
-        entities.Light.PantryLights,
-        entities.Number.ZEsp32C63StillTargetDelay,
+        entities.Switch.BathroomMotionSensor,
+        entities.BinarySensor.BathroomPresenceSensors,
+        entities.Light.BathroomLights,
+        entities.Number.ZEsp32C62StillTargetDelay,
         logger
     )
 {
