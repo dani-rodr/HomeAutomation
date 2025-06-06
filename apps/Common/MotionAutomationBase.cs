@@ -5,7 +5,13 @@ using System.Threading.Tasks;
 
 namespace HomeAutomation.apps.Common;
 
-public abstract class MotionAutomationBase(SwitchEntity enableSwitch, BinarySensorEntity motionSensor, LightEntity light, NumberEntity sensorDelay, ILogger logger) : AutomationBase(logger), IDisposable
+public abstract class MotionAutomationBase(
+    SwitchEntity enableSwitch,
+    BinarySensorEntity motionSensor,
+    LightEntity light,
+    NumberEntity sensorDelay,
+    ILogger logger
+) : AutomationBase(logger), IDisposable
 {
     protected readonly BinarySensorEntity MotionSensor = motionSensor;
     protected readonly LightEntity Light = light;
@@ -20,12 +26,14 @@ public abstract class MotionAutomationBase(SwitchEntity enableSwitch, BinarySens
     private CancellationTokenSource? LightTurnOffCancellationToken;
 
     private bool ShouldDimLights(int dimThreshold) => (SensorDelay.State ?? 0) > dimThreshold;
+
     protected void InitializeMotionAutomation()
     {
         ToggleMotionAutomationBasedOnSwitch();
         EnableSwitch.StateChanges().Subscribe(_ => ToggleMotionAutomationBasedOnSwitch());
         Light.StateChanges().Subscribe(e => HandleLightToggleSwitch(e));
     }
+
     protected virtual void OnMotionDetected()
     {
         CancelPendingTurnOff();
@@ -58,12 +66,14 @@ public abstract class MotionAutomationBase(SwitchEntity enableSwitch, BinarySens
             // Ignore cancellation
         }
     }
+
     protected void CancelPendingTurnOff()
     {
         LightTurnOffCancellationToken?.Cancel();
         LightTurnOffCancellationToken?.Dispose();
         LightTurnOffCancellationToken = null;
     }
+
     private void HandleLightToggleSwitch(StateChange<LightEntity, EntityState<LightAttributes>> evt)
     {
         var state = evt.New?.State;
@@ -94,13 +104,18 @@ public abstract class MotionAutomationBase(SwitchEntity enableSwitch, BinarySens
     {
         switch (MotionSensor.State)
         {
-            case HaEntityStates.ON: Light.TurnOn(); break;
-            case HaEntityStates.OFF: Light.TurnOff(); break;
+            case HaEntityStates.ON:
+                Light.TurnOn();
+                break;
+            case HaEntityStates.OFF:
+                Light.TurnOff();
+                break;
             case HaEntityStates.UNAVAILABLE:
             case HaEntityStates.UNKNOWN:
                 break;
         }
     }
+
     private void EnableAutomations()
     {
         if (Automations != null)

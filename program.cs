@@ -14,12 +14,13 @@ try
         .UseNetDaemonDefaultLogging()
         .UseNetDaemonRuntime()
         .UseNetDaemonTextToSpeech()
-        .ConfigureServices((_, services) =>
-            services
-                .AddAppsFromAssembly(Assembly.GetExecutingAssembly())
-                .AddNetDaemonStateManager()
-                .AddNetDaemonScheduler()
-                .AddHomeAssistantGenerated()
+        .ConfigureServices(
+            (_, services) =>
+                services
+                    .AddAppsFromAssembly(Assembly.GetExecutingAssembly())
+                    .AddNetDaemonStateManager()
+                    .AddNetDaemonScheduler()
+                    .AddHomeAssistantGenerated()
         )
         .Build()
         .RunAsync()
