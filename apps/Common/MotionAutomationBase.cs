@@ -5,8 +5,9 @@ using System.Threading.Tasks;
 
 namespace HomeAutomation.apps.Common;
 
-public abstract class MotionAutomationBase(SwitchEntity enableSwitch, BinarySensorEntity motionSensor, LightEntity light, NumberEntity sensorDelay) : IDisposable
+public abstract class MotionAutomationBase(SwitchEntity enableSwitch, BinarySensorEntity motionSensor, LightEntity light, NumberEntity sensorDelay, ILogger logger) : IDisposable
 {
+    protected readonly ILogger _logger = logger;
     protected readonly BinarySensorEntity _motionSensor = motionSensor;
     protected readonly LightEntity _light = light;
     protected readonly SwitchEntity _enableSwitch = enableSwitch;
@@ -63,8 +64,24 @@ public abstract class MotionAutomationBase(SwitchEntity enableSwitch, BinarySens
     protected void InitializeMotionAutomation()
     {
         ToggleMotionAutomationBasedOnSwitch();
-        _enableSwitch.StateChangesWithCurrent().Subscribe(_ => ToggleMotionAutomationBasedOnSwitch());
+        _enableSwitch.StateChanges().Subscribe(_ => ToggleMotionAutomationBasedOnSwitch());
+        _light.StateChanges().Subscribe(e => HandleLightToggleSwitch(e));
     }
+
+    private void HandleLightToggleSwitch(StateChange<LightEntity, EntityState<LightAttributes>> evt)
+    {
+        var state = evt.New?.State;
+        var userId = evt.New?.Context?.UserId;
+        if (state == HaEntityStates.ON && HaIdentity.IsKnownUser(userId))
+        {
+            _enableSwitch.TurnOff();
+        }
+        else if (state == HaEntityStates.OFF && HaIdentity.IsKnownUser(userId))
+        {
+            _enableSwitch.TurnOn();
+        }
+    }
+
     private void ToggleMotionAutomationBasedOnSwitch()
     {
         if (_enableSwitch.State != HaEntityStates.ON)

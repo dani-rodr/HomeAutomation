@@ -7,4 +7,5 @@ global using NetDaemon.HassModel.Entities;
 global using HomeAssistantGenerated;
 global using HomeAutomation.apps.Helpers;
 global using HomeAutomation.apps.Common;
+global using Microsoft.Extensions.Logging;
 

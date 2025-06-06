@@ -8,11 +8,12 @@ public class Kitchen : MotionAutomationBase
     protected override int SensorWaitTime => 30;
     private readonly BinarySensorEntity _powerPlug;
 
-    public Kitchen(Entities entities)
+    public Kitchen(Entities entities, ILogger<Kitchen> logger)
         : base(entities.Switch.KitchenMotionSensor,
                entities.BinarySensor.KitchenMotionSensors,
                entities.Light.RgbLightStrip,
-               entities.Number.Ld2410Esp325StillTargetDelay)
+               entities.Number.Ld2410Esp325StillTargetDelay,
+               logger)
     {
         _powerPlug = entities.BinarySensor.SmartPlug3PowerExceedsThreshold;
 

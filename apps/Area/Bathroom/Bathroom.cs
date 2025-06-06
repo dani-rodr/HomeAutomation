@@ -5,11 +5,12 @@ namespace HomeAutomation.apps.Area.Bathroom;
 [NetDaemonApp]
 public class Bathroom : MotionAutomationBase
 {
-    public Bathroom(Entities entities)
+    public Bathroom(Entities entities, ILogger<Bathroom> logger)
         : base(entities.Switch.BathroomMotionSensor,
                entities.BinarySensor.BathroomPresenceSensors,
                entities.Light.BathroomLights,
-               entities.Number.ZEsp32C62StillTargetDelay)
+               entities.Number.ZEsp32C62StillTargetDelay,
+               logger)
     {
         InitializeMotionAutomation();
     }

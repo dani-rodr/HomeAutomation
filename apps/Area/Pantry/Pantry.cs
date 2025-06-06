@@ -8,11 +8,12 @@ public class Pantry : MotionAutomationBase
     protected override int SensorWaitTime => 10;
     private readonly BinarySensorEntity _miScaleStepSensor;
     private readonly LightEntity _mirrorLight;
-    public Pantry(Entities entities)
+    public Pantry(Entities entities, ILogger<Pantry> logger)
         : base(entities.Switch.PantryMotionSensor,
                entities.BinarySensor.PantryMotionSensors,
                entities.Light.PantryLights,
-               entities.Number.ZEsp32C63StillTargetDelay)
+               entities.Number.ZEsp32C63StillTargetDelay,
+               logger)
     {
         _miScaleStepSensor = entities.BinarySensor.Esp32PresenceBedroomMiScalePresence;
         _mirrorLight = entities.Light.ControllerRgbDf1c0d;
