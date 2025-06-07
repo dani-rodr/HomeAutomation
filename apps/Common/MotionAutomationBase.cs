@@ -76,10 +76,16 @@ public abstract class MotionAutomationBase(
         var userId = evt.New?.Context?.UserId;
         if (state == HaEntityStates.ON && HaIdentity.IsManuallyOperated(userId))
         {
+            Logger.LogInformation(
+                "ControlMasterSwitchOnLightChange: Light turned ON by manual operation, turning OFF master switch."
+            );
             MasterSwitch?.TurnOff();
         }
         else if (state == HaEntityStates.OFF && HaIdentity.IsManuallyOperated(userId))
         {
+            Logger.LogInformation(
+                "ControlMasterSwitchOnLightChange: Light turned OFF by manual operation, turning ON master switch."
+            );
             MasterSwitch?.TurnOn();
         }
     }

@@ -96,6 +96,26 @@ public static class StateExtensions
     {
         return e.New?.Context?.UserId ?? string.Empty;
     }
+
+    public static bool IsOn(this string? state)
+    {
+        return string.Equals(state, HaEntityStates.ON, StringComparison.OrdinalIgnoreCase);
+    }
+
+    public static bool IsOff(this string? state)
+    {
+        return string.Equals(state, HaEntityStates.OFF, StringComparison.OrdinalIgnoreCase);
+    }
+
+    public static bool IsUnavailable(this string? state)
+    {
+        return string.Equals(state, HaEntityStates.UNAVAILABLE, StringComparison.OrdinalIgnoreCase);
+    }
+
+    public static bool IsUnknown(this string? state)
+    {
+        return string.Equals(state, HaEntityStates.UNKNOWN, StringComparison.OrdinalIgnoreCase);
+    }
 }
 
 public static class NumberEntityExtensions

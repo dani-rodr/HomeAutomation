@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Diagnostics;
 
 namespace HomeAutomation.apps.Area.Bedroom.Automations;
 
@@ -16,14 +15,52 @@ public class MotionAutomation(Entities entities, ILogger<Bedroom> logger)
     private readonly SwitchEntity _leftSideFanSwitch = entities.Switch.Sonoff100238104e1;
     private bool _isFanManuallyActivated = false;
 
-    protected override IEnumerable<IDisposable> SwitchableAutomations()
+    public override void StartAutomation()
     {
-        yield return MotionSensor.StateChanges().IsOn().Subscribe(_ => MotionDetected());
-        yield return MotionSensor.StateChanges().IsOff().Subscribe(_ => MotionStopped());
-        yield return _leftSideFanSwitch.StateChanges().Subscribe(UpdateFanActivationStatus());
+        base.StartAutomation();
+        _rightSideEmptySwitch.StateChangesWithCurrent().Subscribe(ToggleLightsViaSwitch());
+
+        // Fan automation
+        _leftSideFanSwitch.StateChangesWithCurrent().Subscribe(UpdateFanActivationStatus());
+        MotionSensor.StateChangesWithCurrent().IsOn().Subscribe(MotionDetected());
+        MotionSensor.StateChangesWithCurrent().IsOff().Subscribe(MotionStopped());
+        Light.StateChangesWithCurrent().Subscribe(EnableMasterSwitchWhenLightActive());
     }
 
-    private Action<StateChange<SwitchEntity, EntityState<SwitchAttributes>>> UpdateFanActivationStatus()
+    private Action<StateChange> EnableMasterSwitchWhenLightActive()
+    {
+        return e =>
+        {
+            var state = Light.State;
+            var isAutomated = HaIdentity.IsAutomated(e.UserId());
+            if (isAutomated && state.IsOn())
+            {
+                MasterSwitch?.TurnOn();
+                return;
+            }
+        };
+    }
+
+    protected override IEnumerable<IDisposable> SwitchableAutomations()
+    {
+        yield return MotionSensor.StateChangesWithCurrent().IsOn().Subscribe(_ => Light.TurnOn());
+        yield return MotionSensor.StateChangesWithCurrent().IsOff().Subscribe(_ => Light.TurnOff());
+    }
+
+    private Action<StateChange> ToggleLightsViaSwitch()
+    {
+        return e =>
+        {
+            if (!HaIdentity.IsPhysicallyOperated(e.UserId()))
+            {
+                return;
+            }
+            Light.Toggle();
+            MasterSwitch?.TurnOff();
+        };
+    }
+
+    private Action<StateChange> UpdateFanActivationStatus()
     {
         return e =>
         {
@@ -31,22 +68,26 @@ public class MotionAutomation(Entities entities, ILogger<Bedroom> logger)
             {
                 return;
             }
-            _isFanManuallyActivated = e.State() == HaEntityStates.ON;
+            _isFanManuallyActivated = _leftSideFanSwitch.State.IsOn();
         };
     }
 
-    private void MotionDetected()
+    private Action<StateChange> MotionDetected()
     {
-        Light.TurnOn();
-        if (_isFanManuallyActivated)
+        return _ =>
         {
-            _leftSideFanSwitch.TurnOn();
-        }
+            if (_isFanManuallyActivated)
+            {
+                _leftSideFanSwitch.TurnOn();
+            }
+        };
     }
 
-    private void MotionStopped()
+    private Action<StateChange> MotionStopped()
     {
-        Light.TurnOff();
-        _leftSideFanSwitch.TurnOff();
+        return _ =>
+        {
+            _leftSideFanSwitch.TurnOff();
+        };
     }
 }
