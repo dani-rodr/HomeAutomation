@@ -25,21 +25,9 @@ public abstract class MotionAutomationBase(
     public override void StartAutomation()
     {
         base.StartAutomation();
-        Light.StateChanges().Subscribe(e => ControlMasterSwitchOnLightChange(e));
-        MasterSwitch
-            ?.StateChanges()
-            .IsOn()
-            .Subscribe(_ =>
-            {
-                if (MotionSensor.State == HaEntityStates.ON)
-                {
-                    Light.TurnOn();
-                }
-                else
-                {
-                    Light.TurnOff();
-                }
-            });
+        ControlLightOnMotionChange();
+        Light.StateChanges().Subscribe(ControlMasterSwitchOnLightChange);
+        MasterSwitch?.StateChanges().IsOn().Subscribe(e => ControlLightOnMotionChange());
     }
 
     protected virtual void OnMotionDetected()
@@ -93,6 +81,18 @@ public abstract class MotionAutomationBase(
         else if (state == HaEntityStates.OFF && HaIdentity.IsManuallyOperated(userId))
         {
             MasterSwitch?.TurnOn();
+        }
+    }
+
+    private void ControlLightOnMotionChange()
+    {
+        if (MotionSensor.State == HaEntityStates.ON)
+        {
+            Light.TurnOn();
+        }
+        else
+        {
+            Light.TurnOff();
         }
     }
 

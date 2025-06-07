@@ -21,6 +21,8 @@ public static class HaIdentity
     public static bool IsManuallyOperated(string? userId) =>
         string.IsNullOrEmpty(userId?.Trim()) || KnownUsers.Contains(userId.Trim());
 
+    public static bool IsPhysicallyOperated(string? userId) => string.IsNullOrEmpty(userId);
+
     public static bool IsAutomated(string? userId) => userId is not null && (userId == SUPERVISOR);
 
     private static readonly HashSet<string> KnownUsers = [ATHENA_BEZOS, DANIEL_RODRIGUEZ, MIPAD5, MANUAL];

@@ -91,6 +91,11 @@ public static class StateExtensions
     {
         return e.New?.State ?? string.Empty;
     }
+
+    public static string UserId(this StateChange e)
+    {
+        return e.New?.Context?.UserId ?? string.Empty;
+    }
 }
 
 public static class NumberEntityExtensions
