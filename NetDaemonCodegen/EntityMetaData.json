@@ -45,7 +45,7 @@
         },
         {
           "id": "light.mipad_screen",
-          "friendlyName": "Screen",
+          "friendlyName": "MiPad Screen",
           "cSharpName": "MipadScreen"
         },
         {
@@ -332,17 +332,17 @@
         },
         {
           "id": "media_player.mipad",
-          "friendlyName": null,
+          "friendlyName": "MiPad",
           "cSharpName": "Mipad"
         },
         {
           "id": "media_player.projector",
-          "friendlyName": null,
+          "friendlyName": "Projector",
           "cSharpName": "Projector"
         },
         {
           "id": "media_player.projector_2",
-          "friendlyName": null,
+          "friendlyName": "Projector",
           "cSharpName": "Projector2"
         },
         {
@@ -826,17 +826,17 @@
         },
         {
           "id": "binary_sensor.mipad",
-          "friendlyName": null,
+          "friendlyName": "MiPad",
           "cSharpName": "Mipad"
         },
         {
           "id": "binary_sensor.mipad_browser_dark_mode",
-          "friendlyName": "Browser dark mode",
+          "friendlyName": "MiPad Browser dark mode",
           "cSharpName": "MipadBrowserDarkMode"
         },
         {
           "id": "binary_sensor.mipad_browser_fullykiosk",
-          "friendlyName": "Browser FullyKiosk",
+          "friendlyName": "MiPad Browser FullyKiosk",
           "cSharpName": "MipadBrowserFullykiosk"
         },
         {
@@ -2020,6 +2020,41 @@
     {
       "domain": "input_boolean",
       "entities": [
+        {
+          "id": "input_boolean.ac_power_saving_mode",
+          "friendlyName": "AC Power Saving Mode",
+          "cSharpName": "AcPowerSavingMode"
+        },
+        {
+          "id": "input_boolean.netdaemon_home_automation_apps_area_bathroom_bathroom",
+          "friendlyName": "netdaemon_home_automation_apps_area_bathroom_bathroom",
+          "cSharpName": "NetdaemonHomeAutomationAppsAreaBathroomBathroom"
+        },
+        {
+          "id": "input_boolean.netdaemon_home_automation_apps_area_bedroom_bedroom",
+          "friendlyName": "netdaemon_home_automation_apps_area_bedroom_bedroom",
+          "cSharpName": "NetdaemonHomeAutomationAppsAreaBedroomBedroom"
+        },
+        {
+          "id": "input_boolean.netdaemon_home_automation_apps_area_kitchen_kitchen",
+          "friendlyName": "netdaemon_home_automation_apps_area_kitchen_kitchen",
+          "cSharpName": "NetdaemonHomeAutomationAppsAreaKitchenKitchen"
+        },
+        {
+          "id": "input_boolean.netdaemon_home_automation_apps_area_living_room_living_room",
+          "friendlyName": "netdaemon_home_automation_apps_area_living_room_living_room",
+          "cSharpName": "NetdaemonHomeAutomationAppsAreaLivingRoomLivingRoom"
+        },
+        {
+          "id": "input_boolean.netdaemon_home_automation_apps_area_pantry_pantry",
+          "friendlyName": "netdaemon_home_automation_apps_area_pantry_pantry",
+          "cSharpName": "NetdaemonHomeAutomationAppsAreaPantryPantry"
+        },
+        {
+          "id": "input_boolean.netdaemon_home_automation_apps_common_startup",
+          "friendlyName": "netdaemon_home_automation_apps_common_startup",
+          "cSharpName": "NetdaemonHomeAutomationAppsCommonStartup"
+        },
         {
           "id": "input_boolean.use_kitchen_lights",
           "friendlyName": "use_kitchen_lights",
@@ -3220,7 +3255,7 @@
         },
         {
           "id": "remote.projector",
-          "friendlyName": null,
+          "friendlyName": "Projector",
           "cSharpName": "Projector"
         }
       ],
@@ -4048,22 +4083,22 @@
         },
         {
           "id": "sensor.mipad_browser_path",
-          "friendlyName": "Browser path",
+          "friendlyName": "MiPad Browser path",
           "cSharpName": "MipadBrowserPath"
         },
         {
           "id": "sensor.mipad_browser_user",
-          "friendlyName": "Browser user",
+          "friendlyName": "MiPad Browser user",
           "cSharpName": "MipadBrowserUser"
         },
         {
           "id": "sensor.mipad_browser_useragent",
-          "friendlyName": "Browser userAgent",
+          "friendlyName": "MiPad Browser userAgent",
           "cSharpName": "MipadBrowserUseragent"
         },
         {
           "id": "sensor.mipad_browser_visibility",
-          "friendlyName": "Browser visibility",
+          "friendlyName": "MiPad Browser visibility",
           "cSharpName": "MipadBrowserVisibility"
         },
         {
@@ -4827,6 +4862,16 @@
           "jsonName": "free_space_in_google_drive",
           "cSharpName": "FreeSpaceInGoogleDrive",
           "clrType": "System.String"
+        },
+        {
+          "jsonName": "on_foot",
+          "cSharpName": "OnFoot",
+          "clrType": "System.Double"
+        },
+        {
+          "jsonName": "walking",
+          "cSharpName": "Walking",
+          "clrType": "System.Double"
         }
       ]
     },
@@ -5546,12 +5591,12 @@
         },
         {
           "id": "sensor.mipad_browser_height",
-          "friendlyName": "Browser height",
+          "friendlyName": "MiPad Browser height",
           "cSharpName": "MipadBrowserHeight"
         },
         {
           "id": "sensor.mipad_browser_width",
-          "friendlyName": "Browser width",
+          "friendlyName": "MiPad Browser width",
           "cSharpName": "MipadBrowserWidth"
         },
         {

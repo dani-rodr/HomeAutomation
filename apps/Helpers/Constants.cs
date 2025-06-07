@@ -8,6 +8,9 @@ public static class HaEntityStates
     public const string OFF = "off";
     public const string UNAVAILABLE = "unavailable";
     public const string UNKNOWN = "unknown";
+    public const string DRY = "dry";
+    public const string COOL = "cool";
+    public const string AUTO = "auto";
 }
 
 public static class HaIdentity

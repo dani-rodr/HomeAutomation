@@ -98,25 +98,32 @@ public static class StateExtensions
         return e.New?.Context?.UserId ?? string.Empty;
     }
 
-    public static bool IsOn(this string? state)
-    {
-        return string.Equals(state, HaEntityStates.ON, StringComparison.OrdinalIgnoreCase);
-    }
+    public static bool IsOpen(this string? state) => state.IsOn();
 
-    public static bool IsOff(this string? state)
-    {
-        return string.Equals(state, HaEntityStates.OFF, StringComparison.OrdinalIgnoreCase);
-    }
+    public static bool IsClosed(this string? state) => state.IsOff();
 
-    public static bool IsUnavailable(this string? state)
-    {
-        return string.Equals(state, HaEntityStates.UNAVAILABLE, StringComparison.OrdinalIgnoreCase);
-    }
+    public static bool IsOn(this string? state) =>
+        string.Equals(state, HaEntityStates.ON, StringComparison.OrdinalIgnoreCase);
 
-    public static bool IsUnknown(this string? state)
-    {
-        return string.Equals(state, HaEntityStates.UNKNOWN, StringComparison.OrdinalIgnoreCase);
-    }
+    public static bool IsOff(this string? state) =>
+        string.Equals(state, HaEntityStates.OFF, StringComparison.OrdinalIgnoreCase);
+
+    public static bool IsUnavailable(this string? state) =>
+        string.Equals(state, HaEntityStates.UNAVAILABLE, StringComparison.OrdinalIgnoreCase);
+}
+
+public static class ClimateEntityExtensions
+{
+    public static bool IsDry(this ClimateEntity climate) =>
+        string.Equals(climate.State, HaEntityStates.DRY, StringComparison.OrdinalIgnoreCase);
+
+    public static bool IsCool(this ClimateEntity climate) =>
+        string.Equals(climate.State, HaEntityStates.COOL, StringComparison.OrdinalIgnoreCase);
+
+    public static bool IsOff(this ClimateEntity climate) =>
+        string.Equals(climate.State, HaEntityStates.OFF, StringComparison.OrdinalIgnoreCase);
+
+    public static bool IsOn(this ClimateEntity climate) => climate.IsDry() || climate.IsCool();
 }
 
 public static class NumberEntityExtensions
