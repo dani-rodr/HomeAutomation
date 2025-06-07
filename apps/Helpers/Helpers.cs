@@ -112,6 +112,13 @@ public static class StateExtensions
         string.Equals(state, HaEntityStates.UNAVAILABLE, StringComparison.OrdinalIgnoreCase);
 }
 
+public static class BinaryEntityExtensions
+{
+    public static bool IsOpen(this BinarySensorEntity sensor) => sensor.State.IsOpen();
+
+    public static bool IsClosed(this BinarySensorEntity sensor) => sensor.State.IsClosed();
+}
+
 public static class ClimateEntityExtensions
 {
     public static bool IsDry(this ClimateEntity climate) =>
@@ -149,5 +156,18 @@ public static class SwitchEntityExtensions
                 pair.Count == maxBufferSize && (pair[1].Timestamp - pair[0].Timestamp) <= TimeSpan.FromSeconds(timeout)
             )
             .Select(pair => pair.Select(x => x.Value).ToList());
+    }
+}
+
+public static class TimeRange
+{
+    public static bool IsCurrentTimeInBetween(int start, int end) =>
+        IsTimeInBewteen(DateTime.Now.TimeOfDay, start, end);
+
+    public static bool IsTimeInBewteen(TimeSpan time, int start, int end)
+    {
+        var startTime = TimeSpan.FromHours(start);
+        var endTime = TimeSpan.FromHours(end);
+        return start <= end ? time >= startTime && time <= endTime : time >= startTime || time <= endTime;
     }
 }
