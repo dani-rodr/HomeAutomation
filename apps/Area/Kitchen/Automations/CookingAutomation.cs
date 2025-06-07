@@ -8,23 +8,22 @@ public class CookingAutomation(Entities entities, ILogger logger) : AutomationBa
     private readonly SwitchEntity _riceCookerSwitch = entities.Switch.RiceCookerSocket1;
     private readonly SensorEntity _airFryerStatus = entities.Sensor.CareliSg593061393Maf05aStatusP21;
     private readonly ButtonEntity _inductionTurnOff = entities.Button.InductionCookerPower;
-    private readonly BinarySensorEntity _cookingWattageExceedThreshold = entities
-        .BinarySensor
-        .SmartPlug3PowerExceedsThreshold;
+    private readonly NumericSensorEntity _inductionPower = entities.Sensor.SmartPlug3SonoffS31Power;
 
     public override void StartAutomation()
     {
         AutoTurnOffRiceCookerOnIdle(minutes: 10);
-        AutoTurnOffInductionOnIdle(minutes: 12);
+        AutoTurnOffAfterBoilingWater(minutes: 12);
     }
 
     protected override IEnumerable<IDisposable> SwitchableAutomations() => [];
 
-    private void AutoTurnOffInductionOnIdle(int minutes)
+    private void AutoTurnOffAfterBoilingWater(int minutes)
     {
-        _cookingWattageExceedThreshold
+        var boilingPower = 1550;
+        _inductionPower
             .StateChangesWithCurrent()
-            .WhenStateIsForMinutes(HaEntityStates.ON, minutes)
+            .WhenStateIsForMinutes(s => s?.State > boilingPower, minutes)
             .Subscribe(_ =>
             {
                 if (_airFryerStatus.State == HaEntityStates.UNAVAILABLE)
