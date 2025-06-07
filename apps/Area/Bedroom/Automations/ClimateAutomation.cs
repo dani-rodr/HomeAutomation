@@ -16,16 +16,17 @@ public class ClimateAutomation(Entities entities, IScheduler scheduler, ILogger<
     private readonly SwitchEntity fanSwitch = entities.Switch.Sonoff100238104e1;
     private readonly Dictionary<TimeBlock, AcScheduleSetting> _acScheduleSettings = new()
     {
-        [TimeBlock.Morning] = new(27, 27, 25, HaEntityStates.DRY, true, 6, 18),
-        [TimeBlock.Afternoon] = new(25, 27, 22, HaEntityStates.COOL, false, 18, 22),
-        [TimeBlock.Night] = new(22, 25, 20, HaEntityStates.COOL, false, 22, 6),
+        [TimeBlock.Morning] = new(27, 27, 25, HaEntityStates.DRY, true, HourStart: 6, HourEnd: 18),
+        [TimeBlock.Afternoon] = new(25, 27, 22, HaEntityStates.COOL, false, HourStart: 18, HourEnd: 22),
+        [TimeBlock.Night] = new(22, 25, 20, HaEntityStates.COOL, false, HourStart: 22, HourEnd: 6),
     };
 
     protected override IEnumerable<IDisposable> GetSwitchableAutomations()
     {
-        yield return scheduler.ScheduleCron("0 6 * * *", () => ApplyAcSettings(TimeBlock.Morning));
-        yield return scheduler.ScheduleCron("0 18 * * *", () => ApplyAcSettings(TimeBlock.Afternoon));
-        yield return scheduler.ScheduleCron("0 22 * * *", () => ApplyAcSettings(TimeBlock.Night));
+        foreach (var automation in GetScheduledAutomations())
+        {
+            yield return automation;
+        }
         yield return doorSensor.StateChanges().IsOff().Subscribe(_ => ApplyAcSettings(FindTimeBlock()));
         yield return doorSensor
             .StateChanges()
@@ -35,6 +36,16 @@ public class ClimateAutomation(Entities entities, IScheduler scheduler, ILogger<
             .StateChanges()
             .WhenStateIsForMinutes(HaEntityStates.OFF, 10)
             .Subscribe(_ => ApplyAcSettings(FindTimeBlock()));
+    }
+
+    private IEnumerable<IDisposable> GetScheduledAutomations()
+    {
+        foreach (var (timeBlock, setting) in _acScheduleSettings)
+        {
+            var hour = setting.HourStart;
+            string cron = $"0 {hour} * * *";
+            yield return scheduler.ScheduleCron(cron, () => ApplyAcSettings(timeBlock));
+        }
     }
 
     private TimeBlock? FindTimeBlock()
