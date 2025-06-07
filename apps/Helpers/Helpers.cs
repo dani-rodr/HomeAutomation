@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 using System.Reactive.Concurrency;
 
@@ -123,5 +124,23 @@ public static class NumberEntityExtensions
     public static void SetNumericValue(this NumberEntity entity, double value)
     {
         entity.CallService("set_value", new { value });
+    }
+}
+
+public static class SwitchEntityExtensions
+{
+    public static IObservable<IList<StateChange<SwitchEntity, EntityState<SwitchAttributes>>>> OnDoubleClick(
+        this IObservable<StateChange<SwitchEntity, EntityState<SwitchAttributes>>> source,
+        int timeout
+    )
+    {
+        var maxBufferSize = 2;
+        return source
+            .Timestamp() // adds timestamp to each state change
+            .Buffer(maxBufferSize, 1) // sliding window of 2 consecutive changes
+            .Where(pair =>
+                pair.Count == maxBufferSize && (pair[1].Timestamp - pair[0].Timestamp) <= TimeSpan.FromSeconds(timeout)
+            )
+            .Select(pair => pair.Select(x => x.Value).ToList());
     }
 }

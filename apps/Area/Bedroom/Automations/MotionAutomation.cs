@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 
 namespace HomeAutomation.apps.Area.Bedroom.Automations;
 
@@ -18,13 +19,37 @@ public class MotionAutomation(Entities entities, ILogger<Bedroom> logger)
     public override void StartAutomation()
     {
         base.StartAutomation();
-        _rightSideEmptySwitch.StateChangesWithCurrent().Subscribe(ToggleLightsViaSwitch());
+        SetupLightSwitchAutomations();
+        SetupFanMotionAutomations();
+    }
 
-        // Fan automation
+    protected override IEnumerable<IDisposable> GetSwitchableAutomations()
+    {
+        yield return MotionSensor.StateChangesWithCurrent().IsOn().Subscribe(_ => Light.TurnOn());
+        yield return MotionSensor.StateChangesWithCurrent().IsOff().Subscribe(_ => Light.TurnOff());
+    }
+
+    private void SetupLightSwitchAutomations()
+    {
+        _leftSideFanSwitch
+            .StateChanges()
+            .OnDoubleClick(timeout: 2)
+            .Subscribe(e =>
+            {
+                if (HaIdentity.IsPhysicallyOperated(e.FirstOrDefault()?.UserId()))
+                {
+                    Light.Toggle();
+                }
+            });
+        _rightSideEmptySwitch.StateChanges().Subscribe(ToggleLightsViaSwitch());
+        Light.StateChanges().Subscribe(EnableMasterSwitchWhenLightActive());
+    }
+
+    private void SetupFanMotionAutomations()
+    {
         _leftSideFanSwitch.StateChangesWithCurrent().Subscribe(UpdateFanActivationStatus());
         MotionSensor.StateChangesWithCurrent().IsOn().Subscribe(MotionDetected());
         MotionSensor.StateChangesWithCurrent().IsOff().Subscribe(MotionStopped());
-        Light.StateChangesWithCurrent().Subscribe(EnableMasterSwitchWhenLightActive());
     }
 
     private Action<StateChange> EnableMasterSwitchWhenLightActive()
@@ -39,12 +64,6 @@ public class MotionAutomation(Entities entities, ILogger<Bedroom> logger)
                 return;
             }
         };
-    }
-
-    protected override IEnumerable<IDisposable> GetSwitchableAutomations()
-    {
-        yield return MotionSensor.StateChangesWithCurrent().IsOn().Subscribe(_ => Light.TurnOn());
-        yield return MotionSensor.StateChangesWithCurrent().IsOff().Subscribe(_ => Light.TurnOff());
     }
 
     private Action<StateChange> ToggleLightsViaSwitch()
