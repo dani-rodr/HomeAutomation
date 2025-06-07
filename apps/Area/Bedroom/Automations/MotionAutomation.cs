@@ -41,7 +41,7 @@ public class MotionAutomation(Entities entities, ILogger<Bedroom> logger)
         };
     }
 
-    protected override IEnumerable<IDisposable> SwitchableAutomations()
+    protected override IEnumerable<IDisposable> GetSwitchableAutomations()
     {
         yield return MotionSensor.StateChangesWithCurrent().IsOn().Subscribe(_ => Light.TurnOn());
         yield return MotionSensor.StateChangesWithCurrent().IsOff().Subscribe(_ => Light.TurnOff());

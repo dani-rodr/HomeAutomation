@@ -19,7 +19,7 @@ public class MotionAutomation(Entities entities, ILogger<Kitchen> logger)
         SetupMotionSensorReactivation();
     }
 
-    protected override IEnumerable<IDisposable> SwitchableAutomations()
+    protected override IEnumerable<IDisposable> GetSwitchableAutomations()
     {
         // Lighting automation
         yield return MotionSensor

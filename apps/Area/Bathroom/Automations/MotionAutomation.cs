@@ -11,7 +11,7 @@ public class MotionAutomation(Entities entities, ILogger<Bathroom> logger)
         logger
     )
 {
-    protected override IEnumerable<IDisposable> SwitchableAutomations()
+    protected override IEnumerable<IDisposable> GetSwitchableAutomations()
     {
         // Lighting automation
         yield return MotionSensor.StateChanges().IsOn().Subscribe(_ => OnMotionDetected());

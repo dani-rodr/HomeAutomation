@@ -16,7 +16,7 @@ public class CookingAutomation(Entities entities, ILogger logger) : AutomationBa
         AutoTurnOffAfterBoilingWater(minutes: 12);
     }
 
-    protected override IEnumerable<IDisposable> SwitchableAutomations() => [];
+    protected override IEnumerable<IDisposable> GetSwitchableAutomations() => [];
 
     private void AutoTurnOffAfterBoilingWater(int minutes)
     {

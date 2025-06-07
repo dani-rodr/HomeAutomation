@@ -8,13 +8,12 @@ public abstract class AutomationBase(ILogger logger, SwitchEntity? masterSwitch 
 {
     protected SwitchEntity? MasterSwitch { get; } = masterSwitch;
     protected ILogger Logger { get; } = logger;
-    protected abstract IEnumerable<IDisposable> SwitchableAutomations();
+    protected abstract IEnumerable<IDisposable> GetSwitchableAutomations();
     private CompositeDisposable? _automations;
 
     public virtual void StartAutomation()
     {
-        ToggleAutomation();
-        MasterSwitch?.StateChanges().Subscribe(_ => ToggleAutomation());
+        MasterSwitch?.StateAllChangesWithCurrent().Subscribe(_ => ToggleAutomation());
     }
 
     private void EnableAutomations()
@@ -23,7 +22,7 @@ public abstract class AutomationBase(ILogger logger, SwitchEntity? masterSwitch 
         {
             return;
         }
-        _automations = [.. SwitchableAutomations()];
+        _automations = [.. GetSwitchableAutomations()];
     }
 
     private void DisableAutomations()
@@ -39,7 +38,6 @@ public abstract class AutomationBase(ILogger logger, SwitchEntity? masterSwitch 
             DisableAutomations();
             return;
         }
-
         EnableAutomations();
     }
 

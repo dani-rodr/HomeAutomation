@@ -25,9 +25,8 @@ public abstract class MotionAutomationBase(
     public override void StartAutomation()
     {
         base.StartAutomation();
-        ControlLightOnMotionChange();
         Light.StateChanges().Subscribe(ControlMasterSwitchOnLightChange);
-        MasterSwitch?.StateChanges().IsOn().Subscribe(e => ControlLightOnMotionChange());
+        MasterSwitch?.StateChangesWithCurrent().IsOn().Subscribe(ControlLightOnMotionChange());
     }
 
     protected virtual void OnMotionDetected()
@@ -72,8 +71,8 @@ public abstract class MotionAutomationBase(
 
     private void ControlMasterSwitchOnLightChange(StateChange<LightEntity, EntityState<LightAttributes>> evt)
     {
-        var state = evt.New?.State;
-        var userId = evt.New?.Context?.UserId;
+        var state = Light.State;
+        var userId = evt.UserId();
         if (state == HaEntityStates.ON && HaIdentity.IsManuallyOperated(userId))
         {
             Logger.LogInformation(
@@ -90,16 +89,19 @@ public abstract class MotionAutomationBase(
         }
     }
 
-    private void ControlLightOnMotionChange()
+    private Action<StateChange> ControlLightOnMotionChange()
     {
-        if (MotionSensor.State == HaEntityStates.ON)
+        return e =>
         {
-            Light.TurnOn();
-        }
-        else
-        {
-            Light.TurnOff();
-        }
+            if (MotionSensor.State.IsOn())
+            {
+                Light.TurnOn();
+            }
+            else
+            {
+                Light.TurnOff();
+            }
+        };
     }
 
     public override void Dispose()

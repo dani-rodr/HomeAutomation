@@ -17,7 +17,7 @@ public class MotionAutomation(Entities entities, ILogger<Pantry> logger)
         .Esp32PresenceBedroomMiScalePresence;
     private readonly LightEntity _mirrorLight = entities.Light.ControllerRgbDf1c0d;
 
-    protected override IEnumerable<IDisposable> SwitchableAutomations()
+    protected override IEnumerable<IDisposable> GetSwitchableAutomations()
     {
         // Lighting automation
         yield return MotionSensor.StateChanges().IsOn().Subscribe(_ => Light.TurnOn());
