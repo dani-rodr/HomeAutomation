@@ -164,10 +164,10 @@ public static class TimeRange
     public static bool IsCurrentTimeInBetween(int start, int end) =>
         IsTimeInBewteen(DateTime.Now.TimeOfDay, start, end);
 
-    public static bool IsTimeInBewteen(TimeSpan time, int start, int end)
+    public static bool IsTimeInBewteen(TimeSpan now, int start, int end)
     {
         var startTime = TimeSpan.FromHours(start);
         var endTime = TimeSpan.FromHours(end);
-        return start <= end ? time >= startTime && time <= endTime : time >= startTime || time <= endTime;
+        return start <= end ? now >= startTime && now <= endTime : now >= startTime || now <= endTime;
     }
 }

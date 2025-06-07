@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Reactive.Concurrency;
 using NetDaemon.Extensions.Scheduler;
 
@@ -13,40 +14,61 @@ public class ClimateAutomation(Entities entities, IScheduler scheduler, ILogger<
     private readonly BinarySensorEntity doorSensor = entities.BinarySensor.ContactSensorDoor;
     private readonly InputBooleanEntity powerSavingMode = entities.InputBoolean.AcPowerSavingMode;
     private readonly SwitchEntity fanSwitch = entities.Switch.Sonoff100238104e1;
-    private readonly Dictionary<string, (int NormalTemp, int PowerSavingTemp, string Mode)> _acScheduleSettings = new()
+    private readonly Dictionary<TimeBlock, AcScheduleSetting> _acScheduleSettings = new()
     {
-        ["morning"] = (27, 27, HaEntityStates.DRY),
-        ["afternoon"] = (25, 27, HaEntityStates.COOL),
-        ["night"] = (22, 25, HaEntityStates.COOL),
+        [TimeBlock.Morning] = new(27, 27, 25, HaEntityStates.DRY, true, 6, 18),
+        [TimeBlock.Afternoon] = new(25, 27, 22, HaEntityStates.COOL, false, 18, 22),
+        [TimeBlock.Night] = new(22, 25, 20, HaEntityStates.COOL, false, 22, 6),
     };
 
     protected override IEnumerable<IDisposable> GetSwitchableAutomations()
     {
-        yield return scheduler.ScheduleCron("0 6 * * *", () => ApplyAcSchedule("morning"));
-        yield return scheduler.ScheduleCron("0 18 * * *", () => ApplyAcSchedule("afternoon"));
-        yield return scheduler.ScheduleCron("0 22 * * *", () => ApplyAcSchedule("night"));
+        yield return scheduler.ScheduleCron("0 6 * * *", () => ApplyAcSettings(TimeBlock.Morning));
+        yield return scheduler.ScheduleCron("0 18 * * *", () => ApplyAcSettings(TimeBlock.Afternoon));
+        yield return scheduler.ScheduleCron("0 22 * * *", () => ApplyAcSettings(TimeBlock.Night));
+        yield return doorSensor.StateChanges().IsOff().Subscribe(_ => ApplyAcSettings(FindTimeBlock()));
+        yield return doorSensor
+            .StateChanges()
+            .WhenStateIsForMinutes(HaEntityStates.ON, 5)
+            .Subscribe(_ => ApplyAcSettings(FindTimeBlock()));
+        yield return motionSensor
+            .StateChanges()
+            .WhenStateIsForMinutes(HaEntityStates.OFF, 10)
+            .Subscribe(_ => ApplyAcSettings(FindTimeBlock()));
     }
 
-    private void ApplyAcSchedule(string timeOfDay)
+    private TimeBlock? FindTimeBlock()
     {
-        if (!_acScheduleSettings.TryGetValue(timeOfDay, out var setting))
+        foreach (var kv in _acScheduleSettings)
         {
-            return;
+            if (TimeRange.IsCurrentTimeInBetween(kv.Value.HourStart, kv.Value.HourEnd))
+                return kv.Key;
         }
-        var targetTemp = IsPowerSavingMode() ? setting.PowerSavingTemp : setting.NormalTemp;
-        if (timeOfDay != "morning" && ShouldSkipCooling(targetTemp))
-        {
-            return;
-        }
-        ApplyAcSettings(targetTemp, setting.Mode);
-
-        if (timeOfDay == "morning")
-        {
-            ActivateFanIfOccupied();
-        }
+        return null;
     }
 
-    private bool IsPowerSavingMode() => powerSavingMode.IsOn();
+    private void ApplyAcSettings(TimeBlock? timeBlock)
+    {
+        if (timeBlock is null || !_acScheduleSettings.TryGetValue(timeBlock.Value, out var setting) || !ac.IsOn())
+        {
+            return;
+        }
+
+        int targetTemp = GetTemperature(setting);
+        Logger.LogDebug(
+            "ApplyAcSchedule: Applying schedule for {TimeBlock} with target temp {TargetTemp} and mode {Mode}.",
+            timeBlock.Value,
+            targetTemp,
+            setting.Mode
+        );
+        ApplyAcSettings(targetTemp, setting.Mode);
+        ActivateFanIfOccupied(setting.ActivateFan);
+    }
+
+    private int GetTemperature(AcScheduleSetting setting) =>
+        powerSavingMode.IsOn() ? setting.PowerSavingTemp
+        : IsDoorClosed() ? setting.ClosedDoorTemp
+        : setting.NormalTemp;
 
     private void ApplyAcSettings(int temperature, string hvacMode)
     {
@@ -55,12 +77,10 @@ public class ClimateAutomation(Entities entities, IScheduler scheduler, ILogger<
         ac.SetFanMode(HaEntityStates.AUTO);
     }
 
-    private bool ShouldSkipCooling(double? threshold) =>
-        !ac.IsOn() && !ac.IsCool() && ac.Attributes?.Temperature <= threshold;
-
-    private void ActivateFanIfOccupied()
+    private void ActivateFanIfOccupied(bool activateFan)
     {
-        if (IsOccupied() && ac.Attributes?.CurrentTemperature >= 24)
+        var isHot = ac.Attributes?.CurrentTemperature >= 24;
+        if (activateFan && IsOccupied() && isHot)
         {
             fanSwitch.TurnOn();
         }
@@ -68,5 +88,22 @@ public class ClimateAutomation(Entities entities, IScheduler scheduler, ILogger<
 
     private bool IsOccupied() => motionSensor.State.IsOn();
 
-    private bool IsDoorOpen() => doorSensor.State.IsOn();
+    private bool IsDoorClosed() => doorSensor.State.IsOff();
 }
+
+internal enum TimeBlock
+{
+    Morning,
+    Afternoon,
+    Night,
+}
+
+internal record AcScheduleSetting(
+    int NormalTemp,
+    int PowerSavingTemp,
+    int ClosedDoorTemp,
+    string Mode,
+    bool ActivateFan,
+    int HourStart,
+    int HourEnd
+);
