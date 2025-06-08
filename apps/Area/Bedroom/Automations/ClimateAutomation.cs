@@ -12,10 +12,7 @@ public class ClimateAutomation(Entities entities, IScheduler scheduler, ILogger<
     private readonly ClimateEntity _ac = entities.Climate.Ac;
     private readonly BinarySensorEntity _motionSensor = entities.BinarySensor.BedroomPresenceSensors;
     private readonly BinarySensorEntity _doorSensor = entities.BinarySensor.ContactSensorDoor;
-    private readonly BinarySensorEntity _emptyHouse = entities.BinarySensor.House;
-    private readonly InputBooleanEntity _powerSavingMode = entities.InputBoolean.AcPowerSavingMode;
     private readonly SwitchEntity _fanSwitch = entities.Switch.Sonoff100238104e1;
-    private readonly ButtonEntity _acFanModeToggle = entities.Button.AcFanModeToggle;
     private readonly Dictionary<TimeBlock, AcScheduleSetting> _acScheduleSettings = new()
     {
         [TimeBlock.Morning] = new(27, 27, 25, HaEntityStates.DRY, true, HourStart: 6, HourEnd: 18),
@@ -57,11 +54,13 @@ public class ClimateAutomation(Entities entities, IScheduler scheduler, ILogger<
 
     private IEnumerable<IDisposable> GetHousePresenceAutomations()
     {
-        yield return _emptyHouse
+        var houseEmpty = entities.BinarySensor.House;
+
+        yield return houseEmpty
             .StateChangesWithCurrent()
             .WhenStateIsForMinutes(HaEntityStates.OFF, 20)
             .Subscribe(_ => _isHouseEmpty = true);
-        yield return _emptyHouse
+        yield return houseEmpty
             .StateChanges()
             .Where(e => e.IsOn() && _isHouseEmpty)
             .Subscribe(_ =>
@@ -73,8 +72,8 @@ public class ClimateAutomation(Entities entities, IScheduler scheduler, ILogger<
 
     private IEnumerable<IDisposable> GetFanModeToggleAutomation()
     {
-        yield return _acFanModeToggle
-            .StateChanges()
+        yield return entities
+            .Button.AcFanModeToggle.StateChanges()
             .Subscribe(_ =>
             {
                 var modes = new[]
@@ -120,7 +119,7 @@ public class ClimateAutomation(Entities entities, IScheduler scheduler, ILogger<
     }
 
     private int GetTemperature(AcScheduleSetting setting) =>
-        _powerSavingMode.IsOn() ? setting.PowerSavingTemp
+        entities.InputBoolean.AcPowerSavingMode.IsOn() ? setting.PowerSavingTemp
         : _doorSensor.IsClosed() ? setting.ClosedDoorTemp
         : setting.NormalTemp;
 
