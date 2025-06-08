@@ -1,13 +1,13 @@
-using System;
-using HomeAssistantGenerated;
+using HomeAutomation.apps.Area.LivingRoom.Automations;
 
 namespace HomeAutomation.apps.Area.LivingRoom;
 
 [NetDaemonApp]
 public class LivingRoom
 {
-    public LivingRoom(Entities entities, IHaContext ha)
+    public LivingRoom(Entities entities, ILogger<LivingRoom> logger)
     {
-        // entities.Light.SalaLightsGroup.Toggle();
+        var motionAutomation = new MotionAutomation(entities, logger);
+        motionAutomation.StartAutomation();
     }
 }

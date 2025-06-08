@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-
 namespace HomeAutomation.apps.Area.Bathroom.Automations;
 
 public class MotionAutomation(Entities entities, ILogger<Bathroom> logger)
@@ -11,13 +9,6 @@ public class MotionAutomation(Entities entities, ILogger<Bathroom> logger)
         logger
     )
 {
-    protected override IEnumerable<IDisposable> GetLightAutomations()
-    {
-        // Lighting automation
-        yield return MotionSensor.StateChanges().IsOn().Subscribe(_ => OnMotionDetected());
-        yield return MotionSensor
-            .StateChanges()
-            .IsOff()
-            .Subscribe(async _ => await OnMotionStoppedAsync(dimBrightnessPct: 80, dimDelaySeconds: 5));
-    }
+    protected override int DimBrightnessPct => 80;
+    protected override int DimDelaySeconds => 5;
 }
