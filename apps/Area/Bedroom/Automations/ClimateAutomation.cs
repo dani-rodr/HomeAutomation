@@ -70,32 +70,26 @@ public class ClimateAutomation(Entities entities, IScheduler scheduler, ILogger<
 
     private IEnumerable<IDisposable> GetSensorBasedAutomations()
     {
-        yield return _doorSensor.StateChanges().IsOff().Subscribe(_ => ApplyAcSettings(FindTimeBlock()));
-        yield return _doorSensor
-            .StateChanges()
-            .WhenStateIsForMinutes(HaEntityStates.ON, 5)
-            .Subscribe(_ => ApplyAcSettings(FindTimeBlock()));
-        yield return _motionSensor
-            .StateChanges()
-            .WhenStateIsForMinutes(HaEntityStates.OFF, 10)
-            .Subscribe(_ => ApplyAcSettings(FindTimeBlock()));
+        yield return _doorSensor.StateChanges().IsOff().Subscribe(ApplyTimeBasedAcSetting);
+        yield return _doorSensor.StateChanges().IsOnForMinutes(5).Subscribe(ApplyTimeBasedAcSetting);
+        yield return _motionSensor.StateChanges().IsOffForMinutes(10).Subscribe(ApplyTimeBasedAcSetting);
+        yield return _motionSensor.StateChanges().IsOn().Subscribe(ApplyTimeBasedAcSetting);
     }
+
+    private void ApplyTimeBasedAcSetting(StateChange e) => ApplyAcSettings(FindTimeBlock());
 
     private IEnumerable<IDisposable> GetHousePresenceAutomations()
     {
         var houseEmpty = entities.BinarySensor.House;
 
-        yield return houseEmpty
-            .StateChangesWithCurrent()
-            .WhenStateIsForMinutes(HaEntityStates.OFF, 20)
-            .Subscribe(_ => _isHouseEmpty = true);
+        yield return houseEmpty.StateChangesWithCurrent().IsOffForMinutes(20).Subscribe(_ => _isHouseEmpty = true);
         yield return houseEmpty
             .StateChanges()
             .Where(e => e.IsOn() && _isHouseEmpty)
-            .Subscribe(_ =>
+            .Subscribe(e =>
             {
                 _isHouseEmpty = false;
-                ApplyAcSettings(FindTimeBlock());
+                ApplyTimeBasedAcSetting(e);
             });
     }
 

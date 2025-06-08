@@ -35,11 +35,11 @@ public abstract class MotionAutomationBase(
     {
         yield return MotionSensor
             .StateChanges()
-            .WhenStateIsForSeconds(HaEntityStates.ON, SensorWaitTime)
+            .IsOnForSeconds(SensorWaitTime)
             .Subscribe(_ => SensorDelay.SetNumericValue(SensorDelayValueActive));
         yield return MotionSensor
             .StateChanges()
-            .WhenStateIsForSeconds(HaEntityStates.OFF, SensorWaitTime)
+            .IsOffForSeconds(SensorWaitTime)
             .Subscribe(_ => SensorDelay.SetNumericValue(SensorDelayValueInactive));
     }
 

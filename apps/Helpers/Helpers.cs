@@ -43,6 +43,24 @@ public static class StateChangeObservableExtensions
         int time
     ) => source.WhenStateIsFor(s => s?.State == desiredState, TimeSpan.FromHours(time), Scheduler.Default);
 
+    public static IObservable<StateChange> IsOnForSeconds(this IObservable<StateChange> source, int time) =>
+        source.WhenStateIsForSeconds(HaEntityStates.ON, time);
+
+    public static IObservable<StateChange> IsOnForMinutes(this IObservable<StateChange> source, int time) =>
+        source.WhenStateIsForMinutes(HaEntityStates.ON, time);
+
+    public static IObservable<StateChange> IsOnForHours(this IObservable<StateChange> source, int time) =>
+        source.WhenStateIsForHours(HaEntityStates.ON, time);
+
+    public static IObservable<StateChange> IsOffForSeconds(this IObservable<StateChange> source, int time) =>
+        source.WhenStateIsForSeconds(HaEntityStates.OFF, time);
+
+    public static IObservable<StateChange> IsOffForMinutes(this IObservable<StateChange> source, int time) =>
+        source.WhenStateIsForMinutes(HaEntityStates.OFF, time);
+
+    public static IObservable<StateChange> IsOffForHours(this IObservable<StateChange> source, int time) =>
+        source.WhenStateIsForHours(HaEntityStates.OFF, time);
+
     public static IObservable<StateChange<T, TState>> WhenStateIsForSeconds<T, TState>(
         this IObservable<StateChange<T, TState>> source,
         Func<TState?, bool> predicate,

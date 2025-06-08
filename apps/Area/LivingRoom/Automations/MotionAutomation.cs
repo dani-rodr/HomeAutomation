@@ -25,7 +25,7 @@ public class MotionAutomation(Entities entities, ILogger<LivingRoom> logger)
         base.StartAutomation();
         MotionSensor
             .StateChanges()
-            .WhenStateIsForMinutes(HaEntityStates.OFF, 30)
+            .IsOffForMinutes(30)
             .Where(_ => entities.MediaPlayer.Tcl65c755.IsOff())
             .Subscribe(_ => MasterSwitch?.TurnOn());
     }
@@ -42,15 +42,15 @@ public class MotionAutomation(Entities entities, ILogger<LivingRoom> logger)
             .. GetSalaFanAutomations(),
             entities
                 .BinarySensor.KitchenMotionSensors.StateChanges()
-                .WhenStateIsForSeconds(HaEntityStates.ON, 10)
+                .IsOnForSeconds(10)
                 .Subscribe(_ => SensorDelay.SetNumericValue(SensorDelayValueActive)),
         ];
     }
 
     private IEnumerable<IDisposable> GetSalaFanAutomations() // Better create a fan Automation class with the air purifier
     {
-        yield return MotionSensor.StateChanges().WhenStateIsForSeconds(HaEntityStates.ON, 3).Subscribe(TurnOnSalaFans);
-        yield return MotionSensor.StateChanges().WhenStateIsForMinutes(HaEntityStates.OFF, 1).Subscribe(TurnOffAllFans);
+        yield return MotionSensor.StateChanges().IsOnForSeconds(3).Subscribe(TurnOnSalaFans);
+        yield return MotionSensor.StateChanges().IsOffForMinutes(1).Subscribe(TurnOffAllFans);
     }
 
     private void TurnOnSalaFans(StateChange e)
