@@ -15,9 +15,38 @@ public class ClimateAutomation(Entities entities, IScheduler scheduler, ILogger<
     private readonly SwitchEntity _fanSwitch = entities.Switch.Sonoff100238104e1;
     private readonly Dictionary<TimeBlock, AcScheduleSetting> _acScheduleSettings = new()
     {
-        [TimeBlock.Morning] = new(27, 27, 25, HaEntityStates.DRY, true, HourStart: 6, HourEnd: 18),
-        [TimeBlock.Afternoon] = new(25, 27, 22, HaEntityStates.COOL, false, HourStart: 18, HourEnd: 22),
-        [TimeBlock.Night] = new(22, 25, 20, HaEntityStates.COOL, false, HourStart: 22, HourEnd: 6),
+        [TimeBlock.Morning] = new(
+            NormalTemp: 25,
+            PowerSavingTemp: 27,
+            ClosedDoorTemp: 24,
+            UnoccupiedTemp: 27,
+            Mode: HaEntityStates.DRY,
+            ActivateFan: true,
+            HourStart: 6,
+            HourEnd: 18
+        ),
+
+        [TimeBlock.Afternoon] = new(
+            NormalTemp: 24,
+            PowerSavingTemp: 27,
+            ClosedDoorTemp: 22,
+            UnoccupiedTemp: 25,
+            Mode: HaEntityStates.COOL,
+            ActivateFan: false,
+            HourStart: 18,
+            HourEnd: 22
+        ),
+
+        [TimeBlock.Night] = new(
+            NormalTemp: 22,
+            PowerSavingTemp: 25,
+            ClosedDoorTemp: 20,
+            UnoccupiedTemp: 25,
+            Mode: HaEntityStates.COOL,
+            ActivateFan: false,
+            HourStart: 22,
+            HourEnd: 6
+        ),
     };
     private bool _isHouseEmpty = false;
 
@@ -119,10 +148,25 @@ public class ClimateAutomation(Entities entities, IScheduler scheduler, ILogger<
         ActivateFan(setting.ActivateFan, targetTemp);
     }
 
-    private int GetTemperature(AcScheduleSetting setting) =>
-        entities.InputBoolean.AcPowerSavingMode.IsOn() ? setting.PowerSavingTemp
-        : _doorSensor.IsClosed() ? setting.ClosedDoorTemp
-        : setting.NormalTemp;
+    private int GetTemperature(AcScheduleSetting setting)
+    {
+        if (_motionSensor.IsOff())
+        {
+            return setting.UnoccupiedTemp;
+        }
+
+        if (_doorSensor.IsClosed())
+        {
+            return setting.ClosedDoorTemp;
+        }
+
+        if (entities.InputBoolean.AcPowerSavingMode.IsOn())
+        {
+            return setting.PowerSavingTemp;
+        }
+
+        return setting.NormalTemp;
+    }
 
     private void ApplyAcSettings(int temperature, string hvacMode)
     {
@@ -152,6 +196,7 @@ internal record AcScheduleSetting(
     int NormalTemp,
     int PowerSavingTemp,
     int ClosedDoorTemp,
+    int UnoccupiedTemp,
     string Mode,
     bool ActivateFan,
     int HourStart,
