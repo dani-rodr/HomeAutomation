@@ -11,7 +11,7 @@ public class MotionAutomation(Entities entities, ILogger<Bathroom> logger)
         logger
     )
 {
-    protected override IEnumerable<IDisposable> GetSwitchableAutomations()
+    protected override IEnumerable<IDisposable> GetLightAutomations()
     {
         // Lighting automation
         yield return MotionSensor.StateChanges().IsOn().Subscribe(_ => OnMotionDetected());
@@ -19,14 +19,5 @@ public class MotionAutomation(Entities entities, ILogger<Bathroom> logger)
             .StateChanges()
             .IsOff()
             .Subscribe(async _ => await OnMotionStoppedAsync(dimBrightnessPct: 80, dimDelaySeconds: 5));
-        // Sensor delay automation
-        yield return MotionSensor
-            .StateChanges()
-            .WhenStateIsForSeconds(HaEntityStates.ON, SensorWaitTime)
-            .Subscribe(_ => SensorDelay.SetNumericValue(SensorDelayValueActive));
-        yield return MotionSensor
-            .StateChanges()
-            .WhenStateIsForSeconds(HaEntityStates.OFF, SensorWaitTime)
-            .Subscribe(_ => SensorDelay.SetNumericValue(SensorDelayValueInactive));
     }
 }

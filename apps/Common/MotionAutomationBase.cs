@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -27,6 +28,23 @@ public abstract class MotionAutomationBase(
         base.StartAutomation();
         Light.StateChanges().Subscribe(ControlMasterSwitchOnLightChange);
         MasterSwitch?.StateChangesWithCurrent().IsOn().Subscribe(ControlLightOnMotionChange);
+    }
+
+    protected override IEnumerable<IDisposable> GetSwitchableAutomations() =>
+        [.. GetLightAutomations(), .. GetSensorDelayAutomations()];
+
+    protected virtual IEnumerable<IDisposable> GetLightAutomations() => [];
+
+    protected virtual IEnumerable<IDisposable> GetSensorDelayAutomations()
+    {
+        yield return MotionSensor
+            .StateChanges()
+            .WhenStateIsForSeconds(HaEntityStates.ON, SensorWaitTime)
+            .Subscribe(_ => SensorDelay.SetNumericValue(SensorDelayValueActive));
+        yield return MotionSensor
+            .StateChanges()
+            .WhenStateIsForSeconds(HaEntityStates.OFF, SensorWaitTime)
+            .Subscribe(_ => SensorDelay.SetNumericValue(SensorDelayValueInactive));
     }
 
     protected virtual void OnMotionDetected()

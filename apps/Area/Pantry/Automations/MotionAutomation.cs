@@ -24,7 +24,7 @@ public class MotionAutomation(Entities entities, ILogger<Pantry> logger)
         _roomDoor.StateChanges().IsOff().Subscribe(_ => MasterSwitch?.TurnOn());
     }
 
-    protected override IEnumerable<IDisposable> GetSwitchableAutomations()
+    protected override IEnumerable<IDisposable> GetLightAutomations()
     {
         // Lighting automation
         yield return MotionSensor.StateChanges().IsOn().Subscribe(_ => Light.TurnOn());
@@ -37,14 +37,5 @@ public class MotionAutomation(Entities entities, ILogger<Pantry> logger)
                 _mirrorLight.TurnOff();
             });
         yield return _miScalePresenceSensor.StateChanges().IsOn().Subscribe(_ => _mirrorLight.TurnOn());
-        // Sensor delay automation
-        yield return MotionSensor
-            .StateChanges()
-            .WhenStateIsForSeconds(HaEntityStates.ON, SensorWaitTime)
-            .Subscribe(_ => SensorDelay.SetNumericValue(SensorDelayValueActive));
-        yield return MotionSensor
-            .StateChanges()
-            .WhenStateIsForSeconds(HaEntityStates.OFF, SensorWaitTime)
-            .Subscribe(_ => SensorDelay.SetNumericValue(SensorDelayValueInactive));
     }
 }

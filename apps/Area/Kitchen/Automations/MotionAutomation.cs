@@ -19,28 +19,22 @@ public class MotionAutomation(Entities entities, ILogger<Kitchen> logger)
         SetupMotionSensorReactivation();
     }
 
-    protected override IEnumerable<IDisposable> GetSwitchableAutomations()
+    protected override IEnumerable<IDisposable> GetLightAutomations()
     {
-        // Lighting automation
         yield return MotionSensor
             .StateChanges()
             .WhenStateIsForSeconds(HaEntityStates.ON, 5)
             .Subscribe(_ => Light.TurnOn());
         yield return MotionSensor.StateChanges().IsOff().Subscribe(_ => Light.TurnOff());
+    }
 
-        // Sensor delay automation
-        yield return MotionSensor
-            .StateChanges()
-            .WhenStateIsForSeconds(HaEntityStates.ON, SensorWaitTime)
-            .Subscribe(_ => SensorDelay.SetNumericValue(SensorDelayValueActive));
-        yield return MotionSensor
-            .StateChanges()
-            .WhenStateIsForSeconds(HaEntityStates.OFF, SensorWaitTime)
-            .Subscribe(_ => SensorDelay.SetNumericValue(SensorDelayValueInactive));
-        yield return _powerPlug
-            .StateChanges()
-            .IsOn()
-            .Subscribe(_ => SensorDelay.SetNumericValue(SensorDelayValueActive));
+    protected override IEnumerable<IDisposable> GetSensorDelayAutomations()
+    {
+        return
+        [
+            .. base.GetSensorDelayAutomations(),
+            _powerPlug.StateChanges().IsOn().Subscribe(_ => SensorDelay.SetNumericValue(SensorDelayValueActive)),
+        ];
     }
 
     private void SetupMotionSensorReactivation()
