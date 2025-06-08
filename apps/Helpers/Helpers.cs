@@ -6,7 +6,7 @@ namespace HomeAutomation.apps.Helpers;
 
 public static class StateChangeObservableExtensions
 {
-    public static IObservable<StateChange> IsState(this IObservable<StateChange> source, params string[] states)
+    public static IObservable<StateChange> IsAnyOfStates(this IObservable<StateChange> source, params string[] states)
     {
         return source.Where(e =>
             e.New?.State != null && states.Any(s => s.Equals(e.New.State, StringComparison.OrdinalIgnoreCase))
@@ -14,16 +14,16 @@ public static class StateChangeObservableExtensions
     }
 
     public static IObservable<StateChange> IsOn(this IObservable<StateChange> source) =>
-        source.IsState(HaEntityStates.ON);
+        source.IsAnyOfStates(HaEntityStates.ON);
 
     public static IObservable<StateChange> IsOff(this IObservable<StateChange> source) =>
-        source.IsState(HaEntityStates.OFF);
+        source.IsAnyOfStates(HaEntityStates.OFF);
 
     public static IObservable<StateChange> IsUnavailable(this IObservable<StateChange> source) =>
-        source.IsState(HaEntityStates.UNAVAILABLE);
+        source.IsAnyOfStates(HaEntityStates.UNAVAILABLE);
 
     public static IObservable<StateChange> IsUnknown(this IObservable<StateChange> source) =>
-        source.IsState(HaEntityStates.UNKNOWN);
+        source.IsAnyOfStates(HaEntityStates.UNKNOWN);
 
     public static IObservable<StateChange> WhenStateIsForSeconds(
         this IObservable<StateChange> source,
@@ -116,6 +116,10 @@ public static class BinaryEntityExtensions
 {
     public static bool IsOpen(this BinarySensorEntity sensor) => sensor.State.IsOpen();
 
+    public static bool IsOccupied(this BinarySensorEntity sensor) => sensor.State.IsOn();
+
+    public static bool IsClear(this BinarySensorEntity sensor) => sensor.State.IsOff();
+
     public static bool IsClosed(this BinarySensorEntity sensor) => sensor.State.IsClosed();
 }
 
@@ -162,9 +166,9 @@ public static class SwitchEntityExtensions
 public static class TimeRange
 {
     public static bool IsCurrentTimeInBetween(int start, int end) =>
-        IsTimeInBewteen(DateTime.Now.TimeOfDay, start, end);
+        IsTimeInBetween(DateTime.Now.TimeOfDay, start, end);
 
-    public static bool IsTimeInBewteen(TimeSpan now, int start, int end)
+    public static bool IsTimeInBetween(TimeSpan now, int start, int end)
     {
         var startTime = TimeSpan.FromHours(start);
         var endTime = TimeSpan.FromHours(end);

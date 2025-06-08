@@ -26,7 +26,7 @@ public abstract class MotionAutomationBase(
     {
         base.StartAutomation();
         Light.StateChanges().Subscribe(ControlMasterSwitchOnLightChange);
-        MasterSwitch?.StateChangesWithCurrent().IsOn().Subscribe(ControlLightOnMotionChange());
+        MasterSwitch?.StateChangesWithCurrent().IsOn().Subscribe(ControlLightOnMotionChange);
     }
 
     protected virtual void OnMotionDetected()
@@ -69,7 +69,7 @@ public abstract class MotionAutomationBase(
         LightTurnOffCancellationToken = null;
     }
 
-    private void ControlMasterSwitchOnLightChange(StateChange<LightEntity, EntityState<LightAttributes>> evt)
+    private void ControlMasterSwitchOnLightChange(StateChange evt)
     {
         var state = Light.State;
         var userId = evt.UserId();
@@ -89,19 +89,16 @@ public abstract class MotionAutomationBase(
         }
     }
 
-    private Action<StateChange> ControlLightOnMotionChange()
+    private void ControlLightOnMotionChange(StateChange evt)
     {
-        return e =>
+        if (MotionSensor.IsOn())
         {
-            if (MotionSensor.State.IsOn())
-            {
-                Light.TurnOn();
-            }
-            else
-            {
-                Light.TurnOff();
-            }
-        };
+            Light.TurnOn();
+        }
+        else
+        {
+            Light.TurnOff();
+        }
     }
 
     public override void Dispose()

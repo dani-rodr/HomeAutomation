@@ -41,72 +41,52 @@ public class MotionAutomation(Entities entities, ILogger<Bedroom> logger)
                     Light.Toggle();
                 }
             });
-        _rightSideEmptySwitch.StateChanges().Subscribe(ToggleLightsViaSwitch());
-        Light.StateChanges().Subscribe(EnableMasterSwitchWhenLightActive());
+        _rightSideEmptySwitch.StateChanges().Subscribe(ToggleLightsViaSwitch);
+        Light.StateChanges().Subscribe(EnableMasterSwitchWhenLightActive);
     }
 
     private void SetupFanMotionAutomations()
     {
-        _leftSideFanSwitch.StateChangesWithCurrent().Subscribe(UpdateFanActivationStatus());
-        MotionSensor.StateChangesWithCurrent().IsOn().Subscribe(MotionDetected());
-        MotionSensor.StateChangesWithCurrent().IsOff().Subscribe(MotionStopped());
+        _leftSideFanSwitch.StateChangesWithCurrent().Subscribe(UpdateFanActivationStatus);
+        MotionSensor.StateChangesWithCurrent().IsOn().Subscribe(HandleMotionDetected);
+        MotionSensor.StateChangesWithCurrent().IsOff().Subscribe(HandleMotionStopped);
     }
 
-    private Action<StateChange> EnableMasterSwitchWhenLightActive()
+    private void EnableMasterSwitchWhenLightActive(StateChange e)
     {
-        return e =>
+        var state = Light.State;
+        if (HaIdentity.IsAutomated(e.UserId()) && state.IsOn())
         {
-            var state = Light.State;
-            var isAutomated = HaIdentity.IsAutomated(e.UserId());
-            if (isAutomated && state.IsOn())
-            {
-                MasterSwitch?.TurnOn();
-                return;
-            }
-        };
+            MasterSwitch?.TurnOn();
+        }
     }
 
-    private Action<StateChange> ToggleLightsViaSwitch()
+    private void ToggleLightsViaSwitch(StateChange e)
     {
-        return e =>
+        if (!HaIdentity.IsPhysicallyOperated(e.UserId()))
         {
-            if (!HaIdentity.IsPhysicallyOperated(e.UserId()))
-            {
-                return;
-            }
-            Light.Toggle();
-            MasterSwitch?.TurnOff();
-        };
+            return;
+        }
+        Light.Toggle();
+        MasterSwitch?.TurnOff();
     }
 
-    private Action<StateChange> UpdateFanActivationStatus()
+    private void UpdateFanActivationStatus(StateChange e)
     {
-        return e =>
+        if (!HaIdentity.IsManuallyOperated(e.UserId()))
         {
-            if (!HaIdentity.IsManuallyOperated(e.UserId()))
-            {
-                return;
-            }
-            _isFanManuallyActivated = _leftSideFanSwitch.State.IsOn();
-        };
+            return;
+        }
+        _isFanManuallyActivated = _leftSideFanSwitch.State.IsOn();
     }
 
-    private Action<StateChange> MotionDetected()
+    private void HandleMotionDetected(StateChange e)
     {
-        return _ =>
+        if (_isFanManuallyActivated)
         {
-            if (_isFanManuallyActivated)
-            {
-                _leftSideFanSwitch.TurnOn();
-            }
-        };
+            _leftSideFanSwitch.TurnOn();
+        }
     }
 
-    private Action<StateChange> MotionStopped()
-    {
-        return _ =>
-        {
-            _leftSideFanSwitch.TurnOff();
-        };
-    }
+    private void HandleMotionStopped(StateChange e) => _leftSideFanSwitch.TurnOff();
 }

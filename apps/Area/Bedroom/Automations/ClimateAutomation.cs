@@ -8,12 +8,12 @@ namespace HomeAutomation.apps.Area.Bedroom.Automations;
 public class ClimateAutomation(Entities entities, IScheduler scheduler, ILogger<Bedroom> logger)
     : AutomationBase(logger, entities.Switch.AcAutomation)
 {
-    private readonly IScheduler scheduler = scheduler;
-    private readonly ClimateEntity ac = entities.Climate.Ac;
-    private readonly BinarySensorEntity motionSensor = entities.BinarySensor.BedroomPresenceSensors;
-    private readonly BinarySensorEntity doorSensor = entities.BinarySensor.ContactSensorDoor;
-    private readonly InputBooleanEntity powerSavingMode = entities.InputBoolean.AcPowerSavingMode;
-    private readonly SwitchEntity fanSwitch = entities.Switch.Sonoff100238104e1;
+    private readonly IScheduler _scheduler = scheduler;
+    private readonly ClimateEntity _ac = entities.Climate.Ac;
+    private readonly BinarySensorEntity _motionSensor = entities.BinarySensor.BedroomPresenceSensors;
+    private readonly BinarySensorEntity _doorSensor = entities.BinarySensor.ContactSensorDoor;
+    private readonly InputBooleanEntity _powerSavingMode = entities.InputBoolean.AcPowerSavingMode;
+    private readonly SwitchEntity _fanSwitch = entities.Switch.Sonoff100238104e1;
     private readonly Dictionary<TimeBlock, AcScheduleSetting> _acScheduleSettings = new()
     {
         [TimeBlock.Morning] = new(27, 27, 25, HaEntityStates.DRY, true, HourStart: 6, HourEnd: 18),
@@ -27,12 +27,12 @@ public class ClimateAutomation(Entities entities, IScheduler scheduler, ILogger<
         {
             yield return automation;
         }
-        yield return doorSensor.StateChanges().IsOff().Subscribe(_ => ApplyAcSettings(FindTimeBlock()));
-        yield return doorSensor
+        yield return _doorSensor.StateChanges().IsOff().Subscribe(_ => ApplyAcSettings(FindTimeBlock()));
+        yield return _doorSensor
             .StateChanges()
             .WhenStateIsForMinutes(HaEntityStates.ON, 5)
             .Subscribe(_ => ApplyAcSettings(FindTimeBlock()));
-        yield return motionSensor
+        yield return _motionSensor
             .StateChanges()
             .WhenStateIsForMinutes(HaEntityStates.OFF, 10)
             .Subscribe(_ => ApplyAcSettings(FindTimeBlock()));
@@ -44,7 +44,7 @@ public class ClimateAutomation(Entities entities, IScheduler scheduler, ILogger<
         {
             var hour = setting.HourStart;
             string cron = $"0 {hour} * * *";
-            yield return scheduler.ScheduleCron(cron, () => ApplyAcSettings(timeBlock));
+            yield return _scheduler.ScheduleCron(cron, () => ApplyAcSettings(timeBlock));
         }
     }
 
@@ -60,7 +60,7 @@ public class ClimateAutomation(Entities entities, IScheduler scheduler, ILogger<
 
     private void ApplyAcSettings(TimeBlock? timeBlock)
     {
-        if (timeBlock is null || !_acScheduleSettings.TryGetValue(timeBlock.Value, out var setting) || !ac.IsOn())
+        if (timeBlock is null || !_acScheduleSettings.TryGetValue(timeBlock.Value, out var setting) || !_ac.IsOn())
         {
             return;
         }
@@ -73,33 +73,29 @@ public class ClimateAutomation(Entities entities, IScheduler scheduler, ILogger<
             setting.Mode
         );
         ApplyAcSettings(targetTemp, setting.Mode);
-        ActivateFanIfOccupied(setting.ActivateFan);
+        ActivateFanIfOccupied(setting.ActivateFan, targetTemp);
     }
 
     private int GetTemperature(AcScheduleSetting setting) =>
-        powerSavingMode.IsOn() ? setting.PowerSavingTemp
-        : IsDoorClosed() ? setting.ClosedDoorTemp
+        _powerSavingMode.IsOn() ? setting.PowerSavingTemp
+        : _doorSensor.IsClosed() ? setting.ClosedDoorTemp
         : setting.NormalTemp;
 
     private void ApplyAcSettings(int temperature, string hvacMode)
     {
-        ac.SetTemperature(temperature);
-        ac.SetHvacMode(hvacMode);
-        ac.SetFanMode(HaEntityStates.AUTO);
+        _ac.SetTemperature(temperature);
+        _ac.SetHvacMode(hvacMode);
+        _ac.SetFanMode(HaEntityStates.AUTO);
     }
 
-    private void ActivateFanIfOccupied(bool activateFan)
+    private void ActivateFanIfOccupied(bool activateFan, int targetTemp)
     {
-        var isHot = ac.Attributes?.CurrentTemperature >= 24;
-        if (activateFan && IsOccupied() && isHot)
+        var isHot = _ac.Attributes?.CurrentTemperature >= targetTemp;
+        if (activateFan && _motionSensor.IsOccupied() && isHot)
         {
-            fanSwitch.TurnOn();
+            _fanSwitch.TurnOn();
         }
     }
-
-    private bool IsOccupied() => motionSensor.State.IsOn();
-
-    private bool IsDoorClosed() => doorSensor.State.IsOff();
 }
 
 internal enum TimeBlock

@@ -13,7 +13,7 @@ public abstract class AutomationBase(ILogger logger, SwitchEntity? masterSwitch 
 
     public virtual void StartAutomation()
     {
-        MasterSwitch?.StateAllChangesWithCurrent().Subscribe(_ => ToggleAutomation());
+        MasterSwitch?.StateAllChangesWithCurrent().Subscribe(ToggleAutomation);
     }
 
     private void EnableAutomations()
@@ -31,7 +31,7 @@ public abstract class AutomationBase(ILogger logger, SwitchEntity? masterSwitch 
         _automations = null;
     }
 
-    private void ToggleAutomation()
+    private void ToggleAutomation(StateChange e)
     {
         if (MasterSwitch?.State != HaEntityStates.ON)
         {
