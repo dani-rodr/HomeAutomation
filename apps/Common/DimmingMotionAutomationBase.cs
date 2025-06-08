@@ -13,7 +13,7 @@ public abstract class DimmingMotionAutomationBase(
 {
     private CancellationTokenSource? LightTurnOffCancellationToken;
 
-    private bool ShouldDimLights(int dimThreshold) => (SensorDelay.State ?? 0) > dimThreshold;
+    private bool ShouldDimLights() => (SensorDelay.State ?? 0) == SensorDelayValueActive;
 
     protected virtual void OnMotionDetected()
     {
@@ -23,7 +23,7 @@ public abstract class DimmingMotionAutomationBase(
 
     protected virtual async Task OnMotionStoppedAsync(int dimBrightnessPct, int dimDelaySeconds)
     {
-        if (!ShouldDimLights(dimDelaySeconds))
+        if (!ShouldDimLights())
         {
             Light.TurnOff();
             return;
