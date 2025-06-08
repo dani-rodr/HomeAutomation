@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 namespace HomeAutomation.apps.Area.LivingRoom.Automations;
 
 public class MotionAutomation(Entities entities, ILogger<LivingRoom> logger)
@@ -14,9 +16,19 @@ public class MotionAutomation(Entities entities, ILogger<LivingRoom> logger)
     protected override int SensorDelayValueInactive => 1;
     protected override int DimBrightnessPct => 80;
     protected override int DimDelaySeconds => 15;
+    private readonly BinarySensorEntity livingRoomMotionSensor = entities.BinarySensor.Ld2410Esp321SmartPresence;
 
     public override void StartAutomation()
     {
         base.StartAutomation();
+    }
+
+    protected override IEnumerable<IDisposable> GetLightAutomations()
+    {
+        return
+        [
+            .. base.GetLightAutomations(),
+            livingRoomMotionSensor.StateChanges().IsOn().Subscribe(OnMotionDetected),
+        ];
     }
 }

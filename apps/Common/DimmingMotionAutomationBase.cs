@@ -14,17 +14,17 @@ public abstract class DimmingMotionAutomationBase(
 {
     protected abstract int DimBrightnessPct { get; }
     protected abstract int DimDelaySeconds { get; }
-    private CancellationTokenSource? LightTurnOffCancellationToken;
+    private CancellationTokenSource? _lightTurnOffCancellationToken;
 
     private bool ShouldDimLights() => (SensorDelay.State ?? 0) == SensorDelayValueActive;
 
     protected override IEnumerable<IDisposable> GetLightAutomations()
     {
-        yield return MotionSensor.StateChanges().IsOn().Subscribe(_ => OnMotionDetected());
+        yield return MotionSensor.StateChanges().IsOn().Subscribe(OnMotionDetected);
         yield return MotionSensor.StateChanges().IsOff().Subscribe(async _ => await OnMotionStoppedAsync());
     }
 
-    protected virtual void OnMotionDetected()
+    protected virtual void OnMotionDetected(StateChange e)
     {
         CancelPendingTurnOff();
         Light.TurnOn(brightnessPct: 100);
@@ -39,8 +39,8 @@ public abstract class DimmingMotionAutomationBase(
         }
         CancelPendingTurnOff();
 
-        LightTurnOffCancellationToken = new CancellationTokenSource();
-        var token = LightTurnOffCancellationToken.Token;
+        _lightTurnOffCancellationToken = new CancellationTokenSource();
+        var token = _lightTurnOffCancellationToken.Token;
 
         try
         {
@@ -59,9 +59,9 @@ public abstract class DimmingMotionAutomationBase(
 
     protected void CancelPendingTurnOff()
     {
-        LightTurnOffCancellationToken?.Cancel();
-        LightTurnOffCancellationToken?.Dispose();
-        LightTurnOffCancellationToken = null;
+        _lightTurnOffCancellationToken?.Cancel();
+        _lightTurnOffCancellationToken?.Dispose();
+        _lightTurnOffCancellationToken = null;
     }
 
     public override void Dispose()

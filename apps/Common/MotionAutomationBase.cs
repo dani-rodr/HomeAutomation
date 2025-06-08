@@ -12,8 +12,8 @@ public abstract class MotionAutomationBase(
 ) : AutomationBase(logger, masterSwitch), IDisposable
 {
     protected readonly BinarySensorEntity MotionSensor = motionSensor;
-    protected readonly LightEntity Light = light;
     protected readonly NumberEntity SensorDelay = sensorDelay;
+    protected virtual LightEntity Light { get; } = light;
     protected virtual int SensorWaitTime => 15;
     protected virtual int SensorDelayValueActive => 5;
     protected virtual int SensorDelayValueInactive => 1;
@@ -26,9 +26,11 @@ public abstract class MotionAutomationBase(
     }
 
     protected override IEnumerable<IDisposable> GetSwitchableAutomations() =>
-        [.. GetLightAutomations(), .. GetSensorDelayAutomations()];
+        [.. GetLightAutomations(), .. GetSensorDelayAutomations(), .. GetAdditionalSwitchableAutomations()];
 
     protected virtual IEnumerable<IDisposable> GetLightAutomations() => [];
+
+    protected virtual IEnumerable<IDisposable> GetAdditionalSwitchableAutomations() => [];
 
     protected virtual IEnumerable<IDisposable> GetSensorDelayAutomations()
     {
