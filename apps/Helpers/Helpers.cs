@@ -112,6 +112,8 @@ public static class StateExtensions
         return e.New?.Context?.UserId ?? string.Empty;
     }
 
+    public static bool IsValidButtonPress(this StateChange e) => DateTime.TryParse(e?.New?.State, out _);
+
     public static bool IsOpen(this string? state) => state.IsOn();
 
     public static bool IsClosed(this string? state) => state.IsOff();

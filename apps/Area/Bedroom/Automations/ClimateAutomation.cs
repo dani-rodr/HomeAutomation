@@ -74,6 +74,7 @@ public class ClimateAutomation(Entities entities, IScheduler scheduler, ILogger<
     {
         yield return entities
             .Button.AcFanModeToggle.StateChanges()
+            .Where(e => e.IsValidButtonPress())
             .Subscribe(_ =>
             {
                 var modes = new[]
