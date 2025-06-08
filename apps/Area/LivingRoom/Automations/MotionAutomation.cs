@@ -16,18 +16,57 @@ public class MotionAutomation(Entities entities, ILogger<LivingRoom> logger)
     protected override int SensorDelayValueInactive => 1;
     protected override int DimBrightnessPct => 80;
     protected override int DimDelaySeconds => 15;
-    private readonly BinarySensorEntity livingRoomMotionSensor = entities.BinarySensor.Ld2410Esp321SmartPresence;
+    private readonly SwitchEntity _ceilingFan = entities.Switch.CeilingFan;
+    private readonly SwitchEntity _standFan = entities.Switch.Sonoff10023810231;
+    private readonly SwitchEntity _exhaustFan = entities.Switch.Cozylife955f;
 
     public override void StartAutomation()
     {
         base.StartAutomation();
+        MotionSensor
+            .StateChanges()
+            .WhenStateIsForMinutes(HaEntityStates.OFF, 30)
+            .Where(_ => entities.MediaPlayer.Tcl65c755.IsOff())
+            .Subscribe(_ => MasterSwitch?.TurnOn());
     }
 
     protected override IEnumerable<IDisposable> GetLightAutomations()
     {
-        bool turnOffPantryLights =
-            entities.Switch.PantryMotionSensor.IsOn() && entities.BinarySensor.PantryMotionSensors.IsOff();
         return [.. base.GetLightAutomations(), AutoPantryOffWithSala()];
+    }
+
+    protected override IEnumerable<IDisposable> GetAdditionalSwitchableAutomations()
+    {
+        return
+        [
+            .. GetSalaFanAutomations(),
+            entities
+                .BinarySensor.KitchenMotionSensors.StateChanges()
+                .WhenStateIsForSeconds(HaEntityStates.ON, 10)
+                .Subscribe(_ => SensorDelay.SetNumericValue(SensorDelayValueActive)),
+        ];
+    }
+
+    private IEnumerable<IDisposable> GetSalaFanAutomations() // Better create a fan Automation class with the air purifier
+    {
+        yield return MotionSensor.StateChanges().WhenStateIsForSeconds(HaEntityStates.ON, 3).Subscribe(TurnOnSalaFans);
+        yield return MotionSensor.StateChanges().WhenStateIsForMinutes(HaEntityStates.OFF, 1).Subscribe(TurnOffAllFans);
+    }
+
+    private void TurnOnSalaFans(StateChange e)
+    {
+        _ceilingFan.TurnOn();
+        if (entities.BinarySensor.BedroomPresenceSensors.IsOff())
+        {
+            _exhaustFan.TurnOn();
+        }
+    }
+
+    private void TurnOffAllFans(StateChange e)
+    {
+        _ceilingFan.TurnOff();
+        _standFan.TurnOff();
+        _exhaustFan.TurnOff();
     }
 
     private IDisposable AutoPantryOffWithSala()
