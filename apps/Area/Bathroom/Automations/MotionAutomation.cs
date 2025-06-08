@@ -3,7 +3,7 @@ using System.Collections.Generic;
 namespace HomeAutomation.apps.Area.Bathroom.Automations;
 
 public class MotionAutomation(Entities entities, ILogger<Bathroom> logger)
-    : MotionAutomationBase(
+    : DimmingMotionAutomationBase(
         entities.Switch.BathroomMotionSensor,
         entities.BinarySensor.BathroomPresenceSensors,
         entities.Light.BathroomLights,
