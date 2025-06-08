@@ -12,21 +12,38 @@ public class ClimateAutomation(Entities entities, IScheduler scheduler, ILogger<
     private readonly ClimateEntity _ac = entities.Climate.Ac;
     private readonly BinarySensorEntity _motionSensor = entities.BinarySensor.BedroomPresenceSensors;
     private readonly BinarySensorEntity _doorSensor = entities.BinarySensor.ContactSensorDoor;
+    private readonly BinarySensorEntity _emptyHouse = entities.BinarySensor.House;
     private readonly InputBooleanEntity _powerSavingMode = entities.InputBoolean.AcPowerSavingMode;
     private readonly SwitchEntity _fanSwitch = entities.Switch.Sonoff100238104e1;
+    private readonly ButtonEntity _acFanModeToggle = entities.Button.AcFanModeToggle;
     private readonly Dictionary<TimeBlock, AcScheduleSetting> _acScheduleSettings = new()
     {
         [TimeBlock.Morning] = new(27, 27, 25, HaEntityStates.DRY, true, HourStart: 6, HourEnd: 18),
         [TimeBlock.Afternoon] = new(25, 27, 22, HaEntityStates.COOL, false, HourStart: 18, HourEnd: 22),
         [TimeBlock.Night] = new(22, 25, 20, HaEntityStates.COOL, false, HourStart: 22, HourEnd: 6),
     };
+    private bool _isHouseEmpty = false;
 
-    protected override IEnumerable<IDisposable> GetSwitchableAutomations()
+    protected override IEnumerable<IDisposable> GetSwitchableAutomations() =>
+        [
+            .. GetScheduledAutomations(),
+            .. GetSensorBasedAutomations(),
+            .. GetHousePresenceAutomations(),
+            .. GetFanModeToggleAutomation(),
+        ];
+
+    private IEnumerable<IDisposable> GetScheduledAutomations()
     {
-        foreach (var automation in GetScheduledAutomations())
+        foreach (var (timeBlock, setting) in _acScheduleSettings)
         {
-            yield return automation;
+            var hour = setting.HourStart;
+            string cron = $"0 {hour} * * *";
+            yield return _scheduler.ScheduleCron(cron, () => ApplyAcSettings(timeBlock));
         }
+    }
+
+    private IEnumerable<IDisposable> GetSensorBasedAutomations()
+    {
         yield return _doorSensor.StateChanges().IsOff().Subscribe(_ => ApplyAcSettings(FindTimeBlock()));
         yield return _doorSensor
             .StateChanges()
@@ -38,14 +55,40 @@ public class ClimateAutomation(Entities entities, IScheduler scheduler, ILogger<
             .Subscribe(_ => ApplyAcSettings(FindTimeBlock()));
     }
 
-    private IEnumerable<IDisposable> GetScheduledAutomations()
+    private IEnumerable<IDisposable> GetHousePresenceAutomations()
     {
-        foreach (var (timeBlock, setting) in _acScheduleSettings)
-        {
-            var hour = setting.HourStart;
-            string cron = $"0 {hour} * * *";
-            yield return _scheduler.ScheduleCron(cron, () => ApplyAcSettings(timeBlock));
-        }
+        yield return _emptyHouse
+            .StateChangesWithCurrent()
+            .WhenStateIsForMinutes(HaEntityStates.OFF, 20)
+            .Subscribe(_ => _isHouseEmpty = true);
+        yield return _emptyHouse
+            .StateChanges()
+            .Where(e => e.IsOn() && _isHouseEmpty)
+            .Subscribe(_ =>
+            {
+                _isHouseEmpty = false;
+                ApplyAcSettings(FindTimeBlock());
+            });
+    }
+
+    private IEnumerable<IDisposable> GetFanModeToggleAutomation()
+    {
+        yield return _acFanModeToggle
+            .StateChanges()
+            .Subscribe(_ =>
+            {
+                var modes = new[]
+                {
+                    HaEntityStates.AUTO,
+                    HaEntityStates.LOW,
+                    HaEntityStates.MEDIUM,
+                    HaEntityStates.HIGH,
+                };
+                var current = _ac.Attributes?.FanMode;
+                var index = Array.IndexOf(modes, current);
+                var next = modes[(index + 1) % modes.Length];
+                _ac.SetFanMode(next);
+            });
     }
 
     private TimeBlock? FindTimeBlock()
@@ -73,7 +116,7 @@ public class ClimateAutomation(Entities entities, IScheduler scheduler, ILogger<
             setting.Mode
         );
         ApplyAcSettings(targetTemp, setting.Mode);
-        ActivateFanIfOccupied(setting.ActivateFan, targetTemp);
+        ActivateFan(setting.ActivateFan, targetTemp);
     }
 
     private int GetTemperature(AcScheduleSetting setting) =>
@@ -88,7 +131,7 @@ public class ClimateAutomation(Entities entities, IScheduler scheduler, ILogger<
         _ac.SetFanMode(HaEntityStates.AUTO);
     }
 
-    private void ActivateFanIfOccupied(bool activateFan, int targetTemp)
+    private void ActivateFan(bool activateFan, int targetTemp)
     {
         var isHot = _ac.Attributes?.CurrentTemperature >= targetTemp;
         if (activateFan && _motionSensor.IsOccupied() && isHot)

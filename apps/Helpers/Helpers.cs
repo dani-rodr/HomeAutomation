@@ -93,6 +93,20 @@ public static class StateExtensions
         return e.New?.State ?? string.Empty;
     }
 
+    public static bool IsOn<T, TState>(this StateChange<T, TState> e)
+        where T : Entity
+        where TState : EntityState
+    {
+        return e.New != null && e.New.State.IsOn();
+    }
+
+    public static bool IsOff<T, TState>(this StateChange<T, TState> e)
+        where T : Entity
+        where TState : EntityState
+    {
+        return e.New != null && e.New.State.IsOff();
+    }
+
     public static string UserId(this StateChange e)
     {
         return e.New?.Context?.UserId ?? string.Empty;

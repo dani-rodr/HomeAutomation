@@ -10,6 +10,9 @@ public static class HaEntityStates
     public const string UNKNOWN = "unknown";
     public const string DRY = "dry";
     public const string COOL = "cool";
+    public const string LOW = "low";
+    public const string MEDIUM = "medium";
+    public const string HIGH = "high";
     public const string AUTO = "auto";
 }
 
