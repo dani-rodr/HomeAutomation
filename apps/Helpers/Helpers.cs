@@ -16,7 +16,13 @@ public static class StateChangeObservableExtensions
     public static IObservable<StateChange> IsOn(this IObservable<StateChange> source) =>
         source.IsAnyOfStates(HaEntityStates.ON);
 
+    public static IObservable<StateChange> IsOpen(this IObservable<StateChange> source) =>
+        source.IsAnyOfStates(HaEntityStates.ON);
+
     public static IObservable<StateChange> IsOff(this IObservable<StateChange> source) =>
+        source.IsAnyOfStates(HaEntityStates.OFF);
+
+    public static IObservable<StateChange> IsClosed(this IObservable<StateChange> source) =>
         source.IsAnyOfStates(HaEntityStates.OFF);
 
     public static IObservable<StateChange> IsUnavailable(this IObservable<StateChange> source) =>

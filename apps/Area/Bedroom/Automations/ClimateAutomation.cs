@@ -70,13 +70,22 @@ public class ClimateAutomation(Entities entities, IScheduler scheduler, ILogger<
 
     private IEnumerable<IDisposable> GetSensorBasedAutomations()
     {
-        yield return _doorSensor.StateChanges().IsOff().Subscribe(ApplyTimeBasedAcSetting);
+        yield return _doorSensor.StateChanges().IsClosed().Subscribe(ApplyTimeBasedAcSetting);
         yield return _doorSensor.StateChanges().IsOnForMinutes(5).Subscribe(ApplyTimeBasedAcSetting);
         yield return _motionSensor.StateChanges().IsOffForMinutes(10).Subscribe(ApplyTimeBasedAcSetting);
         yield return _motionSensor.StateChanges().IsOn().Subscribe(ApplyTimeBasedAcSetting);
     }
 
-    private void ApplyTimeBasedAcSetting(StateChange e) => ApplyAcSettings(FindTimeBlock());
+    private void ApplyTimeBasedAcSetting(StateChange e)
+    {
+        Logger.LogDebug(
+            "ApplyTimeBasedAcSetting triggered by sensor: {EntityId}, NewState: {State}",
+            e.New?.EntityId,
+            e.New?.State
+        );
+
+        ApplyAcSettings(FindTimeBlock());
+    }
 
     private IEnumerable<IDisposable> GetHousePresenceAutomations()
     {
