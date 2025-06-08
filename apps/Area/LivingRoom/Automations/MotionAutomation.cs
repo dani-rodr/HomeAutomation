@@ -25,10 +25,20 @@ public class MotionAutomation(Entities entities, ILogger<LivingRoom> logger)
 
     protected override IEnumerable<IDisposable> GetLightAutomations()
     {
-        return
-        [
-            .. base.GetLightAutomations(),
-            livingRoomMotionSensor.StateChanges().IsOn().Subscribe(OnMotionDetected),
-        ];
+        bool turnOffPantryLights =
+            entities.Switch.PantryMotionSensor.IsOn() && entities.BinarySensor.PantryMotionSensors.IsOff();
+        return [.. base.GetLightAutomations(), AutoPantryOffWithSala()];
     }
+
+    private IDisposable AutoPantryOffWithSala()
+    {
+        return Light
+            .StateChanges()
+            .IsOff()
+            .Where(_ => ShouldPantryLightsTurnOff())
+            .Subscribe(_ => entities.Light.PantryLights.TurnOff());
+    }
+
+    private bool ShouldPantryLightsTurnOff() =>
+        entities.Switch.PantryMotionSensor.IsOn() && entities.BinarySensor.PantryMotionSensors.IsOff();
 }
