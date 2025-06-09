@@ -15,13 +15,7 @@ public class MotionAutomation(Entities entities, ILogger<Bedroom> logger)
     private readonly SwitchEntity _rightSideEmptySwitch = entities.Switch.Sonoff1002352c401;
     private readonly SwitchEntity _leftSideFanSwitch = entities.Switch.Sonoff100238104e1;
     private bool _isFanManuallyActivated = false;
-
-    public override void StartAutomation()
-    {
-        base.StartAutomation();
-        SetupLightSwitchAutomations();
-        SetupFanMotionAutomations();
-    }
+    protected override IEnumerable<IDisposable> GetAdditionalStartupAutomations() => [.. SetupLightSwitchAutomations(), .. SetupFanMotionAutomations()];
 
     protected override IEnumerable<IDisposable> GetSwitchableAutomations()
     {
@@ -29,9 +23,9 @@ public class MotionAutomation(Entities entities, ILogger<Bedroom> logger)
         yield return MotionSensor.StateChangesWithCurrent().IsOff().Subscribe(_ => Light.TurnOff());
     }
 
-    private void SetupLightSwitchAutomations()
+    private IEnumerable<IDisposable> SetupLightSwitchAutomations()
     {
-        _leftSideFanSwitch
+        yield return _leftSideFanSwitch
             .StateChanges()
             .OnDoubleClick(timeout: 2)
             .Subscribe(e =>
@@ -41,15 +35,15 @@ public class MotionAutomation(Entities entities, ILogger<Bedroom> logger)
                     Light.Toggle();
                 }
             });
-        _rightSideEmptySwitch.StateChanges().Subscribe(ToggleLightsViaSwitch);
-        Light.StateChanges().Subscribe(EnableMasterSwitchWhenLightActive);
+        yield return _rightSideEmptySwitch.StateChanges().Subscribe(ToggleLightsViaSwitch);
+        yield return Light.StateChanges().Subscribe(EnableMasterSwitchWhenLightActive);
     }
 
-    private void SetupFanMotionAutomations()
+    private IEnumerable<IDisposable> SetupFanMotionAutomations()
     {
-        _leftSideFanSwitch.StateChangesWithCurrent().Subscribe(UpdateFanActivationStatus);
-        MotionSensor.StateChangesWithCurrent().IsOn().Subscribe(HandleMotionDetected);
-        MotionSensor.StateChangesWithCurrent().IsOff().Subscribe(HandleMotionStopped);
+        yield return _leftSideFanSwitch.StateChangesWithCurrent().Subscribe(UpdateFanActivationStatus);
+        yield return MotionSensor.StateChangesWithCurrent().IsOn().Subscribe(HandleMotionDetected);
+        yield return MotionSensor.StateChangesWithCurrent().IsOff().Subscribe(HandleMotionStopped);
     }
 
     private void EnableMasterSwitchWhenLightActive(StateChange e)

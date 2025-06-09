@@ -10,35 +10,40 @@ public class CookingAutomation(Entities entities, ILogger logger) : AutomationBa
     private readonly ButtonEntity _inductionTurnOff = entities.Button.InductionCookerPower;
     private readonly NumericSensorEntity _inductionPower = entities.Sensor.SmartPlug3SonoffS31Power;
 
-    public override void StartAutomation()
+    protected override IEnumerable<IDisposable> GetStartupAutomations()
     {
-        AutoTurnOffRiceCookerOnIdle(minutes: 10);
-        AutoTurnOffAfterBoilingWater(minutes: 12);
+        yield return AutoTurnOffRiceCookerOnIdle(minutes: 10);
+        yield return AutoTurnOffAfterBoilingWater(minutes: 12);
     }
 
     protected override IEnumerable<IDisposable> GetSwitchableAutomations() => [];
 
-    private void AutoTurnOffAfterBoilingWater(int minutes)
+    private IDisposable AutoTurnOffAfterBoilingWater(int minutes)
     {
-        var boilingPower = 1550;
-        _inductionPower
+        var boilingPowerThreshold = 1550;
+        return _inductionPower
             .StateChangesWithCurrent()
-            .WhenStateIsForMinutes(s => s?.State > boilingPower, minutes)
+            .WhenStateIsForMinutes(s => s?.State > boilingPowerThreshold, minutes)
             .Subscribe(_ =>
             {
                 if (_airFryerStatus.State == HaEntityStates.UNAVAILABLE)
                 {
                     _inductionTurnOff.Press();
+                    Logger.LogInformation("Auto-turned off induction cooker after {Minutes} minutes of boiling", minutes);
                 }
             });
     }
 
-    private void AutoTurnOffRiceCookerOnIdle(int minutes)
+    private IDisposable AutoTurnOffRiceCookerOnIdle(int minutes)
     {
-        var riceCookerIdlePower = 100;
-        _riceCookerPower
+        var riceCookerIdlePowerThreshold = 100;
+        return _riceCookerPower
             .StateChangesWithCurrent()
-            .WhenStateIsForMinutes(s => s?.State < riceCookerIdlePower, minutes)
-            .Subscribe(_ => _riceCookerSwitch.TurnOff());
+            .WhenStateIsForMinutes(s => s?.State < riceCookerIdlePowerThreshold, minutes)
+            .Subscribe(_ =>
+            {
+                _riceCookerSwitch.TurnOff();
+                Logger.LogInformation("Auto-turned off rice cooker after {Minutes} minutes idle", minutes);
+            });
     }
 }

@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reactive.Concurrency;
+using System.Threading;
 using NetDaemon.Extensions.Scheduler;
 
 namespace HomeAutomation.apps.Area.Bedroom.Automations;
@@ -13,9 +14,20 @@ public class ClimateAutomation(Entities entities, IScheduler scheduler, ILogger<
     private readonly BinarySensorEntity _motionSensor = entities.BinarySensor.BedroomPresenceSensors;
     private readonly BinarySensorEntity _doorSensor = entities.BinarySensor.ContactSensorDoor;
     private readonly SwitchEntity _fanSwitch = entities.Switch.Sonoff100238104e1;
-    private Dictionary<TimeBlock, AcScheduleSetting> GetCurrentAcScheduleSettings() => new()
+    private Dictionary<TimeBlock, AcScheduleSetting>? _cachedAcSettings;
+    private readonly Lock _houseEmptyLock = new();
+    private bool _isHouseEmpty = false;
+
+    private Dictionary<TimeBlock, AcScheduleSetting> GetCurrentAcScheduleSettings()
     {
-        [TimeBlock.Sunrise] = new(
+        if (_cachedAcSettings != null)
+        {
+            return _cachedAcSettings;
+        }
+
+        _cachedAcSettings = new()
+        {
+            [TimeBlock.Sunrise] = new(
             NormalTemp: 25,
             PowerSavingTemp: 27,
             ClosedDoorTemp: 24,
@@ -26,7 +38,7 @@ public class ClimateAutomation(Entities entities, IScheduler scheduler, ILogger<
             HourEnd: entities.Sensor.SunNextSetting.LocalHour()
         ),
 
-        [TimeBlock.Sunset] = new(
+            [TimeBlock.Sunset] = new(
             NormalTemp: 24,
             PowerSavingTemp: 27,
             ClosedDoorTemp: 22,
@@ -37,7 +49,7 @@ public class ClimateAutomation(Entities entities, IScheduler scheduler, ILogger<
             HourEnd: entities.Sensor.SunNextMidnight.LocalHour()
         ),
 
-        [TimeBlock.Midnight] = new(
+            [TimeBlock.Midnight] = new(
             NormalTemp: 22,
             PowerSavingTemp: 25,
             ClosedDoorTemp: 20,
@@ -47,15 +59,23 @@ public class ClimateAutomation(Entities entities, IScheduler scheduler, ILogger<
             HourStart: entities.Sensor.SunNextMidnight.LocalHour(),
             HourEnd: entities.Sensor.SunNextRising.LocalHour()
         ),
-    };
-    private bool _isHouseEmpty = false;
+        };
+
+        return _cachedAcSettings;
+    }
     public override void StartAutomation()
     {
         base.StartAutomation();
         Logger.LogDebug("AC schedule settings initialized based on current sun sensor values. HourStart and HourEnd may vary daily depending on sunrise, sunset, and midnight times.");
-
         LogAcScheduleSettings();
-        _scheduler.ScheduleCron("0 0 * * *", RestartAutomations);
+    }
+    protected override IEnumerable<IDisposable> GetStartupAutomations()
+    {
+        yield return _scheduler.ScheduleCron("0 0 * * *", () =>
+        {
+            Logger.LogInformation("Midnight AC schedule refresh triggered");
+            InvalidateAcSettingsCache();
+        });
     }
     private void LogAcScheduleSettings()
     {
@@ -67,13 +87,10 @@ public class ClimateAutomation(Entities entities, IScheduler scheduler, ILogger<
                 setting.Mode, setting.ActivateFan, setting.HourStart, setting.HourEnd);
         }
     }
-    protected override void RestartAutomations()
+    private void InvalidateAcSettingsCache()
     {
-        Logger.LogDebug("Restarting Climate Automations");
-        LogAcScheduleSettings();
-        base.RestartAutomations();
+        _cachedAcSettings = null;
     }
-
     protected override IEnumerable<IDisposable> GetSwitchableAutomations() =>
         [
             .. GetScheduledAutomations(),
@@ -120,14 +137,32 @@ public class ClimateAutomation(Entities entities, IScheduler scheduler, ILogger<
     {
         var houseEmpty = entities.BinarySensor.House;
 
-        yield return houseEmpty.StateChangesWithCurrent().IsOffForMinutes(20).Subscribe(_ => _isHouseEmpty = true);
+        yield return houseEmpty.StateChangesWithCurrent().IsOffForMinutes(20).Subscribe(_ =>
+        {
+            lock (_houseEmptyLock)
+            {
+                _isHouseEmpty = true;
+                Logger.LogInformation("House marked as empty after 20 minutes");
+            }
+        });
+
         yield return houseEmpty
             .StateChanges()
-            .Where(e => e.IsOn() && _isHouseEmpty)
+            .Where(e => e.IsOn())
             .Subscribe(e =>
             {
-                _isHouseEmpty = false;
-                ApplyTimeBasedAcSetting(e);
+                bool wasEmpty;
+                lock (_houseEmptyLock)
+                {
+                    wasEmpty = _isHouseEmpty;
+                    _isHouseEmpty = false;
+                }
+
+                if (wasEmpty)
+                {
+                    Logger.LogInformation("House reoccupied, applying AC settings");
+                    ApplyTimeBasedAcSetting(e);
+                }
             });
     }
 

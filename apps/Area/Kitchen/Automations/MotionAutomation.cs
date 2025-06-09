@@ -13,12 +13,6 @@ public class MotionAutomation(Entities entities, ILogger<Kitchen> logger)
 {
     private readonly BinarySensorEntity _powerPlug = entities.BinarySensor.SmartPlug3PowerExceedsThreshold;
 
-    public override void StartAutomation()
-    {
-        base.StartAutomation();
-        SetupMotionSensorReactivation();
-    }
-
     protected override IEnumerable<IDisposable> GetLightAutomations()
     {
         yield return MotionSensor.StateChanges().IsOnForSeconds(5).Subscribe(_ => Light.TurnOn());
@@ -34,8 +28,10 @@ public class MotionAutomation(Entities entities, ILogger<Kitchen> logger)
         ];
     }
 
-    private void SetupMotionSensorReactivation()
+    protected override IEnumerable<IDisposable> GetAdditionalStartupAutomations() => [SetupMotionSensorReactivation()];
+
+    private IDisposable SetupMotionSensorReactivation()
     {
-        MotionSensor.StateChanges().IsOffForHours(1).Subscribe(_ => MasterSwitch?.TurnOn());
+        return MotionSensor.StateChanges().IsOffForHours(1).Subscribe(_ => MasterSwitch?.TurnOn());
     }
 }

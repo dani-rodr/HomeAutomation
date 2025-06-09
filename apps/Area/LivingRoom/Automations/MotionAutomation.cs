@@ -20,10 +20,9 @@ public class MotionAutomation(Entities entities, ILogger<LivingRoom> logger)
     private readonly SwitchEntity _standFan = entities.Switch.Sonoff10023810231;
     private readonly SwitchEntity _exhaustFan = entities.Switch.Cozylife955f;
 
-    public override void StartAutomation()
+    protected override IEnumerable<IDisposable> GetAdditionalStartupAutomations()
     {
-        base.StartAutomation();
-        MotionSensor
+        yield return MotionSensor
             .StateChanges()
             .IsOffForMinutes(30)
             .Where(_ => entities.MediaPlayer.Tcl65c755.IsOff())

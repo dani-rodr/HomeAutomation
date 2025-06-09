@@ -16,20 +16,25 @@ public abstract class MotionAutomationBase(
     protected virtual int SensorWaitTime => 15;
     protected virtual int SensorDelayValueActive => 5;
     protected virtual int SensorDelayValueInactive => 1;
-
-    public override void StartAutomation()
+    protected sealed override IEnumerable<IDisposable> GetStartupAutomations()
     {
-        base.StartAutomation();
-        Light.StateChanges().Subscribe(ControlMasterSwitchOnLightChange);
-        MasterSwitch?.StateChangesWithCurrent().IsOn().Subscribe(ControlLightOnMotionChange);
+        yield return Light.StateChanges().Subscribe(ControlMasterSwitchOnLightChange);
+        if (MasterSwitch != null)
+        {
+            yield return MasterSwitch.StateChanges().Subscribe(ControlLightOnMotionChange);
+        }
+        foreach (var automation in GetAdditionalStartupAutomations())
+        {
+            yield return automation;
+        }
     }
-
     protected override IEnumerable<IDisposable> GetSwitchableAutomations() =>
         [.. GetLightAutomations(), .. GetSensorDelayAutomations(), .. GetAdditionalSwitchableAutomations()];
 
     protected virtual IEnumerable<IDisposable> GetLightAutomations() => [];
 
     protected virtual IEnumerable<IDisposable> GetAdditionalSwitchableAutomations() => [];
+    protected virtual IEnumerable<IDisposable> GetAdditionalStartupAutomations() => [];
 
     protected virtual IEnumerable<IDisposable> GetSensorDelayAutomations()
     {
