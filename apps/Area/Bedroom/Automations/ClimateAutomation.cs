@@ -54,15 +54,24 @@ public class ClimateAutomation(Entities entities, IScheduler scheduler, ILogger<
         base.StartAutomation();
         Logger.LogDebug("AC schedule settings initialized based on current sun sensor values. HourStart and HourEnd may vary daily depending on sunrise, sunset, and midnight times.");
 
+        LogAcScheduleSettings();
+        _scheduler.ScheduleCron("0 0 * * *", RestartAutomations);
+    }
+    private void LogAcScheduleSettings()
+    {
         foreach (var kvp in GetCurrentAcScheduleSettings())
         {
             var setting = kvp.Value;
-
             Logger.LogDebug("TimeBlock {TimeBlock}: NormalTemp={NormalTemp}, PowerSavingTemp={PowerSavingTemp}, ClosedDoorTemp={ClosedDoorTemp}, UnoccupiedTemp={UnoccupiedTemp}, Mode={Mode}, ActivateFan={ActivateFan}, HourStart={HourStart}, HourEnd={HourEnd}",
                 kvp.Key, setting.NormalTemp, setting.PowerSavingTemp, setting.ClosedDoorTemp, setting.UnoccupiedTemp,
                 setting.Mode, setting.ActivateFan, setting.HourStart, setting.HourEnd);
         }
-        _scheduler.ScheduleCron("0 0 * * *", RestartAutomations);
+    }
+    protected override void RestartAutomations()
+    {
+        Logger.LogDebug("Restarting Climate Automations");
+        LogAcScheduleSettings();
+        base.RestartAutomations();
     }
 
     protected override IEnumerable<IDisposable> GetSwitchableAutomations() =>

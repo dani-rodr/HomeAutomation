@@ -30,7 +30,7 @@ public abstract class AutomationBase(ILogger logger, SwitchEntity? masterSwitch 
         _automations?.Dispose();
         _automations = null;
     }
-    protected void RestartAutomations()
+    protected virtual void RestartAutomations()
     {
         DisableAutomations();
         EnableAutomations();
