@@ -3,7 +3,8 @@
     "allow": [
       "Bash(mkdir:*)",
       "Bash(mv:*)",
-      "Bash(dotnet new:*)"
+      "Bash(dotnet new:*)",
+      "WebFetch(domain:netdaemon.xyz)"
     ],
     "deny": []
   }

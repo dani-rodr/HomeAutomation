@@ -4,7 +4,19 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This is a NetDaemon v5 home automation application that runs on Home Assistant. NetDaemon allows writing Home Assistant automations in C# (.NET 9). The project defines automations for various areas (bathroom, bedroom, kitchen, living room, pantry) and includes device controls, security features, and smart climate management.
+This is a NetDaemon v5 home automation application that runs on Home Assistant. NetDaemon is a C# automation platform that enables developers to write home automations using modern .NET design patterns. It integrates with Home Assistant using websockets for maximum performance and provides strongly-typed entity access through code generation.
+
+**Official Documentation**: https://netdaemon.xyz/  
+**GitHub**: https://github.com/net-daemon/netdaemon
+
+### Key Features
+- **Modern .NET Development**: Write automations in C# using .NET 9
+- **Reactive Programming**: Built on Reactive Extensions (Rx.NET) for event-driven programming
+- **Code Generation**: Automatically generates strongly-typed entities and services from Home Assistant
+- **High Performance**: WebSocket integration for real-time communication
+- **Type Safety**: Full IntelliSense support with generated entity models
+
+This project defines automations for various areas (bathroom, bedroom, kitchen, living room, pantry) and includes device controls, security features, and smart climate management.
 
 ## Key Commands
 
@@ -35,6 +47,13 @@ nd-codegen
 dotnet tool update -g NetDaemon.HassModel.CodeGen
 ```
 
+### WSL Development
+```bash
+# Use dotnet.exe when running from WSL
+dotnet.exe build
+dotnet.exe publish -c Release
+```
+
 ## Architecture Overview
 
 ### Core Structure
@@ -55,6 +74,7 @@ The project uses NetDaemon's code generation to create strongly-typed entities a
 - Generated code is in `HomeAssistantGenerated.cs`
 - Metadata stored in `/NetDaemonCodegen/`
 - Configuration in `appsettings.json` under `CodeGeneration` section
+- Run `nd-codegen` to regenerate after adding new entities in Home Assistant
 
 ### Configuration
 - **`appsettings.json`** - Main configuration (Home Assistant connection, logging)
@@ -67,17 +87,39 @@ The `publish.ps1` script:
 2. Publishes the project to the addon's config directory
 3. Restarts the addon
 
-### Development Notes
-- Uses .NET 9 with C# 13
+### Development Requirements
+- **.NET 9 SDK** with C# 13
+- **IDE**: Visual Studio 2022, VS Code, or JetBrains Rider
+- **Home Assistant**: Access token with Administrator privileges
+- **Git**: For version control (recommended)
 - Follows strict EditorConfig rules (see `.editorconfig`)
 - Global usings defined in `apps/GlobalUsings.cs`
 - All automations use reactive extensions (System.Reactive)
 - Master switches control automation groups
 
-## Architecture Patterns & Best Practices
+## NetDaemon Architecture Patterns & Best Practices
 
-### Inheritance Hierarchy
-The project follows a well-structured inheritance pattern:
+### NetDaemon Application Structure
+NetDaemon applications follow specific patterns:
+```csharp
+[NetDaemonApp]
+public class MyAutomation
+{
+    public MyAutomation(IHaContext ha, ILogger<MyAutomation> logger)
+    {
+        var entities = new Entities(ha);
+        
+        // Setup reactive subscriptions
+        entities.BinarySensor.MotionSensor
+            .StateChanges()
+            .Where(e => e.New.IsOn())
+            .Subscribe(_ => entities.Light.MyLight.TurnOn());
+    }
+}
+```
+
+### Project-Specific Inheritance Hierarchy
+The project extends NetDaemon patterns with a custom hierarchy:
 ```
 IAutomation (interface)
     └── AutomationBase (abstract base class)
@@ -94,11 +136,21 @@ IAutomation (interface)
                         └── Uses CancellationTokenSource for async operations
 ```
 
-### Reactive Programming Patterns
+### Reactive Programming Patterns (NetDaemon Best Practices)
 - **State Changes**: Use `StateChanges()` for new state events only
-- **Current State**: Use `StateChangesWithCurrent()` when you need the current state immediately
-- **Time-based Filters**: Chain methods like `IsOnForMinutes(5)` for delayed reactions
+- **Current State**: Use `StateChangesWithCurrent()` when you need the current state immediately  
+- **Time-based Filters**: Use `WhenStateIsFor()` for proper time-delayed reactions
+- **Safe Subscriptions**: Use `SubscribeSafe()` to prevent exceptions from breaking subscriptions
 - **Subscriptions**: ALL subscriptions MUST be returned from `GetSwitchableAutomations()` or properly disposed
+
+### Application Lifecycle (NetDaemon v5)
+1. **Instantiating**: Constructor called, use for DI setup only
+2. **Async Initialization**: Implement `IAsyncInitializable` for async setup
+3. **Running**: App actively processing events
+4. **Disposing**: Clean up resources when stopping
+5. **Stopped**: App fully cleaned up
+
+**Important**: Never block the constructor - use it only for setting up subscriptions
 
 ### Subscription Lifecycle Management
 ```csharp
@@ -118,22 +170,39 @@ public override void StartAutomation()
 
 ## Critical Implementation Notes
 
-### Common Pitfalls to Avoid
+### NetDaemon-Specific Pitfalls to Avoid
 
 1. **Memory Leaks from Untracked Subscriptions**
    - Problem: Creating subscriptions outside of `GetSwitchableAutomations()`
    - Solution: Always return IDisposable subscriptions from the method
+   - NetDaemon Impact: Unhandled exceptions in subscriptions stop the entire stream
    - Found in: CookingAutomation.cs, ClimateAutomation.cs (cron job)
 
-2. **Thread Safety Issues**
+2. **Blocking Operations in Constructor**
+   - Problem: NetDaemon expects constructor to return quickly
+   - Solution: Move async/blocking operations to `IAsyncInitializable`
+   - NetDaemon Impact: Can cause startup timeouts
+
+3. **Thread Safety Issues**
    - Problem: Shared state accessed from multiple reactive streams
    - Solution: Use `volatile`, `Interlocked`, or lock synchronization
+   - NetDaemon Impact: Rx.NET subscriptions may run on different threads
    - Example: `_isHouseEmpty` field in ClimateAutomation
 
-3. **Null Reference Exceptions**
+4. **Unhandled Exceptions in Subscriptions**
+   - Problem: Exceptions terminate the subscription permanently
+   - Solution: Use `SubscribeSafe()` or wrap handlers in try-catch
+   - NetDaemon Impact: Silent failures in automations
+
+5. **Null Reference Exceptions**
    - Problem: Accessing nullable attributes without checks
    - Solution: Use null-conditional operators (`?.`) and proper null checks
    - Example: `_ac.Attributes?.Temperature` comparisons
+
+6. **Time Zone Confusion**
+   - Problem: Scheduler uses UTC, Cron expressions use local time
+   - Solution: Be explicit about time zones in scheduling
+   - NetDaemon Impact: Automations running at wrong times
 
 ### Proper Disposal Pattern
 ```csharp
@@ -291,7 +360,7 @@ protected override IEnumerable<IDisposable> GetSwitchableAutomations()
 }
 ```
 
-### State Change Patterns
+### State Change Patterns (NetDaemon v5)
 ```csharp
 // React to state changes only
 sensor.StateChanges().IsOn().Subscribe(TurnOnLight);
@@ -299,10 +368,21 @@ sensor.StateChanges().IsOn().Subscribe(TurnOnLight);
 // Include current state in initial subscription
 sensor.StateChangesWithCurrent().Where(s => s.IsOn()).Subscribe(Configure);
 
-// Time-based reactions
-motion.StateChanges()
-    .IsOffForMinutes(10)
+// Time-based reactions (NetDaemon pattern)
+sensor.StateChanges()
+    .WhenStateIsFor(s => s?.State == "off", TimeSpan.FromMinutes(10), scheduler)
     .Subscribe(_ => TurnOffLights());
+
+// Safe subscription to handle exceptions
+sensor.StateChanges()
+    .Where(e => e.New.IsOn())
+    .SubscribeSafe(HandleMotion, ex => Logger.LogError(ex, "Motion handler failed"));
+
+// Ignore events during disposal
+sensor.StateChanges()
+    .Where(e => e.New.IsOn())
+    .IgnoreOnComplete() // Prevents actions during app shutdown
+    .Subscribe(HandleMotion);
 ```
 
 ### Error Handling Best Practices
@@ -337,3 +417,59 @@ Logger.LogWarning("Invalid hour {Hour} for schedule", hour);
 
 Logger.LogError(ex, "Failed to control {Device}", device.EntityId);
 ```
+
+## Testing Guidelines
+
+NetDaemon provides excellent testing support through reactive testing utilities:
+
+### Time-Based Testing
+```csharp
+using Microsoft.Reactive.Testing;
+
+[Test]
+public void Motion_Should_Turn_Off_After_Delay()
+{
+    var testScheduler = new TestScheduler();
+    var motion = testScheduler.CreateHotObservable(
+        OnNext(100, new StateChange(null, "on", null)),
+        OnNext(200, new StateChange("on", "off", null))
+    );
+    
+    // Test automation behavior with controlled time
+    testScheduler.AdvanceBy(TimeSpan.FromMinutes(10).Ticks);
+}
+```
+
+### Best Practices for Testing
+- Test all edge cases and error conditions
+- Use `TestScheduler` for time-based testing
+- Mock Home Assistant entities and state changes
+- Verify proper disposal of resources
+- Test thread safety with concurrent operations
+
+## Deployment & Installation
+
+### Home Assistant Add-on (Recommended)
+1. Add repository: `https://github.com/net-daemon/homeassistant-addon`
+2. Install NetDaemon add-on from the store
+3. Deploy apps to `/config/netdaemon5` directory
+4. Configure connection in add-on settings
+
+### Docker Deployment
+```yaml
+version: '3.7'
+services:
+  netdaemon:
+    image: netdaemon/netdaemon5
+    environment:
+      - HomeAssistant__Host=homeassistant.local
+      - HomeAssistant__Port=8123
+      - HomeAssistant__Token=YOUR_TOKEN
+    volumes:
+      - ./apps:/app
+```
+
+### Required Home Assistant Configuration
+- Long-lived access token with Administrator privileges
+- WebSocket API enabled (default in Home Assistant)
+- Network access between NetDaemon and Home Assistant
