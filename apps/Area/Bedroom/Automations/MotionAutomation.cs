@@ -15,7 +15,9 @@ public class MotionAutomation(Entities entities, ILogger<Bedroom> logger)
     private readonly SwitchEntity _rightSideEmptySwitch = entities.Switch.Sonoff1002352c401;
     private readonly SwitchEntity _leftSideFanSwitch = entities.Switch.Sonoff100238104e1;
     private bool _isFanManuallyActivated = false;
-    protected override IEnumerable<IDisposable> GetAdditionalStartupAutomations() => [.. SetupLightSwitchAutomations(), .. SetupFanMotionAutomations()];
+
+    protected override IEnumerable<IDisposable> GetAdditionalStartupAutomations() =>
+        [.. SetupLightSwitchAutomations(), .. SetupFanMotionAutomations()];
 
     protected override IEnumerable<IDisposable> GetSwitchableAutomations()
     {

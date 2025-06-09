@@ -16,6 +16,7 @@ public abstract class MotionAutomationBase(
     protected virtual int SensorWaitTime => 15;
     protected virtual int SensorDelayValueActive => 5;
     protected virtual int SensorDelayValueInactive => 1;
+
     protected sealed override IEnumerable<IDisposable> GetStartupAutomations()
     {
         yield return Light.StateChanges().Subscribe(ControlMasterSwitchOnLightChange);
@@ -28,12 +29,14 @@ public abstract class MotionAutomationBase(
             yield return automation;
         }
     }
+
     protected override IEnumerable<IDisposable> GetSwitchableAutomations() =>
         [.. GetLightAutomations(), .. GetSensorDelayAutomations(), .. GetAdditionalSwitchableAutomations()];
 
     protected virtual IEnumerable<IDisposable> GetLightAutomations() => [];
 
     protected virtual IEnumerable<IDisposable> GetAdditionalSwitchableAutomations() => [];
+
     protected virtual IEnumerable<IDisposable> GetAdditionalStartupAutomations() => [];
 
     protected virtual IEnumerable<IDisposable> GetSensorDelayAutomations()
@@ -58,12 +61,16 @@ public abstract class MotionAutomationBase(
         }
         if (isLightsOn)
         {
-            Logger.LogInformation("ControlMasterSwitchOnLightChange: Light turned ON by manual operation, turning OFF master switch.");
+            Logger.LogInformation(
+                "ControlMasterSwitchOnLightChange: Light turned ON by manual operation, turning OFF master switch."
+            );
             MasterSwitch?.TurnOff();
         }
         else
         {
-            Logger.LogInformation("ControlMasterSwitchOnLightChange: Light turned OFF by manual operation, turning ON master switch.");
+            Logger.LogInformation(
+                "ControlMasterSwitchOnLightChange: Light turned OFF by manual operation, turning ON master switch."
+            );
             MasterSwitch?.TurnOn();
         }
     }
