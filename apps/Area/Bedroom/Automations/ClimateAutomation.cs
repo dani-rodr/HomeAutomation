@@ -13,42 +13,57 @@ public class ClimateAutomation(Entities entities, IScheduler scheduler, ILogger<
     private readonly BinarySensorEntity _motionSensor = entities.BinarySensor.BedroomPresenceSensors;
     private readonly BinarySensorEntity _doorSensor = entities.BinarySensor.ContactSensorDoor;
     private readonly SwitchEntity _fanSwitch = entities.Switch.Sonoff100238104e1;
-    private readonly Dictionary<TimeBlock, AcScheduleSetting> _acScheduleSettings = new()
+    private Dictionary<TimeBlock, AcScheduleSetting> GetCurrentAcScheduleSettings() => new()
     {
-        [TimeBlock.Morning] = new(
+        [TimeBlock.Sunrise] = new(
             NormalTemp: 25,
             PowerSavingTemp: 27,
             ClosedDoorTemp: 24,
             UnoccupiedTemp: 27,
             Mode: HaEntityStates.DRY,
             ActivateFan: true,
-            HourStart: 6,
-            HourEnd: 18
+            HourStart: entities.Sensor.SunNextRising.LocalHour(),
+            HourEnd: entities.Sensor.SunNextSetting.LocalHour()
         ),
 
-        [TimeBlock.Afternoon] = new(
+        [TimeBlock.Sunset] = new(
             NormalTemp: 24,
             PowerSavingTemp: 27,
             ClosedDoorTemp: 22,
             UnoccupiedTemp: 25,
             Mode: HaEntityStates.COOL,
             ActivateFan: false,
-            HourStart: 18,
-            HourEnd: 22
+            HourStart: entities.Sensor.SunNextSetting.LocalHour(),
+            HourEnd: entities.Sensor.SunNextMidnight.LocalHour()
         ),
 
-        [TimeBlock.Night] = new(
+        [TimeBlock.Midnight] = new(
             NormalTemp: 22,
             PowerSavingTemp: 25,
             ClosedDoorTemp: 20,
             UnoccupiedTemp: 25,
             Mode: HaEntityStates.COOL,
             ActivateFan: false,
-            HourStart: 22,
-            HourEnd: 6
+            HourStart: entities.Sensor.SunNextMidnight.LocalHour(),
+            HourEnd: entities.Sensor.SunNextRising.LocalHour()
         ),
     };
     private bool _isHouseEmpty = false;
+    public override void StartAutomation()
+    {
+        base.StartAutomation();
+        Logger.LogDebug("AC schedule settings initialized based on current sun sensor values. HourStart and HourEnd may vary daily depending on sunrise, sunset, and midnight times.");
+
+        foreach (var kvp in GetCurrentAcScheduleSettings())
+        {
+            var setting = kvp.Value;
+
+            Logger.LogDebug("TimeBlock {TimeBlock}: NormalTemp={NormalTemp}, PowerSavingTemp={PowerSavingTemp}, ClosedDoorTemp={ClosedDoorTemp}, UnoccupiedTemp={UnoccupiedTemp}, Mode={Mode}, ActivateFan={ActivateFan}, HourStart={HourStart}, HourEnd={HourEnd}",
+                kvp.Key, setting.NormalTemp, setting.PowerSavingTemp, setting.ClosedDoorTemp, setting.UnoccupiedTemp,
+                setting.Mode, setting.ActivateFan, setting.HourStart, setting.HourEnd);
+        }
+        _scheduler.ScheduleCron("0 0 * * *", RestartAutomations);
+    }
 
     protected override IEnumerable<IDisposable> GetSwitchableAutomations() =>
         [
@@ -60,9 +75,14 @@ public class ClimateAutomation(Entities entities, IScheduler scheduler, ILogger<
 
     private IEnumerable<IDisposable> GetScheduledAutomations()
     {
-        foreach (var (timeBlock, setting) in _acScheduleSettings)
+        foreach (var (timeBlock, setting) in GetCurrentAcScheduleSettings())
         {
             var hour = setting.HourStart;
+            if (hour < 0 || hour > 23)
+            {
+                Logger.LogWarning("Invalid HourStart {HourStart} for TimeBlock {TimeBlock}. Skipping schedule.", hour, timeBlock);
+                continue;
+            }
             string cron = $"0 {hour} * * *";
             yield return _scheduler.ScheduleCron(cron, () => ApplyAcSettings(timeBlock));
         }
@@ -125,7 +145,7 @@ public class ClimateAutomation(Entities entities, IScheduler scheduler, ILogger<
 
     private TimeBlock? FindTimeBlock()
     {
-        foreach (var kv in _acScheduleSettings)
+        foreach (var kv in GetCurrentAcScheduleSettings())
         {
             if (TimeRange.IsCurrentTimeInBetween(kv.Value.HourStart, kv.Value.HourEnd))
                 return kv.Key;
@@ -135,12 +155,17 @@ public class ClimateAutomation(Entities entities, IScheduler scheduler, ILogger<
 
     private void ApplyAcSettings(TimeBlock? timeBlock)
     {
-        if (timeBlock is null || !_acScheduleSettings.TryGetValue(timeBlock.Value, out var setting) || !_ac.IsOn())
+        if (timeBlock is null || !GetCurrentAcScheduleSettings().TryGetValue(timeBlock.Value, out var setting) || !_ac.IsOn())
         {
             return;
         }
 
         int targetTemp = GetTemperature(setting);
+        if (_ac.Attributes?.Temperature == setting.NormalTemp && string.Equals(_ac.State, setting.Mode, StringComparison.OrdinalIgnoreCase))
+        {
+            Logger.LogDebug("Skipping ApplyAcSettings: AC already set to TargetTemp {Temp} and Mode {Mode}", setting.NormalTemp, setting.Mode);
+            return;
+        }
         Logger.LogDebug(
             "ApplyAcSchedule: Applying schedule for {TimeBlock} with target temp {TargetTemp} and mode {Mode}.",
             timeBlock.Value,
@@ -190,9 +215,9 @@ public class ClimateAutomation(Entities entities, IScheduler scheduler, ILogger<
 
 internal enum TimeBlock
 {
-    Morning,
-    Afternoon,
-    Night,
+    Sunrise,
+    Sunset,
+    Midnight,
 }
 
 internal record AcScheduleSetting(

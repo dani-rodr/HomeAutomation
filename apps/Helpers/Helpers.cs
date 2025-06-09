@@ -151,7 +151,19 @@ public static class StateExtensions
     public static bool IsUnavailable(this string? state) =>
         string.Equals(state, HaEntityStates.UNAVAILABLE, StringComparison.OrdinalIgnoreCase);
 }
+public static class SensorEntityExtensions
+{
+    public static int LocalHour(this SensorEntity sensor)
+    {
+        if (sensor?.EntityState?.State is not string stateString ||
+            !DateTime.TryParse(stateString, out var utcTime))
+        {
+            return -1; // Use as fallback for invalid state
+        }
 
+        return utcTime.Hour;
+    }
+}
 public static class BinaryEntityExtensions
 {
     public static bool IsOpen(this BinarySensorEntity sensor) => sensor.State.IsOpen();
