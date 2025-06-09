@@ -30,10 +30,7 @@ public class MotionAutomation(Entities entities, ILogger<Bedroom> logger)
             .OnDoubleClick(timeout: 2)
             .Subscribe(e =>
             {
-                if (HaIdentity.IsPhysicallyOperated(e.FirstOrDefault()?.UserId()))
-                {
-                    Light.Toggle();
-                }
+                ToggleLightsViaSwitch(e.First());
             });
         yield return _rightSideEmptySwitch.StateChanges().Subscribe(ToggleLightsViaSwitch);
         yield return Light.StateChanges().Subscribe(EnableMasterSwitchWhenLightActive);

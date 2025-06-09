@@ -21,7 +21,7 @@ public abstract class MotionAutomationBase(
         yield return Light.StateChanges().Subscribe(ControlMasterSwitchOnLightChange);
         if (MasterSwitch != null)
         {
-            yield return MasterSwitch.StateChanges().Subscribe(ControlLightOnMotionChange);
+            yield return MasterSwitch.StateChanges().IsOn().Subscribe(ControlLightOnMotionChange);
         }
         foreach (var automation in GetAdditionalStartupAutomations())
         {
@@ -50,20 +50,20 @@ public abstract class MotionAutomationBase(
 
     private void ControlMasterSwitchOnLightChange(StateChange evt)
     {
-        var state = Light.State;
-        var userId = evt.UserId();
-        if (state == HaEntityStates.ON && HaIdentity.IsManuallyOperated(userId))
+        var isLightsOn = Light.IsOn();
+        var isManuallyOperated = HaIdentity.IsManuallyOperated(evt.UserId());
+        if (!isManuallyOperated)
         {
-            Logger.LogInformation(
-                "ControlMasterSwitchOnLightChange: Light turned ON by manual operation, turning OFF master switch."
-            );
+            return;
+        }
+        if (isLightsOn)
+        {
+            Logger.LogInformation("ControlMasterSwitchOnLightChange: Light turned ON by manual operation, turning OFF master switch.");
             MasterSwitch?.TurnOff();
         }
-        else if (state == HaEntityStates.OFF && HaIdentity.IsManuallyOperated(userId))
+        else
         {
-            Logger.LogInformation(
-                "ControlMasterSwitchOnLightChange: Light turned OFF by manual operation, turning ON master switch."
-            );
+            Logger.LogInformation("ControlMasterSwitchOnLightChange: Light turned OFF by manual operation, turning ON master switch.");
             MasterSwitch?.TurnOn();
         }
     }
