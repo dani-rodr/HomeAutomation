@@ -28,69 +28,88 @@ public class ClimateAutomation(Entities entities, IScheduler scheduler, ILogger<
         _cachedAcSettings = new()
         {
             [TimeBlock.Sunrise] = new(
-            NormalTemp: 25,
-            PowerSavingTemp: 27,
-            ClosedDoorTemp: 24,
-            UnoccupiedTemp: 27,
-            Mode: HaEntityStates.DRY,
-            ActivateFan: true,
-            HourStart: entities.Sensor.SunNextRising.LocalHour(),
-            HourEnd: entities.Sensor.SunNextSetting.LocalHour()
-        ),
+                NormalTemp: 25,
+                PowerSavingTemp: 27,
+                ClosedDoorTemp: 24,
+                UnoccupiedTemp: 27,
+                Mode: HaEntityStates.DRY,
+                ActivateFan: true,
+                HourStart: entities.Sensor.SunNextRising.LocalHour(),
+                HourEnd: entities.Sensor.SunNextSetting.LocalHour()
+            ),
 
             [TimeBlock.Sunset] = new(
-            NormalTemp: 24,
-            PowerSavingTemp: 27,
-            ClosedDoorTemp: 22,
-            UnoccupiedTemp: 25,
-            Mode: HaEntityStates.COOL,
-            ActivateFan: false,
-            HourStart: entities.Sensor.SunNextSetting.LocalHour(),
-            HourEnd: entities.Sensor.SunNextMidnight.LocalHour()
-        ),
+                NormalTemp: 24,
+                PowerSavingTemp: 27,
+                ClosedDoorTemp: 22,
+                UnoccupiedTemp: 25,
+                Mode: HaEntityStates.COOL,
+                ActivateFan: false,
+                HourStart: entities.Sensor.SunNextSetting.LocalHour(),
+                HourEnd: entities.Sensor.SunNextMidnight.LocalHour()
+            ),
 
             [TimeBlock.Midnight] = new(
-            NormalTemp: 22,
-            PowerSavingTemp: 25,
-            ClosedDoorTemp: 20,
-            UnoccupiedTemp: 25,
-            Mode: HaEntityStates.COOL,
-            ActivateFan: false,
-            HourStart: entities.Sensor.SunNextMidnight.LocalHour(),
-            HourEnd: entities.Sensor.SunNextRising.LocalHour()
-        ),
+                NormalTemp: 22,
+                PowerSavingTemp: 25,
+                ClosedDoorTemp: 20,
+                UnoccupiedTemp: 25,
+                Mode: HaEntityStates.COOL,
+                ActivateFan: false,
+                HourStart: entities.Sensor.SunNextMidnight.LocalHour(),
+                HourEnd: entities.Sensor.SunNextRising.LocalHour()
+            ),
         };
 
         return _cachedAcSettings;
     }
+
     public override void StartAutomation()
     {
         base.StartAutomation();
-        Logger.LogDebug("AC schedule settings initialized based on current sun sensor values. HourStart and HourEnd may vary daily depending on sunrise, sunset, and midnight times.");
+        Logger.LogDebug(
+            "AC schedule settings initialized based on current sun sensor values. HourStart and HourEnd may vary daily depending on sunrise, sunset, and midnight times."
+        );
         LogAcScheduleSettings();
     }
+
     protected override IEnumerable<IDisposable> GetStartupAutomations()
     {
-        yield return _scheduler.ScheduleCron("0 0 * * *", () =>
-        {
-            Logger.LogInformation("Midnight AC schedule refresh triggered");
-            InvalidateAcSettingsCache();
-        });
+        yield return _scheduler.ScheduleCron(
+            "0 0 * * *",
+            () =>
+            {
+                Logger.LogInformation("Midnight AC schedule refresh triggered");
+                InvalidateAcSettingsCache();
+            }
+        );
     }
+
     private void LogAcScheduleSettings()
     {
         foreach (var kvp in GetCurrentAcScheduleSettings())
         {
             var setting = kvp.Value;
-            Logger.LogDebug("TimeBlock {TimeBlock}: NormalTemp={NormalTemp}, PowerSavingTemp={PowerSavingTemp}, ClosedDoorTemp={ClosedDoorTemp}, UnoccupiedTemp={UnoccupiedTemp}, Mode={Mode}, ActivateFan={ActivateFan}, HourStart={HourStart}, HourEnd={HourEnd}",
-                kvp.Key, setting.NormalTemp, setting.PowerSavingTemp, setting.ClosedDoorTemp, setting.UnoccupiedTemp,
-                setting.Mode, setting.ActivateFan, setting.HourStart, setting.HourEnd);
+            Logger.LogDebug(
+                "TimeBlock {TimeBlock}: NormalTemp={NormalTemp}, PowerSavingTemp={PowerSavingTemp}, ClosedDoorTemp={ClosedDoorTemp}, UnoccupiedTemp={UnoccupiedTemp}, Mode={Mode}, ActivateFan={ActivateFan}, HourStart={HourStart}, HourEnd={HourEnd}",
+                kvp.Key,
+                setting.NormalTemp,
+                setting.PowerSavingTemp,
+                setting.ClosedDoorTemp,
+                setting.UnoccupiedTemp,
+                setting.Mode,
+                setting.ActivateFan,
+                setting.HourStart,
+                setting.HourEnd
+            );
         }
     }
+
     private void InvalidateAcSettingsCache()
     {
         _cachedAcSettings = null;
     }
+
     protected override IEnumerable<IDisposable> GetSwitchableAutomations() =>
         [
             .. GetScheduledAutomations(),
@@ -106,7 +125,11 @@ public class ClimateAutomation(Entities entities, IScheduler scheduler, ILogger<
             var hour = setting.HourStart;
             if (hour < 0 || hour > 23)
             {
-                Logger.LogWarning("Invalid HourStart {HourStart} for TimeBlock {TimeBlock}. Skipping schedule.", hour, timeBlock);
+                Logger.LogWarning(
+                    "Invalid HourStart {HourStart} for TimeBlock {TimeBlock}. Skipping schedule.",
+                    hour,
+                    timeBlock
+                );
                 continue;
             }
             string cron = $"0 {hour} * * *";
@@ -137,14 +160,17 @@ public class ClimateAutomation(Entities entities, IScheduler scheduler, ILogger<
     {
         var houseEmpty = entities.BinarySensor.House;
 
-        yield return houseEmpty.StateChangesWithCurrent().IsOffForMinutes(20).Subscribe(_ =>
-        {
-            lock (_houseEmptyLock)
+        yield return houseEmpty
+            .StateChangesWithCurrent()
+            .IsOffForMinutes(20)
+            .Subscribe(_ =>
             {
-                _isHouseEmpty = true;
-                Logger.LogInformation("House marked as empty after 20 minutes");
-            }
-        });
+                lock (_houseEmptyLock)
+                {
+                    _isHouseEmpty = true;
+                    Logger.LogInformation("House marked as empty after 20 minutes");
+                }
+            });
 
         yield return houseEmpty
             .StateChanges()
@@ -199,15 +225,26 @@ public class ClimateAutomation(Entities entities, IScheduler scheduler, ILogger<
 
     private void ApplyAcSettings(TimeBlock? timeBlock)
     {
-        if (timeBlock is null || !GetCurrentAcScheduleSettings().TryGetValue(timeBlock.Value, out var setting) || !_ac.IsOn())
+        if (
+            timeBlock is null
+            || !GetCurrentAcScheduleSettings().TryGetValue(timeBlock.Value, out var setting)
+            || !_ac.IsOn()
+        )
         {
             return;
         }
 
         int targetTemp = GetTemperature(setting);
-        if (_ac.Attributes?.Temperature == setting.NormalTemp && string.Equals(_ac.State, setting.Mode, StringComparison.OrdinalIgnoreCase))
+        if (
+            _ac.Attributes?.Temperature == targetTemp
+            && string.Equals(_ac.State, setting.Mode, StringComparison.OrdinalIgnoreCase)
+        )
         {
-            Logger.LogDebug("Skipping ApplyAcSettings: AC already set to TargetTemp {Temp} and Mode {Mode}", setting.NormalTemp, setting.Mode);
+            Logger.LogDebug(
+                "Skipping ApplyAcSettings: AC already set to TargetTemp {Temp} and Mode {Mode}",
+                setting.NormalTemp,
+                setting.Mode
+            );
             return;
         }
         Logger.LogDebug(
@@ -222,17 +259,28 @@ public class ClimateAutomation(Entities entities, IScheduler scheduler, ILogger<
 
     private int GetTemperature(AcScheduleSetting setting)
     {
-        if (_motionSensor.IsOff())
+        bool occupied = _motionSensor.IsOccupied();
+        bool doorOpen = _doorSensor.IsOpen();
+        bool powerSaving = entities.InputBoolean.AcPowerSavingMode.IsOn();
+
+        Logger.LogInformation(
+            "Occupied: {Occupied}, DoorOpen: {DoorOpen}, PowerSaving: {PowerSaving}",
+            occupied,
+            doorOpen,
+            powerSaving
+        );
+
+        if (!occupied && doorOpen)
         {
             return setting.UnoccupiedTemp;
         }
 
-        if (_doorSensor.IsClosed())
+        if (occupied && !doorOpen)
         {
             return setting.ClosedDoorTemp;
         }
 
-        if (entities.InputBoolean.AcPowerSavingMode.IsOn())
+        if (occupied && doorOpen && entities.InputBoolean.AcPowerSavingMode.IsOn())
         {
             return setting.PowerSavingTemp;
         }

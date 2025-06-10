@@ -6,7 +6,15 @@
       "version": "25.18.1",
       "commands": [
         "nd-codegen"
-      ]
+      ],
+      "rollForward": false
+    },
+    "csharpier": {
+      "version": "1.0.2",
+      "commands": [
+        "csharpier"
+      ],
+      "rollForward": false
     }
   }
 }
