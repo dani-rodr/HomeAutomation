@@ -14,6 +14,23 @@ public static class HaEntityStates
     public const string MEDIUM = "medium";
     public const string HIGH = "high";
     public const string AUTO = "auto";
+
+    // Weather states
+    public const string SUNNY = "sunny";
+    public const string CLEAR_NIGHT = "clear-night";
+    public const string PARTLY_CLOUDY = "partlycloudy";
+    public const string CLOUDY = "cloudy";
+    public const string RAINY = "rainy";
+    public const string POURING = "pouring";
+    public const string LIGHTNING = "lightning";
+    public const string LIGHTNING_RAINY = "lightning-rainy";
+    public const string HAIL = "hail";
+    public const string SNOWY = "snowy";
+    public const string SNOWY_RAINY = "snowy-rainy";
+    public const string FOG = "fog";
+    public const string WINDY = "windy";
+    public const string WINDY_VARIANT = "windy-variant";
+    public const string EXCEPTIONAL = "exceptional";
 }
 
 public static class HaIdentity

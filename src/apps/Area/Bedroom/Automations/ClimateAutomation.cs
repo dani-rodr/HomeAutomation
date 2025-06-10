@@ -262,17 +262,20 @@ public class ClimateAutomation(Entities entities, IScheduler scheduler, ILogger<
         bool occupied = _motionSensor.IsOccupied();
         bool doorOpen = _doorSensor.IsOpen();
         bool powerSaving = entities.InputBoolean.AcPowerSavingMode.IsOn();
+        var weather = entities.Weather.Home;
+        bool isColdWeather = !weather.IsSunny();
 
         Logger.LogInformation(
-            "Occupied: {Occupied}, DoorOpen: {DoorOpen}, PowerSaving: {PowerSaving}",
+            "Occupied: {Occupied}, DoorOpen: {DoorOpen}, PowerSaving: {PowerSaving} Weather: {WeatherCondition}",
             occupied,
             doorOpen,
-            powerSaving
+            powerSaving,
+            weather?.State
         );
 
         if (!occupied && doorOpen)
         {
-            return setting.UnoccupiedTemp;
+            return isColdWeather ? setting.NormalTemp : setting.UnoccupiedTemp;
         }
 
         if (occupied && !doorOpen)

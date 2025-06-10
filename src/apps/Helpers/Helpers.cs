@@ -151,12 +151,12 @@ public static class StateExtensions
     public static bool IsUnavailable(this string? state) =>
         string.Equals(state, HaEntityStates.UNAVAILABLE, StringComparison.OrdinalIgnoreCase);
 }
+
 public static class SensorEntityExtensions
 {
     public static int LocalHour(this SensorEntity sensor)
     {
-        if (sensor?.EntityState?.State is not string stateString ||
-            !DateTime.TryParse(stateString, out var utcTime))
+        if (sensor?.EntityState?.State is not string stateString || !DateTime.TryParse(stateString, out var utcTime))
         {
             return -1; // Use as fallback for invalid state
         }
@@ -164,6 +164,7 @@ public static class SensorEntityExtensions
         return utcTime.Hour;
     }
 }
+
 public static class BinaryEntityExtensions
 {
     public static bool IsOpen(this BinarySensorEntity sensor) => sensor.State.IsOpen();
@@ -187,6 +188,35 @@ public static class ClimateEntityExtensions
         string.Equals(climate.State, HaEntityStates.OFF, StringComparison.OrdinalIgnoreCase);
 
     public static bool IsOn(this ClimateEntity climate) => climate.IsDry() || climate.IsCool();
+}
+
+public static class WeatherEntityExtensions
+{
+    public static bool IsDry(this WeatherEntity climate) =>
+        string.Equals(climate.State, HaEntityStates.DRY, StringComparison.OrdinalIgnoreCase);
+
+    public static bool IsSunny(this WeatherEntity climate)
+    {
+        return (
+            string.Equals(climate.State, HaEntityStates.SUNNY, StringComparison.OrdinalIgnoreCase)
+            || string.Equals(climate.State, HaEntityStates.PARTLY_CLOUDY, StringComparison.OrdinalIgnoreCase)
+        );
+    }
+
+    public static bool IsRainy(this WeatherEntity climate) =>
+        climate.State is HaEntityStates.RAINY or HaEntityStates.POURING or HaEntityStates.LIGHTNING_RAINY;
+
+    public static bool IsCloudy(this WeatherEntity climate) =>
+        climate.State is HaEntityStates.CLOUDY or HaEntityStates.PARTLY_CLOUDY;
+
+    public static bool IsClearNight(this WeatherEntity climate) =>
+        string.Equals(climate.State, HaEntityStates.CLEAR_NIGHT, StringComparison.OrdinalIgnoreCase);
+
+    public static bool IsStormy(this WeatherEntity climate) =>
+        climate.State is HaEntityStates.LIGHTNING or HaEntityStates.LIGHTNING_RAINY or HaEntityStates.HAIL;
+
+    public static bool IsSnowy(this WeatherEntity climate) =>
+        climate.State is HaEntityStates.SNOWY or HaEntityStates.SNOWY_RAINY;
 }
 
 public static class NumberEntityExtensions
