@@ -11,6 +11,7 @@ public class ClimateAutomation(Entities entities, IScheduler scheduler, ILogger 
     private readonly BinarySensorEntity _motionSensor = entities.BinarySensor.BedroomPresenceSensors;
     private readonly BinarySensorEntity _doorSensor = entities.BinarySensor.ContactSensorDoor;
     private readonly SwitchEntity _fanSwitch = entities.Switch.Sonoff100238104e1;
+    private readonly InputBooleanEntity _isPowerSavingMode = entities.InputBoolean.AcPowerSavingMode;
     private Dictionary<TimeBlock, AcScheduleSetting>? _cachedAcSettings;
 
     private Dictionary<TimeBlock, AcScheduleSetting> GetCurrentAcScheduleSettings()
@@ -25,8 +26,8 @@ public class ClimateAutomation(Entities entities, IScheduler scheduler, ILogger 
             [TimeBlock.Sunrise] = new(
                 NormalTemp: 25,
                 PowerSavingTemp: 27,
-                ClosedDoorTemp: 24,
-                UnoccupiedTemp: 27,
+                CoolTemp: 24,
+                PassiveTemp: 27,
                 Mode: HaEntityStates.DRY,
                 ActivateFan: true,
                 HourStart: entities.Sensor.SunNextRising.LocalHour(),
@@ -36,8 +37,8 @@ public class ClimateAutomation(Entities entities, IScheduler scheduler, ILogger 
             [TimeBlock.Sunset] = new(
                 NormalTemp: 24,
                 PowerSavingTemp: 27,
-                ClosedDoorTemp: 22,
-                UnoccupiedTemp: 25,
+                CoolTemp: 22,
+                PassiveTemp: 25,
                 Mode: HaEntityStates.COOL,
                 ActivateFan: false,
                 HourStart: entities.Sensor.SunNextSetting.LocalHour(),
@@ -47,8 +48,8 @@ public class ClimateAutomation(Entities entities, IScheduler scheduler, ILogger 
             [TimeBlock.Midnight] = new(
                 NormalTemp: 24,
                 PowerSavingTemp: 25,
-                ClosedDoorTemp: 20,
-                UnoccupiedTemp: 25,
+                CoolTemp: 20,
+                PassiveTemp: 25,
                 Mode: HaEntityStates.COOL,
                 ActivateFan: false,
                 HourStart: entities.Sensor.SunNextMidnight.LocalHour(),
@@ -90,8 +91,8 @@ public class ClimateAutomation(Entities entities, IScheduler scheduler, ILogger 
                 kvp.Key,
                 setting.NormalTemp,
                 setting.PowerSavingTemp,
-                setting.ClosedDoorTemp,
-                setting.UnoccupiedTemp,
+                setting.CoolTemp,
+                setting.PassiveTemp,
                 setting.Mode,
                 setting.ActivateFan,
                 setting.HourStart,
@@ -253,7 +254,7 @@ public class ClimateAutomation(Entities entities, IScheduler scheduler, ILogger 
     {
         bool isOccupied = _motionSensor.IsOccupied();
         bool isDoorOpen = _doorSensor.IsOpen();
-        bool isPowerSaving = entities.InputBoolean.AcPowerSavingMode.IsOn();
+        bool isPowerSaving = _isPowerSavingMode.IsOn();
         var weather = entities.Weather.Home;
         bool isColdWeather = !weather.IsSunny();
 
@@ -266,11 +267,11 @@ public class ClimateAutomation(Entities entities, IScheduler scheduler, ILogger 
         );
         return (isOccupied, isDoorOpen, isPowerSaving, isColdWeather) switch
         {
-            (false, true, _, true) => setting.NormalTemp,
-            (false, true, _, false) => setting.UnoccupiedTemp,
-            (true, false, _, _) => setting.ClosedDoorTemp,
-            (true, true, true, _) => setting.PowerSavingTemp,
-            _ => setting.NormalTemp,
+            (_, _, true, _) => setting.PowerSavingTemp,
+            (true, false, _, _) => setting.CoolTemp,
+            (_, true, _, true) => setting.NormalTemp,
+            (_, true, _, false) => setting.PassiveTemp,
+            (false, false, _, _) => setting.PassiveTemp,
         };
     }
 
@@ -301,8 +302,8 @@ internal enum TimeBlock
 internal record AcScheduleSetting(
     int NormalTemp,
     int PowerSavingTemp,
-    int ClosedDoorTemp,
-    int UnoccupiedTemp,
+    int CoolTemp,
+    int PassiveTemp,
     string Mode,
     bool ActivateFan,
     int HourStart,
