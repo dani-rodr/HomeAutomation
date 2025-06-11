@@ -9,6 +9,9 @@ public class MotionAutomation(Entities entities, ILogger logger)
         entities.Number.Ld2410Esp325StillTargetDelay
     )
 {
+    protected override int SensorWaitTime => 15;
+    protected override int SensorActiveDelayValue => 15;
+    protected override int SensorInactiveDelayValue => 1;
     private readonly BinarySensorEntity _powerPlug = entities.BinarySensor.SmartPlug3PowerExceedsThreshold;
 
     protected override IEnumerable<IDisposable> GetLightAutomations() =>
@@ -17,13 +20,12 @@ public class MotionAutomation(Entities entities, ILogger logger)
             MotionSensor.StateChanges().IsOff().Subscribe(_ => Light.TurnOff()),
         ];
 
-    protected override IEnumerable<IDisposable> GetSensorDelayAutomations() =>
-        [
-            .. base.GetSensorDelayAutomations(),
-            _powerPlug.StateChanges().IsOn().Subscribe(_ => SensorDelay?.SetNumericValue(SensorActiveDelayValue)),
-        ];
+    protected override IEnumerable<IDisposable> GetAdditionalSwitchableAutomations() => [SetupDelayOnPowerPlug()];
 
     protected override IEnumerable<IDisposable> GetAdditionalStartupAutomations() => [SetupMotionSensorReactivation()];
+
+    private IDisposable SetupDelayOnPowerPlug() =>
+        _powerPlug.StateChanges().IsOn().Subscribe(_ => SensorDelay?.SetNumericValue(SensorActiveDelayValue));
 
     private IDisposable SetupMotionSensorReactivation() =>
         MotionSensor.StateChanges().IsOffForHours(1).Subscribe(_ => MasterSwitch?.TurnOn());

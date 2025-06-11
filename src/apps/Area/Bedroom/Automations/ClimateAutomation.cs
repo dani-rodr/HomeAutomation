@@ -87,7 +87,10 @@ public class ClimateAutomation(Entities entities, IScheduler scheduler, ILogger 
         {
             var setting = kvp.Value;
             Logger.LogDebug(
-                "TimeBlock {TimeBlock}: NormalTemp={NormalTemp}, PowerSavingTemp={PowerSavingTemp}, ClosedDoorTemp={ClosedDoorTemp}, UnoccupiedTemp={UnoccupiedTemp}, Mode={Mode}, ActivateFan={ActivateFan}, HourStart={HourStart}, HourEnd={HourEnd}",
+                "TimeBlock {TimeBlock}: NormalTemp={NormalTemp},"
+                    + " PowerSavingTemp={PowerSavingTemp}, CoolTemp={CoolTemp},"
+                    + " PassiveTemp={PassiveTemp}, Mode={Mode}, ActivateFan={ActivateFan},"
+                    + " HourStart={HourStart}, HourEnd={HourEnd}",
                 kvp.Key,
                 setting.NormalTemp,
                 setting.PowerSavingTemp,
@@ -211,7 +214,9 @@ public class ClimateAutomation(Entities entities, IScheduler scheduler, ILogger 
         foreach (var kv in GetCurrentAcScheduleSettings())
         {
             if (TimeRange.IsCurrentTimeInBetween(kv.Value.HourStart, kv.Value.HourEnd))
+            {
                 return kv.Key;
+            }
         }
         return null;
     }

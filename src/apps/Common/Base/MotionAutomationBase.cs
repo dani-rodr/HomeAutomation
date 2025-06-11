@@ -28,7 +28,7 @@ public abstract class MotionAutomationBase(
         }
     }
 
-    protected override IEnumerable<IDisposable> GetToggleableAutomations() =>
+    protected sealed override IEnumerable<IDisposable> GetToggleableAutomations() =>
         [.. GetLightAutomations(), .. GetSensorDelayAutomations(), .. GetAdditionalSwitchableAutomations()];
 
     protected virtual IEnumerable<IDisposable> GetLightAutomations() => [];
