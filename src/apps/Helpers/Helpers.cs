@@ -31,6 +31,15 @@ public static class StateChangeObservableExtensions
     public static IObservable<StateChange> IsUnknown(this IObservable<StateChange> source) =>
         source.IsAnyOfStates(HaEntityStates.UNKNOWN);
 
+    public static IObservable<StateChange> IsManuallyOperated(this IObservable<StateChange> source) =>
+        source.Where(s => HaIdentity.IsManuallyOperated(s.UserId()));
+
+    public static IObservable<StateChange> IsPhysicallyOperated(this IObservable<StateChange> source) =>
+        source.Where(s => HaIdentity.IsPhysicallyOperated(s.UserId()));
+
+    public static IObservable<StateChange> IsAutomated(this IObservable<StateChange> source) =>
+        source.Where(s => HaIdentity.IsAutomated(s.UserId()));
+
     public static IObservable<StateChange> WhenStateIsForSeconds(
         this IObservable<StateChange> source,
         string desiredState,
@@ -138,6 +147,10 @@ public static class StateExtensions
 
     public static bool IsValidButtonPress(this StateChange e) => DateTime.TryParse(e?.New?.State, out _);
 
+    public static bool IsOn(this StateChange e) => e?.New?.State?.IsOn() ?? false;
+
+    public static bool IsOff(this StateChange e) => e?.New?.State?.IsOff() ?? true;
+
     public static bool IsOpen(this string? state) => state.IsOn();
 
     public static bool IsClosed(this string? state) => state.IsOff();
@@ -151,12 +164,12 @@ public static class StateExtensions
     public static bool IsUnavailable(this string? state) =>
         string.Equals(state, HaEntityStates.UNAVAILABLE, StringComparison.OrdinalIgnoreCase);
 }
+
 public static class SensorEntityExtensions
 {
     public static int LocalHour(this SensorEntity sensor)
     {
-        if (sensor?.EntityState?.State is not string stateString ||
-            !DateTime.TryParse(stateString, out var utcTime))
+        if (sensor?.EntityState?.State is not string stateString || !DateTime.TryParse(stateString, out var utcTime))
         {
             return -1; // Use as fallback for invalid state
         }
@@ -164,6 +177,7 @@ public static class SensorEntityExtensions
         return utcTime.Hour;
     }
 }
+
 public static class BinaryEntityExtensions
 {
     public static bool IsOpen(this BinarySensorEntity sensor) => sensor.State.IsOpen();

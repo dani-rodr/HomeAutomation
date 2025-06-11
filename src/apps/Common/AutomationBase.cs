@@ -37,6 +37,7 @@ public abstract class AutomationBase(ILogger logger, SwitchEntity? masterSwitch 
         _toggleableAutomations?.Dispose();
         _toggleableAutomations = null;
     }
+
     private void ToggleAutomation(StateChange e)
     {
         if (MasterSwitch?.State != HaEntityStates.ON)

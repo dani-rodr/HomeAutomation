@@ -12,7 +12,7 @@ public abstract class MotionAutomationBase(
 {
     protected readonly BinarySensorEntity MotionSensor = motionSensor;
     protected readonly NumberEntity SensorDelay = sensorDelay;
-    protected virtual LightEntity Light { get; } = light;
+    protected readonly LightEntity Light = light;
     protected virtual int SensorWaitTime => 15;
     protected virtual int SensorDelayValueActive => 5;
     protected virtual int SensorDelayValueInactive => 1;

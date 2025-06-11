@@ -29,7 +29,10 @@ public class CookingAutomation(Entities entities, ILogger logger) : AutomationBa
                 if (_airFryerStatus.State == HaEntityStates.UNAVAILABLE)
                 {
                     _inductionTurnOff.Press();
-                    Logger.LogInformation("Auto-turned off induction cooker after {Minutes} minutes of boiling", minutes);
+                    Logger.LogInformation(
+                        "Auto-turned off induction cooker after {Minutes} minutes of boiling",
+                        minutes
+                    );
                 }
             });
     }

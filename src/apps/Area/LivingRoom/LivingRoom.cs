@@ -7,7 +7,10 @@ public class LivingRoom
 {
     public LivingRoom(Entities entities, ILogger<LivingRoom> logger)
     {
-        var motionAutomation = new MotionAutomation(entities, logger);
-        motionAutomation.StartAutomation();
+        var lightAutomation = new MotionAutomation(entities, logger);
+        lightAutomation.StartAutomation();
+
+        var fanAutomation = new FanAutomation(entities, logger);
+        fanAutomation.StartAutomation();
     }
 }
