@@ -2,7 +2,7 @@
 global using System;
 global using System.Reactive.Linq;
 global using HomeAssistantGenerated;
-global using HomeAutomation.apps.Common;
+global using HomeAutomation.apps.Common.Base;
 global using HomeAutomation.apps.Helpers;
 global using Microsoft.Extensions.Logging;
 global using NetDaemon.AppModel;

@@ -6,7 +6,7 @@ using NetDaemon.Extensions.Scheduler;
 
 namespace HomeAutomation.apps.Area.Bedroom.Automations;
 
-public class ClimateAutomation(Entities entities, IScheduler scheduler, ILogger<Bedroom> logger)
+public class ClimateAutomation(Entities entities, IScheduler scheduler, ILogger logger)
     : AutomationBase(logger, entities.Switch.AcAutomation)
 {
     private readonly IScheduler _scheduler = scheduler;

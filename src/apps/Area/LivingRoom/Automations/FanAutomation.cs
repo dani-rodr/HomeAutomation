@@ -3,8 +3,7 @@ using apps.Area.LivingRoom.Devices;
 
 namespace HomeAutomation.apps.Area.LivingRoom.Automations;
 
-public class FanAutomation(Entities entities, ILogger<LivingRoom> logger)
-    : AutomationBase(logger, entities.Switch.SalaMotionSensor)
+public class FanAutomation(Entities entities, ILogger logger) : AutomationBase(logger, entities.Switch.SalaMotionSensor)
 {
     private readonly SwitchEntity _ceilingFan = entities.Switch.CeilingFan;
     private readonly SwitchEntity _standFan = entities.Switch.Sonoff10023810231;
@@ -15,7 +14,7 @@ public class FanAutomation(Entities entities, ILogger<LivingRoom> logger)
     public override void StartAutomation()
     {
         base.StartAutomation();
-        AirPurifier airPurifier = new(entities, logger);
+        AirPurifier airPurifier = new(entities, Logger);
         airPurifier.StartAutomation();
     }
 

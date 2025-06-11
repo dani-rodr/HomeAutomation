@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace HomeAutomation.apps.Common;
+namespace HomeAutomation.apps.Common.Base;
 
 public abstract class DimmingMotionAutomationBase(
     SwitchEntity masterSwitch,

@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace HomeAutomation.apps.Area.Bedroom.Automations;
 
-public class MotionAutomation(Entities entities, ILogger<Bedroom> logger)
+public class MotionAutomation(Entities entities, ILogger logger)
     : MotionAutomationBase(
         entities.Switch.BedroomMotionSensor,
         entities.BinarySensor.BedroomPresenceSensors,

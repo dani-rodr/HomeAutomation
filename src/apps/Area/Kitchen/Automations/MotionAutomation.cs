@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 namespace HomeAutomation.apps.Area.Kitchen.Automations;
 
-public class MotionAutomation(Entities entities, ILogger<Kitchen> logger)
+public class MotionAutomation(Entities entities, ILogger logger)
     : MotionAutomationBase(
         entities.Switch.KitchenMotionSensor,
         entities.BinarySensor.KitchenMotionSensors,

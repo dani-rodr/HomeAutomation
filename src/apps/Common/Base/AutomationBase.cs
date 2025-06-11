@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Reactive.Disposables;
 using HomeAutomation.apps.Common.Interface;
 
-namespace HomeAutomation.apps.Common;
+namespace HomeAutomation.apps.Common.Base;
 
 public abstract class AutomationBase(ILogger logger, SwitchEntity? masterSwitch = null) : IAutomation, IDisposable
 {

@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 namespace HomeAutomation.apps.Area.LivingRoom.Automations;
 
-public class MotionAutomation(Entities entities, ILogger<LivingRoom> logger)
+public class MotionAutomation(Entities entities, ILogger logger)
     : DimmingMotionAutomationBase(
         entities.Switch.SalaMotionSensor,
         entities.BinarySensor.LivingRoomPresenceSensors,

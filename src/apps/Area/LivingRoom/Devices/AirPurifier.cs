@@ -3,8 +3,7 @@ using apps.Area.LivingRoom;
 
 namespace apps.Area.LivingRoom.Devices;
 
-public class AirPurifier(Entities entities, ILogger<HomeAutomation.apps.Area.LivingRoom.LivingRoom> logger)
-    : AutomationBase(logger, entities.Switch.CleanAir)
+public class AirPurifier(Entities entities, ILogger logger) : AutomationBase(logger, entities.Switch.CleanAir)
 {
     private readonly NumericSensorEntity _airQuality = entities.Sensor.XiaomiSg753990712Cpa4Pm25DensityP34;
     private readonly SwitchEntity _airPurifierFan = entities.Switch.XiaomiSmartAirPurifier4CompactAirPurifierFanSwitch;

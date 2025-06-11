@@ -1,6 +1,6 @@
 namespace HomeAutomation.apps.Area.Bathroom.Automations;
 
-public class MotionAutomation(Entities entities, ILogger<Bathroom> logger)
+public class MotionAutomation(Entities entities, ILogger logger)
     : DimmingMotionAutomationBase(
         entities.Switch.BathroomMotionSensor,
         entities.BinarySensor.BathroomPresenceSensors,
