@@ -156,36 +156,33 @@ public class ClimateAutomation(Entities entities, IScheduler scheduler, ILogger 
     private IEnumerable<IDisposable> GetHousePresenceAutomations()
     {
         var houseEmpty = entities.BinarySensor.House;
-
-        yield return houseEmpty
-            .StateChangesWithCurrent()
-            .IsOffForMinutes(20)
-            .Subscribe(_ =>
-            {
-                lock (_houseEmptyLock)
-                {
-                    _isHouseEmpty = true;
-                    Logger.LogInformation("House marked as empty after 20 minutes");
-                }
-            });
-
+        yield return houseEmpty.StateChanges().IsOffForHours(1).Subscribe(_ => _ac.TurnOff());
         yield return houseEmpty
             .StateChanges()
-            .Where(e => e.IsOn())
+            .IsOn()
             .Subscribe(e =>
             {
-                bool wasEmpty;
-                lock (_houseEmptyLock)
-                {
-                    wasEmpty = _isHouseEmpty;
-                    _isHouseEmpty = false;
-                }
+                var last = e.Old?.LastChanged;
+                var current = e.New?.LastChanged;
 
-                if (wasEmpty)
+                if (!(last.HasValue && current.HasValue))
                 {
-                    Logger.LogInformation("House reoccupied, applying AC settings");
-                    ApplyTimeBasedAcSetting(e);
+                    return;
                 }
+                var timeThresholdMinutes = 20;
+
+                var durationEmptyMinutes = (current.Value - last.Value).TotalMinutes;
+                if (durationEmptyMinutes < timeThresholdMinutes)
+                {
+                    Logger.LogInformation(
+                        "House was only empty for {Minutes} minutes. Skipping AC change.",
+                        durationEmptyMinutes
+                    );
+                    return;
+                }
+                Logger.LogInformation("House was empty for {Minutes} minutes", durationEmptyMinutes);
+                _ac.TurnOn();
+                ApplyTimeBasedAcSetting(e);
             });
     }
 
