@@ -12,9 +12,9 @@ public class AirPurifier(Entities entities, ILogger logger) : AutomationBase(log
     private bool _isCleaningAir = false;
     private bool _isStandFanManuallyOperated = false;
 
-    protected override IEnumerable<IDisposable> GetStartupAutomations() => [];
+    protected override IEnumerable<IDisposable> GetPersistentAutomations() => [];
 
-    protected override IEnumerable<IDisposable> GetSwitchableAutomations()
+    protected override IEnumerable<IDisposable> GetToggleableAutomations()
     {
         int waitTime = 10;
         int cleanAirThreshold = 5;

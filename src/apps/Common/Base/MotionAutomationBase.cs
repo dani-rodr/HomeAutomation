@@ -6,7 +6,7 @@ public abstract class MotionAutomationBase(
     LightEntity light,
     NumberEntity sensorDelay,
     ILogger logger
-) : AutomationBase(logger, masterSwitch), IDisposable
+) : AutomationBase(logger, masterSwitch)
 {
     protected readonly BinarySensorEntity MotionSensor = motionSensor;
     protected readonly NumberEntity SensorDelay = sensorDelay;
@@ -15,7 +15,7 @@ public abstract class MotionAutomationBase(
     protected virtual int SensorDelayValueActive => 5;
     protected virtual int SensorDelayValueInactive => 1;
 
-    protected sealed override IEnumerable<IDisposable> GetStartupAutomations()
+    protected sealed override IEnumerable<IDisposable> GetPersistentAutomations()
     {
         yield return Light.StateChanges().Subscribe(ControlMasterSwitchOnLightChange);
         if (MasterSwitch != null)
@@ -28,7 +28,7 @@ public abstract class MotionAutomationBase(
         }
     }
 
-    protected override IEnumerable<IDisposable> GetSwitchableAutomations() =>
+    protected override IEnumerable<IDisposable> GetToggleableAutomations() =>
         [.. GetLightAutomations(), .. GetSensorDelayAutomations(), .. GetAdditionalSwitchableAutomations()];
 
     protected virtual IEnumerable<IDisposable> GetLightAutomations() => [];
@@ -83,11 +83,5 @@ public abstract class MotionAutomationBase(
         {
             Light.TurnOff();
         }
-    }
-
-    public override void Dispose()
-    {
-        base.Dispose();
-        GC.SuppressFinalize(this);
     }
 }

@@ -13,12 +13,10 @@ public class MotionAutomation(Entities entities, ILogger logger)
 {
     private readonly SwitchEntity _rightSideEmptySwitch = entities.Switch.Sonoff1002352c401;
     private readonly SwitchEntity _leftSideFanSwitch = entities.Switch.Sonoff100238104e1;
-    private bool _isFanManuallyActivated = false;
 
-    protected override IEnumerable<IDisposable> GetAdditionalStartupAutomations() =>
-        [.. GetLightSwitchAutomations(), .. GetFanMotionAutomations()];
+    protected override IEnumerable<IDisposable> GetAdditionalStartupAutomations() => GetLightSwitchAutomations();
 
-    protected override IEnumerable<IDisposable> GetSwitchableAutomations()
+    protected override IEnumerable<IDisposable> GetToggleableAutomations()
     {
         yield return MotionSensor.StateChangesWithCurrent().IsOn().Subscribe(_ => Light.TurnOn());
         yield return MotionSensor.StateChangesWithCurrent().IsOff().Subscribe(_ => Light.TurnOff());
@@ -35,13 +33,6 @@ public class MotionAutomation(Entities entities, ILogger logger)
             });
         yield return _rightSideEmptySwitch.StateChanges().Subscribe(ToggleLightsViaSwitch);
         yield return Light.StateChanges().Subscribe(EnableMasterSwitchWhenLightActive);
-    }
-
-    private IEnumerable<IDisposable> GetFanMotionAutomations()
-    {
-        yield return _leftSideFanSwitch.StateChangesWithCurrent().Subscribe(UpdateFanActivationStatus);
-        yield return MotionSensor.StateChangesWithCurrent().IsOn().Subscribe(HandleMotionDetected);
-        yield return MotionSensor.StateChangesWithCurrent().IsOff().Subscribe(HandleMotionStopped);
     }
 
     private void EnableMasterSwitchWhenLightActive(StateChange e)
@@ -62,23 +53,4 @@ public class MotionAutomation(Entities entities, ILogger logger)
         Light.Toggle();
         MasterSwitch?.TurnOff();
     }
-
-    private void UpdateFanActivationStatus(StateChange e)
-    {
-        if (!HaIdentity.IsManuallyOperated(e.UserId()))
-        {
-            return;
-        }
-        _isFanManuallyActivated = _leftSideFanSwitch.State.IsOn();
-    }
-
-    private void HandleMotionDetected(StateChange e)
-    {
-        if (_isFanManuallyActivated)
-        {
-            _leftSideFanSwitch.TurnOn();
-        }
-    }
-
-    private void HandleMotionStopped(StateChange e) => _leftSideFanSwitch.TurnOff();
 }

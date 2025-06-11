@@ -2,13 +2,19 @@ using apps.Area.LivingRoom.Devices;
 
 namespace HomeAutomation.apps.Area.LivingRoom.Automations;
 
-public class FanAutomation(Entities entities, ILogger logger) : AutomationBase(logger, entities.Switch.SalaMotionSensor)
+public class FanAutomation(Entities entities, ILogger logger)
+    : FanAutomationBase(
+        entities.Switch.SalaMotionSensor,
+        entities.BinarySensor.LivingRoomPresenceSensors,
+        logger,
+        entities.Switch.CeilingFan,
+        entities.Switch.Sonoff10023810231,
+        entities.Switch.Cozylife955f
+    )
 {
-    private readonly SwitchEntity _ceilingFan = entities.Switch.CeilingFan;
-    private readonly SwitchEntity _standFan = entities.Switch.Sonoff10023810231;
-    private readonly SwitchEntity _exhaustFan = entities.Switch.Cozylife955f;
-    private readonly BinarySensorEntity _motionSensor = entities.BinarySensor.LivingRoomPresenceSensors;
-    private bool _isCeilingFanManuallyOff = false;
+    private SwitchEntity _exhaustFan = entities.Switch.Cozylife955f;
+
+    protected override bool IsFanManuallyActivated { get; set; } = false;
 
     public override void StartAutomation()
     {
@@ -17,21 +23,23 @@ public class FanAutomation(Entities entities, ILogger logger) : AutomationBase(l
         airPurifier.StartAutomation();
     }
 
-    protected override IEnumerable<IDisposable> GetStartupAutomations() => [];
+    protected override IEnumerable<IDisposable> GetPersistentAutomations() => [];
 
-    protected override IEnumerable<IDisposable> GetSwitchableAutomations() =>
-        [.. GetSalaFanAutomations(), GetCeilingFanManualOperations()];
+    protected override IEnumerable<IDisposable> GetToggleableAutomations() =>
+        [.. GetSalaFanAutomations(), .. GetCeilingFanManualOperations()];
 
-    private IDisposable GetCeilingFanManualOperations()
+    private IEnumerable<IDisposable> GetCeilingFanManualOperations()
     {
-        return _ceilingFan.StateChanges().IsOff().IsManuallyOperated().Subscribe(_ => _isCeilingFanManuallyOff = true);
+        yield return Fan.StateChanges().IsOn().IsManuallyOperated().Subscribe(_ => IsFanManuallyActivated = true);
+        yield return Fan.StateChanges().IsOff().IsManuallyOperated().Subscribe(_ => IsFanManuallyActivated = false);
+        yield return Fan.StateChanges().IsOffForMinutes(15).Subscribe(_ => IsFanManuallyActivated = true);
     }
 
     private void TurnOnSalaFans(StateChange e)
     {
-        if (!_isCeilingFanManuallyOff)
+        if (IsFanManuallyActivated)
         {
-            _ceilingFan.TurnOn();
+            Fan.TurnOn();
         }
 
         if (entities.BinarySensor.BedroomPresenceSensors.IsOff())
@@ -40,16 +48,9 @@ public class FanAutomation(Entities entities, ILogger logger) : AutomationBase(l
         }
     }
 
-    private void TurnOffAllFans(StateChange e)
-    {
-        _ceilingFan.TurnOff();
-        _standFan.TurnOff();
-        _exhaustFan.TurnOff();
-    }
-
     private IEnumerable<IDisposable> GetSalaFanAutomations()
     {
-        yield return _motionSensor.StateChanges().IsOnForSeconds(3).Subscribe(TurnOnSalaFans);
-        yield return _motionSensor.StateChanges().IsOffForMinutes(1).Subscribe(TurnOffAllFans);
+        yield return MotionSensor.StateChanges().IsOnForSeconds(3).Subscribe(TurnOnSalaFans);
+        yield return MotionSensor.StateChanges().IsOffForMinutes(1).Subscribe(TurnOffFans);
     }
 }

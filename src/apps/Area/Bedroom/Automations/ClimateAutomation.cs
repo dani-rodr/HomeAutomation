@@ -70,7 +70,7 @@ public class ClimateAutomation(Entities entities, IScheduler scheduler, ILogger 
         LogCurrentAcScheduleSettings();
     }
 
-    protected override IEnumerable<IDisposable> GetStartupAutomations()
+    protected override IEnumerable<IDisposable> GetPersistentAutomations()
     {
         yield return _scheduler.ScheduleCron(
             "0 0 * * *",
@@ -107,7 +107,7 @@ public class ClimateAutomation(Entities entities, IScheduler scheduler, ILogger 
         _cachedAcSettings = null;
     }
 
-    protected override IEnumerable<IDisposable> GetSwitchableAutomations() =>
+    protected override IEnumerable<IDisposable> GetToggleableAutomations() =>
         [
             .. GetScheduledAutomations(),
             .. GetSensorBasedAutomations(),

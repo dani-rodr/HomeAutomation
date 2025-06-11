@@ -10,13 +10,13 @@ public class CookingAutomation(Entities entities, ILogger logger) : AutomationBa
     private readonly ButtonEntity _inductionTurnOff = entities.Button.InductionCookerPower;
     private readonly NumericSensorEntity _inductionPower = entities.Sensor.SmartPlug3SonoffS31Power;
 
-    protected override IEnumerable<IDisposable> GetStartupAutomations()
+    protected override IEnumerable<IDisposable> GetPersistentAutomations()
     {
         yield return AutoTurnOffRiceCookerOnIdle(minutes: 10);
         yield return AutoTurnOffAfterBoilingWater(minutes: 12);
     }
 
-    protected override IEnumerable<IDisposable> GetSwitchableAutomations() => [];
+    protected override IEnumerable<IDisposable> GetToggleableAutomations() => [];
 
     private IDisposable AutoTurnOffAfterBoilingWater(int minutes)
     {

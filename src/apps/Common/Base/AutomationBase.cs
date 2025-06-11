@@ -7,18 +7,18 @@ public abstract class AutomationBase(ILogger logger, SwitchEntity? masterSwitch 
 {
     protected SwitchEntity? MasterSwitch { get; } = masterSwitch;
     protected ILogger Logger { get; } = logger;
-    protected abstract IEnumerable<IDisposable> GetSwitchableAutomations();
-    protected abstract IEnumerable<IDisposable> GetStartupAutomations();
+    protected abstract IEnumerable<IDisposable> GetToggleableAutomations();
+    protected abstract IEnumerable<IDisposable> GetPersistentAutomations();
     private CompositeDisposable? _toggleableAutomations;
-    private CompositeDisposable? _permanentAutomations;
+    private CompositeDisposable? _persistentAutomations;
 
     public virtual void StartAutomation()
     {
-        _permanentAutomations = [.. GetStartupAutomations()];
+        _persistentAutomations = [.. GetPersistentAutomations()];
 
         if (MasterSwitch is not null)
         {
-            _permanentAutomations.Add(MasterSwitch.StateAllChangesWithCurrent().Subscribe(ToggleAutomation));
+            _persistentAutomations.Add(MasterSwitch.StateAllChangesWithCurrent().Subscribe(ToggleAutomation));
         }
     }
 
@@ -28,7 +28,7 @@ public abstract class AutomationBase(ILogger logger, SwitchEntity? masterSwitch 
         {
             return;
         }
-        _toggleableAutomations = [.. GetSwitchableAutomations()];
+        _toggleableAutomations = [.. GetToggleableAutomations()];
     }
 
     private void DisableAutomations()
@@ -49,8 +49,8 @@ public abstract class AutomationBase(ILogger logger, SwitchEntity? masterSwitch 
 
     public virtual void Dispose()
     {
-        _permanentAutomations?.Dispose();
-        _permanentAutomations = null;
+        _persistentAutomations?.Dispose();
+        _persistentAutomations = null;
         DisableAutomations();
         GC.SuppressFinalize(this);
     }
