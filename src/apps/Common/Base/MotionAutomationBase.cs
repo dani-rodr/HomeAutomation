@@ -17,12 +17,12 @@ public abstract class MotionAutomationBase(
 
     protected sealed override IEnumerable<IDisposable> GetPersistentAutomations()
     {
-        yield return Light.StateChanges().Subscribe(ControlMasterSwitchOnLightChange);
+        yield return Light.StateChanges().IsManuallyOperated().Subscribe(ControlMasterSwitchOnLightChange);
         if (MasterSwitch != null)
         {
             yield return MasterSwitch.StateChanges().IsOn().Subscribe(ControlLightOnMotionChange);
         }
-        foreach (var automation in GetAdditionalStartupAutomations())
+        foreach (var automation in GetAdditionalPersistentAutomations())
         {
             yield return automation;
         }
@@ -35,7 +35,7 @@ public abstract class MotionAutomationBase(
 
     protected virtual IEnumerable<IDisposable> GetAdditionalSwitchableAutomations() => [];
 
-    protected virtual IEnumerable<IDisposable> GetAdditionalStartupAutomations() => [];
+    protected virtual IEnumerable<IDisposable> GetAdditionalPersistentAutomations() => [];
 
     protected virtual IEnumerable<IDisposable> GetSensorDelayAutomations()
     {
@@ -51,20 +51,14 @@ public abstract class MotionAutomationBase(
 
     private void ControlMasterSwitchOnLightChange(StateChange evt)
     {
-        var isLightsOn = Light.IsOn();
-        var isManuallyOperated = HaIdentity.IsManuallyOperated(evt.UserId());
-        if (!isManuallyOperated)
-        {
-            return;
-        }
-        if (isLightsOn)
+        if (Light.IsOn())
         {
             Logger.LogInformation(
                 "ControlMasterSwitchOnLightChange: Light turned ON by manual operation, turning OFF master switch."
             );
             MasterSwitch?.TurnOff();
         }
-        else
+        else if (Light.IsOff())
         {
             Logger.LogInformation(
                 "ControlMasterSwitchOnLightChange: Light turned OFF by manual operation, turning ON master switch."

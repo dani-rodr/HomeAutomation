@@ -22,7 +22,8 @@ public class MotionAutomation(Entities entities, ILogger logger)
 
     protected override IEnumerable<IDisposable> GetAdditionalSwitchableAutomations() => [SetupDelayOnPowerPlug()];
 
-    protected override IEnumerable<IDisposable> GetAdditionalStartupAutomations() => [SetupMotionSensorReactivation()];
+    protected override IEnumerable<IDisposable> GetAdditionalPersistentAutomations() =>
+        [SetupMotionSensorReactivation()];
 
     private IDisposable SetupDelayOnPowerPlug() =>
         _powerPlug.StateChanges().IsOn().Subscribe(_ => SensorDelay?.SetNumericValue(SensorActiveDelayValue));

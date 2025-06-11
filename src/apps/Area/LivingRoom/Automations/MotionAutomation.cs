@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-
 namespace HomeAutomation.apps.Area.LivingRoom.Automations;
 
 public class MotionAutomation(
@@ -22,7 +20,7 @@ public class MotionAutomation(
     protected override int DimBrightnessPct => 80;
     protected override int DimDelaySeconds => 15;
 
-    protected override IEnumerable<IDisposable> GetAdditionalStartupAutomations()
+    protected override IEnumerable<IDisposable> GetAdditionalPersistentAutomations()
     {
         yield return TurnOnMotionSensorOnTvOff(); // This is when we stay on sala while lights off then go to the room
     }

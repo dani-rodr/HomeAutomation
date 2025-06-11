@@ -18,7 +18,7 @@ public class MotionAutomation(Entities entities, ILogger logger)
     private readonly LightEntity _mirrorLight = entities.Light.ControllerRgbDf1c0d;
     private readonly BinarySensorEntity _roomDoor = entities.BinarySensor.ContactSensorDoor;
 
-    protected override IEnumerable<IDisposable> GetAdditionalStartupAutomations() =>
+    protected override IEnumerable<IDisposable> GetAdditionalPersistentAutomations() =>
         [_roomDoor.StateChanges().IsOff().Subscribe(_ => MasterSwitch?.TurnOn())];
 
     protected override IEnumerable<IDisposable> GetLightAutomations()

@@ -22,7 +22,7 @@ public class CookingAutomation(Entities entities, ILogger logger) : AutomationBa
     {
         var boilingPowerThreshold = 1550;
         return _inductionPower
-            .StateChangesWithCurrent()
+            .StateChanges()
             .WhenStateIsForMinutes(s => s?.State > boilingPowerThreshold, minutes)
             .Subscribe(_ =>
             {
@@ -41,7 +41,7 @@ public class CookingAutomation(Entities entities, ILogger logger) : AutomationBa
     {
         var riceCookerIdlePowerThreshold = 100;
         return _riceCookerPower
-            .StateChangesWithCurrent()
+            .StateChanges()
             .WhenStateIsForMinutes(s => s?.State < riceCookerIdlePowerThreshold, minutes)
             .Subscribe(_ =>
             {
