@@ -203,6 +203,35 @@ public static class ClimateEntityExtensions
     public static bool IsOn(this ClimateEntity climate) => climate.IsDry() || climate.IsCool();
 }
 
+public static class WeatherEntityExtensions
+{
+    public static bool IsDry(this WeatherEntity climate) =>
+        string.Equals(climate.State, HaEntityStates.DRY, StringComparison.OrdinalIgnoreCase);
+
+    public static bool IsSunny(this WeatherEntity climate)
+    {
+        return (
+            string.Equals(climate.State, HaEntityStates.SUNNY, StringComparison.OrdinalIgnoreCase)
+            || string.Equals(climate.State, HaEntityStates.PARTLY_CLOUDY, StringComparison.OrdinalIgnoreCase)
+        );
+    }
+
+    public static bool IsRainy(this WeatherEntity climate) =>
+        climate.State is HaEntityStates.RAINY or HaEntityStates.POURING or HaEntityStates.LIGHTNING_RAINY;
+
+    public static bool IsCloudy(this WeatherEntity climate) =>
+        climate.State is HaEntityStates.CLOUDY or HaEntityStates.PARTLY_CLOUDY;
+
+    public static bool IsClearNight(this WeatherEntity climate) =>
+        string.Equals(climate.State, HaEntityStates.CLEAR_NIGHT, StringComparison.OrdinalIgnoreCase);
+
+    public static bool IsStormy(this WeatherEntity climate) =>
+        climate.State is HaEntityStates.LIGHTNING or HaEntityStates.LIGHTNING_RAINY or HaEntityStates.HAIL;
+
+    public static bool IsSnowy(this WeatherEntity climate) =>
+        climate.State is HaEntityStates.SNOWY or HaEntityStates.SNOWY_RAINY;
+}
+
 public static class NumberEntityExtensions
 {
     public static void SetNumericValue(this NumberEntity entity, double value)
