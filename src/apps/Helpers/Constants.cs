@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-
 namespace HomeAutomation.apps.Helpers;
 
 public static class HaEntityStates
@@ -42,11 +40,11 @@ public static class HaIdentity
     public const string MANUAL = "";
 
     public static bool IsManuallyOperated(string? userId) =>
-        string.IsNullOrEmpty(userId?.Trim()) || KnownUsers.Contains(userId.Trim());
+        string.IsNullOrEmpty(userId?.Trim()) || _knownUsers.Contains(userId.Trim());
 
     public static bool IsPhysicallyOperated(string? userId) => string.IsNullOrEmpty(userId);
 
     public static bool IsAutomated(string? userId) => userId is not null && (userId == SUPERVISOR);
 
-    private static readonly HashSet<string> KnownUsers = [ATHENA_BEZOS, DANIEL_RODRIGUEZ, MIPAD5, MANUAL];
+    private static readonly HashSet<string> _knownUsers = [ATHENA_BEZOS, DANIEL_RODRIGUEZ, MIPAD5, MANUAL];
 }

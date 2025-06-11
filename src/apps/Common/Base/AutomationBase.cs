@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.Reactive.Disposables;
 using HomeAutomation.apps.Common.Interface;
 

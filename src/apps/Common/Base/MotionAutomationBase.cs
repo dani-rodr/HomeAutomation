@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-
 namespace HomeAutomation.apps.Common.Base;
 
 public abstract class MotionAutomationBase(

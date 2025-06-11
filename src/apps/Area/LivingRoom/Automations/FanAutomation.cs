@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using apps.Area.LivingRoom.Devices;
 
 namespace HomeAutomation.apps.Area.LivingRoom.Automations;

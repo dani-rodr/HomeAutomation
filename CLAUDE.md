@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 This is a NetDaemon v5 home automation application that runs on Home Assistant. NetDaemon is a C# automation platform that enables developers to write home automations using modern .NET design patterns. It integrates with Home Assistant using websockets for maximum performance and provides strongly-typed entity access through code generation.
 
-**Official Documentation**: https://netdaemon.xyz/  
+**Official Documentation**: https://netdaemon.xyz/
 **GitHub**: https://github.com/net-daemon/netdaemon
 
 ### Key Features
@@ -69,6 +69,23 @@ dotnet.exe publish -c Release
 - **`DimmingMotionAutomationBase`** - Extended motion automation with dimming capabilities
 - **`IAutomation`** - Interface all automations must implement
 
+### Project-Specific Inheritance Hierarchy
+```
+IAutomation (interface)
+    └── AutomationBase (abstract base class)
+        ├── Manages master switch functionality
+        ├── Handles automation lifecycle (enable/disable)
+        └── Implements IDisposable with CompositeDisposable
+            └── MotionAutomationBase
+                ├── Adds motion sensor logic
+                ├── Controls sensor delay settings
+                └── Manages light-motion relationships
+                    └── DimmingMotionAutomationBase
+                        ├── Adds dimming capabilities
+                        ├── Implements delayed turn-off with cancellation
+                        └── Uses CancellationTokenSource for async operations
+```
+
 ### Code Generation
 The project uses NetDaemon's code generation to create strongly-typed entities and services:
 - Generated code is in `HomeAssistantGenerated.cs`
@@ -97,9 +114,9 @@ The `publish.ps1` script:
 - All automations use reactive extensions (System.Reactive)
 - Master switches control automation groups
 
-## NetDaemon Architecture Patterns & Best Practices
+## NetDaemon v5 Essentials
 
-### NetDaemon Application Structure
+### Basic Application Structure
 NetDaemon applications follow specific patterns:
 ```csharp
 [NetDaemonApp]
@@ -108,7 +125,7 @@ public class MyAutomation
     public MyAutomation(IHaContext ha, ILogger<MyAutomation> logger)
     {
         var entities = new Entities(ha);
-        
+
         // Setup reactive subscriptions
         entities.BinarySensor.MotionSensor
             .StateChanges()
@@ -118,30 +135,11 @@ public class MyAutomation
 }
 ```
 
-### Project-Specific Inheritance Hierarchy
-The project extends NetDaemon patterns with a custom hierarchy:
-```
-IAutomation (interface)
-    └── AutomationBase (abstract base class)
-        ├── Manages master switch functionality
-        ├── Handles automation lifecycle (enable/disable)
-        └── Implements IDisposable with CompositeDisposable
-            └── MotionAutomationBase
-                ├── Adds motion sensor logic
-                ├── Controls sensor delay settings
-                └── Manages light-motion relationships
-                    └── DimmingMotionAutomationBase
-                        ├── Adds dimming capabilities
-                        ├── Implements delayed turn-off with cancellation
-                        └── Uses CancellationTokenSource for async operations
-```
-
-### Reactive Programming Patterns (NetDaemon Best Practices)
+### Essential Reactive Patterns
 - **State Changes**: Use `StateChanges()` for new state events only
-- **Current State**: Use `StateChangesWithCurrent()` when you need the current state immediately  
+- **Current State**: Use `StateChangesWithCurrent()` when you need current state immediately
 - **Time-based Filters**: Use `WhenStateIsFor()` for proper time-delayed reactions
 - **Safe Subscriptions**: Use `SubscribeSafe()` to prevent exceptions from breaking subscriptions
-- **Subscriptions**: ALL subscriptions MUST be returned from `GetSwitchableAutomations()` or properly disposed
 
 ### Application Lifecycle (NetDaemon v5)
 1. **Instantiating**: Constructor called, use for DI setup only
@@ -152,9 +150,9 @@ IAutomation (interface)
 
 **Important**: Never block the constructor - use it only for setting up subscriptions
 
-### Subscription Lifecycle Management
+### Subscription Management Pattern
 ```csharp
-// CORRECT: Subscriptions tracked and disposed
+// CORRECT: Subscriptions tracked and disposed via master switch
 protected override IEnumerable<IDisposable> GetSwitchableAutomations()
 {
     yield return sensor.StateChanges().Subscribe(HandleChange);
@@ -168,97 +166,7 @@ public override void StartAutomation()
 }
 ```
 
-## Critical Implementation Notes
-
-### NetDaemon-Specific Pitfalls to Avoid
-
-1. **Memory Leaks from Untracked Subscriptions**
-   - Problem: Creating subscriptions outside of `GetSwitchableAutomations()`
-   - Solution: Always return IDisposable subscriptions from the method
-   - NetDaemon Impact: Unhandled exceptions in subscriptions stop the entire stream
-   - Found in: CookingAutomation.cs, ClimateAutomation.cs (cron job)
-
-2. **Blocking Operations in Constructor**
-   - Problem: NetDaemon expects constructor to return quickly
-   - Solution: Move async/blocking operations to `IAsyncInitializable`
-   - NetDaemon Impact: Can cause startup timeouts
-
-3. **Thread Safety Issues**
-   - Problem: Shared state accessed from multiple reactive streams
-   - Solution: Use `volatile`, `Interlocked`, or lock synchronization
-   - NetDaemon Impact: Rx.NET subscriptions may run on different threads
-   - Example: `_isHouseEmpty` field in ClimateAutomation
-
-4. **Unhandled Exceptions in Subscriptions**
-   - Problem: Exceptions terminate the subscription permanently
-   - Solution: Use `SubscribeSafe()` or wrap handlers in try-catch
-   - NetDaemon Impact: Silent failures in automations
-
-5. **Null Reference Exceptions**
-   - Problem: Accessing nullable attributes without checks
-   - Solution: Use null-conditional operators (`?.`) and proper null checks
-   - Example: `_ac.Attributes?.Temperature` comparisons
-
-6. **Time Zone Confusion**
-   - Problem: Scheduler uses UTC, Cron expressions use local time
-   - Solution: Be explicit about time zones in scheduling
-   - NetDaemon Impact: Automations running at wrong times
-
-### Proper Disposal Pattern
-```csharp
-public class MyAutomation : AutomationBase
-{
-    private IDisposable? _cronJob;
-    
-    public override void StartAutomation()
-    {
-        base.StartAutomation();
-        _cronJob = scheduler.ScheduleCron("0 0 * * *", DoDaily);
-    }
-    
-    public override void Dispose()
-    {
-        _cronJob?.Dispose(); // Dispose non-switchable subscriptions
-        base.Dispose();      // Base handles switchable subscriptions
-        GC.SuppressFinalize(this);
-    }
-}
-```
-
-### Pattern for Automations Without Master Switch
-Some automations need to run continuously without master switch control:
-```csharp
-public class AlwaysOnAutomation : AutomationBase
-{
-    private readonly List<IDisposable> _subscriptions = new();
-    
-    public AlwaysOnAutomation(ILogger logger) : base(logger) // No master switch
-    {
-    }
-    
-    public override void StartAutomation()
-    {
-        // Don't call base.StartAutomation() - no master switch behavior needed
-        _subscriptions.Add(CreateSubscription1());
-        _subscriptions.Add(CreateSubscription2());
-    }
-    
-    protected override IEnumerable<IDisposable> GetSwitchableAutomations() => [];
-    
-    public override void Dispose()
-    {
-        foreach (var subscription in _subscriptions)
-        {
-            subscription?.Dispose();
-        }
-        _subscriptions.Clear();
-        base.Dispose();
-        GC.SuppressFinalize(this);
-    }
-}
-```
-
-## Key Extension Methods & Helpers
+## Project-Specific Helpers & Extensions
 
 ### State Change Extensions (StateChangeObservableExtensions)
 - `IsOn()`, `IsOff()` - Filter for on/off states
@@ -296,12 +204,12 @@ if (TimeRange.IsCurrentTimeInBetween(22, 6)) // 10 PM to 6 AM
 }
 ```
 
-## Known Issues & Solutions
+## Known Project-Specific Issues
 
-### Issue: Memory Leak in Subscriptions
+### Memory Leak in Subscriptions
 **Problem**: Subscriptions created in `StartAutomation()` are never disposed
 ```csharp
-// WRONG
+// WRONG: Found in some existing files
 public override void StartAutomation()
 {
     AutoTurnOffRiceCookerOnIdle(minutes: 10); // Leak!
@@ -316,136 +224,13 @@ protected override IEnumerable<IDisposable> GetSwitchableAutomations()
 }
 ```
 
-### Issue: Race Conditions in Shared State
-**Problem**: Multiple threads accessing shared fields
-```csharp
-private bool _isHouseEmpty = false; // Accessed from multiple streams
-```
+### Thread Safety in ClimateAutomation
+**Issue**: `_isHouseEmpty` field accessed from multiple streams
+**Solution**: Uses `volatile` keyword and lock synchronization for thread safety
 
-**Solution**: Use thread-safe patterns
-```csharp
-private volatile bool _isHouseEmpty = false;
-// OR
-private readonly object _lock = new();
-private bool _isHouseEmpty;
-```
-
-### Issue: Inefficient Resource Usage
-**Problem**: Recreating objects on every call
-```csharp
-private Dictionary<TimeBlock, AcScheduleSetting> GetSettings() => new() { ... };
-```
-
-**Solution**: Cache when appropriate
-```csharp
-private Dictionary<TimeBlock, AcScheduleSetting>? _cachedSettings;
-private Dictionary<TimeBlock, AcScheduleSetting> GetSettings() => 
-    _cachedSettings ??= BuildSettings();
-```
-
-## Development Guidelines
-
-### Implementing GetSwitchableAutomations()
-This method is crucial for proper resource management:
-```csharp
-protected override IEnumerable<IDisposable> GetSwitchableAutomations()
-{
-    // Return ALL subscriptions that should be managed by master switch
-    yield return sensor.StateChanges().Subscribe(Handle);
-    yield return scheduler.ScheduleCron("0 * * * *", Hourly);
-    
-    // Chain multiple collections if needed
-    foreach (var sub in GetAdditionalSubscriptions())
-        yield return sub;
-}
-```
-
-### State Change Patterns (NetDaemon v5)
-```csharp
-// React to state changes only
-sensor.StateChanges().IsOn().Subscribe(TurnOnLight);
-
-// Include current state in initial subscription
-sensor.StateChangesWithCurrent().Where(s => s.IsOn()).Subscribe(Configure);
-
-// Time-based reactions (NetDaemon pattern)
-sensor.StateChanges()
-    .WhenStateIsFor(s => s?.State == "off", TimeSpan.FromMinutes(10), scheduler)
-    .Subscribe(_ => TurnOffLights());
-
-// Safe subscription to handle exceptions
-sensor.StateChanges()
-    .Where(e => e.New.IsOn())
-    .SubscribeSafe(HandleMotion, ex => Logger.LogError(ex, "Motion handler failed"));
-
-// Ignore events during disposal
-sensor.StateChanges()
-    .Where(e => e.New.IsOn())
-    .IgnoreOnComplete() // Prevents actions during app shutdown
-    .Subscribe(HandleMotion);
-```
-
-### Error Handling Best Practices
-```csharp
-protected virtual void HandleStateChange(StateChange evt)
-{
-    try
-    {
-        // Your logic here
-        ProcessChange(evt);
-    }
-    catch (Exception ex)
-    {
-        Logger.LogError(ex, "Failed to handle state change for {Entity}", 
-            evt.Entity.EntityId);
-        // Consider fallback behavior
-    }
-}
-```
-
-### Logging Guidelines
-- Use structured logging with appropriate levels
-- Log automation decisions at Debug level
-- Log errors and warnings appropriately
-- Include entity IDs and states in log context
-
-```csharp
-Logger.LogDebug("Applying AC settings for {TimeBlock} with temp {Temp}°C", 
-    timeBlock, targetTemp);
-    
-Logger.LogWarning("Invalid hour {Hour} for schedule", hour);
-
-Logger.LogError(ex, "Failed to control {Device}", device.EntityId);
-```
-
-## Testing Guidelines
-
-NetDaemon provides excellent testing support through reactive testing utilities:
-
-### Time-Based Testing
-```csharp
-using Microsoft.Reactive.Testing;
-
-[Test]
-public void Motion_Should_Turn_Off_After_Delay()
-{
-    var testScheduler = new TestScheduler();
-    var motion = testScheduler.CreateHotObservable(
-        OnNext(100, new StateChange(null, "on", null)),
-        OnNext(200, new StateChange("on", "off", null))
-    );
-    
-    // Test automation behavior with controlled time
-    testScheduler.AdvanceBy(TimeSpan.FromMinutes(10).Ticks);
-}
-```
-
-### Best Practices for Testing
-- Test all edge cases and error conditions
-- Use `TestScheduler` for time-based testing
-- Mock Home Assistant entities and state changes
-- Verify proper disposal of resources
-- Test thread safety with concurrent operations
+### Unsafe Async Pattern in DimmingMotionAutomationBase
+**Issue**: Direct async lambda in Subscribe() without proper error handling
+**Impact**: Can terminate reactive stream on exception
 
 ## Deployment & Installation
 
@@ -473,3 +258,244 @@ services:
 - Long-lived access token with Administrator privileges
 - WebSocket API enabled (default in Home Assistant)
 - Network access between NetDaemon and Home Assistant
+
+## Coding Standards
+
+This project follows strict coding standards for consistency, maintainability, and reliability.
+
+**📋 For comprehensive coding guidelines, implementation patterns, error handling standards, testing requirements, and code review checklists, see [CODING_GUIDELINES.md](./CODING_GUIDELINES.md).**
+
+### Quick Reference
+- **All subscriptions MUST have error handling** (`SubscribeSafe()` or try-catch)
+- **Resource management**: Implement `IDisposable` properly with `CompositeDisposable`
+- **Strategic collection patterns**: Use `[]` for fixed collections, `yield return` for subscriptions, `[..]` for combining
+- **Modern C# 13 features**: Switch expressions, collection expressions, global usings
+- **Documentation**: XML documentation required for all public classes
+- **Thread safety**: Use `volatile`, locks, or `Interlocked` for shared state
+
+### Strategic Collection Patterns (Modern C# 13/.NET 9)
+
+**Use Collection Expressions `[]` when:**
+- Small, fixed collections (2-5 items): `GetFans() => [_fan1, _fan2, _fan3]`
+- Immediate materialization needed: `string[] modes = [AUTO, LOW, MEDIUM, HIGH]`
+- Array/List literals where type is obvious
+- Simple combining with spread: `[..source1, ..source2, item3]`
+
+**Use `yield return` when:**
+- **Subscription management** (NetDaemon memory safety): `yield return sensor.Subscribe(...)`
+- Large sequences that benefit from lazy evaluation
+- Complex logic between items
+- Memory-sensitive operations
+
+**Proven Examples from Codebase:**
+```csharp
+// ✅ Collection expression for fixed fans
+protected override IEnumerable<SwitchEntity> GetFans() =>
+    [_ceilingFan, _standFan, _exhaustFan];
+
+// ✅ Spread syntax for combining automations
+protected override IEnumerable<IDisposable> GetSwitchableAutomations() =>
+    [.. GetLightAutomations(), .. GetSensorDelayAutomations()];
+
+// ✅ Yield return for subscription management
+protected override IEnumerable<IDisposable> GetLightAutomations()
+{
+    yield return MotionSensor.StateChanges().Subscribe(HandleMotion);
+    yield return Light.StateChanges().Subscribe(HandleLight);
+}
+
+// ✅ Switch expressions for complex logic
+return (occupied, doorOpen, powerSaving, isColdWeather) switch
+{
+    (false, true, _, true) => setting.NormalTemp,
+    (false, true, _, false) => setting.UnoccupiedTemp,
+    (true, false, _, _) => setting.ClosedDoorTemp,
+    (true, true, true, _) => setting.PowerSavingTemp,
+    _ => setting.NormalTemp
+};
+```
+
+### Global Usings Strategy
+- **Centralized in `GlobalUsings.cs`**: System, Collections, Threading, Reactive, NetDaemon
+- **Remove redundant usings**: Don't repeat what's already global
+- **Add new globals**: When 3+ files use the same namespace
+
+### Critical Requirements
+- Never use async lambdas in `Subscribe()` without error handling
+- Always return subscriptions from `GetSwitchableAutomations()`
+- Include structured logging with appropriate context
+- Follow strategic collection patterns ([] vs yield return)
+- Use modern C# 13 features appropriately
+
+## Naming Conventions & Standards
+
+This project follows strict naming conventions to ensure consistency, maintainability, and clarity across the entire codebase.
+
+### Field & Variable Naming
+
+**Private Fields:**
+```csharp
+// ✅ CORRECT: Underscore prefix with camelCase
+private readonly SensorEntity _motionSensor;
+private volatile bool _isManuallyControlled;
+private static readonly HashSet<string> _knownUsers;
+
+// ❌ INCORRECT: Missing underscore prefix
+private readonly SensorEntity motionSensor;
+private volatile bool IsManuallyControlled;
+```
+
+**Public Properties & Local Variables:**
+```csharp
+// ✅ CORRECT: PascalCase for public, camelCase for local
+public string EntityId { get; set; }
+public bool IsOccupied() => _sensor.State.IsOn();
+
+private void ProcessData()
+{
+    var currentState = _sensor.State;  // camelCase local variable
+    bool isActive = currentState.IsOn();
+}
+```
+
+### Constant Naming
+
+**All Constants (Public & Private):**
+```csharp
+// ✅ CORRECT: UPPER_CASE convention for all constants
+public const string CLEAR_NIGHT = "clear-night";
+public const string DANIEL_RODRIGUEZ = "7512fc7c361e45879df43f9f0f34fc57";
+
+private const int MONITOR_STARTUP_TIMEOUT_SECONDS = 30;
+private const double EXCELLENT_AIR_THRESHOLD = 6.0;
+
+// ❌ AVOID: Mixed naming patterns
+private const int MonitorStartupTimeoutSeconds = 30;  // PascalCase
+private const double excellentAirThreshold = 6.0;     // camelCase
+```
+
+**Single Source of Truth:**
+```csharp
+// ✅ CORRECT: Use existing constants from HaIdentity
+string targetService = userId switch
+{
+    HaIdentity.DANIEL_RODRIGUEZ => "mobile_app_poco_f4_gt",
+    HaIdentity.MIPAD5 => "mobile_app_21051182c",
+    _ => null,
+};
+
+// ❌ INCORRECT: Duplicate constants
+private const string DanielUserId = "7512fc7c361e45879df43f9f0f34fc57";  // Duplicate!
+```
+
+### Method & Function Naming Patterns
+
+**Event Handlers:**
+```csharp
+// ✅ STANDARDIZED PATTERN: OnXxx for direct event handlers
+private void OnMotionStateChanged(StateChange e)
+private void OnAirPurifierStateChanged(StateChange e)
+private void OnDeskPresenceChanged(StateChange e)
+```
+
+**Business Logic Processing:**
+```csharp
+// ✅ STANDARDIZED PATTERN: ProcessXxx for complex business logic
+private void ProcessExcellentAirQuality()
+private void ProcessPoorAirQuality(double? pm25Value)
+private void ProcessTemperatureData(double temperature)
+```
+
+**State Management:**
+```csharp
+// ✅ STANDARDIZED PATTERN: ManageXxx for state coordination
+private void ManageStandFanState(bool shouldBeOn, double? pm25Value)
+private void ManageScreenBasedOnPresence()
+private void ManageClimateSettings()
+```
+
+**Setup & Configuration:**
+```csharp
+// ✅ STANDARDIZED PATTERN: GetXxx for automation setup (consistent with base)
+protected override IEnumerable<IDisposable> GetSwitchableAutomations()
+private IEnumerable<IDisposable> GetLightAutomations()
+private IEnumerable<IDisposable> GetSensorDelayAutomations()
+
+// ✅ STANDARDIZED PATTERN: SetXxx/ConfigureXxx for clear configuration
+private void SetAcTemperatureAndMode(int temperature, string hvacMode)
+private void ConfigureScheduledSettings()
+```
+
+**Conditional Actions:**
+```csharp
+// ✅ CLEAR PURPOSE: ConditionallyXxx for clarity
+private void ConditionallyActivateFan(bool activateFan, int targetTemp)
+private void ConditionallyTurnOffDevices()
+
+// ✅ SPECIFIC ACTIONS: Clear verb + specific target
+private void ApplyScheduledAcSettings(TimeBlock? timeBlock)
+private void LogCurrentAcScheduleSettings()
+```
+
+**State Checking:**
+```csharp
+// ✅ BOOLEAN METHODS: IsXxx, HasXxx, CanXxx patterns
+public bool IsOccupied() => _sensor.State.IsOn();
+private bool IsMonitorShowingPcInput()
+private bool HasValidConfiguration()
+private bool CanActivateClimate()
+```
+
+### Access Modifier Guidelines
+
+```csharp
+// ✅ CORRECT: Public for API, Internal for testing
+public class MotionAutomation : MotionAutomationBase
+{
+    // ✅ Internal for simulation/testing methods
+    internal void SimulateShowPcWebhook()
+    internal void SimulateShutdownWebhook()
+
+    // ✅ Private for implementation details
+    private void ProcessMotionData()
+    private void ManageDeviceState()
+}
+```
+
+### Naming Best Practices
+
+1. **Eliminate Duplication**: Always check for existing constants in `HaIdentity` and `HaEntityStates`
+2. **Descriptive Purpose**: Method names should clearly indicate what they do and why
+3. **Consistent Patterns**: Follow established patterns for similar operations across classes
+4. **Clear Overloads**: When method overloads exist, names should distinguish their purpose
+5. **Appropriate Access**: Use `internal` for testing/simulation, `private` for implementation
+
+### Before/After Examples
+
+**Event Handler Standardization:**
+```csharp
+// ❌ BEFORE: Mixed patterns
+private void OnPm25Changed(StateChange e)          // OnXxx pattern
+private void HandleExcellentAirQuality()           // HandleXxx pattern
+private void HandleStandFan(bool shouldBeOn)       // HandleXxx pattern
+
+// ✅ AFTER: Consistent patterns
+private void OnPm25Changed(StateChange e)          // OnXxx for events
+private void ProcessExcellentAirQuality()          // ProcessXxx for logic
+private void ManageStandFanState(bool shouldBeOn)  // ManageXxx for state
+```
+
+**Method Clarity Improvements:**
+```csharp
+// ❌ BEFORE: Ambiguous overloads
+private void ApplyAcSettings(TimeBlock? timeBlock)     // Which settings?
+private void ApplyAcSettings(int temperature, string hvacMode)  // Same name!
+private void ActivateFan(bool activateFan, int targetTemp)     // Confusing param
+
+// ✅ AFTER: Clear purpose
+private void ApplyScheduledAcSettings(TimeBlock? timeBlock)    // Scheduled settings
+private void SetAcTemperatureAndMode(int temperature, string hvacMode)  // Specific action
+private void ConditionallyActivateFan(bool activateFan, int targetTemp)  // Conditional
+```
+
+These naming standards ensure consistency, maintainability, and clarity across the entire HomeAutomation codebase.

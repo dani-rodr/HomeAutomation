@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.Linq;
 
 namespace HomeAutomation.apps.Area.Bedroom.Automations;
@@ -17,7 +16,7 @@ public class MotionAutomation(Entities entities, ILogger logger)
     private bool _isFanManuallyActivated = false;
 
     protected override IEnumerable<IDisposable> GetAdditionalStartupAutomations() =>
-        [.. SetupLightSwitchAutomations(), .. SetupFanMotionAutomations()];
+        [.. GetLightSwitchAutomations(), .. GetFanMotionAutomations()];
 
     protected override IEnumerable<IDisposable> GetSwitchableAutomations()
     {
@@ -25,7 +24,7 @@ public class MotionAutomation(Entities entities, ILogger logger)
         yield return MotionSensor.StateChangesWithCurrent().IsOff().Subscribe(_ => Light.TurnOff());
     }
 
-    private IEnumerable<IDisposable> SetupLightSwitchAutomations()
+    private IEnumerable<IDisposable> GetLightSwitchAutomations()
     {
         yield return _leftSideFanSwitch
             .StateChanges()
@@ -38,7 +37,7 @@ public class MotionAutomation(Entities entities, ILogger logger)
         yield return Light.StateChanges().Subscribe(EnableMasterSwitchWhenLightActive);
     }
 
-    private IEnumerable<IDisposable> SetupFanMotionAutomations()
+    private IEnumerable<IDisposable> GetFanMotionAutomations()
     {
         yield return _leftSideFanSwitch.StateChangesWithCurrent().Subscribe(UpdateFanActivationStatus);
         yield return MotionSensor.StateChangesWithCurrent().IsOn().Subscribe(HandleMotionDetected);

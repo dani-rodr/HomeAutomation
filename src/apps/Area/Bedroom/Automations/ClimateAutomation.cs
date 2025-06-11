@@ -1,7 +1,4 @@
-using System.Collections.Generic;
 using System.Linq;
-using System.Reactive.Concurrency;
-using System.Threading;
 using NetDaemon.Extensions.Scheduler;
 
 namespace HomeAutomation.apps.Area.Bedroom.Automations;
@@ -70,7 +67,7 @@ public class ClimateAutomation(Entities entities, IScheduler scheduler, ILogger 
         Logger.LogDebug(
             "AC schedule settings initialized based on current sun sensor values. HourStart and HourEnd may vary daily depending on sunrise, sunset, and midnight times."
         );
-        LogAcScheduleSettings();
+        LogCurrentAcScheduleSettings();
     }
 
     protected override IEnumerable<IDisposable> GetStartupAutomations()
@@ -85,7 +82,7 @@ public class ClimateAutomation(Entities entities, IScheduler scheduler, ILogger 
         );
     }
 
-    private void LogAcScheduleSettings()
+    private void LogCurrentAcScheduleSettings()
     {
         foreach (var kvp in GetCurrentAcScheduleSettings())
         {
@@ -133,7 +130,7 @@ public class ClimateAutomation(Entities entities, IScheduler scheduler, ILogger 
                 continue;
             }
             string cron = $"0 {hour} * * *";
-            yield return _scheduler.ScheduleCron(cron, () => ApplyAcSettings(timeBlock));
+            yield return _scheduler.ScheduleCron(cron, () => ApplyScheduledAcSettings(timeBlock));
         }
     }
 
@@ -153,7 +150,7 @@ public class ClimateAutomation(Entities entities, IScheduler scheduler, ILogger 
             e.New?.State
         );
 
-        ApplyAcSettings(FindTimeBlock());
+        ApplyScheduledAcSettings(FindTimeBlock());
     }
 
     private IEnumerable<IDisposable> GetHousePresenceAutomations()
@@ -223,7 +220,7 @@ public class ClimateAutomation(Entities entities, IScheduler scheduler, ILogger 
         return null;
     }
 
-    private void ApplyAcSettings(TimeBlock? timeBlock)
+    private void ApplyScheduledAcSettings(TimeBlock? timeBlock)
     {
         if (
             timeBlock is null
@@ -253,52 +250,43 @@ public class ClimateAutomation(Entities entities, IScheduler scheduler, ILogger 
             targetTemp,
             setting.Mode
         );
-        ApplyAcSettings(targetTemp, setting.Mode);
-        ActivateFan(setting.ActivateFan, targetTemp);
+        SetAcTemperatureAndMode(targetTemp, setting.Mode);
+        ConditionallyActivateFan(setting.ActivateFan, targetTemp);
     }
 
     private int GetTemperature(AcScheduleSetting setting)
     {
-        bool occupied = _motionSensor.IsOccupied();
-        bool doorOpen = _doorSensor.IsOpen();
-        bool powerSaving = entities.InputBoolean.AcPowerSavingMode.IsOn();
+        bool isOccupied = _motionSensor.IsOccupied();
+        bool isDoorOpen = _doorSensor.IsOpen();
+        bool isPowerSaving = entities.InputBoolean.AcPowerSavingMode.IsOn();
         var weather = entities.Weather.Home;
         bool isColdWeather = !weather.IsSunny();
 
         Logger.LogInformation(
             "Occupied: {Occupied}, DoorOpen: {DoorOpen}, PowerSaving: {PowerSaving} Weather: {WeatherCondition}",
-            occupied,
-            doorOpen,
-            powerSaving,
+            isOccupied,
+            isDoorOpen,
+            isPowerSaving,
             weather?.State
         );
-
-        if (!occupied && doorOpen)
+        return (isOccupied, isDoorOpen, isPowerSaving, isColdWeather) switch
         {
-            return isColdWeather ? setting.NormalTemp : setting.UnoccupiedTemp;
-        }
-
-        if (occupied && !doorOpen)
-        {
-            return setting.ClosedDoorTemp;
-        }
-
-        if (occupied && doorOpen && entities.InputBoolean.AcPowerSavingMode.IsOn())
-        {
-            return setting.PowerSavingTemp;
-        }
-
-        return setting.NormalTemp;
+            (false, true, _, true) => setting.NormalTemp,
+            (false, true, _, false) => setting.UnoccupiedTemp,
+            (true, false, _, _) => setting.ClosedDoorTemp,
+            (true, true, true, _) => setting.PowerSavingTemp,
+            _ => setting.NormalTemp,
+        };
     }
 
-    private void ApplyAcSettings(int temperature, string hvacMode)
+    private void SetAcTemperatureAndMode(int temperature, string hvacMode)
     {
         _ac.SetTemperature(temperature);
         _ac.SetHvacMode(hvacMode);
         _ac.SetFanMode(HaEntityStates.AUTO);
     }
 
-    private void ActivateFan(bool activateFan, int targetTemp)
+    private void ConditionallyActivateFan(bool activateFan, int targetTemp)
     {
         var isHot = _ac.Attributes?.CurrentTemperature >= targetTemp;
         if (activateFan && _motionSensor.IsOccupied() && isHot)
