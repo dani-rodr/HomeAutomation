@@ -5,8 +5,8 @@ public class MotionAutomation(Entities entities, ILogger logger)
         entities.Switch.KitchenMotionSensor,
         entities.BinarySensor.KitchenMotionSensors,
         entities.Light.RgbLightStrip,
-        entities.Number.Ld2410Esp325StillTargetDelay,
-        logger
+        logger,
+        entities.Number.Ld2410Esp325StillTargetDelay
     )
 {
     private readonly BinarySensorEntity _powerPlug = entities.BinarySensor.SmartPlug3PowerExceedsThreshold;
@@ -20,7 +20,7 @@ public class MotionAutomation(Entities entities, ILogger logger)
     protected override IEnumerable<IDisposable> GetSensorDelayAutomations() =>
         [
             .. base.GetSensorDelayAutomations(),
-            _powerPlug.StateChanges().IsOn().Subscribe(_ => SensorDelay.SetNumericValue(SensorDelayValueActive)),
+            _powerPlug.StateChanges().IsOn().Subscribe(_ => SensorDelay?.SetNumericValue(SensorActiveDelayValue)),
         ];
 
     protected override IEnumerable<IDisposable> GetAdditionalStartupAutomations() => [SetupMotionSensorReactivation()];

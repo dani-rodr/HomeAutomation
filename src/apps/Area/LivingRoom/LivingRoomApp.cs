@@ -8,8 +8,12 @@ public class LivingRoomApp(Entities entities, ILogger<LivingRoomApp> logger) : A
     protected override IEnumerable<IAutomation> CreateAutomations()
     {
         var standFan = Entities.Switch.Sonoff10023810231;
-        yield return new MotionAutomation(Entities, Logger);
-        yield return new FanAutomation(Entities, standFan, Logger);
+        var motionSensorSwitch = Entities.Switch.SalaMotionSensor;
+        var motionSensor = Entities.BinarySensor.LivingRoomPresenceSensors;
+
+        yield return new MotionAutomation(Entities, motionSensorSwitch, motionSensor, Logger);
+        yield return new FanAutomation(Entities, motionSensorSwitch, motionSensor, standFan, Logger);
         yield return new AirQualityAutomations(Entities, standFan, Logger);
+        yield return new TabletAutomations(Entities, motionSensorSwitch, motionSensor, Logger);
     }
 }

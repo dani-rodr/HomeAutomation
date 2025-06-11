@@ -1,9 +1,15 @@
 namespace HomeAutomation.apps.Area.LivingRoom.Automations;
 
-public class FanAutomation(Entities entities, SwitchEntity standFan, ILogger logger)
+public class FanAutomation(
+    Entities entities,
+    SwitchEntity masterSwitch,
+    BinarySensorEntity motionSensor,
+    SwitchEntity standFan,
+    ILogger logger
+)
     : FanAutomationBase(
-        entities.Switch.SalaMotionSensor,
-        entities.BinarySensor.LivingRoomPresenceSensors,
+        masterSwitch,
+        motionSensor,
         logger,
         entities.Switch.CeilingFan,
         standFan,

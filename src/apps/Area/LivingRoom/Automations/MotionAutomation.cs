@@ -2,18 +2,23 @@ using System.Collections.Generic;
 
 namespace HomeAutomation.apps.Area.LivingRoom.Automations;
 
-public class MotionAutomation(Entities entities, ILogger logger)
+public class MotionAutomation(
+    Entities entities,
+    SwitchEntity masterSwitch,
+    BinarySensorEntity motionSensor,
+    ILogger logger
+)
     : DimmingMotionAutomationBase(
-        entities.Switch.SalaMotionSensor,
-        entities.BinarySensor.LivingRoomPresenceSensors,
+        masterSwitch,
+        motionSensor,
         entities.Light.SalaLightsGroup,
-        entities.Number.Ld2410Esp321StillTargetDelay,
-        logger
+        logger,
+        entities.Number.Ld2410Esp321StillTargetDelay
     )
 {
     protected override int SensorWaitTime => 30;
-    protected override int SensorDelayValueActive => 45;
-    protected override int SensorDelayValueInactive => 1;
+    protected override int SensorActiveDelayValue => 45;
+    protected override int SensorInactiveDelayValue => 1;
     protected override int DimBrightnessPct => 80;
     protected override int DimDelaySeconds => 15;
 
@@ -42,7 +47,7 @@ public class MotionAutomation(Entities entities, ILogger logger)
         return entities
             .BinarySensor.KitchenMotionSensors.StateChanges()
             .IsOnForSeconds(10)
-            .Subscribe(_ => SensorDelay.SetNumericValue(SensorDelayValueActive));
+            .Subscribe(_ => SensorDelay?.SetNumericValue(SensorActiveDelayValue));
     }
 
     private IDisposable TurnOffPantryLights()

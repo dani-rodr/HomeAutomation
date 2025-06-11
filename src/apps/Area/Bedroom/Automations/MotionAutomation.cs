@@ -7,8 +7,8 @@ public class MotionAutomation(Entities entities, ILogger logger)
         entities.Switch.BedroomMotionSensor,
         entities.BinarySensor.BedroomPresenceSensors,
         entities.Light.BedLights,
-        entities.Number.Esp32PresenceBedroomStillTargetDelay,
-        logger
+        logger,
+        entities.Number.Esp32PresenceBedroomStillTargetDelay
     )
 {
     private readonly SwitchEntity _rightSideEmptySwitch = entities.Switch.Sonoff1002352c401;

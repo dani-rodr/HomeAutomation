@@ -12,8 +12,6 @@ public class ClimateAutomation(Entities entities, IScheduler scheduler, ILogger 
     private readonly BinarySensorEntity _doorSensor = entities.BinarySensor.ContactSensorDoor;
     private readonly SwitchEntity _fanSwitch = entities.Switch.Sonoff100238104e1;
     private Dictionary<TimeBlock, AcScheduleSetting>? _cachedAcSettings;
-    private readonly Lock _houseEmptyLock = new();
-    private bool _isHouseEmpty = false;
 
     private Dictionary<TimeBlock, AcScheduleSetting> GetCurrentAcScheduleSettings()
     {
@@ -47,7 +45,7 @@ public class ClimateAutomation(Entities entities, IScheduler scheduler, ILogger 
             ),
 
             [TimeBlock.Midnight] = new(
-                NormalTemp: 22,
+                NormalTemp: 24,
                 PowerSavingTemp: 25,
                 ClosedDoorTemp: 20,
                 UnoccupiedTemp: 25,

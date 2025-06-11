@@ -5,8 +5,8 @@ public class MotionAutomation(Entities entities, ILogger logger)
         entities.Switch.BathroomMotionSensor,
         entities.BinarySensor.BathroomPresenceSensors,
         entities.Light.BathroomLights,
-        entities.Number.ZEsp32C62StillTargetDelay,
-        logger
+        logger,
+        entities.Number.ZEsp32C62StillTargetDelay
     )
 {
     protected override int DimBrightnessPct => 80;

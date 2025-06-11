@@ -4,15 +4,15 @@ public abstract class DimmingMotionAutomationBase(
     SwitchEntity masterSwitch,
     BinarySensorEntity motionSensor,
     LightEntity light,
-    NumberEntity sensorDelay,
-    ILogger logger
-) : MotionAutomationBase(masterSwitch, motionSensor, light, sensorDelay, logger)
+    ILogger logger,
+    NumberEntity sensorDelay
+) : MotionAutomationBase(masterSwitch, motionSensor, light, logger, sensorDelay)
 {
     protected abstract int DimBrightnessPct { get; }
     protected abstract int DimDelaySeconds { get; }
     private CancellationTokenSource? _lightTurnOffCancellationToken;
 
-    private bool ShouldDimLights() => (SensorDelay.State ?? 0) == SensorDelayValueActive;
+    private bool ShouldDimLights() => (SensorDelay?.State ?? 0) == SensorActiveDelayValue;
 
     protected override IEnumerable<IDisposable> GetLightAutomations()
     {

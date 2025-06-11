@@ -7,8 +7,8 @@ public class MotionAutomation(Entities entities, ILogger logger)
         entities.Switch.PantryMotionSensor,
         entities.BinarySensor.PantryMotionSensors,
         entities.Light.PantryLights,
-        entities.Number.ZEsp32C63StillTargetDelay,
-        logger
+        logger,
+        entities.Number.ZEsp32C63StillTargetDelay
     )
 {
     protected override int SensorWaitTime => 10;
