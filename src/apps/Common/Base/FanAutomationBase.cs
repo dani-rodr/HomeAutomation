@@ -12,7 +12,7 @@ public abstract class FanAutomationBase(
     protected readonly BinarySensorEntity MotionSensor = motionSensor;
     protected readonly SwitchEntity[] Fans = fans;
     protected readonly SwitchEntity Fan = fans.First();
-    protected abstract bool IsFanManuallyActivated { get; set; }
+    protected abstract bool ShouldActivateFan { get; set; }
 
     protected virtual void TurnOnFans(StateChange _) => Fans.ToList().ForEach(fan => fan.TurnOn());
 

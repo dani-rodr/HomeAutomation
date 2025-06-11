@@ -8,13 +8,13 @@ public class FanAutomation(Entities entities, ILogger logger)
         entities.Switch.Sonoff100238104e1
     )
 {
-    protected override bool IsFanManuallyActivated { get; set; } = false;
+    protected override bool ShouldActivateFan { get; set; } = false;
 
     protected override IEnumerable<IDisposable> GetPersistentAutomations()
     {
         yield return Fan.StateChangesWithCurrent()
             .IsManuallyOperated()
-            .Subscribe(_ => IsFanManuallyActivated = Fan.State.IsOn());
+            .Subscribe(_ => ShouldActivateFan = Fan.State.IsOn());
         yield return MotionSensor.StateChangesWithCurrent().IsOn().Subscribe(HandleMotionDetected);
         yield return MotionSensor.StateChangesWithCurrent().IsOff().Subscribe(HandleMotionStopped);
     }
@@ -23,7 +23,7 @@ public class FanAutomation(Entities entities, ILogger logger)
 
     private void HandleMotionDetected(StateChange e)
     {
-        if (IsFanManuallyActivated)
+        if (ShouldActivateFan)
         {
             Fan.TurnOn();
         }
