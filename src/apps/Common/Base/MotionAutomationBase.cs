@@ -51,20 +51,24 @@ public abstract class MotionAutomationBase(
 
     private void ControlMasterSwitchOnLightChange(StateChange evt)
     {
-        if (Light.IsOn())
+        var lightState = Light.IsOn();
+        var motionState = MotionSensor.IsOccupied();
+
+        Logger.LogDebug(
+            "LightChange detected: Light.IsOn={Light}, MotionSensor.IsOccupied={Motion}",
+            lightState,
+            motionState
+        );
+
+        if (lightState == motionState)
         {
-            Logger.LogInformation(
-                "ControlMasterSwitchOnLightChange: Light turned ON by manual operation, turning OFF master switch."
-            );
-            MasterSwitch?.TurnOff();
-        }
-        else if (Light.IsOff())
-        {
-            Logger.LogInformation(
-                "ControlMasterSwitchOnLightChange: Light turned OFF by manual operation, turning ON master switch."
-            );
+            Logger.LogDebug("Enabling automation via MasterSwitch (states match)");
             MasterSwitch?.TurnOn();
+            return;
         }
+
+        Logger.LogDebug("Disabling automation via MasterSwitch (states mismatch)");
+        MasterSwitch?.TurnOff();
     }
 
     private void ControlLightOnMotionChange(StateChange evt)
@@ -72,10 +76,8 @@ public abstract class MotionAutomationBase(
         if (MotionSensor.IsOn())
         {
             Light.TurnOn();
+            return;
         }
-        else
-        {
-            Light.TurnOff();
-        }
+        Light.TurnOff();
     }
 }
