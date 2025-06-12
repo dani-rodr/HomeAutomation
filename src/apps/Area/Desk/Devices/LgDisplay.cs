@@ -34,7 +34,7 @@ public class LgDisplay(Entities entities, Services services, ILogger logger)
     public IObservable<StateChange<MediaPlayerEntity, EntityState<MediaPlayerAttributes>>> StateChanges() =>
         Entity.StateChanges();
 
-    public void SendToast(string msg) => SendCommand("system.notifications/createToast", new { message = msg });
+    public void ShowToast(string msg) => SendCommand("system.notifications/createToast", new { message = msg });
 
     public void ShowPC() => ShowSource(DisplaySource.PC.ToString());
 

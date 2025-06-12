@@ -7,5 +7,4 @@ public abstract class ComputerBase(ILogger logger) : IComputer
     protected ILogger Logger = logger;
     public abstract void TurnOn();
     public abstract void TurnOff();
-    public abstract void Show();
 }

@@ -4,5 +4,4 @@ public interface IComputer
 {
     void TurnOn();
     void TurnOff();
-    void Show();
 }
