@@ -10,6 +10,7 @@ public enum DisplaySource
 public class LgDisplay(Entities entities, Services services, ILogger logger)
     : MediaPlayerBase(entities.MediaPlayer.LgWebosSmartTv, logger)
 {
+    private const string MAC_ADDRESS = "D4:8D:26:B8:C4:AA";
     private bool IsScreenOn { get; set; }
     private readonly WebostvServices _services = services.Webostv;
     private int _brightness = 90;
@@ -47,16 +48,15 @@ public class LgDisplay(Entities entities, Services services, ILogger logger)
 
     public override void TurnOn()
     {
-        base.TurnOn();
+        services.WakeOnLan.SendMagicPacket(MAC_ADDRESS);
         TurnOnScreen();
     }
 
     protected override void ExtendSourceDictionary(Dictionary<string, string> sources)
     {
-        foreach (var kv in sources)
-        {
-            sources[kv.Key.ToString()] = kv.Value;
-        }
+        sources[DisplaySource.PC.ToString()] = "HDMI 1";
+        sources[DisplaySource.Laptop.ToString()] = "HDMI 3";
+        sources[DisplaySource.ScreenSaver.ToString()] = "Always Ready";
     }
 
     private void SendCommand(string command, object? payload = null) => _services.Command(EntityId, command, payload);

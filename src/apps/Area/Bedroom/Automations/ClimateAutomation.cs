@@ -234,13 +234,13 @@ public class ClimateAutomation(Entities entities, IScheduler scheduler, ILogger 
 
         int targetTemp = GetTemperature(setting);
         if (
-            _ac.Attributes?.Temperature == targetTemp
+            _ac.Attributes?.Temperature <= targetTemp
             && string.Equals(_ac.State, setting.Mode, StringComparison.OrdinalIgnoreCase)
         )
         {
             Logger.LogDebug(
-                "Skipping ApplyAcSettings: AC already set to TargetTemp {Temp} and Mode {Mode}",
-                setting.NormalTemp,
+                "Skipping ApplyAcSettings: AC already set less than or equal TargetTemp {Temp} and Mode {Mode}",
+                targetTemp,
                 setting.Mode
             );
             return;
