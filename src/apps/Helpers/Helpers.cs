@@ -160,6 +160,12 @@ public static class StateExtensions
     public static bool IsOff(this string? state) =>
         string.Equals(state, HaEntityStates.OFF, StringComparison.OrdinalIgnoreCase);
 
+    public static bool IsConnected(this string? state) =>
+        string.Equals(state, HaEntityStates.CONNECTED, StringComparison.OrdinalIgnoreCase);
+
+    public static bool IsDisconnected(this string? state) =>
+        string.Equals(state, HaEntityStates.DISCONNECTED, StringComparison.OrdinalIgnoreCase);
+
     public static bool IsUnavailable(this string? state) =>
         string.Equals(state, HaEntityStates.UNAVAILABLE, StringComparison.OrdinalIgnoreCase);
 }
@@ -186,6 +192,10 @@ public static class BinaryEntityExtensions
     public static bool IsClear(this BinarySensorEntity sensor) => sensor.State.IsOff();
 
     public static bool IsClosed(this BinarySensorEntity sensor) => sensor.State.IsClosed();
+
+    public static bool IsConnected(this BinarySensorEntity sensor) => sensor.State.IsConnected();
+
+    public static bool IsDisconnected(this BinarySensorEntity sensor) => sensor.State.IsDisconnected();
 }
 
 public static class ClimateEntityExtensions

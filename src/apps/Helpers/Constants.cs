@@ -12,6 +12,8 @@ public static class HaEntityStates
     public const string MEDIUM = "medium";
     public const string HIGH = "high";
     public const string AUTO = "auto";
+    public const string CONNECTED = "connected";
+    public const string DISCONNECTED = "disconnected";
 
     // Weather states
     public const string SUNNY = "sunny";

@@ -2,15 +2,32 @@ using HomeAutomation.apps.Area.Desk.Devices;
 
 namespace HomeAutomation.apps.Area.Desk.Automations;
 
-public class DisplayAutomations(Entities entities, LgDisplay monitor, ILogger logger) : AutomationBase(logger)
+public class DisplayAutomations(Entities entities, LgDisplay monitor, Desktop desktop, ILogger logger)
+    : AutomationBase(logger)
 {
     protected override IEnumerable<IDisposable> GetPersistentAutomations()
     {
         yield return GetBrightnessAutomation();
         yield return GetScreenToggleAutomation();
+        yield return ToggleMonitorOnDesktopState();
     }
 
     protected override IEnumerable<IDisposable> GetToggleableAutomations() => [];
+
+    private IDisposable ToggleMonitorOnDesktopState()
+    {
+        return desktop
+            .GetPowerState()
+            .Subscribe(isOn =>
+            {
+                if (isOn)
+                {
+                    monitor.ShowPC();
+                    return;
+                }
+                monitor.TurnOff();
+            });
+    }
 
     private IDisposable GetScreenToggleAutomation()
     {
