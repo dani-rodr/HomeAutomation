@@ -2,25 +2,38 @@ using HomeAutomation.apps.Area.Desk.Devices;
 
 namespace HomeAutomation.apps.Area.Desk.Automations;
 
-public class DisplayAutomations(Entities entities, LgDisplay monitor, Desktop desktop, ILogger logger)
+public class DisplayAutomations(Entities entities, LgDisplay monitor, Desktop desktop, Laptop laptop, ILogger logger)
     : AutomationBase(logger)
 {
     protected override IEnumerable<IDisposable> GetPersistentAutomations() =>
-        [GetScreenBrightnessAutomation(), GetScreenStateAutomation(), .. GetPcStateAutomations()];
+        [GetScreenBrightnessAutomation(), GetScreenStateAutomation(), .. GetPcAutamations(), .. GetLaptopAutomations()];
 
     protected override IEnumerable<IDisposable> GetToggleableAutomations() => [];
 
-    private IEnumerable<IDisposable> GetPcStateAutomations()
+    private IEnumerable<IDisposable> GetPcAutamations()
     {
-        yield return desktop.GetPowerState().Subscribe(ShowPc);
+        yield return desktop.StateChanges().Subscribe(ShowPc);
         yield return desktop.OnShowRequested().Subscribe(ShowPc);
+        yield return desktop.OnHideRequested().Subscribe(HidePc);
     }
+
+    private IEnumerable<IDisposable> GetLaptopAutomations() => [];
 
     private void ShowPc(bool isOn)
     {
         if (isOn)
         {
             monitor.ShowPC();
+            return;
+        }
+        monitor.TurnOff();
+    }
+
+    private void HidePc(bool _)
+    {
+        if (laptop.IsOn())
+        {
+            monitor.ShowLaptop();
             return;
         }
         monitor.TurnOff();

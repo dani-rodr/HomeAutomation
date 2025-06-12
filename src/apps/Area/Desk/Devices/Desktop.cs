@@ -10,18 +10,20 @@ public class Desktop(Entities entities, HaEventHandler eventHandler, ILogger log
     private readonly BinarySensorEntity networkStatus = entities.BinarySensor.DanielPcNetworkStatus;
     private readonly SwitchEntity powerSwitch = entities.Switch.WakeOnLan;
 
-    public IObservable<bool> GetPowerState()
+    public override bool IsOn() => GetPowerState(powerPlugThreshold.State, networkStatus.State);
+
+    public override IObservable<bool> StateChanges()
     {
         return Observable
             .CombineLatest(
                 powerPlugThreshold.StateChanges().Select(s => s.New?.State),
                 networkStatus.StateChanges().Select(s => s.New?.State),
-                EvaluatePowerState
+                GetPowerState
             )
-            .StartWith(EvaluatePowerState(powerPlugThreshold.State, networkStatus.State));
+            .StartWith(GetPowerState(powerPlugThreshold.State, networkStatus.State));
     }
 
-    private static bool EvaluatePowerState(string? powerState, string? netState)
+    private static bool GetPowerState(string? powerState, string? netState)
     {
         if (netState.IsDisconnected())
         {
@@ -30,9 +32,11 @@ public class Desktop(Entities entities, HaEventHandler eventHandler, ILogger log
         return powerState.IsOn() || netState.IsConnected();
     }
 
-    public IObservable<bool> OnShowRequested() => eventHandler.WhenEventTriggered(SHOW_PC_EVENT).Select(_ => true);
+    public override IObservable<bool> OnShowRequested() =>
+        eventHandler.WhenEventTriggered(SHOW_PC_EVENT).Select(_ => true);
 
-    public IObservable<bool> OnHideRequested() => eventHandler.WhenEventTriggered(HIDE_PC_EVENT).Select(_ => true);
+    public override IObservable<bool> OnHideRequested() =>
+        eventHandler.WhenEventTriggered(HIDE_PC_EVENT).Select(_ => true);
 
     public override void TurnOff() => powerSwitch.TurnOff();
 

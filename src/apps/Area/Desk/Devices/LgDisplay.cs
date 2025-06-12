@@ -52,6 +52,12 @@ public class LgDisplay(Entities entities, Services services, ILogger logger)
         TurnOnScreen();
     }
 
+    public override void TurnOff()
+    {
+        ShowPC();
+        base.TurnOff();
+    }
+
     protected override void ExtendSourceDictionary(Dictionary<string, string> sources)
     {
         sources[DisplaySource.PC.ToString()] = "HDMI 1";

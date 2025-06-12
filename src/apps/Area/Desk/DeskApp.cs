@@ -13,6 +13,7 @@ public class DeskApp(IHaContext haContext, Entities entities, Services services,
         var eventHandler = new HaEventHandler(haContext, Logger);
         var monitor = new LgDisplay(Entities, services, Logger);
         var destkop = new Desktop(Entities, eventHandler, Logger);
-        yield return new DisplayAutomations(Entities, monitor, destkop, Logger);
+        var laptop = new Laptop(Entities, eventHandler, Logger);
+        yield return new DisplayAutomations(Entities, monitor, destkop, laptop, Logger);
     }
 }

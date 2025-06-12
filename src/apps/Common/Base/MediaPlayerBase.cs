@@ -39,7 +39,7 @@ public abstract class MediaPlayerBase : IMediaPlayer
 
     public virtual void TurnOn() => Entity.TurnOn();
 
-    public void TurnOff() => Entity.TurnOff();
+    public virtual void TurnOff() => Entity.TurnOff();
 
     public bool IsOn() => Entity.State.IsOn();
 
