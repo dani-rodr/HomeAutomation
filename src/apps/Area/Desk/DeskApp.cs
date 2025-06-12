@@ -9,7 +9,7 @@ public class DeskApp(Entities entities, Services services, ILogger<DeskApp> logg
 {
     protected override IEnumerable<IAutomation> CreateAutomations()
     {
-        var monitor = new LgDisplay(Entities, services);
+        var monitor = new LgDisplay(Entities, services, logger);
         yield return new DisplayAutomations(Entities, monitor, Logger);
     }
 }

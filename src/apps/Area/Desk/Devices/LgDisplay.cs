@@ -1,18 +1,17 @@
 namespace HomeAutomation.apps.Area.Desk.Devices;
 
-public class LgDisplay(Entities entities, Services services) : MediaPlayerBase(entities.MediaPlayer.LgWebosSmartTv)
+public enum DisplaySource
 {
-    private const string SourcePC = "PC";
-    private const string SourceLaptop = "Laptop";
-    private const string SourceScreenSaver = "ScreenSaver";
+    PC,
+    Laptop,
+    ScreenSaver,
+}
+
+public class LgDisplay(Entities entities, Services services, ILogger logger)
+    : MediaPlayerBase(entities.MediaPlayer.LgWebosSmartTv, logger)
+{
     private bool IsScreenOn { get; set; }
     private readonly WebostvServices _services = services.Webostv;
-    private readonly Dictionary<string, string> _sources = new()
-    {
-        [SourcePC] = "HDMI 1",
-        [SourceLaptop] = "HDMI 3",
-        [SourceScreenSaver] = "Always Ready",
-    };
     private int _brightness = 90;
 
     public async Task SetBrightnessAsync(int value)
@@ -31,29 +30,20 @@ public class LgDisplay(Entities entities, Services services) : MediaPlayerBase(e
         _brightness = value;
     }
 
+    public IObservable<StateChange<MediaPlayerEntity, EntityState<MediaPlayerAttributes>>> StateChanges() =>
+        Entity.StateChanges();
+
     public void SendToast(string msg) => SendCommand("system.notifications/createToast", new { message = msg });
 
-    public void ShowPC() => ShowSource(SourcePC);
+    public void ShowPC() => ShowSource(DisplaySource.PC.ToString());
 
-    public void ShowLaptop() => ShowSource(SourceLaptop);
+    public void ShowLaptop() => ShowSource(DisplaySource.Laptop.ToString());
 
-    public void ShowScreenSaver() => ShowSource(SourceScreenSaver);
+    public void ShowScreenSaver() => ShowSource(DisplaySource.ScreenSaver.ToString());
 
-    public void TurnOnScreen()
-    {
-        if (IsScreenOn)
-            return;
-        IsScreenOn = true;
-        SendCommand("com.webos.service.tvpower/power/turnOnScreen");
-    }
+    public void TurnOnScreen() => SetScreenPower(true);
 
-    public void TurnOffScreen()
-    {
-        if (!IsScreenOn)
-            return;
-        IsScreenOn = false;
-        SendCommand("com.webos.service.tvpower/power/turnOffScreen");
-    }
+    public void TurnOffScreen() => SetScreenPower(false);
 
     public override void TurnOn()
     {
@@ -61,15 +51,11 @@ public class LgDisplay(Entities entities, Services services) : MediaPlayerBase(e
         TurnOnScreen();
     }
 
-    private void ShowSource(string key)
+    protected override void ExtendSourceDictionary(Dictionary<string, string> sources)
     {
-        if (_sources.TryGetValue(key, out var source))
+        foreach (var kv in sources)
         {
-            SelectSource(source);
-        }
-        else
-        {
-            throw new ArgumentException($"Source key '{key}' not defined.", nameof(key));
+            sources[kv.Key.ToString()] = kv.Value;
         }
     }
 
@@ -97,5 +83,20 @@ public class LgDisplay(Entities entities, Services services) : MediaPlayerBase(e
             type = "confirm",
             isSysReq = true,
         };
+    }
+
+    private void SetScreenPower(bool on)
+    {
+        if (IsScreenOn == on)
+        {
+            return;
+        }
+
+        IsScreenOn = on;
+        var command = on
+            ? "com.webos.service.tvpower/power/turnOnScreen"
+            : "com.webos.service.tvpower/power/turnOffScreen";
+
+        SendCommand(command);
     }
 }
