@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-using System.Reactive.Concurrency;
 using HomeAutomation.apps.Area.Bedroom.Automations;
 using HomeAutomation.apps.Common.Interface;
 
