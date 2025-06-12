@@ -22,13 +22,26 @@ public class MotionAutomation(
 
     protected override IEnumerable<IDisposable> GetAdditionalPersistentAutomations()
     {
-        yield return TurnOnMotionSensorOnTvOff(); // This is when we stay on sala while lights off then go to the room
+        yield return TurnOnMotionSensorOnTvOff();
+        yield return TurnOnMotionSensorAfterNoMotionAndRoomOccupied();
     }
 
     protected override IEnumerable<IDisposable> GetAdditionalSwitchableAutomations()
     {
         yield return TurnOffPantryLights();
         yield return SetSensorDelayOnKitchenOccupancy();
+    }
+
+    private IDisposable TurnOnMotionSensorAfterNoMotionAndRoomOccupied()
+    {
+        return MotionSensor
+            .StateChanges()
+            .IsOffForMinutes(2)
+            .Where(_ =>
+                entities.BinarySensor.ContactSensorDoor.IsClosed()
+                && entities.BinarySensor.BedroomPresenceSensors.IsOccupied()
+            )
+            .Subscribe(_ => MasterSwitch?.TurnOn());
     }
 
     private IDisposable TurnOnMotionSensorOnTvOff()

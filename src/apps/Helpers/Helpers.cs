@@ -4,12 +4,13 @@ namespace HomeAutomation.apps.Helpers;
 
 public static class StateChangeObservableExtensions
 {
-    public static IObservable<StateChange> IsAnyOfStates(this IObservable<StateChange> source, params string[] states)
-    {
-        return source.Where(e =>
+    public static IObservable<StateChange> IsAnyOfStates(
+        this IObservable<StateChange> source,
+        params string[] states
+    ) =>
+        source.Where(e =>
             e.New?.State != null && states.Any(s => s.Equals(e.New.State, StringComparison.OrdinalIgnoreCase))
         );
-    }
 
     public static IObservable<StateChange> IsOn(this IObservable<StateChange> source) =>
         source.IsAnyOfStates(HaEntityStates.ON);
