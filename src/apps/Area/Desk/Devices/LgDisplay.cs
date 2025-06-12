@@ -31,6 +31,8 @@ public class LgDisplay(Entities entities, Services services) : MediaPlayerBase(e
         _brightness = value;
     }
 
+    public void SendToast(string msg) => SendCommand("system.notifications/createToast", new { message = msg });
+
     public void ShowPC() => ShowSource(SourcePC);
 
     public void ShowLaptop() => ShowSource(SourceLaptop);

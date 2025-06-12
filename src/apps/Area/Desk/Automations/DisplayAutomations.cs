@@ -7,9 +7,28 @@ public class DisplayAutomations(Entities entities, LgDisplay monitor, ILogger lo
     protected override IEnumerable<IDisposable> GetPersistentAutomations()
     {
         yield return GetBrightnessAutomation();
+        yield return GetScreenToggleAutomation();
     }
 
     protected override IEnumerable<IDisposable> GetToggleableAutomations() => [];
+
+    private IDisposable GetScreenToggleAutomation()
+    {
+        return entities
+            .Switch.LgScreen.StateChanges()
+            .Subscribe(e =>
+            {
+                if (e.IsOn())
+                {
+                    monitor.TurnOnScreen();
+                    return;
+                }
+                if (e.IsOff())
+                {
+                    monitor.TurnOffScreen();
+                }
+            });
+    }
 
     private IDisposable GetBrightnessAutomation()
     {
