@@ -6,5 +6,9 @@ namespace HomeAutomation.apps.Area.Bathroom;
 
 public class BathroomApp(Entities entities, ILogger<BathroomApp> logger) : AreaBase<BathroomApp>(entities, logger)
 {
-    protected override IEnumerable<IAutomation> CreateAutomations() => [new MotionAutomation(Entities, Logger)];
+    protected override IEnumerable<IAutomation> CreateAutomations()
+    {
+        var motionEntities = new BathroomMotionEntities(Entities);
+        yield return new MotionAutomation(motionEntities, Logger);
+    }
 }

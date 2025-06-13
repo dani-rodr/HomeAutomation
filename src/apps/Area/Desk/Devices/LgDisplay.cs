@@ -1,3 +1,5 @@
+using HomeAutomation.apps.Common.Containers;
+
 namespace HomeAutomation.apps.Area.Desk.Devices;
 
 public enum DisplaySource
@@ -7,8 +9,8 @@ public enum DisplaySource
     ScreenSaver,
 }
 
-public class LgDisplay(Entities entities, Services services, ILogger logger)
-    : MediaPlayerBase(entities.MediaPlayer.LgWebosSmartTv, logger)
+public class LgDisplay(ILgDisplayEntities entities, Services services, ILogger logger)
+    : MediaPlayerBase(entities.LgWebosSmartTv, logger)
 {
     private const string MAC_ADDRESS = "D4:8D:26:B8:C4:AA";
     private bool IsScreenOn { get; set; }

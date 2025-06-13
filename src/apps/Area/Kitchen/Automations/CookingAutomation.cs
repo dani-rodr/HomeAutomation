@@ -2,13 +2,13 @@ using System.Collections.Generic;
 
 namespace HomeAutomation.apps.Area.Kitchen.Automations;
 
-public class CookingAutomation(Entities entities, ILogger logger) : AutomationBase(logger)
+public class CookingAutomation(ICookingAutomationEntities entities, ILogger logger) : AutomationBase(logger)
 {
-    private readonly NumericSensorEntity _riceCookerPower = entities.Sensor.RiceCookerPower;
-    private readonly SwitchEntity _riceCookerSwitch = entities.Switch.RiceCookerSocket1;
-    private readonly SensorEntity _airFryerStatus = entities.Sensor.CareliSg593061393Maf05aStatusP21;
-    private readonly ButtonEntity _inductionTurnOff = entities.Button.InductionCookerPower;
-    private readonly NumericSensorEntity _inductionPower = entities.Sensor.SmartPlug3SonoffS31Power;
+    private readonly NumericSensorEntity _riceCookerPower = entities.RiceCookerPower;
+    private readonly SwitchEntity _riceCookerSwitch = entities.RiceCookerSwitch;
+    private readonly SensorEntity _airFryerStatus = entities.AirFryerStatus;
+    private readonly ButtonEntity _inductionTurnOff = entities.InductionTurnOff;
+    private readonly NumericSensorEntity _inductionPower = entities.InductionPower;
 
     protected override IEnumerable<IDisposable> GetPersistentAutomations()
     {

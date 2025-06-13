@@ -1,18 +1,13 @@
 using System.Linq;
+using HomeAutomation.apps.Common.Containers;
 
 namespace HomeAutomation.apps.Area.Bedroom.Automations;
 
-public class MotionAutomation(Entities entities, ILogger logger)
-    : MotionAutomationBase(
-        entities.Switch.BedroomMotionSensor,
-        entities.BinarySensor.BedroomPresenceSensors,
-        entities.Light.BedLights,
-        logger,
-        entities.Number.Esp32PresenceBedroomStillTargetDelay
-    )
+public class MotionAutomation(IBedroomMotionEntities entities, ILogger logger)
+    : MotionAutomationBase(entities.MasterSwitch, entities.MotionSensor, entities.Light, logger, entities.SensorDelay)
 {
-    private readonly SwitchEntity _rightSideEmptySwitch = entities.Switch.Sonoff1002352c401;
-    private readonly SwitchEntity _leftSideFanSwitch = entities.Switch.Sonoff100238104e1;
+    private readonly SwitchEntity _rightSideEmptySwitch = entities.RightSideEmptySwitch;
+    private readonly SwitchEntity _leftSideFanSwitch = entities.LeftSideFanSwitch;
 
     protected override IEnumerable<IDisposable> GetAdditionalPersistentAutomations() => GetLightSwitchAutomations();
 

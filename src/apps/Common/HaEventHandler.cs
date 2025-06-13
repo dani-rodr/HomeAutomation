@@ -1,6 +1,8 @@
+using HomeAutomation.apps.Common.Interface;
+
 namespace HomeAutomation.apps.Common;
 
-public class HaEventHandler(IHaContext haContext, ILogger logger)
+public class HaEventHandler(IHaContext haContext, ILogger logger) : IEventHandler
 {
     public void Subscribe(string eventType, Action<Event> handler)
     {

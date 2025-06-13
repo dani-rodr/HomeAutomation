@@ -1,18 +1,15 @@
+using HomeAutomation.apps.Common.Containers;
+
 namespace HomeAutomation.apps.Area.Kitchen.Automations;
 
-public class MotionAutomation(Entities entities, ILogger logger)
-    : MotionAutomationBase(
-        entities.Switch.KitchenMotionSensor,
-        entities.BinarySensor.KitchenMotionSensors,
-        entities.Light.RgbLightStrip,
-        logger,
-        entities.Number.Ld2410Esp325StillTargetDelay
-    )
+public class MotionAutomation(IKitchenMotionEntities entities, ILogger logger)
+    : MotionAutomationBase(entities.MasterSwitch, entities.MotionSensor, entities.Light, logger, entities.SensorDelay)
 {
+    private readonly BinarySensorEntity _powerPlug = entities.PowerPlug;
+
     protected override int SensorWaitTime => 15;
     protected override int SensorActiveDelayValue => 15;
     protected override int SensorInactiveDelayValue => 1;
-    private readonly BinarySensorEntity _powerPlug = entities.BinarySensor.SmartPlug3PowerExceedsThreshold;
 
     protected override IEnumerable<IDisposable> GetLightAutomations() =>
         [

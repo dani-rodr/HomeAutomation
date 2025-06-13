@@ -1,16 +1,16 @@
 namespace HomeAutomation.apps.Area.LivingRoom.Automations;
 
-public class AirQualityAutomations(Entities entities, SwitchEntity supportingFan, ILogger logger)
+public class AirQualityAutomations(IAirQualityEntities entities, ILogger logger)
     : FanAutomationBase(
-        entities.Switch.CleanAir,
-        entities.BinarySensor.LivingRoomPresenceSensors,
+        entities.CleanAirSwitch,
+        entities.PresenceSensor,
         logger,
-        entities.Switch.XiaomiSmartAirPurifier4CompactAirPurifierFanSwitch,
-        supportingFan
+        entities.AirPurifierFan,
+        entities.SupportingFan
     )
 {
-    private readonly NumericSensorEntity _airQuality = entities.Sensor.XiaomiSg753990712Cpa4Pm25DensityP34;
-    private readonly SwitchEntity _ledStatus = entities.Switch.XiaomiSmartAirPurifier4CompactAirPurifierLedStatus;
+    private readonly NumericSensorEntity _airQuality = entities.Pm25Sensor;
+    private readonly SwitchEntity _ledStatus = entities.LedStatus;
     protected override bool ShouldActivateFan { get; set; } = false;
     private bool IsCleaningAir { get; set; } = false;
 
@@ -21,6 +21,7 @@ public class AirQualityAutomations(Entities entities, SwitchEntity supportingFan
         int waitTime = 10;
         int cleanAirThreshold = 5;
         int dirtyAirThreshold = 75;
+        var supportingFan = entities.SupportingFan;
         yield return Fan.StateChanges().Subscribe(SyncLedWithFan);
         yield return _airQuality
             .StateChanges()

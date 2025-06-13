@@ -1,12 +1,10 @@
+using System.Linq;
+using HomeAutomation.apps.Common.Containers;
+
 namespace HomeAutomation.apps.Area.Bedroom;
 
-public class FanAutomation(Entities entities, ILogger logger)
-    : FanAutomationBase(
-        entities.Switch.BedroomMotionSensor,
-        entities.BinarySensor.BedroomPresenceSensors,
-        logger,
-        entities.Switch.Sonoff100238104e1
-    )
+public class FanAutomation(IFanAutomationEntities entities, ILogger logger)
+    : FanAutomationBase(entities.MasterSwitch, entities.MotionSensor, logger, [.. entities.Fans])
 {
     protected override bool ShouldActivateFan { get; set; } = false;
 

@@ -3,15 +3,15 @@ using NetDaemon.Extensions.Scheduler;
 
 namespace HomeAutomation.apps.Area.Bedroom.Automations;
 
-public class ClimateAutomation(Entities entities, IScheduler scheduler, ILogger logger)
-    : AutomationBase(logger, entities.Switch.AcAutomation)
+public class ClimateAutomation(IClimateAutomationEntities entities, IScheduler scheduler, ILogger logger)
+    : AutomationBase(logger, entities.MasterSwitch)
 {
     private readonly IScheduler _scheduler = scheduler;
-    private readonly ClimateEntity _ac = entities.Climate.Ac;
-    private readonly BinarySensorEntity _motionSensor = entities.BinarySensor.BedroomPresenceSensors;
-    private readonly BinarySensorEntity _doorSensor = entities.BinarySensor.ContactSensorDoor;
-    private readonly SwitchEntity _fanSwitch = entities.Switch.Sonoff100238104e1;
-    private readonly InputBooleanEntity _isPowerSavingMode = entities.InputBoolean.AcPowerSavingMode;
+    private readonly ClimateEntity _ac = entities.AirConditioner;
+    private readonly BinarySensorEntity _motionSensor = entities.MotionSensor;
+    private readonly BinarySensorEntity _doorSensor = entities.DoorSensor;
+    private readonly SwitchEntity _fanSwitch = entities.FanSwitch;
+    private readonly InputBooleanEntity _isPowerSavingMode = entities.PowerSavingMode;
     private Dictionary<TimeBlock, AcScheduleSetting>? _cachedAcSettings;
 
     private Dictionary<TimeBlock, AcScheduleSetting> GetCurrentAcScheduleSettings()
@@ -30,8 +30,8 @@ public class ClimateAutomation(Entities entities, IScheduler scheduler, ILogger 
                 PassiveTemp: 27,
                 Mode: HaEntityStates.DRY,
                 ActivateFan: true,
-                HourStart: entities.Sensor.SunNextRising.LocalHour(),
-                HourEnd: entities.Sensor.SunNextSetting.LocalHour()
+                HourStart: entities.SunRising.LocalHour(),
+                HourEnd: entities.SunSetting.LocalHour()
             ),
 
             [TimeBlock.Sunset] = new(
@@ -41,8 +41,8 @@ public class ClimateAutomation(Entities entities, IScheduler scheduler, ILogger 
                 PassiveTemp: 25,
                 Mode: HaEntityStates.COOL,
                 ActivateFan: false,
-                HourStart: entities.Sensor.SunNextSetting.LocalHour(),
-                HourEnd: entities.Sensor.SunNextMidnight.LocalHour()
+                HourStart: entities.SunSetting.LocalHour(),
+                HourEnd: entities.SunMidnight.LocalHour()
             ),
 
             [TimeBlock.Midnight] = new(
@@ -52,8 +52,8 @@ public class ClimateAutomation(Entities entities, IScheduler scheduler, ILogger 
                 PassiveTemp: 25,
                 Mode: HaEntityStates.COOL,
                 ActivateFan: false,
-                HourStart: entities.Sensor.SunNextMidnight.LocalHour(),
-                HourEnd: entities.Sensor.SunNextRising.LocalHour()
+                HourStart: entities.SunMidnight.LocalHour(),
+                HourEnd: entities.SunRising.LocalHour()
             ),
         };
 
@@ -157,7 +157,7 @@ public class ClimateAutomation(Entities entities, IScheduler scheduler, ILogger 
 
     private IEnumerable<IDisposable> GetHousePresenceAutomations()
     {
-        var houseEmpty = entities.BinarySensor.House;
+        var houseEmpty = entities.HouseSensor;
         yield return houseEmpty.StateChanges().IsOffForHours(1).Subscribe(_ => _ac.TurnOff());
         yield return houseEmpty
             .StateChanges()
@@ -191,7 +191,7 @@ public class ClimateAutomation(Entities entities, IScheduler scheduler, ILogger 
     private IEnumerable<IDisposable> GetFanModeToggleAutomation()
     {
         yield return entities
-            .Button.AcFanModeToggle.StateChanges()
+            .AcFanModeToggle.StateChanges()
             .Where(e => e.IsValidButtonPress())
             .Subscribe(_ =>
             {
@@ -260,7 +260,7 @@ public class ClimateAutomation(Entities entities, IScheduler scheduler, ILogger 
         bool isOccupied = _motionSensor.IsOccupied();
         bool isDoorOpen = _doorSensor.IsOpen();
         bool isPowerSaving = _isPowerSavingMode.IsOn();
-        var weather = entities.Weather.Home;
+        var weather = entities.Weather;
         bool isColdWeather = !weather.IsSunny();
 
         Logger.LogInformation(

@@ -1,15 +1,13 @@
+using HomeAutomation.apps.Common.Containers;
+
 namespace HomeAutomation.apps.Area.LivingRoom.Automations;
 
-public class TabletAutomations(
-    Entities entities,
-    SwitchEntity masterSwitch,
-    BinarySensorEntity motionSensor,
-    ILogger logger
-) : MotionAutomationBase(masterSwitch, motionSensor, entities.Light.MipadScreen, logger)
+public class TabletAutomations(ITabletAutomationEntities entities, ILogger logger) 
+    : MotionAutomationBase(entities.MasterSwitch, entities.MotionSensor, entities.TabletScreen, logger)
 {
     protected override IEnumerable<IDisposable> GetSensorDelayAutomations() => [];
 
-    private BinarySensorEntity _tabletActive = entities.BinarySensor.Mipad;
+    private BinarySensorEntity _tabletActive = entities.TabletActive;
 
     protected override IEnumerable<IDisposable> GetLightAutomations() =>
         [MotionSensor.StateChanges().Subscribe(ToggleLights)];

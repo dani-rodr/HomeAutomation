@@ -1,32 +1,23 @@
+using HomeAutomation.apps.Common.Containers;
+
 namespace HomeAutomation.apps.Area.LivingRoom.Automations;
 
 public class MotionAutomation : MotionAutomationBase
 {
-    private readonly Entities _entities;
+    private readonly ILivingRoomMotionEntities _entities;
     private readonly DimmingLightController _dimmingController;
 
     protected override int SensorWaitTime => 30;
     protected override int SensorActiveDelayValue => 45;
     protected override int SensorInactiveDelayValue => 1;
 
-    public MotionAutomation(
-        Entities entities,
-        SwitchEntity masterSwitch,
-        BinarySensorEntity motionSensor,
-        ILogger logger
-    )
-        : base(
-            masterSwitch,
-            motionSensor,
-            entities.Light.SalaLightsGroup,
-            logger,
-            entities.Number.Ld2410Esp321StillTargetDelay
-        )
+    public MotionAutomation(ILivingRoomMotionEntities entities, ILogger logger)
+        : base(entities.MasterSwitch, entities.MotionSensor, entities.Light, logger, entities.SensorDelay)
     {
         _entities = entities;
         _dimmingController = new DimmingLightController(
             SensorActiveDelayValue,
-            entities.Number.Ld2410Esp321StillTargetDelay,
+            entities.SensorDelay,
             dimDelaySeconds: 15
         );
     }
@@ -57,10 +48,7 @@ public class MotionAutomation : MotionAutomationBase
         return MotionSensor
             .StateChanges()
             .IsOffForMinutes(2)
-            .Where(_ =>
-                _entities.BinarySensor.ContactSensorDoor.IsClosed()
-                && _entities.BinarySensor.BedroomPresenceSensors.IsOccupied()
-            )
+            .Where(_ => _entities.ContactSensorDoor.IsClosed() && _entities.BedroomPresenceSensors.IsOccupied())
             .Subscribe(_ => MasterSwitch?.TurnOn());
     }
 
@@ -69,14 +57,14 @@ public class MotionAutomation : MotionAutomationBase
         return MotionSensor
             .StateChanges()
             .IsOffForMinutes(30)
-            .Where(_ => _entities.MediaPlayer.Tcl65c755.IsOff())
+            .Where(_ => _entities.TclTv.IsOff())
             .Subscribe(_ => MasterSwitch?.TurnOn());
     }
 
     private IDisposable SetSensorDelayOnKitchenOccupancy()
     {
         return _entities
-            .BinarySensor.KitchenMotionSensors.StateChanges()
+            .KitchenMotionSensors.StateChanges()
             .IsOnForSeconds(10)
             .Subscribe(_ => SensorDelay?.SetNumericValue(SensorActiveDelayValue));
     }
@@ -87,11 +75,10 @@ public class MotionAutomation : MotionAutomationBase
             .StateChanges()
             .IsOff()
             .Where(_ => PantryUnoccupied())
-            .Subscribe(_ => _entities.Light.PantryLights.TurnOff());
+            .Subscribe(_ => _entities.PantryLights.TurnOff());
     }
 
-    private bool PantryUnoccupied() =>
-        _entities.Switch.PantryMotionSensor.IsOn() && _entities.BinarySensor.PantryMotionSensors.IsOff();
+    private bool PantryUnoccupied() => _entities.PantryMotionSensor.IsOn() && _entities.PantryMotionSensors.IsOff();
 
     public override void Dispose()
     {

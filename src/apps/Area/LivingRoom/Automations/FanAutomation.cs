@@ -1,20 +1,10 @@
+using System.Linq;
+using HomeAutomation.apps.Common.Containers;
+
 namespace HomeAutomation.apps.Area.LivingRoom.Automations;
 
-public class FanAutomation(
-    Entities entities,
-    SwitchEntity masterSwitch,
-    BinarySensorEntity motionSensor,
-    SwitchEntity standFan,
-    ILogger logger
-)
-    : FanAutomationBase(
-        masterSwitch,
-        motionSensor,
-        logger,
-        entities.Switch.CeilingFan,
-        standFan,
-        entities.Switch.Cozylife955f
-    )
+public class FanAutomation(ILivingRoomFanEntities entities, ILogger logger)
+    : FanAutomationBase(entities.MasterSwitch, entities.MotionSensor, logger, [.. entities.Fans])
 {
     protected override bool ShouldActivateFan { get; set; } = false;
     private SwitchEntity ExhaustFan => Fans[2];
@@ -38,7 +28,7 @@ public class FanAutomation(
             Fan.TurnOn();
         }
 
-        if (entities.BinarySensor.BedroomPresenceSensors.IsOff())
+        if (entities.BedroomPresenceSensor.IsOff())
         {
             ExhaustFan.TurnOn();
         }

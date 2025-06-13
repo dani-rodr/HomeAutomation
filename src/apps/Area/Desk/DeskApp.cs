@@ -1,6 +1,7 @@
 using HomeAutomation.apps.Area.Desk.Automations;
 using HomeAutomation.apps.Area.Desk.Devices;
 using HomeAutomation.apps.Common;
+using HomeAutomation.apps.Common.Containers;
 using HomeAutomation.apps.Common.Interface;
 
 namespace HomeAutomation.apps.Area.Desk;
@@ -10,10 +11,17 @@ public class DeskApp(IHaContext haContext, Entities entities, Services services,
 {
     protected override IEnumerable<IAutomation> CreateAutomations()
     {
-        var eventHandler = new HaEventHandler(haContext, Logger);
-        var monitor = new LgDisplay(Entities, services, Logger);
-        var destkop = new Desktop(Entities, eventHandler, Logger);
-        var laptop = new Laptop(Entities, eventHandler, Logger);
-        yield return new DisplayAutomations(Entities, monitor, destkop, laptop, Logger);
+        IEventHandler eventHandler = new HaEventHandler(haContext, Logger);
+
+        var lgDisplayEntities = new DeskLgDisplayEntities(Entities);
+        var monitor = new LgDisplay(lgDisplayEntities, services, Logger);
+
+        var desktopEntities = new DeskDesktopEntities(Entities);
+        var destkop = new Desktop(desktopEntities, eventHandler, Logger);
+
+        var laptop = new Laptop(eventHandler, Logger);
+
+        var displayEntities = new DeskDisplayEntities(Entities);
+        yield return new DisplayAutomations(displayEntities, monitor, destkop, laptop, Logger);
     }
 }

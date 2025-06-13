@@ -7,6 +7,7 @@ global using System.Threading;
 global using System.Threading.Tasks;
 global using HomeAssistantGenerated;
 global using HomeAutomation.apps.Common.Base;
+global using HomeAutomation.apps.Common.Containers;
 global using HomeAutomation.apps.Common.Services;
 global using HomeAutomation.apps.Helpers;
 global using Microsoft.Extensions.Logging;

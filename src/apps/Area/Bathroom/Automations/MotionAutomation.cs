@@ -4,19 +4,10 @@ public class MotionAutomation : MotionAutomationBase
 {
     private readonly DimmingLightController _dimmingController;
 
-    public MotionAutomation(Entities entities, ILogger logger)
-        : base(
-            entities.Switch.BathroomMotionSensor,
-            entities.BinarySensor.BathroomPresenceSensors,
-            entities.Light.BathroomLights,
-            logger,
-            entities.Number.ZEsp32C62StillTargetDelay
-        )
+    public MotionAutomation(IMotionAutomationEntities entities, ILogger logger)
+        : base(entities.MasterSwitch, entities.MotionSensor, entities.Light, logger, entities.SensorDelay)
     {
-        _dimmingController = new DimmingLightController(
-            sensorActiveDelayValue: SensorActiveDelayValue,
-            sensorDelay: entities.Number.ZEsp32C62StillTargetDelay
-        );
+        _dimmingController = new DimmingLightController(SensorActiveDelayValue, entities.SensorDelay);
     }
 
     protected override IEnumerable<IDisposable> GetLightAutomations()

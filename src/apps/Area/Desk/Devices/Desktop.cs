@@ -1,14 +1,16 @@
 using HomeAutomation.apps.Common;
+using HomeAutomation.apps.Common.Containers;
+using HomeAutomation.apps.Common.Interface;
 
 namespace HomeAutomation.apps.Area.Desk.Devices;
 
-public class Desktop(Entities entities, HaEventHandler eventHandler, ILogger logger) : ComputerBase(logger)
+public class Desktop(IDesktopEntities entities, IEventHandler eventHandler, ILogger logger) : ComputerBase(logger)
 {
     private const string SHOW_PC_EVENT = "show_pc";
     private const string HIDE_PC_EVENT = "hide_pc";
-    private readonly BinarySensorEntity powerPlugThreshold = entities.BinarySensor.SmartPlug1PowerExceedsThreshold;
-    private readonly BinarySensorEntity networkStatus = entities.BinarySensor.DanielPcNetworkStatus;
-    private readonly SwitchEntity powerSwitch = entities.Switch.WakeOnLan;
+    private readonly BinarySensorEntity powerPlugThreshold = entities.PowerPlugThreshold;
+    private readonly BinarySensorEntity networkStatus = entities.NetworkStatus;
+    private readonly SwitchEntity powerSwitch = entities.PowerSwitch;
 
     public override bool IsOn() => GetPowerState(powerPlugThreshold.State, networkStatus.State);
 

@@ -6,7 +6,8 @@
       "Bash(dotnet new:*)",
       "WebFetch(domain:netdaemon.xyz)",
       "Bash(dotnet.exe build:*)",
-      "Bash(rm:*)"
+      "Bash(rm:*)",
+      "Bash(dotnet build)"
     ],
     "deny": []
   }

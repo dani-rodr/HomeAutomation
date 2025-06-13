@@ -1,10 +1,11 @@
 using HomeAutomation.apps.Common;
+using HomeAutomation.apps.Common.Interface;
 
 namespace HomeAutomation.apps.Area.Desk.Devices;
 
-public class Laptop(Entities entities, HaEventHandler eventHandler, ILogger logger) : ComputerBase(logger)
+public class Laptop(IEventHandler eventHandler, ILogger logger) : ComputerBase(logger)
 {
-    public override bool IsOn() => false;
+    public override bool IsOn() => true;
 
     public override IObservable<bool> OnHideRequested()
     {
