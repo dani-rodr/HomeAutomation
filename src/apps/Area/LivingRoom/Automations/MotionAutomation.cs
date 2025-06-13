@@ -1,25 +1,26 @@
-using HomeAutomation.apps.Common.Containers;
-
 namespace HomeAutomation.apps.Area.LivingRoom.Automations;
 
 public class MotionAutomation : MotionAutomationBase
 {
     private readonly ILivingRoomMotionEntities _entities;
-    private readonly DimmingLightController _dimmingController;
+    private readonly IDimmingLightController _dimmingController;
 
     protected override int SensorWaitTime => 30;
     protected override int SensorActiveDelayValue => 45;
     protected override int SensorInactiveDelayValue => 1;
 
-    public MotionAutomation(ILivingRoomMotionEntities entities, ILogger logger)
+    public MotionAutomation(
+        ILivingRoomMotionEntities entities,
+        IDimmingLightController dimmingController,
+        ILogger logger
+    )
         : base(entities.MasterSwitch, entities.MotionSensor, entities.Light, logger, entities.SensorDelay)
     {
         _entities = entities;
-        _dimmingController = new DimmingLightController(
-            SensorActiveDelayValue,
-            entities.SensorDelay,
-            dimDelaySeconds: 15
-        );
+        _dimmingController = dimmingController;
+
+        _dimmingController.SetSensorActiveDelayValue(SensorActiveDelayValue);
+        _dimmingController.SetDimParameters(brightnessPct: 80, delaySeconds: 15);
     }
 
     protected override IEnumerable<IDisposable> GetLightAutomations()

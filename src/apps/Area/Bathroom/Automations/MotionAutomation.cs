@@ -2,12 +2,18 @@ namespace HomeAutomation.apps.Area.Bathroom.Automations;
 
 public class MotionAutomation : MotionAutomationBase
 {
-    private readonly DimmingLightController _dimmingController;
+    private readonly IDimmingLightController _dimmingController;
 
-    public MotionAutomation(IMotionAutomationEntities entities, ILogger logger)
+    public MotionAutomation(
+        IMotionAutomationEntities entities,
+        IDimmingLightController dimmingController,
+        ILogger logger
+    )
         : base(entities.MasterSwitch, entities.MotionSensor, entities.Light, logger, entities.SensorDelay)
     {
-        _dimmingController = new DimmingLightController(SensorActiveDelayValue, entities.SensorDelay);
+        _dimmingController = dimmingController;
+
+        _dimmingController.SetSensorActiveDelayValue(SensorActiveDelayValue);
     }
 
     protected override IEnumerable<IDisposable> GetLightAutomations()

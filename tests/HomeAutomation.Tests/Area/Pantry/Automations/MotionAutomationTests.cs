@@ -11,16 +11,6 @@ public class MotionAutomationTests : IDisposable
 {
     private readonly MockHaContext _mockHaContext;
     private readonly Mock<ILogger<MotionAutomation>> _mockLogger;
-
-    // Test entities as private fields - easy to edit right here!
-    private readonly SwitchEntity _masterSwitch;
-    private readonly BinarySensorEntity _motionSensor;
-    private readonly LightEntity _pantryLight;
-    private readonly LightEntity _mirrorLight;
-    private readonly BinarySensorEntity _miScalePresence;
-    private readonly BinarySensorEntity _roomDoor;
-    private readonly NumberEntity _sensorDelay;
-
     private readonly TestEntities _entities;
     private readonly MotionAutomation _automation;
 
@@ -29,28 +19,8 @@ public class MotionAutomationTests : IDisposable
         _mockHaContext = new MockHaContext();
         _mockLogger = new Mock<ILogger<MotionAutomation>>();
 
-        // Initialize test entities with descriptive entity IDs
-        _masterSwitch = new SwitchEntity(_mockHaContext, "switch.pantry_motion_sensor");
-        _motionSensor = new BinarySensorEntity(_mockHaContext, "binary_sensor.pantry_motion_sensors");
-        _pantryLight = new LightEntity(_mockHaContext, "light.pantry_lights");
-        _sensorDelay = new NumberEntity(_mockHaContext, "number.z_esp32_c6_3_still_target_delay");
-        _miScalePresence = new BinarySensorEntity(
-            _mockHaContext,
-            "binary_sensor.esp32_presence_bedroom_mi_scale_presence"
-        );
-        _mirrorLight = new LightEntity(_mockHaContext, "light.controller_rgb_df1c0d");
-        _roomDoor = new BinarySensorEntity(_mockHaContext, "binary_sensor.contact_sensor_door");
-
-        // Create wrapper that implements the interface
-        _entities = new TestEntities(
-            _masterSwitch,
-            _motionSensor,
-            _pantryLight,
-            _sensorDelay,
-            _miScalePresence,
-            _mirrorLight,
-            _roomDoor
-        );
+        // Create test entities wrapper - much simpler!
+        _entities = new TestEntities(_mockHaContext);
 
         _automation = new MotionAutomation(_entities, _mockLogger.Object);
 
@@ -58,7 +28,7 @@ public class MotionAutomationTests : IDisposable
         _automation.StartAutomation();
 
         // Simulate master switch being ON to enable automation logic
-        _mockHaContext.SimulateStateChange(_masterSwitch.EntityId, "off", "on");
+        _mockHaContext.SimulateStateChange(_entities.MasterSwitch.EntityId, "off", "on");
 
         // Clear any initialization service calls
         _mockHaContext.ClearServiceCalls();
@@ -72,7 +42,7 @@ public class MotionAutomationTests : IDisposable
         _mockHaContext.StateChangeSubject.OnNext(stateChange);
 
         // Assert - Clean, one-line assertion using entity ID
-        _mockHaContext.ShouldHaveCalledLightTurnOn(_pantryLight.EntityId);
+        _mockHaContext.ShouldHaveCalledLightTurnOn(_entities.Light.EntityId);
     }
 
     [Fact]
@@ -83,7 +53,7 @@ public class MotionAutomationTests : IDisposable
         _mockHaContext.StateChangeSubject.OnNext(stateChange);
 
         // Assert - Clean helper for common pattern using entity IDs
-        _mockHaContext.ShouldHaveCalledBothLightsTurnOff(_pantryLight.EntityId, _mirrorLight.EntityId);
+        _mockHaContext.ShouldHaveCalledBothLightsTurnOff(_entities.Light.EntityId, _entities.MirrorLight.EntityId);
     }
 
     [Fact]
@@ -94,8 +64,8 @@ public class MotionAutomationTests : IDisposable
         _mockHaContext.StateChangeSubject.OnNext(stateChange);
 
         // Assert - Clean syntax with negative assertions using entity IDs
-        _mockHaContext.ShouldHaveCalledLightTurnOn(_mirrorLight.EntityId);
-        _mockHaContext.ShouldNeverHaveCalledLight(_pantryLight.EntityId);
+        _mockHaContext.ShouldHaveCalledLightTurnOn(_entities.MirrorLight.EntityId);
+        _mockHaContext.ShouldNeverHaveCalledLight(_entities.Light.EntityId);
     }
 
     [Fact]
@@ -106,7 +76,7 @@ public class MotionAutomationTests : IDisposable
         _mockHaContext.StateChangeSubject.OnNext(stateChange);
 
         // Assert - Switch assertions work too using entity ID
-        _mockHaContext.ShouldHaveCalledSwitchTurnOn(_masterSwitch.EntityId);
+        _mockHaContext.ShouldHaveCalledSwitchTurnOn(_entities.MasterSwitch.EntityId);
     }
 
     [Fact]
@@ -117,10 +87,10 @@ public class MotionAutomationTests : IDisposable
         _mockHaContext.ClearServiceCalls();
 
         // Act - Simulate master switch being turned on (should trigger ControlLightOnMotionChange)
-        _mockHaContext.SimulateStateChange(_masterSwitch.EntityId, "off", "on");
+        _mockHaContext.SimulateStateChange(_entities.MasterSwitch.EntityId, "off", "on");
 
         // Assert - Should turn on light because motion sensor is already on
-        _mockHaContext.ShouldHaveCalledLightTurnOn(_pantryLight.EntityId);
+        _mockHaContext.ShouldHaveCalledLightTurnOn(_entities.Light.EntityId);
     }
 
     [Fact]
@@ -131,10 +101,10 @@ public class MotionAutomationTests : IDisposable
         _mockHaContext.ClearServiceCalls();
 
         // Act - Simulate master switch being turned on
-        _mockHaContext.SimulateStateChange(_masterSwitch.EntityId, "off", "on");
+        _mockHaContext.SimulateStateChange(_entities.MasterSwitch.EntityId, "off", "on");
 
         // Assert - Should turn off light because motion sensor is off
-        _mockHaContext.ShouldHaveCalledLightTurnOff(_pantryLight.EntityId);
+        _mockHaContext.ShouldHaveCalledLightTurnOff(_entities.Light.EntityId);
     }
 
     [Fact]
@@ -148,8 +118,8 @@ public class MotionAutomationTests : IDisposable
         _mockHaContext.StateChangeSubject.OnNext(presenceStateChange);
 
         // Assert - Verify both lights and exact counts using entity IDs
-        _mockHaContext.ShouldHaveCalledLightTurnOn(_pantryLight.EntityId);
-        _mockHaContext.ShouldHaveCalledLightTurnOn(_mirrorLight.EntityId);
+        _mockHaContext.ShouldHaveCalledLightTurnOn(_entities.Light.EntityId);
+        _mockHaContext.ShouldHaveCalledLightTurnOn(_entities.MirrorLight.EntityId);
         _mockHaContext.ShouldHaveServiceCallCount(2);
     }
 
@@ -171,9 +141,9 @@ public class MotionAutomationTests : IDisposable
         _mockHaContext.StateChangeSubject.OnNext(StateChangeHelpers.MotionDetected(_entities.MotionSensor));
 
         // Assert - Verify exact call counts for complex scenarios using entity IDs
-        _mockHaContext.ShouldHaveCalledLightExactly(_pantryLight.EntityId, "turn_on", 2);
-        _mockHaContext.ShouldHaveCalledLightExactly(_pantryLight.EntityId, "turn_off", 1);
-        _mockHaContext.ShouldHaveCalledLightExactly(_mirrorLight.EntityId, "turn_off", 1);
+        _mockHaContext.ShouldHaveCalledLightExactly(_entities.Light.EntityId, "turn_on", 2);
+        _mockHaContext.ShouldHaveCalledLightExactly(_entities.Light.EntityId, "turn_off", 1);
+        _mockHaContext.ShouldHaveCalledLightExactly(_entities.MirrorLight.EntityId, "turn_off", 1);
         _mockHaContext.ShouldHaveServiceCallCount(4); // on, off, off (mirror), on
     }
 
@@ -227,23 +197,20 @@ public class MotionAutomationTests : IDisposable
 
     /// <summary>
     /// Test wrapper that implements IPantryMotionEntities interface
+    /// Creates entities internally with the appropriate entity IDs
     /// </summary>
-    private class TestEntities(
-        SwitchEntity masterSwitch,
-        BinarySensorEntity motionSensor,
-        LightEntity light,
-        NumberEntity sensorDelay,
-        BinarySensorEntity miScalePresenceSensor,
-        LightEntity mirrorLight,
-        BinarySensorEntity roomDoor
-    ) : IPantryMotionEntities
+    private class TestEntities(IHaContext haContext) : IPantryMotionEntities
     {
-        public SwitchEntity MasterSwitch { get; } = masterSwitch;
-        public BinarySensorEntity MotionSensor { get; } = motionSensor;
-        public LightEntity Light { get; } = light;
-        public NumberEntity SensorDelay { get; } = sensorDelay;
-        public BinarySensorEntity MiScalePresenceSensor { get; } = miScalePresenceSensor;
-        public LightEntity MirrorLight { get; } = mirrorLight;
-        public BinarySensorEntity RoomDoor { get; } = roomDoor;
+        public SwitchEntity MasterSwitch { get; } = new SwitchEntity(haContext, "switch.pantry_motion_sensor");
+        public BinarySensorEntity MotionSensor { get; } =
+            new BinarySensorEntity(haContext, "binary_sensor.pantry_motion_sensors");
+        public LightEntity Light { get; } = new LightEntity(haContext, "light.pantry_lights");
+        public NumberEntity SensorDelay { get; } =
+            new NumberEntity(haContext, "number.z_esp32_c6_3_still_target_delay");
+        public BinarySensorEntity MiScalePresenceSensor { get; } =
+            new BinarySensorEntity(haContext, "binary_sensor.esp32_presence_bedroom_mi_scale_presence");
+        public LightEntity MirrorLight { get; } = new LightEntity(haContext, "light.controller_rgb_df1c0d");
+        public BinarySensorEntity RoomDoor { get; } =
+            new BinarySensorEntity(haContext, "binary_sensor.contact_sensor_door");
     }
 }
