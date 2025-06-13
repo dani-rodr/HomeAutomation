@@ -56,6 +56,127 @@ dotnet.exe csharpier format .
 dotnet.exe csharpier check .
 ```
 
+### Testing & Code Coverage
+```bash
+# Run all tests
+dotnet.exe test
+
+# Run tests with basic code coverage
+dotnet.exe test --collect:"XPlat Code Coverage"
+
+# Run tests with coverage using runsettings
+dotnet.exe test --settings coverlet.runsettings
+
+# Run tests with coverage and generate HTML report
+dotnet.exe test --collect:"XPlat Code Coverage" --results-directory ./TestResults
+reportgenerator -reports:"./TestResults/*/coverage.cobertura.xml" -targetdir:"./coverage-report" -reporttypes:Html
+
+# Run tests with coverage threshold enforcement (80% minimum)
+dotnet.exe test /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura /p:Threshold=80
+
+# Generate detailed coverage report with multiple formats
+dotnet.exe test /p:CollectCoverage=true /p:CoverletOutputFormat="json,cobertura,opencover,lcov" /p:CoverletOutput="./coverage/"
+reportgenerator -reports:"./coverage/coverage.cobertura.xml" -targetdir:"./coverage-report" -reporttypes:"Html,HtmlSummary,TextSummary"
+
+# Quick coverage check with console output
+dotnet.exe test /p:CollectCoverage=true /p:CoverletOutputFormat=console
+
+# Use the convenient test-coverage script (recommended)
+.\test-coverage.ps1
+```
+
+### Test & Coverage Scripts
+Two convenient scripts are available for testing workflows:
+
+#### PowerShell Script (Recommended)
+The PowerShell script provides the best experience with advanced error handling, colored output, and cross-platform support:
+
+```powershell
+# Interactive menu
+.\test-coverage.ps1
+
+# Direct commands
+.\test-coverage.ps1 -Action test        # Run tests only
+.\test-coverage.ps1 -Action coverage    # Run tests with coverage
+.\test-coverage.ps1 -Action report      # Run tests + coverage + HTML report
+.\test-coverage.ps1 -Action all         # Full workflow + open browser
+.\test-coverage.ps1 -Action clean       # Clean coverage artifacts
+```
+
+#### Batch Script Alternative
+For environments with restricted PowerShell execution policies:
+```cmd
+# Interactive menu
+test-coverage.bat
+
+# Direct commands
+test-coverage.bat test        # Run tests only
+test-coverage.bat coverage    # Run tests with coverage
+test-coverage.bat report      # Run tests + coverage + HTML report
+test-coverage.bat all         # Full workflow + open browser
+test-coverage.bat clean       # Clean coverage artifacts
+```
+
+#### PowerShell Execution Policy Setup
+If you get "execution policy" errors, run one of these commands as Administrator:
+
+```powershell
+# Option 1: Allow current user to run scripts (recommended)
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+
+# Option 2: Temporary bypass for current session only
+Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope Process
+
+# Option 3: Run without changing policy
+powershell -ExecutionPolicy Bypass -File .\test-coverage.ps1
+```
+
+### Troubleshooting
+
+#### PowerShell Execution Policy Issues
+```powershell
+# Error: "execution of scripts is disabled on this system"
+# Solution 1: Set policy for current user (permanent)
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+
+# Solution 2: Bypass policy for single execution
+powershell -ExecutionPolicy Bypass -File .\test-coverage.ps1
+
+# Solution 3: Use the batch script alternative
+test-coverage.bat
+```
+
+#### Missing Tools
+```bash
+# Install ReportGenerator if missing
+dotnet tool install -g dotnet-reportgenerator-globaltool
+
+# Update ReportGenerator
+dotnet tool update -g dotnet-reportgenerator-globaltool
+
+# Check installed tools
+dotnet tool list -g
+```
+
+#### Coverage Scope
+Code coverage is configured to analyze **only the `src/apps` directory**, which contains your NetDaemon automation business logic. This focused approach:
+- **Excludes infrastructure code** - Generated files, program.cs, Startup.cs are not analyzed
+- **Focuses on automation logic** - Only your area automations, base classes, and helpers count toward coverage
+- **Provides meaningful metrics** - 80% threshold applies to code you actively maintain
+
+Files included in coverage:
+- `src/apps/Area/` - All area-specific automations (Bathroom, Bedroom, Kitchen, etc.)
+- `src/apps/Common/` - Base classes, interfaces, services, and containers
+- `src/apps/Security/` - Security-related automations
+- `src/apps/Helpers/` - Utility functions and constants
+
+#### Coverage Threshold Failures
+If tests fail due to coverage being below 80%:
+- Add more unit tests to increase coverage for automation logic
+- Review the HTML report to see which automation classes/methods need testing
+- Focus on testing business logic in Area automations and Common base classes
+- Temporarily lower the threshold in `HomeAutomation.Tests.csproj` if needed
+
 ### WSL Development
 ```bash
 # Use dotnet.exe when running from WSL

@@ -73,3 +73,13 @@ ehthumbs.db
 
 # Backup files
 *.bak
+
+# Code Coverage
+coverage/
+coverage-report/
+TestResults/
+*.coverage
+*.coveragexml
+coverage*.json
+coverage*.xml
+coverage*.info

@@ -6,6 +6,24 @@
     <IsPackable>false</IsPackable>
     <IsTestProject>true</IsTestProject>
   </PropertyGroup>
+  <!-- Code Coverage Configuration -->
+  <PropertyGroup>
+    <!-- Coverage thresholds -->
+    <Threshold>0</Threshold>
+    <ThresholdType>line,branch,method</ThresholdType>
+    <ThresholdStat>minimum</ThresholdStat>
+    <!-- Coverage output settings -->
+    <CoverletOutputFormat>json,cobertura,opencover,lcov</CoverletOutputFormat>
+    <CoverletOutput>./coverage/</CoverletOutput>
+    <!-- Include only src/apps directory for coverage analysis -->
+    <Include>[HomeAutomation]..\..\src\apps\**\*</Include>
+    <!-- Exclude all files outside apps directory and generated code -->
+    <Exclude>[HomeAutomation]..\..\src\HomeAssistantGenerated.cs</Exclude>
+    <Exclude>[HomeAutomation]..\..\src\program.cs</Exclude>
+    <Exclude>[HomeAutomation]..\..\src\apps\GlobalUsings.cs</Exclude>
+    <Exclude>[HomeAutomation]..\..\src\apps\Common\Startup.cs</Exclude>
+    <ExcludeByAttribute>Obsolete,GeneratedCode,ExcludeFromCodeCoverage</ExcludeByAttribute>
+  </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
     <PackageReference Include="NetDaemon.AppModel" Version="25.18.1" />
@@ -15,6 +33,10 @@
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
     <PackageReference Include="coverlet.collector" Version="6.0.4">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="coverlet.msbuild" Version="6.0.4">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
