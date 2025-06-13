@@ -8,11 +8,11 @@ public interface ITabletAutomationEntities
     BinarySensorEntity TabletActive { get; }
 }
 
-public class LivingRoomTabletEntities(Entities entities, SwitchEntity masterSwitch, BinarySensorEntity motionSensor)
+public class LivingRoomTabletEntities(Entities entities, ILivingRoomSharedEntities sharedEntities)
     : ITabletAutomationEntities
 {
-    public SwitchEntity MasterSwitch => masterSwitch;
-    public BinarySensorEntity MotionSensor => motionSensor;
+    public SwitchEntity MasterSwitch => sharedEntities.MotionSensorSwitch;
+    public BinarySensorEntity MotionSensor => sharedEntities.MotionSensor;
     public LightEntity TabletScreen => entities.Light.MipadScreen;
     public BinarySensorEntity TabletActive => entities.BinarySensor.Mipad;
 }

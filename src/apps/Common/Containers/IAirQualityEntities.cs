@@ -10,12 +10,12 @@ public interface IAirQualityEntities
     SwitchEntity LedStatus { get; }
 }
 
-public class AirQualityEntities(Entities entities, SwitchEntity supportingFan) : IAirQualityEntities
+public class AirQualityEntities(Entities entities, ILivingRoomSharedEntities sharedEntities) : IAirQualityEntities
 {
     public SwitchEntity CleanAirSwitch => entities.Switch.CleanAir;
-    public BinarySensorEntity PresenceSensor => entities.BinarySensor.LivingRoomPresenceSensors;
+    public BinarySensorEntity PresenceSensor => sharedEntities.MotionSensor;
     public SwitchEntity AirPurifierFan => entities.Switch.XiaomiSmartAirPurifier4CompactAirPurifierFanSwitch;
-    public SwitchEntity SupportingFan => supportingFan;
+    public SwitchEntity SupportingFan => sharedEntities.StandFan;
     public NumericSensorEntity Pm25Sensor => entities.Sensor.XiaomiSg753990712Cpa4Pm25DensityP34;
     public SwitchEntity LedStatus => entities.Switch.XiaomiSmartAirPurifier4CompactAirPurifierLedStatus;
 }

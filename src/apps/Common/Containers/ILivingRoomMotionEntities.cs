@@ -1,5 +1,10 @@
 namespace HomeAutomation.apps.Common.Containers;
 
+/// <summary>
+/// Living room motion automation requires cross-area dependencies because it coordinates
+/// automation behavior across multiple rooms (bedroom, kitchen, pantry) for optimal
+/// home-wide automation experience.
+/// </summary>
 public interface ILivingRoomMotionEntities : IMotionAutomationEntities
 {
     BinarySensorEntity ContactSensorDoor { get; }
