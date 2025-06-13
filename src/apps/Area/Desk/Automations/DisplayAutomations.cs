@@ -1,4 +1,7 @@
+using System;
+using System.Reactive;
 using HomeAutomation.apps.Area.Desk.Devices;
+using HomeAutomation.apps.Common.EventHandlers;
 
 namespace HomeAutomation.apps.Area.Desk.Automations;
 
@@ -7,13 +10,39 @@ public class DisplayAutomations(
     LgDisplay monitor,
     Desktop desktop,
     Laptop laptop,
-    ILogger logger
+    ILogger logger,
+    IEventHandler eventHandler
 ) : AutomationBase(logger)
 {
     protected override IEnumerable<IDisposable> GetPersistentAutomations() =>
-        [GetScreenBrightnessAutomation(), GetScreenStateAutomation(), .. GetPcAutomations(), .. GetLaptopAutomations()];
+        [
+            GetScreenBrightnessAutomation(),
+            GetScreenStateAutomation(),
+            GetNfcAutomation(),
+            .. GetPcAutomations(),
+            .. GetLaptopAutomations(),
+        ];
 
     protected override IEnumerable<IDisposable> GetToggleableAutomations() => [];
+
+    private IDisposable GetNfcAutomation() => eventHandler.OnNfcScan(NFC_ID.DESK).Subscribe(ToggleMonitor);
+
+    private void ToggleMonitor(string tagId)
+    {
+        if (desktop.IsOn() && monitor.IsShowingPc)
+        {
+            laptop.TurnOn();
+            ShowLaptop(true);
+        }
+        else if (desktop.IsOn())
+        {
+            ShowPc(true);
+        }
+        else
+        {
+            ShowLaptop(true);
+        }
+    }
 
     private static IEnumerable<IDisposable> GetComputerAutomations(
         ComputerBase device,

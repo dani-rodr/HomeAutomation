@@ -1,8 +1,11 @@
+using System.Reactive;
+
 namespace HomeAutomation.apps.Common.Interface;
 
 public interface IEventHandler
 {
-    void Subscribe(string eventType, Action<Event> handler);
-    void Subscribe(string eventType, Action callback);
+    IDisposable Subscribe(string eventType, Action<Event> handler);
+    IDisposable Subscribe(string eventType, Action callback);
     IObservable<Event> WhenEventTriggered(string eventType);
+    IObservable<string> OnNfcScan(string tagId);
 }

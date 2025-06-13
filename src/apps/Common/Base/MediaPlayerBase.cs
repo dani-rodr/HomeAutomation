@@ -1,6 +1,4 @@
 using System.Linq;
-using HomeAssistantGenerated;
-using HomeAutomation.apps.Common.Interface;
 
 namespace HomeAutomation.apps.Common.Base;
 
@@ -19,14 +17,14 @@ public abstract class MediaPlayerBase : IMediaPlayer
 
     protected MediaPlayerEntity Entity { get; }
     protected ILogger Logger { get; }
-    private readonly Dictionary<string, string> _sources;
+    protected readonly Dictionary<string, string> Sources;
 
     public MediaPlayerBase(MediaPlayerEntity entity, ILogger logger)
     {
         Entity = entity;
         Logger = logger;
-        _sources = SourceList?.ToDictionary(s => s, s => s) ?? [];
-        ExtendSourceDictionary(_sources);
+        Sources = SourceList?.ToDictionary(s => s, s => s) ?? [];
+        ExtendSourceDictionary(Sources);
     }
 
     public void SetVolume(double volumeLevel) => Entity.VolumeSet(volumeLevel);
@@ -49,7 +47,7 @@ public abstract class MediaPlayerBase : IMediaPlayer
 
     protected void ShowSource(string key)
     {
-        if (!_sources.TryGetValue(key, out var source))
+        if (!Sources.TryGetValue(key, out var source))
         {
             Logger.LogError("Source key '{Key}' not defined.", key);
             return;

@@ -1,5 +1,3 @@
-using HomeAutomation.apps.Common.Containers;
-
 namespace HomeAutomation.apps.Area.Desk.Devices;
 
 public enum DisplaySource
@@ -16,6 +14,8 @@ public class LgDisplay(ILgDisplayEntities entities, Services services, ILogger l
     private bool IsScreenOn { get; set; }
     private readonly WebostvServices _services = services.Webostv;
     private int _brightness = 90;
+    public bool IsShowingPc => CurrentSource == Sources[DisplaySource.PC.ToString()];
+    public bool IsShowingLaptop => CurrentSource == Sources[DisplaySource.Laptop.ToString()];
 
     public async Task SetBrightnessAsync(int value)
     {

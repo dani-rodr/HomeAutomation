@@ -53,3 +53,8 @@ public static class HaIdentity
 
     private static readonly HashSet<string> _knownUsers = [ATHENA_BEZOS, DANIEL_RODRIGUEZ, MIPAD5, MANUAL];
 }
+
+public static class NFC_ID
+{
+    public const string DESK = "0aa9e8b4-4b8b-427e-b90e-7f5ac17a15f3";
+}
