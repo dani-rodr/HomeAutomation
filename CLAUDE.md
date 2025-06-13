@@ -47,6 +47,15 @@ nd-codegen
 dotnet tool update -g NetDaemon.HassModel.CodeGen
 ```
 
+### Code Formatting
+```bash
+# Format all C# files with CSharpier
+dotnet.exe csharpier format .
+
+# Check formatting without applying changes
+dotnet.exe csharpier check .
+```
+
 ### WSL Development
 ```bash
 # Use dotnet.exe when running from WSL
@@ -59,31 +68,57 @@ dotnet.exe publish -c Release
 ### Core Structure
 - **`/apps`** - All automation applications
   - **`/Area`** - Room-specific automations (Bathroom, Bedroom, Kitchen, etc.)
-  - **`/Common`** - Base classes and interfaces for all automations
+  - **`/Common`** - Base classes, interfaces, and entity containers
+    - **`/Base`** - Abstract base classes for automation patterns
+    - **`/Containers`** - Entity container interfaces and implementations
+    - **`/Interface`** - Core automation interfaces
+    - **`/Services`** - Shared service classes (DimmingLightController, HaEventHandler)
   - **`/Security`** - Security-related automations (locks, location, notifications)
   - **`/Helpers`** - Constants and utility functions
 
 ### Key Base Classes
 - **`AutomationBase`** - Abstract base for all automations with master switch support
 - **`MotionAutomationBase`** - Base for motion-triggered automations
-- **`DimmingMotionAutomationBase`** - Extended motion automation with dimming capabilities
+- **`FanAutomationBase`** - Base for fan control automations
 - **`IAutomation`** - Interface all automations must implement
 
-### Project-Specific Inheritance Hierarchy
+### Entity Container Architecture
+The project uses **Entity Container Pattern** for clean dependency injection and testability:
+
+- **Entity Containers** - Interfaces that group related entities (e.g., `IMotionAutomationEntities`)
+- **Specialized Containers** - Area-specific extensions (e.g., `IKitchenMotionEntities : IMotionAutomationEntities`)
+- **Shared Entity Containers** - For cross-cutting entity dependencies (e.g., `ILivingRoomSharedEntities`)
+- **Service Composition** - Replaces inheritance with composition (e.g., `DimmingLightController`)
+
+### Project-Specific Architecture Hierarchy
 ```
 IAutomation (interface)
     └── AutomationBase (abstract base class)
         ├── Manages master switch functionality
         ├── Handles automation lifecycle (enable/disable)
         └── Implements IDisposable with CompositeDisposable
-            └── MotionAutomationBase
-                ├── Adds motion sensor logic
-                ├── Controls sensor delay settings
-                └── Manages light-motion relationships
-                    └── DimmingMotionAutomationBase
-                        ├── Adds dimming capabilities
-                        ├── Implements delayed turn-off with cancellation
-                        └── Uses CancellationTokenSource for async operations
+            ├── MotionAutomationBase
+            │   ├── Adds motion sensor logic
+            │   ├── Controls sensor delay settings
+            │   └── Manages light-motion relationships
+            └── FanAutomationBase
+                ├── Adds fan control logic
+                ├── Motion-based activation patterns
+                └── Multi-fan coordination
+
+Entity Container Pattern (Composition over Inheritance):
+IEntityContainer
+    ├── IMotionAutomationEntities (base motion entities)
+    │   ├── IKitchenMotionEntities (kitchen-specific extensions)
+    │   ├── IBedroomMotionEntities (bedroom-specific extensions)
+    │   └── ILivingRoomMotionEntities (living room cross-area dependencies)
+    ├── IFanAutomationEntities (fan control entities)
+    ├── IClimateAutomationEntities (climate control entities)
+    └── ILivingRoomSharedEntities (shared entities for multiple automations)
+
+Service Composition:
+- DimmingLightController (replaces DimmingMotionAutomationBase)
+- HaEventHandler (event handling service)
 ```
 
 ### Code Generation

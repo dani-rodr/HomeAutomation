@@ -7,4 +7,3 @@ public class BathroomMotionEntities(Entities entities) : IMotionAutomationEntiti
     public LightEntity Light => entities.Light.BathroomLights;
     public NumberEntity SensorDelay => entities.Number.ZEsp32C62StillTargetDelay;
 }
-

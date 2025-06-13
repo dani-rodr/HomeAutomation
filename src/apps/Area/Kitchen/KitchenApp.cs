@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using HomeAutomation.apps.Area.Kitchen.Automations;
 using HomeAutomation.apps.Common.Interface;
 
@@ -10,7 +9,7 @@ public class KitchenApp(Entities entities, ILogger<KitchenApp> logger) : AreaBas
     {
         var motionEntities = new KitchenMotionEntities(Entities);
         yield return new MotionAutomation(motionEntities, Logger);
-        
+
         var cookingEntities = new KitchenCookingEntities(Entities);
         yield return new CookingAutomation(cookingEntities, Logger);
     }

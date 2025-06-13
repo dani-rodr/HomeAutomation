@@ -1,7 +1,6 @@
 using HomeAutomation.apps.Area.Desk.Automations;
 using HomeAutomation.apps.Area.Desk.Devices;
 using HomeAutomation.apps.Common;
-using HomeAutomation.apps.Common.Containers;
 using HomeAutomation.apps.Common.Interface;
 
 namespace HomeAutomation.apps.Area.Desk;

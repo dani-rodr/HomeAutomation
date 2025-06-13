@@ -7,7 +7,8 @@
       "WebFetch(domain:netdaemon.xyz)",
       "Bash(dotnet.exe build:*)",
       "Bash(rm:*)",
-      "Bash(dotnet build)"
+      "Bash(dotnet build)",
+      "Bash(dotnet.exe csharpier:*)"
     ],
     "deny": []
   }

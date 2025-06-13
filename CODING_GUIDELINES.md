@@ -14,6 +14,10 @@ This document establishes coding standards and best practices for the HomeAutoma
 │   ├── /Bedroom            # Consistent folder structure
 │   └── ...
 ├── /Common                 # Shared base classes and interfaces
+│   ├── /Base               # Abstract base classes
+│   ├── /Containers         # Entity container interfaces
+│   ├── /Interface          # Service interfaces
+│   └── /Services           # Composition-based services
 ├── /Helpers                # Utility functions and constants
 └── /Security              # Security-related automations
 ```
@@ -24,28 +28,157 @@ This document establishes coding standards and best practices for the HomeAutoma
 - **Helper Classes**: Descriptive names (e.g., `HaIdentity`, `TimeRange`)
 - **Constants**: `Ha{Category}` (e.g., `HaEntityStates`)
 
-## 2. Class Structure Standards
+## 2. Entity Container Architecture
 
-### Automation Class Template
+### Entity Container Pattern
+The codebase uses entity containers to group related Home Assistant entities and simplify dependency injection for testing:
+
+```csharp
+/// <summary>
+/// Container for motion automation entities.
+/// Simplifies constructor dependencies and enables easy testing.
+/// </summary>
+public interface IMotionAutomationEntities
+{
+    SwitchEntity MasterSwitch { get; }
+    BinarySensorEntity MotionSensor { get; }
+    LightEntity Light { get; }
+    NumberEntity SensorDelay { get; }
+}
+
+public class BathroomMotionEntities(Entities entities) : IMotionAutomationEntities
+{
+    public SwitchEntity MasterSwitch => entities.Switch.BathroomAutomation;
+    public BinarySensorEntity MotionSensor => entities.BinarySensor.BathroomMotion;
+    public LightEntity Light => entities.Light.BathroomLights;
+    public NumberEntity SensorDelay => entities.Number.BathroomMotionSensorActiveDelayValue;
+}
+```
+
+### Shared Entity Containers
+For entities used across multiple automations, create shared container interfaces:
+
+```csharp
+/// <summary>
+/// Shared entities used by multiple LivingRoom automations.
+/// Prevents duplication of entity declarations across containers.
+/// </summary>
+public interface ILivingRoomSharedEntities
+{
+    SwitchEntity StandFan { get; }
+    BinarySensorEntity MotionSensor { get; }
+    SwitchEntity MotionSensorSwitch { get; }
+}
+
+// Multiple automations can depend on shared entities
+public interface ILivingRoomFanEntities : ILivingRoomSharedEntities
+{
+    SwitchEntity FanMasterSwitch { get; }
+    NumericSensorEntity Pm25Sensor { get; }
+}
+```
+
+### Entity Container Benefits
+- **Simplified Testing**: Mock one container instead of 6+ individual entities
+- **Clear Dependencies**: Explicit declaration of entity dependencies
+- **Type Safety**: Compile-time validation of entity access
+- **Maintainability**: Centralized entity mapping per area
+- **Shared Entities**: Avoid duplication across multiple automations
+
+## 3. Composition-Based Services
+
+### Service Composition Pattern
+Replace inheritance with composition for better testability and flexibility:
+
+```csharp
+/// <summary>
+/// Dimming light controller service using composition.
+/// Extracted from DimmingMotionAutomationBase for reusability.
+/// </summary>
+public class DimmingLightController(
+    int sensorActiveDelayValue,
+    NumberEntity sensorDelay,
+    int dimBrightnessPct = 80,
+    int dimDelaySeconds = 5) : IDisposable
+{
+    private CancellationTokenSource? _cancellationTokenSource;
+
+    public void StartDimming(LightEntity light, ILogger logger)
+    {
+        _cancellationTokenSource?.Cancel();
+        _cancellationTokenSource = new CancellationTokenSource();
+
+        _ = Task.Run(async () =>
+        {
+            try
+            {
+                await Task.Delay(TimeSpan.FromSeconds(dimDelaySeconds), _cancellationTokenSource.Token);
+                light.TurnOn(brightness: dimBrightnessPct);
+            }
+            catch (TaskCanceledException)
+            {
+                logger.LogDebug("Dimming cancelled for {Light}", light.EntityId);
+            }
+        });
+    }
+
+    public void StopDimming() => _cancellationTokenSource?.Cancel();
+
+    public void Dispose() => _cancellationTokenSource?.Dispose();
+}
+```
+
+### Using Composition in Automations
+```csharp
+public class DimmingMotionAutomation(
+    IMotionAutomationEntities entities,
+    ILogger<DimmingMotionAutomation> logger) : MotionAutomationBase(entities, logger)
+{
+    private readonly DimmingLightController _dimmingController = new(
+        sensorActiveDelayValue: 5,
+        entities.SensorDelay,
+        dimBrightnessPct: 80,
+        dimDelaySeconds: 5);
+
+    protected override void OnMotionDetected(StateChange evt)
+    {
+        base.OnMotionDetected(evt);
+        _dimmingController.StartDimming(entities.Light, Logger);
+    }
+
+    public override void Dispose()
+    {
+        _dimmingController?.Dispose();
+        base.Dispose();
+    }
+}
+```
+
+## 4. Class Structure Standards
+
+### Modern Automation Class Template
 ```csharp
 /// <summary>
 /// Handles automation logic for [specific area/purpose].
-/// Manages [brief description of responsibilities].
+/// Uses entity container pattern for improved testability.
 /// </summary>
 [NetDaemonApp]
 public class ExampleAutomation(
-    IHaContext ha,
+    IExampleEntities entities,
     ILogger<ExampleAutomation> logger,
     INetDaemonScheduler scheduler) : AutomationBase(logger)
 {
-    private readonly Entities _entities = new(ha);
+    private readonly IExampleEntities _entities = entities;
     private readonly INetDaemonScheduler _scheduler = scheduler;
 
-    // Fields: private readonly, underscore prefix
-    private readonly BinarySensorEntity _motionSensor = _entities.BinarySensor.ExampleMotion;
+    // Service composition for complex behaviors
+    private readonly DimmingLightController _dimmingController = new(
+        sensorActiveDelayValue: 5,
+        entities.SensorDelay);
 
-    // Properties: protected for inheritance, PascalCase
-    protected LightEntity Light => _entities.Light.ExampleLight;
+    // Properties: direct access to container entities
+    protected BinarySensorEntity MotionSensor => _entities.MotionSensor;
+    protected LightEntity Light => _entities.Light;
 
     /// <summary>
     /// Returns all switchable automations managed by the master switch.
@@ -196,7 +329,48 @@ private IDisposable CreateUnsafeSubscription()
 - **Never let exceptions terminate** reactive streams
 - **Consider fallback behavior** for critical automations
 
-## 5. Async Patterns in Reactive Streams
+## 5. Interface-Based Design
+
+### Event Handler Interfaces
+Use interfaces for services to improve testability:
+
+```csharp
+/// <summary>
+/// Interface for Home Assistant event handling.
+/// Enables easy mocking and testing of event-driven automations.
+/// </summary>
+public interface IEventHandler
+{
+    void Subscribe(string eventType, Action<Event> handler);
+    void Subscribe(string eventType, Action callback);
+    IObservable<Event> WhenEventTriggered(string eventType);
+}
+
+public class HaEventHandler(IHaContext haContext, ILogger logger) : IEventHandler
+{
+    public void Subscribe(string eventType, Action<Event> handler)
+    {
+        haContext
+            .Events.Where(e => e.EventType == eventType)
+            .Subscribe(e =>
+            {
+                logger.LogInformation("Event '{EventType}' received", eventType);
+                handler(e);
+            });
+    }
+
+    public IObservable<Event> WhenEventTriggered(string eventType) =>
+        haContext.Events.Where(e => e.EventType == eventType);
+}
+```
+
+### Service Interface Guidelines
+- **Create interfaces** for all complex services
+- **Use dependency injection** with container registration
+- **Mock interfaces** in unit tests
+- **Keep interfaces focused** on single responsibility
+
+## 6. Async Patterns in Reactive Streams
 
 ### Safe Async Patterns
 ```csharp
@@ -237,7 +411,7 @@ yield return MotionSensor.StateChanges().IsOff()
 - **Handle TaskCanceledException** explicitly
 - **Use proper error handling** for all async operations
 
-## 6. Resource Management Standards
+## 7. Resource Management Standards
 
 ### IDisposable Implementation
 ```csharp
@@ -281,7 +455,7 @@ public class ExampleAutomation : AutomationBase
 - **Call GC.SuppressFinalize(this)** in Dispose()
 - **Dispose in correct order** (children first, then base)
 
-## 7. Thread Safety Guidelines
+## 8. Thread Safety Guidelines
 
 ### Shared State Management
 ```csharp
@@ -328,7 +502,7 @@ public class ThreadSafeAutomation : AutomationBase
 - **Minimize lock scope** for performance
 - **Document thread safety** assumptions
 
-## 8. Documentation Standards
+## 9. Documentation Standards
 
 ### XML Documentation Requirements
 ```csharp
@@ -380,7 +554,7 @@ public class DimmingMotionAutomation : MotionAutomationBase
 - **Include examples** for base classes and complex APIs
 - **Reference related classes** with `<see cref=""/>` tags
 
-## 9. Logging Standards
+## 10. Logging Standards
 
 ### Structured Logging Pattern
 ```csharp
@@ -444,43 +618,63 @@ public class LoggingExampleAutomation : AutomationBase
   - `Error`: Failures that require attention
 - **Don't log sensitive information** (tokens, passwords)
 
-## 10. Testing Standards
+## 11. Testing Standards
 
-### Unit Test Structure
+### Entity Container Testing Pattern
 ```csharp
 [TestFixture]
 public class MotionAutomationTests
 {
-    private Mock<IHaContext> _mockHa;
+    private Mock<IMotionAutomationEntities> _mockEntities;
     private Mock<ILogger<MotionAutomation>> _mockLogger;
-    private TestScheduler _testScheduler;
+    private Mock<BinarySensorEntity> _mockMotionSensor;
+    private Mock<LightEntity> _mockLight;
     private MotionAutomation _automation;
 
     [SetUp]
     public void Setup()
     {
-        _mockHa = new Mock<IHaContext>();
+        // Mock the entity container instead of individual entities
+        _mockEntities = new Mock<IMotionAutomationEntities>();
         _mockLogger = new Mock<ILogger<MotionAutomation>>();
-        _testScheduler = new TestScheduler();
-        _automation = new MotionAutomation(_mockHa.Object, _mockLogger.Object, _testScheduler);
+        
+        // Setup entity mocks
+        _mockMotionSensor = new Mock<BinarySensorEntity>();
+        _mockLight = new Mock<LightEntity>();
+        
+        // Configure container to return mocked entities
+        _mockEntities.Setup(x => x.MotionSensor).Returns(_mockMotionSensor.Object);
+        _mockEntities.Setup(x => x.Light).Returns(_mockLight.Object);
+        
+        _automation = new MotionAutomation(_mockEntities.Object, _mockLogger.Object);
     }
 
     [Test]
-    public void Motion_Detected_Should_Turn_On_Light()
+    public void Constructor_Should_UseEntityContainer_Successfully()
     {
-        // Arrange
-        var motionObservable = _testScheduler.CreateHotObservable(
-            ReactiveTest.OnNext(100, CreateStateChange("off", "on")),
-            ReactiveTest.OnNext(300, CreateStateChange("on", "off"))
-        );
-
-        // Act
-        _automation.StartAutomation();
-        _testScheduler.AdvanceBy(500);
+        // Act - This tests that the container pattern works
+        var automation = new MotionAutomation(_mockEntities.Object, _mockLogger.Object);
 
         // Assert
-        // Verify light was turned on
-        // Verify proper disposal of resources
+        automation.Should().NotBeNull();
+        
+        // Verify container was accessed during construction
+        _mockEntities.Verify(x => x.MotionSensor, Times.AtLeastOnce);
+        _mockEntities.Verify(x => x.Light, Times.AtLeastOnce);
+    }
+    
+    [Test]
+    public void EntityContainer_Should_SimplifyTesting()
+    {
+        // Before: Would need to mock 6+ individual entity parameters
+        // After: Only need to mock 1 container interface
+        
+        // Arrange & Act
+        var automation = new MotionAutomation(_mockEntities.Object, _mockLogger.Object);
+        
+        // Assert - Easy to verify which entities are used
+        automation.Should().NotBeNull();
+        _mockEntities.VerifyGet(x => x.MotionSensor, Times.AtLeastOnce);
     }
 
     [TearDown]
@@ -491,15 +685,22 @@ public class MotionAutomationTests
 }
 ```
 
-### Testing Requirements
-- **Test all public methods** and critical paths
-- **Use TestScheduler** for time-based testing
-- **Mock all external dependencies** (IHaContext, ILogger)
-- **Test error conditions** and edge cases
-- **Verify resource disposal** in all tests
-- **Test thread safety** for concurrent operations
+### Entity Container Testing Benefits
+- **Simplified Mocking**: Mock one container interface instead of 6+ entities
+- **Clear Dependencies**: Entity requirements are explicit in interface
+- **Type Safety**: Compile-time validation of entity access
+- **Easy Verification**: Simple to verify which entities are used
+- **Test Focus**: Test business logic, not entity wiring
 
-## 11. Modern C# 13/.NET 9 Features
+### Testing Requirements
+- **Use entity containers** for all automation tests
+- **Mock container interfaces** instead of individual entities
+- **Test critical automation paths** and error conditions
+- **Verify entity interactions** through container mocks
+- **Test service composition** separately from automation logic
+- **Verify resource disposal** in all tests
+
+## 12. Modern C# 13/.NET 9 Features
 
 ### Switch Expressions for Complex Logic
 Replace complex if-else chains with switch expressions for better readability:
@@ -608,7 +809,7 @@ public class BedroomAutomation : AutomationBase
 }
 ```
 
-## 12. Performance Guidelines
+## 13. Performance Guidelines
 
 ### Reactive Stream Optimization
 ```csharp
@@ -642,34 +843,42 @@ private Dictionary<TimeBlock, AcScheduleSetting> GetScheduleSettings() =>
 - **Avoid unnecessary object creation** in hot paths
 - **Profile critical paths** for performance bottlenecks
 
-## 12. Code Review Checklist
+## 14. Code Review Checklist
 
 ### Before Submitting Code
 - [ ] All classes have XML documentation
 - [ ] All subscriptions have error handling
 - [ ] Resources are properly disposed
+- [ ] **Entity containers used** for dependency injection
+- [ ] **Composition preferred** over inheritance where appropriate
+- [ ] **Service interfaces defined** for complex behaviors
 - [ ] **Collection patterns follow strategic guidelines** ([] vs yield return vs [..])
 - [ ] **Switch expressions used** for complex conditional logic where appropriate
 - [ ] **Global usings utilized** - no redundant using statements
 - [ ] **Modern C# 13 syntax** leveraged appropriately
 - [ ] Thread safety is considered and documented
-- [ ] Tests cover critical functionality
+- [ ] Tests use entity container mocking
 - [ ] Logging follows structured patterns
 - [ ] Performance considerations addressed
-- [ ] No hardcoded values (use constants/configuration)
+- [ ] No hardcoded entity access (use containers)
 - [ ] Follows established naming conventions
 - [ ] No async lambdas in Subscribe() without error handling
 
 ### Architecture Review
+- [ ] **Entity container pattern used** for all automation dependencies
+- [ ] **Shared entity containers** used to avoid duplication
+- [ ] **Composition over inheritance** applied where beneficial
+- [ ] **Service interfaces** defined for testability
 - [ ] Appropriate base class chosen
 - [ ] Single responsibility principle followed
-- [ ] Dependencies injected properly
+- [ ] Dependencies injected properly through containers
 - [ ] Master switch pattern implemented correctly
 - [ ] Reactive patterns used appropriately
 - [ ] **NetDaemon subscription patterns preserved** (yield return for subscriptions)
 - [ ] **Strategic collection usage** balances performance and readability
+- [ ] **Tests use container mocking** instead of individual entity mocks
 
-## 13. Common Anti-Patterns to Avoid
+## 15. Common Anti-Patterns to Avoid
 
 ### ❌ Memory Leaks
 ```csharp
@@ -703,6 +912,51 @@ _sensor.StateChanges().Subscribe(evt =>
 // WRONG: Multiple subscriptions to same entity without coordination
 _light.StateChanges().Subscribe(Handler1);
 _light.StateChanges().Subscribe(Handler2); // Potential conflicts!
+```
+
+### ❌ Constructor Parameter Explosion
+```csharp
+// WRONG: Too many individual entity parameters
+public ClimateAutomation(
+    SwitchEntity masterSwitch,
+    ClimateEntity ac,
+    BinarySensorEntity houseSensor,
+    SensorEntity tempSensor,
+    SwitchEntity fanToggle,
+    // ... 8 more parameters
+) // Unmaintainable!
+```
+
+### ❌ Hardcoded Entity Access
+```csharp
+// WRONG: Direct entity access breaks container pattern
+public MotionAutomation(IMotionEntities entities)
+{
+    var powerPlug = new Entities(ha).BinarySensor.SmartPlug3; // Breaks pattern!
+}
+```
+
+### ❌ Duplicated Entity Declarations
+```csharp
+// WRONG: Same entities declared in multiple containers
+public interface IFanEntities
+{
+    SwitchEntity StandFan { get; } // Duplicated!
+}
+
+public interface IMotionEntities  
+{
+    SwitchEntity StandFan { get; } // Duplicated!
+}
+
+// CORRECT: Use shared entity containers
+public interface ISharedEntities
+{
+    SwitchEntity StandFan { get; }
+}
+
+public interface IFanEntities : ISharedEntities { }
+public interface IMotionEntities : ISharedEntities { }
 ```
 
 ## Conclusion
