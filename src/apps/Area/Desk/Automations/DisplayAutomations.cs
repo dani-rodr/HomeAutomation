@@ -1,5 +1,4 @@
 using HomeAutomation.apps.Area.Desk.Devices;
-using HomeAutomation.apps.Common.Containers;
 
 namespace HomeAutomation.apps.Area.Desk.Automations;
 
@@ -12,36 +11,46 @@ public class DisplayAutomations(
 ) : AutomationBase(logger)
 {
     protected override IEnumerable<IDisposable> GetPersistentAutomations() =>
-        [GetScreenBrightnessAutomation(), GetScreenStateAutomation(), .. GetPcAutamations(), .. GetLaptopAutomations()];
+        [GetScreenBrightnessAutomation(), GetScreenStateAutomation(), .. GetPcAutomations(), .. GetLaptopAutomations()];
 
     protected override IEnumerable<IDisposable> GetToggleableAutomations() => [];
 
-    private IEnumerable<IDisposable> GetPcAutamations()
+    private IEnumerable<IDisposable> GetPcAutomations()
     {
         yield return desktop.StateChanges().Subscribe(ShowPc);
         yield return desktop.OnShowRequested().Subscribe(ShowPc);
         yield return desktop.OnHideRequested().Subscribe(HidePc);
     }
 
-    private IEnumerable<IDisposable> GetLaptopAutomations() => [];
-
-    private void ShowPc(bool isOn)
+    private IEnumerable<IDisposable> GetLaptopAutomations()
     {
-        if (isOn)
-        {
-            monitor.ShowPC();
-            return;
-        }
-        monitor.TurnOff();
+        yield return laptop.StateChanges().Subscribe(ShowLaptop);
+        yield return laptop.OnShowRequested().Subscribe(ShowLaptop);
+        yield return laptop.OnHideRequested().Subscribe(HideLaptop);
     }
 
-    private void HidePc(bool _)
+    private void ShowPc(bool isOn) => UpdateDisplay(isOn, monitor.ShowPC, laptop.IsOn, monitor.ShowLaptop);
+
+    private void HidePc(bool _) => UpdateDisplay(false, monitor.ShowPC, laptop.IsOn, monitor.ShowLaptop);
+
+    private void ShowLaptop(bool isOn) => UpdateDisplay(isOn, monitor.ShowLaptop, desktop.IsOn, monitor.ShowPC);
+
+    private void HideLaptop(bool _) => UpdateDisplay(false, monitor.ShowLaptop, desktop.IsOn, monitor.ShowPC);
+
+    private void UpdateDisplay(bool isPrimaryOn, Action showPrimary, Func<bool> isFallbackOn, Action showFallback)
     {
-        if (laptop.IsOn())
+        if (isPrimaryOn)
         {
-            monitor.ShowLaptop();
+            showPrimary();
             return;
         }
+
+        if (isFallbackOn())
+        {
+            showFallback();
+            return;
+        }
+
         monitor.TurnOff();
     }
 

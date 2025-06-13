@@ -1,14 +1,17 @@
-using HomeAutomation.apps.Common.Interface;
-
 namespace HomeAutomation.apps.Common.Base;
 
-public abstract class ComputerBase(ILogger logger) : IComputer
+public abstract class ComputerBase(IEventHandler eventHandler, ILogger logger) : IComputer
 {
+    protected abstract string ShowEvent { get; }
+    protected abstract string HideEvent { get; }
+    protected readonly ILogger Logger = logger;
     public abstract void TurnOn();
     public abstract void TurnOff();
     public abstract IObservable<bool> StateChanges();
-    public abstract IObservable<bool> OnShowRequested();
-    public abstract IObservable<bool> OnHideRequested();
+
+    public virtual IObservable<bool> OnShowRequested() => eventHandler.WhenEventTriggered(ShowEvent).Select(_ => true);
+
+    public virtual IObservable<bool> OnHideRequested() => eventHandler.WhenEventTriggered(HideEvent).Select(_ => true);
+
     public abstract bool IsOn();
-    protected ILogger Logger = logger;
 }

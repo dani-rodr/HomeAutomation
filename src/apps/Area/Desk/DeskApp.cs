@@ -1,7 +1,6 @@
 using HomeAutomation.apps.Area.Desk.Automations;
 using HomeAutomation.apps.Area.Desk.Devices;
 using HomeAutomation.apps.Common;
-using HomeAutomation.apps.Common.Interface;
 
 namespace HomeAutomation.apps.Area.Desk;
 
@@ -18,7 +17,8 @@ public class DeskApp(IHaContext haContext, Entities entities, Services services,
         var desktopEntities = new DeskDesktopEntities(Entities);
         var destkop = new Desktop(desktopEntities, eventHandler, Logger);
 
-        var laptop = new Laptop(eventHandler, Logger);
+        var laptopEntities = new LaptopEntities(Entities);
+        var laptop = new Laptop(laptopEntities, eventHandler, Logger);
 
         var displayEntities = new DeskDisplayEntities(Entities);
         yield return new DisplayAutomations(displayEntities, monitor, destkop, laptop, Logger);

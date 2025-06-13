@@ -1,13 +1,10 @@
-using HomeAutomation.apps.Common;
-using HomeAutomation.apps.Common.Containers;
-using HomeAutomation.apps.Common.Interface;
-
 namespace HomeAutomation.apps.Area.Desk.Devices;
 
-public class Desktop(IDesktopEntities entities, IEventHandler eventHandler, ILogger logger) : ComputerBase(logger)
+public class Desktop(IDesktopEntities entities, IEventHandler eventHandler, ILogger logger)
+    : ComputerBase(eventHandler, logger)
 {
-    private const string SHOW_PC_EVENT = "show_pc";
-    private const string HIDE_PC_EVENT = "hide_pc";
+    protected override string ShowEvent { get; } = "show_pc";
+    protected override string HideEvent { get; } = "hide_pc";
     private readonly BinarySensorEntity powerPlugThreshold = entities.PowerPlugThreshold;
     private readonly BinarySensorEntity networkStatus = entities.NetworkStatus;
     private readonly SwitchEntity powerSwitch = entities.PowerSwitch;
@@ -33,12 +30,6 @@ public class Desktop(IDesktopEntities entities, IEventHandler eventHandler, ILog
         }
         return powerState.IsOn() || netState.IsConnected();
     }
-
-    public override IObservable<bool> OnShowRequested() =>
-        eventHandler.WhenEventTriggered(SHOW_PC_EVENT).Select(_ => true);
-
-    public override IObservable<bool> OnHideRequested() =>
-        eventHandler.WhenEventTriggered(HIDE_PC_EVENT).Select(_ => true);
 
     public override void TurnOff() => powerSwitch.TurnOff();
 

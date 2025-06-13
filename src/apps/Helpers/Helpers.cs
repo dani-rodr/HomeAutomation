@@ -139,6 +139,20 @@ public static class StateExtensions
         return e.New != null && e.New.State.IsOff();
     }
 
+    public static bool IsLocked<T, TState>(this StateChange<T, TState> e)
+        where T : Entity
+        where TState : EntityState
+    {
+        return e.New != null && e.New.State.IsLocked();
+    }
+
+    public static bool IsUnlocked<T, TState>(this StateChange<T, TState> e)
+        where T : Entity
+        where TState : EntityState
+    {
+        return e.New != null && e.New.State.IsUnlocked();
+    }
+
     public static string UserId(this StateChange e)
     {
         return e.New?.Context?.UserId ?? string.Empty;
@@ -153,6 +167,12 @@ public static class StateExtensions
     public static bool IsOpen(this string? state) => state.IsOn();
 
     public static bool IsClosed(this string? state) => state.IsOff();
+
+    public static bool IsLocked(this string? state) =>
+        string.Equals(state, HaEntityStates.LOCKED, StringComparison.OrdinalIgnoreCase);
+
+    public static bool IsUnlocked(this string? state) =>
+        string.Equals(state, HaEntityStates.UNLOCKED, StringComparison.OrdinalIgnoreCase);
 
     public static bool IsOn(this string? state) =>
         string.Equals(state, HaEntityStates.ON, StringComparison.OrdinalIgnoreCase);
@@ -181,6 +201,10 @@ public static class SensorEntityExtensions
 
         return utcTime.Hour;
     }
+
+    public static bool IsLocked(this SensorEntity sensor) => sensor?.State.IsLocked() == true;
+
+    public static bool IsUnlocked(this SensorEntity sensor) => sensor?.State.IsUnlocked() == true;
 }
 
 public static class BinaryEntityExtensions

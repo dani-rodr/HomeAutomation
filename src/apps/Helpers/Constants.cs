@@ -14,6 +14,8 @@ public static class HaEntityStates
     public const string AUTO = "auto";
     public const string CONNECTED = "connected";
     public const string DISCONNECTED = "disconnected";
+    public const string UNLOCKED = "unlocked";
+    public const string LOCKED = "locked";
 
     // Weather states
     public const string SUNNY = "sunny";
@@ -39,6 +41,7 @@ public static class HaIdentity
     public const string DANIEL_RODRIGUEZ = "7512fc7c361e45879df43f9f0f34fc57";
     public const string MIPAD5 = "b02831abf0e44536ad8fc552aede48c4";
     public const string SUPERVISOR = "f389ce79e38841e4bfd26c9685ffa784";
+    public const string NODERED = "880cfaa866264c9aaa59fa1f0f0949b9";
     public const string MANUAL = "";
 
     public static bool IsManuallyOperated(string? userId) =>
@@ -46,7 +49,7 @@ public static class HaIdentity
 
     public static bool IsPhysicallyOperated(string? userId) => string.IsNullOrEmpty(userId);
 
-    public static bool IsAutomated(string? userId) => userId is not null && (userId == SUPERVISOR);
+    public static bool IsAutomated(string? userId) => userId is not null && (userId == SUPERVISOR || userId == NODERED);
 
     private static readonly HashSet<string> _knownUsers = [ATHENA_BEZOS, DANIEL_RODRIGUEZ, MIPAD5, MANUAL];
 }
