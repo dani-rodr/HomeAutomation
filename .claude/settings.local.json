@@ -8,7 +8,10 @@
       "Bash(dotnet.exe build:*)",
       "Bash(rm:*)",
       "Bash(dotnet build)",
-      "Bash(dotnet.exe csharpier:*)"
+      "Bash(dotnet.exe csharpier:*)",
+      "Bash(rg:*)",
+      "Bash(grep:*)",
+      "Bash(dotnet test:*)"
     ],
     "deny": []
   }
