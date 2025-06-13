@@ -36,7 +36,11 @@ public class DisplayAutomations(
 
     private void ShowLaptop(bool isOn) => UpdateDisplay(isOn, monitor.ShowLaptop, desktop.IsOn, monitor.ShowPC);
 
-    private void HideLaptop(bool _) => UpdateDisplay(false, monitor.ShowLaptop, desktop.IsOn, monitor.ShowPC);
+    private void HideLaptop(bool _)
+    {
+        UpdateDisplay(false, monitor.ShowLaptop, desktop.IsOn, monitor.ShowPC);
+        laptop.TurnOff();
+    }
 
     private void UpdateDisplay(bool isPrimaryOn, Action showPrimary, Func<bool> isFallbackOn, Action showFallback)
     {
