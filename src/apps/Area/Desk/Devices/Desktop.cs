@@ -19,7 +19,8 @@ public class Desktop(IDesktopEntities entities, IEventHandler eventHandler, ILog
                 networkStatus.StateChanges().Select(s => s.New?.State),
                 GetPowerState
             )
-            .StartWith(GetPowerState(powerPlugThreshold.State, networkStatus.State));
+            .StartWith(GetPowerState(powerPlugThreshold.State, networkStatus.State))
+            .DistinctUntilChanged();
     }
 
     private static bool GetPowerState(string? powerState, string? netState)

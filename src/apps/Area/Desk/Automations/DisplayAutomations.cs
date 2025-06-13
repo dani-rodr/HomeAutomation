@@ -15,19 +15,20 @@ public class DisplayAutomations(
 
     protected override IEnumerable<IDisposable> GetToggleableAutomations() => [];
 
-    private IEnumerable<IDisposable> GetPcAutomations()
+    private static IEnumerable<IDisposable> GetComputerAutomations(
+        ComputerBase device,
+        Action<bool> onShow,
+        Action<bool> onHide
+    )
     {
-        yield return desktop.StateChanges().Subscribe(ShowPc);
-        yield return desktop.OnShowRequested().Subscribe(ShowPc);
-        yield return desktop.OnHideRequested().Subscribe(HidePc);
+        yield return device.StateChanges().Subscribe(onShow);
+        yield return device.OnShowRequested().Subscribe(onShow);
+        yield return device.OnHideRequested().Subscribe(onHide);
     }
 
-    private IEnumerable<IDisposable> GetLaptopAutomations()
-    {
-        yield return laptop.StateChanges().Subscribe(ShowLaptop);
-        yield return laptop.OnShowRequested().Subscribe(ShowLaptop);
-        yield return laptop.OnHideRequested().Subscribe(HideLaptop);
-    }
+    private IEnumerable<IDisposable> GetPcAutomations() => GetComputerAutomations(desktop, ShowPc, HidePc);
+
+    private IEnumerable<IDisposable> GetLaptopAutomations() => GetComputerAutomations(laptop, ShowLaptop, HideLaptop);
 
     private void ShowPc(bool isOn) => UpdateDisplay(isOn, monitor.ShowPC, laptop.IsOn, monitor.ShowLaptop);
 
@@ -39,6 +40,13 @@ public class DisplayAutomations(
 
     private void UpdateDisplay(bool isPrimaryOn, Action showPrimary, Func<bool> isFallbackOn, Action showFallback)
     {
+        Logger.LogDebug(
+            "UpdateDisplay triggered. isPrimaryOn: {Primary}, isFallbackOn: {Fallback}, Desktop: {Desktop}, Laptop: {Laptop}",
+            isPrimaryOn,
+            isFallbackOn(),
+            desktop.IsOn(),
+            laptop.IsOn()
+        );
         if (isPrimaryOn)
         {
             showPrimary();
