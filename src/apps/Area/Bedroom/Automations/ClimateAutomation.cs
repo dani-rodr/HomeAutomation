@@ -79,6 +79,12 @@ public class ClimateAutomation(IClimateAutomationEntities entities, IScheduler s
                 InvalidateAcSettingsCache();
             }
         );
+        yield return _ac.StateAllChanges().IsManuallyOperated().Subscribe(_ => MasterSwitch?.TurnOff());
+        yield return _motionSensor
+            .StateChanges()
+            .IsOffForHours(1)
+            .Where(_ => MasterSwitch.IsOff())
+            .Subscribe(_ => MasterSwitch?.TurnOn());
     }
 
     private void LogCurrentAcScheduleSettings()
@@ -275,7 +281,8 @@ public class ClimateAutomation(IClimateAutomationEntities entities, IScheduler s
             (_, _, true, _) => setting.PowerSavingTemp,
             (true, false, _, _) => setting.CoolTemp,
             (_, true, _, true) => setting.NormalTemp,
-            (_, true, _, false) => setting.PassiveTemp,
+            (true, true, _, false) => setting.NormalTemp,
+            (false, true, _, false) => setting.PassiveTemp,
             (false, false, _, _) => setting.PassiveTemp,
         };
     }

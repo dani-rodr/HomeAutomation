@@ -3,7 +3,7 @@ namespace HomeAutomation.apps.Area.LivingRoom.Automations;
 public class AirQualityAutomations(IAirQualityEntities entities, ILogger logger)
     : FanAutomationBase(
         entities.CleanAirSwitch,
-        entities.PresenceSensor,
+        entities.MotionSensor,
         logger,
         entities.AirPurifierFan,
         entities.SupportingFan
@@ -14,12 +14,33 @@ public class AirQualityAutomations(IAirQualityEntities entities, ILogger logger)
     protected override bool ShouldActivateFan { get; set; } = false;
     private bool IsCleaningAir { get; set; } = false;
 
-    protected override IEnumerable<IDisposable> GetPersistentAutomations() => [];
+    protected override IEnumerable<IDisposable> GetPersistentAutomations()
+    {
+        yield return entities
+            .MotionSensor.StateChanges()
+            .IsOffForMinutes(15)
+            .Where(_ => entities.CleanAirSwitch.IsOff())
+            .Subscribe(_ => MasterSwitch?.TurnOn());
+        yield return entities
+            .AirPurifierFan.StateChanges()
+            .IsManuallyOperated()
+            .Subscribe(e =>
+            {
+                if (e.IsOn())
+                {
+                    MasterSwitch?.TurnOn();
+                }
+                else if (e.IsOff())
+                {
+                    MasterSwitch?.TurnOff();
+                }
+            });
+    }
 
     protected override IEnumerable<IDisposable> GetToggleableAutomations()
     {
         int waitTime = 10;
-        int cleanAirThreshold = 5;
+        int cleanAirThreshold = 7;
         int dirtyAirThreshold = 75;
         var supportingFan = entities.SupportingFan;
         yield return Fan.StateChanges().Subscribe(SyncLedWithFan);
