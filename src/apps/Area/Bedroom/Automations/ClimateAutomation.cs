@@ -91,18 +91,17 @@ public class ClimateAutomation(IClimateAutomationEntities entities, IScheduler s
     {
         var (oldTemp, newTemp) = e.GetAttributeChange<double?>("temperature");
 
-        Logger.LogInformation(
-            "AC state changed: {OldState} ➜ {NewState} | Temp: {OldTemp} ➜ {NewTemp} | By: {User}",
-            e.Old?.State,
-            e.New?.State,
-            oldTemp?.ToString() ?? "N/A",
-            newTemp?.ToString() ?? "N/A",
-            e.UserId() ?? "unknown"
-        );
-
         if (oldTemp.HasValue && newTemp.HasValue && oldTemp != newTemp)
         {
             MasterSwitch?.TurnOff();
+            Logger.LogInformation(
+                "AC state changed: {OldState} ➜ {NewState} | Temp: {OldTemp} ➜ {NewTemp} | By: {User}",
+                e.Old?.State,
+                e.New?.State,
+                oldTemp?.ToString() ?? "N/A",
+                newTemp?.ToString() ?? "N/A",
+                e.UserId() ?? "unknown"
+            );
         }
     }
 
