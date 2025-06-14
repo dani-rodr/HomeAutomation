@@ -8,7 +8,7 @@ public class LivingRoomApp(
     IAirQualityEntities airQualityEntities,
     ITabletAutomationEntities tabletEntities,
     ILogger<LivingRoomApp> logger
-) : AreaBase<LivingRoomApp>()
+) : AppBase<LivingRoomApp>()
 {
     protected override IEnumerable<IAutomation> CreateAutomations()
     {

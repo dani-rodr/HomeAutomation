@@ -2,7 +2,7 @@ using HomeAutomation.apps.Area.Pantry.Automations;
 
 namespace HomeAutomation.apps.Area.Pantry;
 
-public class PantryApp(IPantryMotionEntities motionEntities, ILogger<PantryApp> logger) : AreaBase<PantryApp>()
+public class PantryApp(IPantryMotionEntities motionEntities, ILogger<PantryApp> logger) : AppBase<PantryApp>()
 {
     protected override IEnumerable<IAutomation> CreateAutomations()
     {

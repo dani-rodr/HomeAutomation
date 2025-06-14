@@ -12,7 +12,7 @@ public class DeskApp(
     ILaptopEntities laptopEntities,
     IDisplayAutomationEntities displayEntities,
     ILogger<DeskApp> logger
-) : AreaBase<DeskApp>()
+) : AppBase<DeskApp>()
 {
     protected override IEnumerable<IAutomation> CreateAutomations()
     {

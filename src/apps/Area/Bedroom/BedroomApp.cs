@@ -8,7 +8,7 @@ public class BedroomApp(
     IFanAutomationEntities fanEntities,
     IClimateAutomationEntities climateEntities,
     IScheduler scheduler
-) : AreaBase<BedroomApp>()
+) : AppBase<BedroomApp>()
 {
     protected override IEnumerable<IAutomation> CreateAutomations()
     {

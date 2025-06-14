@@ -1,9 +1,12 @@
 namespace HomeAutomation.apps.Common;
 
 [NetDaemonApp]
-public class Startup
+public class StartupApp : AppBase<StartupApp>
 {
-    public Startup(IHaContext ha, IServices services, ILogger<Startup> logger)
+    protected override IEnumerable<IAutomation> CreateAutomations() => [];
+
+    public StartupApp(HomeAssistantGenerated.Services services, ILogger<StartupApp> logger)
+        : base()
     {
         services.BrowserMod.Notification(new() { Message = "NetDaemonApp has started", ActionText = "Dismiss" });
         logger.LogInformation("NetDaemonApp has started");

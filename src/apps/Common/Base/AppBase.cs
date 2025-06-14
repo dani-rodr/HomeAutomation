@@ -1,12 +1,12 @@
 namespace HomeAutomation.apps.Common.Base;
 
 [NetDaemonApp]
-public abstract class AreaBase<TArea> : IDisposable
+public abstract class AppBase<TArea> : IDisposable
     where TArea : class
 {
     private readonly List<IAutomation> _automations = [];
 
-    protected AreaBase()
+    protected AppBase()
     {
         _automations.AddRange(CreateAutomations());
 

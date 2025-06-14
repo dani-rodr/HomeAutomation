@@ -6,7 +6,7 @@ public class KitchenApp(
     IKitchenMotionEntities motionEntities,
     ICookingAutomationEntities cookingEntities,
     ILogger<KitchenApp> logger
-) : AreaBase<KitchenApp>()
+) : AppBase<KitchenApp>()
 {
     protected override IEnumerable<IAutomation> CreateAutomations()
     {
