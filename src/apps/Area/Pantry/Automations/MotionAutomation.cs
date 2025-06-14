@@ -6,7 +6,7 @@ public class MotionAutomation(IPantryMotionEntities entities, ILogger logger)
     protected override int SensorWaitTime => 10;
 
     protected override IEnumerable<IDisposable> GetAdditionalPersistentAutomations() =>
-        [entities.RoomDoor.StateChanges().IsOff().Subscribe(_ => MasterSwitch?.TurnOn())];
+        [entities.BedroomDoor.StateChanges().IsOff().Subscribe(_ => MasterSwitch?.TurnOn())];
 
     protected override IEnumerable<IDisposable> GetLightAutomations()
     {

@@ -14,7 +14,7 @@ public class Laptop : ComputerBase
         _entities = entities;
         Automations.Add(
             _entities
-                .Switch.StateChanges()
+                .VirtualSwitch.StateChanges()
                 .DistinctUntilChanged()
                 .Subscribe(e =>
                 {
@@ -30,12 +30,15 @@ public class Laptop : ComputerBase
         );
     }
 
-    public override bool IsOn() => IsOnline(_entities.Switch.IsOn(), _entities.Session.IsUnlocked());
+    public override bool IsOn() => IsOnline(_entities.VirtualSwitch.IsOn(), _entities.Session.IsUnlocked());
 
     public override IObservable<bool> StateChanges()
     {
         // Observables for both switch and session state changes
-        var switchOn = _entities.Switch.StateChanges().Select(e => e.IsOn()).StartWith(_entities.Switch.State.IsOn());
+        var switchOn = _entities
+            .VirtualSwitch.StateChanges()
+            .Select(e => e.IsOn())
+            .StartWith(_entities.VirtualSwitch.State.IsOn());
 
         var sessionUnlocked = _entities
             .Session.StateChanges()
@@ -49,7 +52,7 @@ public class Laptop : ComputerBase
 
     public override void TurnOn()
     {
-        _entities.Switch.TurnOn();
+        _entities.VirtualSwitch.TurnOn();
         _entities.PowerPlug.TurnOn();
         foreach (var button in _entities.WakeOnLanButtons)
         {
@@ -59,7 +62,7 @@ public class Laptop : ComputerBase
 
     public override void TurnOff()
     {
-        _entities.Switch.TurnOff();
+        _entities.VirtualSwitch.TurnOff();
 
         if (_entities.Session.State.IsUnlocked())
         {

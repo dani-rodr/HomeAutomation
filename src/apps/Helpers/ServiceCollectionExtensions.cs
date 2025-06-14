@@ -8,6 +8,7 @@ public static class ServiceCollectionExtensions
     {
         return services
             .AddScoped<IEventHandler, HaEventHandler>()
+            .AddTransientEntity<CommonEntities, CommonEntities>()
             .AddTransient<INotificationServices>(p => new NotificationServices(
                 p.GetRequiredService<Services>(),
                 p.GetRequiredService<ILogger<NotificationServices>>()
@@ -57,7 +58,6 @@ public static class ServiceCollectionExtensions
     private static IServiceCollection AddLivingRoomEntities(this IServiceCollection services)
     {
         return services
-            .AddTransientEntity<ILivingRoomSharedEntities, LivingRoomSharedEntities>()
             .AddTransientEntity<ILivingRoomMotionEntities, LivingRoomMotionEntities>()
             .AddTransientEntity<ILivingRoomFanEntities, LivingRoomFanEntities>()
             .AddTransientEntity<IAirQualityEntities, AirQualityEntities>()

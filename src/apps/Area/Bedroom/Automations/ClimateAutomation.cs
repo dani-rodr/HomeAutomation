@@ -9,7 +9,7 @@ public class ClimateAutomation(IClimateAutomationEntities entities, IScheduler s
     private readonly IScheduler _scheduler = scheduler;
     private readonly ClimateEntity _ac = entities.AirConditioner;
     private readonly BinarySensorEntity _motionSensor = entities.MotionSensor;
-    private readonly BinarySensorEntity _doorSensor = entities.DoorSensor;
+    private readonly BinarySensorEntity _doorSensor = entities.Door;
     private readonly SwitchEntity _fanSwitch = entities.FanSwitch;
     private readonly InputBooleanEntity _isPowerSavingMode = entities.PowerSavingMode;
     private Dictionary<TimeBlock, AcScheduleSetting>? _cachedAcSettings;

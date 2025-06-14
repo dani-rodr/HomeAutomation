@@ -2,7 +2,7 @@ namespace HomeAutomation.apps.Area.LivingRoom.Automations;
 
 public class AirQualityAutomations(IAirQualityEntities entities, ILogger logger)
     : FanAutomationBase(
-        entities.CleanAirSwitch,
+        entities.MasterSwitch,
         entities.MotionSensor,
         logger,
         entities.AirPurifierFan,
@@ -19,7 +19,7 @@ public class AirQualityAutomations(IAirQualityEntities entities, ILogger logger)
         yield return entities
             .MotionSensor.StateChanges()
             .IsOffForMinutes(15)
-            .Where(_ => entities.CleanAirSwitch.IsOff())
+            .Where(_ => entities.MasterSwitch.IsOff())
             .Subscribe(_ => MasterSwitch?.TurnOn());
         yield return entities
             .AirPurifierFan.StateChanges()
