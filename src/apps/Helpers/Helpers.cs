@@ -1,4 +1,5 @@
 using System.Linq;
+using System.Text.Json;
 
 namespace HomeAutomation.apps.Helpers;
 
@@ -304,5 +305,43 @@ public static class TimeRange
         var startTime = TimeSpan.FromHours(start);
         var endTime = TimeSpan.FromHours(end);
         return start <= end ? now >= startTime && now <= endTime : now >= startTime || now <= endTime;
+    }
+}
+
+public static class StateChangeExtensions
+{
+    public static (T? Old, T? New) GetAttributeChange<T>(this StateChange change, string attributeName)
+    {
+        T? oldVal = TryGetAttributeValue<T>(change.Old?.Attributes, attributeName);
+        T? newVal = TryGetAttributeValue<T>(change.New?.Attributes, attributeName);
+
+        return (oldVal, newVal);
+    }
+
+    private static T? TryGetAttributeValue<T>(IReadOnlyDictionary<string, object>? attributes, string key)
+    {
+        if (attributes == null || !attributes.TryGetValue(key, out var value))
+            return default;
+
+        if (value is JsonElement json)
+        {
+            try
+            {
+                return json.Deserialize<T>();
+            }
+            catch
+            {
+                return default;
+            }
+        }
+
+        try
+        {
+            return (T?)Convert.ChangeType(value, typeof(T));
+        }
+        catch
+        {
+            return default;
+        }
     }
 }

@@ -1,4 +1,5 @@
 using System.Linq;
+using System.Text.Json;
 using NetDaemon.Extensions.Scheduler;
 
 namespace HomeAutomation.apps.Area.Bedroom.Automations;
@@ -79,12 +80,31 @@ public class ClimateAutomation(IClimateAutomationEntities entities, IScheduler s
                 InvalidateAcSettingsCache();
             }
         );
-        yield return _ac.StateAllChanges().IsManuallyOperated().Subscribe(_ => MasterSwitch?.TurnOff());
+        yield return _ac.StateAllChanges().IsManuallyOperated().Subscribe(TurnOffMasterSwitchOnManualOperation);
         yield return _motionSensor
-            .StateChanges()
+            .StateChangesWithCurrent()
             .IsOffForHours(1)
             .Where(_ => MasterSwitch.IsOff())
             .Subscribe(_ => MasterSwitch?.TurnOn());
+    }
+
+    private void TurnOffMasterSwitchOnManualOperation(StateChange e)
+    {
+        var (oldTemp, newTemp) = e.GetAttributeChange<double?>("temperature");
+
+        Logger.LogInformation(
+            "AC state changed: {OldState} ➜ {NewState} | Temp: {OldTemp} ➜ {NewTemp} | By: {User}",
+            e.Old?.State,
+            e.New?.State,
+            oldTemp?.ToString() ?? "N/A",
+            newTemp?.ToString() ?? "N/A",
+            e.UserId() ?? "unknown"
+        );
+
+        if (oldTemp.HasValue && newTemp.HasValue && oldTemp != newTemp)
+        {
+            MasterSwitch?.TurnOff();
+        }
     }
 
     private void LogCurrentAcScheduleSettings()
