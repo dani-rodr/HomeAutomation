@@ -1,6 +1,6 @@
 namespace HomeAutomation.apps.Common.Interface;
 
-public interface IComputer
+public interface IComputer : IDisposable
 {
     void TurnOn();
     void TurnOff();

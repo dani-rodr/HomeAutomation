@@ -1,7 +1,3 @@
-using System.Collections.Generic;
-using System.Reactive.Concurrency;
-using HomeAutomation.apps.Common.Interface;
-
 namespace HomeAutomation.apps.Common.Base;
 
 [NetDaemonApp]

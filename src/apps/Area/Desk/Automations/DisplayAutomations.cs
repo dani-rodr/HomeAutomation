@@ -1,7 +1,4 @@
-using System;
-using System.Reactive;
 using HomeAutomation.apps.Area.Desk.Devices;
-using HomeAutomation.apps.Common.EventHandlers;
 
 namespace HomeAutomation.apps.Area.Desk.Automations;
 
@@ -10,8 +7,8 @@ public class DisplayAutomations(
     LgDisplay monitor,
     Desktop desktop,
     Laptop laptop,
-    ILogger logger,
-    IEventHandler eventHandler
+    IEventHandler eventHandler,
+    ILogger logger
 ) : AutomationBase(logger)
 {
     protected override IEnumerable<IDisposable> GetPersistentAutomations() =>

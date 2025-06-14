@@ -1,10 +1,8 @@
-using System.Reactive;
 using System.Reactive.Disposables;
-using System.Text.Json;
 
-namespace HomeAutomation.apps.Common.EventHandlers;
+namespace HomeAutomation.apps.Common.Services;
 
-public class HaEventHandler(IHaContext haContext, ILogger logger) : IEventHandler, IDisposable
+public class HaEventHandler(IHaContext haContext, ILogger<HaEventHandler> logger) : IEventHandler, IDisposable
 {
     private const string NFC_EVENT = "tag_scanned";
     private readonly CompositeDisposable _disposables = [];

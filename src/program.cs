@@ -1,4 +1,5 @@
 using System.Reflection;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using NetDaemon.Extensions.Logging;
 using NetDaemon.Extensions.Scheduler;
@@ -21,6 +22,7 @@ try
                     .AddNetDaemonStateManager()
                     .AddNetDaemonScheduler()
                     .AddHomeAssistantGenerated()
+                    .AddScoped<IEventHandler, HaEventHandler>()
         )
         .Build()
         .RunAsync()

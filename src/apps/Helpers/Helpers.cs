@@ -39,6 +39,9 @@ public static class StateChangeObservableExtensions
     public static IObservable<StateChange> IsAutomated(this IObservable<StateChange> source) =>
         source.Where(s => HaIdentity.IsAutomated(s.UserId()));
 
+    public static IObservable<StateChange> IsValidButtonPress(this IObservable<StateChange> source) =>
+        source.Where(s => s.IsValidButtonPress());
+
     public static IObservable<StateChange> WhenStateIsForSeconds(
         this IObservable<StateChange> source,
         string desiredState,

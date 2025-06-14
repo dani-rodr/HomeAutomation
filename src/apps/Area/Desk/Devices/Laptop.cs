@@ -1,21 +1,18 @@
 using System.Linq;
-using System.Reactive.Disposables;
 
 namespace HomeAutomation.apps.Area.Desk.Devices;
 
-public class Laptop : ComputerBase, IDisposable
+public class Laptop : ComputerBase
 {
     protected override string ShowEvent { get; } = "show_laptop";
     protected override string HideEvent { get; } = "hide_laptop";
     private readonly ILaptopEntities _entities;
-    private readonly CompositeDisposable _disposables = [];
 
     public Laptop(ILaptopEntities entities, IEventHandler eventHandler, ILogger logger)
         : base(eventHandler, logger)
     {
         _entities = entities;
-        _disposables =
-        [
+        Automations.Add(
             _entities
                 .Switch.StateChanges()
                 .DistinctUntilChanged()
@@ -29,8 +26,8 @@ public class Laptop : ComputerBase, IDisposable
                     {
                         TurnOff();
                     }
-                }),
-        ];
+                })
+        );
     }
 
     public override bool IsOn() => IsOnline(_entities.Switch.IsOn(), _entities.Session.IsUnlocked());
@@ -71,10 +68,4 @@ public class Laptop : ComputerBase, IDisposable
     }
 
     private static bool IsOnline(bool switchState, bool sessionState) => switchState || sessionState;
-
-    public void Dispose()
-    {
-        _disposables.Dispose();
-        GC.SuppressFinalize(this);
-    }
 }

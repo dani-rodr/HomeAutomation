@@ -1,13 +1,44 @@
 namespace HomeAutomation.apps.Area.Desk.Devices;
 
-public class Desktop(IDesktopEntities entities, IEventHandler eventHandler, ILogger logger)
-    : ComputerBase(eventHandler, logger)
+public class Desktop : ComputerBase
 {
     protected override string ShowEvent { get; } = "show_pc";
     protected override string HideEvent { get; } = "hide_pc";
-    private readonly BinarySensorEntity powerPlugThreshold = entities.PowerPlugThreshold;
-    private readonly BinarySensorEntity networkStatus = entities.NetworkStatus;
-    private readonly SwitchEntity powerSwitch = entities.PowerSwitch;
+    private readonly BinarySensorEntity powerPlugThreshold;
+    private readonly BinarySensorEntity networkStatus;
+    private readonly SwitchEntity powerSwitch;
+    private const string MOONLIGHT_APP = "com.limelight";
+
+    public Desktop(
+        IDesktopEntities entities,
+        IEventHandler eventHandler,
+        INotificationServices notificationServices,
+        ILogger logger
+    )
+        : base(eventHandler, logger)
+    {
+        powerPlugThreshold = entities.PowerPlugThreshold;
+        networkStatus = entities.NetworkStatus;
+        powerSwitch = entities.PowerSwitch;
+        Automations.Add(
+            entities
+                .RemotePcButton.StateChanges()
+                .IsValidButtonPress()
+                .Subscribe(e =>
+                {
+                    if (e.UserId() == HaIdentity.DANIEL_RODRIGUEZ)
+                    {
+                        notificationServices.LaunchAppPocoF4(MOONLIGHT_APP);
+                        return;
+                    }
+                    if (e.UserId() == HaIdentity.MIPAD5)
+                    {
+                        notificationServices.LaunchAppMiPad(MOONLIGHT_APP);
+                        return;
+                    }
+                })
+        );
+    }
 
     public override bool IsOn() => GetPowerState(powerPlugThreshold.State, networkStatus.State);
 
