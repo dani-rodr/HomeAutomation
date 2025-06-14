@@ -157,6 +157,13 @@ public static class StateExtensions
         return e.New != null && e.New.State.IsUnlocked();
     }
 
+    public static bool IsUnavailable<T, TState>(this StateChange<T, TState> e)
+        where T : Entity
+        where TState : EntityState
+    {
+        return e.New != null && e.New.State.IsUnavailable();
+    }
+
     public static string UserId(this StateChange e)
     {
         return e.New?.Context?.UserId ?? string.Empty;
@@ -209,6 +216,8 @@ public static class SensorEntityExtensions
     public static bool IsLocked(this SensorEntity sensor) => sensor?.State.IsLocked() == true;
 
     public static bool IsUnlocked(this SensorEntity sensor) => sensor?.State.IsUnlocked() == true;
+
+    public static bool IsUnavailable(this SensorEntity sensor) => sensor?.State.IsUnavailable() == true;
 }
 
 public static class BinaryEntityExtensions

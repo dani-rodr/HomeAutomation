@@ -1,6 +1,3 @@
-using System.Linq;
-using HomeAutomation.apps.Common.Containers;
-
 namespace HomeAutomation.apps.Area.Bedroom;
 
 public class FanAutomation(IFanAutomationEntities entities, ILogger logger)
@@ -10,22 +7,21 @@ public class FanAutomation(IFanAutomationEntities entities, ILogger logger)
 
     protected override IEnumerable<IDisposable> GetPersistentAutomations()
     {
-        yield return Fan.StateChangesWithCurrent()
-            .IsManuallyOperated()
-            .Subscribe(_ => ShouldActivateFan = Fan.State.IsOn());
-        yield return MotionSensor.StateChangesWithCurrent().IsOn().Subscribe(HandleMotionDetected);
-        yield return MotionSensor.StateChangesWithCurrent().IsOff().Subscribe(HandleMotionStopped);
+        yield return Fan.StateChanges().IsManuallyOperated().Subscribe(_ => ShouldActivateFan = Fan.State.IsOn());
+        yield return MotionSensor.StateChanges().Subscribe(HandleMotionDetection);
     }
 
     protected override IEnumerable<IDisposable> GetToggleableAutomations() => [];
 
-    private void HandleMotionDetected(StateChange e)
+    private void HandleMotionDetection(StateChange e)
     {
-        if (ShouldActivateFan)
+        if (e.IsOn() && ShouldActivateFan)
         {
             Fan.TurnOn();
         }
+        else if (e.IsOff())
+        {
+            Fan.TurnOff();
+        }
     }
-
-    private void HandleMotionStopped(StateChange e) => Fan.TurnOff();
 }

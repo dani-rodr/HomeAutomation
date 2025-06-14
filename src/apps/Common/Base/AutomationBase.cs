@@ -1,5 +1,4 @@
 using System.Reactive.Disposables;
-using HomeAutomation.apps.Common.Interface;
 
 namespace HomeAutomation.apps.Common.Base;
 

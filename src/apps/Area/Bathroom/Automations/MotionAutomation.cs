@@ -1,33 +1,30 @@
 namespace HomeAutomation.apps.Area.Bathroom.Automations;
 
-public class MotionAutomation : MotionAutomationBase
+public class MotionAutomation(
+    IMotionAutomationEntities entities,
+    IDimmingLightController dimmingController,
+    ILogger logger
+) : MotionAutomationBase(entities.MasterSwitch, entities.MotionSensor, entities.Light, logger, entities.SensorDelay)
 {
-    private readonly IDimmingLightController _dimmingController;
-
-    public MotionAutomation(
-        IMotionAutomationEntities entities,
-        IDimmingLightController dimmingController,
-        ILogger logger
-    )
-        : base(entities.MasterSwitch, entities.MotionSensor, entities.Light, logger, entities.SensorDelay)
+    public override void StartAutomation()
     {
-        _dimmingController = dimmingController;
+        dimmingController.SetSensorActiveDelayValue(SensorActiveDelayValue);
 
-        _dimmingController.SetSensorActiveDelayValue(SensorActiveDelayValue);
+        base.StartAutomation();
     }
 
     protected override IEnumerable<IDisposable> GetLightAutomations()
     {
-        yield return MotionSensor.StateChanges().IsOn().Subscribe(e => _dimmingController.OnMotionDetected(Light));
+        yield return MotionSensor.StateChanges().IsOn().Subscribe(e => dimmingController.OnMotionDetected(Light));
         yield return MotionSensor
             .StateChanges()
             .IsOff()
-            .Subscribe(async _ => await _dimmingController.OnMotionStoppedAsync(Light));
+            .Subscribe(async _ => await dimmingController.OnMotionStoppedAsync(Light));
     }
 
     public override void Dispose()
     {
-        _dimmingController?.Dispose();
+        dimmingController?.Dispose();
         base.Dispose();
         GC.SuppressFinalize(this);
     }

@@ -1,5 +1,4 @@
 using System.Linq;
-using System.Text.Json;
 using NetDaemon.Extensions.Scheduler;
 
 namespace HomeAutomation.apps.Area.Bedroom.Automations;

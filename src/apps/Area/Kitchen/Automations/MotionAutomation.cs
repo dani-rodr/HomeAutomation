@@ -1,5 +1,3 @@
-using HomeAutomation.apps.Common.Containers;
-
 namespace HomeAutomation.apps.Area.Kitchen.Automations;
 
 public class MotionAutomation(IKitchenMotionEntities entities, ILogger logger)

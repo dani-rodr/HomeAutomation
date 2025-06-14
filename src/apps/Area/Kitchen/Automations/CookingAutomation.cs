@@ -1,12 +1,7 @@
-using System.Collections.Generic;
-
 namespace HomeAutomation.apps.Area.Kitchen.Automations;
 
 public class CookingAutomation(ICookingAutomationEntities entities, ILogger logger) : AutomationBase(logger)
 {
-    private readonly NumericSensorEntity _riceCookerPower = entities.RiceCookerPower;
-    private readonly SwitchEntity _riceCookerSwitch = entities.RiceCookerSwitch;
-    private readonly SensorEntity _airFryerStatus = entities.AirFryerStatus;
     private readonly ButtonEntity _inductionTurnOff = entities.InductionTurnOff;
     private readonly NumericSensorEntity _inductionPower = entities.InductionPower;
 
@@ -26,7 +21,7 @@ public class CookingAutomation(ICookingAutomationEntities entities, ILogger logg
             .WhenStateIsForMinutes(s => s?.State > boilingPowerThreshold, minutes)
             .Subscribe(_ =>
             {
-                if (_airFryerStatus.State == HaEntityStates.UNAVAILABLE)
+                if (entities.AirFryerStatus.IsUnavailable())
                 {
                     _inductionTurnOff.Press();
                     Logger.LogInformation(
@@ -40,12 +35,12 @@ public class CookingAutomation(ICookingAutomationEntities entities, ILogger logg
     private IDisposable AutoTurnOffRiceCookerOnIdle(int minutes)
     {
         var riceCookerIdlePowerThreshold = 100;
-        return _riceCookerPower
-            .StateChanges()
+        return entities
+            .RiceCookerPower.StateChanges()
             .WhenStateIsForMinutes(s => s?.State < riceCookerIdlePowerThreshold, minutes)
             .Subscribe(_ =>
             {
-                _riceCookerSwitch.TurnOff();
+                entities.RiceCookerSwitch.TurnOff();
                 Logger.LogInformation("Auto-turned off rice cooker after {Minutes} minutes idle", minutes);
             });
     }

@@ -1,6 +1,3 @@
-using System.Linq;
-using HomeAutomation.apps.Common.Containers;
-
 namespace HomeAutomation.apps.Area.LivingRoom.Automations;
 
 public class FanAutomation(ILivingRoomFanEntities entities, ILogger logger)
@@ -16,8 +13,7 @@ public class FanAutomation(ILivingRoomFanEntities entities, ILogger logger)
 
     private IEnumerable<IDisposable> GetCeilingFanManualOperations()
     {
-        yield return Fan.StateChanges().IsOn().IsManuallyOperated().Subscribe(_ => ShouldActivateFan = true);
-        yield return Fan.StateChanges().IsOff().IsManuallyOperated().Subscribe(_ => ShouldActivateFan = false);
+        yield return Fan.StateChanges().IsManuallyOperated().Subscribe(e => ShouldActivateFan = e.IsOn());
         yield return Fan.StateChanges().IsOffForMinutes(15).Subscribe(_ => ShouldActivateFan = true);
     }
 
@@ -28,7 +24,7 @@ public class FanAutomation(ILivingRoomFanEntities entities, ILogger logger)
             Fan.TurnOn();
         }
 
-        if (entities.BedroomPresenceSensor.IsOff())
+        if (entities.BedroomMotionSensor.IsOff())
         {
             ExhaustFan.TurnOn();
         }

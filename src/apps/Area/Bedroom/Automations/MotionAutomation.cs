@@ -1,5 +1,4 @@
 using System.Linq;
-using HomeAutomation.apps.Common.Containers;
 
 namespace HomeAutomation.apps.Area.Bedroom.Automations;
 
@@ -13,8 +12,19 @@ public class MotionAutomation(IBedroomMotionEntities entities, ILogger logger)
 
     protected override IEnumerable<IDisposable> GetLightAutomations()
     {
-        yield return MotionSensor.StateChangesWithCurrent().IsOn().Subscribe(_ => Light.TurnOn());
-        yield return MotionSensor.StateChangesWithCurrent().IsOff().Subscribe(_ => Light.TurnOff());
+        yield return MotionSensor
+            .StateChanges()
+            .Subscribe(e =>
+            {
+                if (e.IsOn())
+                {
+                    Light.TurnOn();
+                }
+                else if (e.IsOff())
+                {
+                    Light.TurnOff();
+                }
+            });
     }
 
     private IEnumerable<IDisposable> GetLightSwitchAutomations()
@@ -27,16 +37,7 @@ public class MotionAutomation(IBedroomMotionEntities entities, ILogger logger)
                 ToggleLightsViaSwitch(e.First());
             });
         yield return _rightSideEmptySwitch.StateChanges().Subscribe(ToggleLightsViaSwitch);
-        yield return Light.StateChanges().Subscribe(EnableMasterSwitchWhenLightActive);
-    }
-
-    private void EnableMasterSwitchWhenLightActive(StateChange e)
-    {
-        var state = Light.State;
-        if (HaIdentity.IsAutomated(e.UserId()) && state.IsOn())
-        {
-            MasterSwitch?.TurnOn();
-        }
+        yield return Light.StateChanges().IsAutomated().IsOn().Subscribe(_ => MasterSwitch?.TurnOn());
     }
 
     private void ToggleLightsViaSwitch(StateChange e)

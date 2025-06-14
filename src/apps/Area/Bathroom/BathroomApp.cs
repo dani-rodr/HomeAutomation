@@ -6,8 +6,10 @@ public class BathroomApp(IBathroomMotionEntities motionEntities, ILogger<Bathroo
 {
     protected override IEnumerable<IAutomation> CreateAutomations()
     {
-        var dimmingController = new DimmingLightController(motionEntities.SensorDelay);
-
-        yield return new MotionAutomation(motionEntities, dimmingController, logger);
+        yield return new MotionAutomation(
+            motionEntities,
+            new DimmingLightController(motionEntities.SensorDelay),
+            logger
+        );
     }
 }

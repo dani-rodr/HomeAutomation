@@ -16,7 +16,7 @@ public class BedroomFanEntities(Entities entities) : IFanAutomationEntities
 
 public interface ILivingRoomFanEntities : IFanAutomationEntities
 {
-    BinarySensorEntity BedroomPresenceSensor { get; }
+    BinarySensorEntity BedroomMotionSensor { get; }
 }
 
 public class LivingRoomFanEntities(Entities entities, ILivingRoomSharedEntities sharedEntities) : ILivingRoomFanEntities
@@ -25,5 +25,5 @@ public class LivingRoomFanEntities(Entities entities, ILivingRoomSharedEntities 
     public BinarySensorEntity MotionSensor => sharedEntities.MotionSensor;
     public IEnumerable<SwitchEntity> Fans =>
         [entities.Switch.CeilingFan, sharedEntities.StandFan, entities.Switch.Cozylife955f];
-    public BinarySensorEntity BedroomPresenceSensor => entities.BinarySensor.BedroomPresenceSensors;
+    public BinarySensorEntity BedroomMotionSensor => entities.BinarySensor.BedroomPresenceSensors;
 }
