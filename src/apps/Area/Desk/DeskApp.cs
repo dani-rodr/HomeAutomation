@@ -3,21 +3,22 @@ using HomeAutomation.apps.Area.Desk.Devices;
 
 namespace HomeAutomation.apps.Area.Desk;
 
-public class DeskApp(Entities entities, Services services, IEventHandler eventHandler, ILogger<DeskApp> logger)
-    : AreaBase<DeskApp>(entities, logger)
+public class DeskApp(
+    Services services,
+    IEventHandler eventHandler,
+    INotificationServices notificationServices,
+    ILgDisplayEntities lgDisplayEntities,
+    IDesktopEntities desktopEntities,
+    ILaptopEntities laptopEntities,
+    IDisplayAutomationEntities displayEntities,
+    ILogger<DeskApp> logger
+) : AreaBase<DeskApp>()
 {
     protected override IEnumerable<IAutomation> CreateAutomations()
     {
-        var lgDisplayEntities = new DeskLgDisplayEntities(Entities);
-        var monitor = new LgDisplay(lgDisplayEntities, services, Logger);
-
-        var desktopEntities = new DeskDesktopEntities(Entities);
-        var desktop = new Desktop(desktopEntities, eventHandler, new NotificationServices(services, logger), Logger);
-
-        var laptopEntities = new LaptopEntities(Entities);
-        var laptop = new Laptop(laptopEntities, eventHandler, Logger);
-
-        var displayEntities = new DeskDisplayEntities(Entities);
-        yield return new DisplayAutomations(displayEntities, monitor, desktop, laptop, eventHandler, Logger);
+        LgDisplay monitor = new(lgDisplayEntities, services, logger);
+        Desktop desktop = new(desktopEntities, eventHandler, notificationServices, logger);
+        Laptop laptop = new(laptopEntities, eventHandler, logger);
+        yield return new DisplayAutomations(displayEntities, monitor, desktop, laptop, eventHandler, logger);
     }
 }

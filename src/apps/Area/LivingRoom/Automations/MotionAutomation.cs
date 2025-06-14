@@ -49,7 +49,7 @@ public class MotionAutomation : MotionAutomationBase
         return MotionSensor
             .StateChanges()
             .IsOffForMinutes(2)
-            .Where(_ => _entities.ContactSensorDoor.IsClosed() && _entities.BedroomPresenceSensors.IsOccupied())
+            .Where(_ => _entities.ContactSensorDoor.IsClosed() && _entities.BedroomMotionSensors.IsOccupied())
             .Subscribe(_ => MasterSwitch?.TurnOn());
     }
 

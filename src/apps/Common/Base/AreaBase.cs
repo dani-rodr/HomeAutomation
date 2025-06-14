@@ -4,16 +4,10 @@ namespace HomeAutomation.apps.Common.Base;
 public abstract class AreaBase<TArea> : IDisposable
     where TArea : class
 {
-    protected readonly Entities Entities;
-    protected readonly ILogger Logger;
-    protected readonly IScheduler? Scheduler;
     private readonly List<IAutomation> _automations = [];
 
-    protected AreaBase(Entities entities, ILogger logger, IScheduler? scheduler = null)
+    protected AreaBase()
     {
-        Entities = entities;
-        Logger = logger;
-        Scheduler = scheduler;
         _automations.AddRange(CreateAutomations());
 
         foreach (var automation in _automations)

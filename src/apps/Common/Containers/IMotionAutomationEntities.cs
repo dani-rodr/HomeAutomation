@@ -27,7 +27,7 @@ public class BedroomMotionEntities(Entities entities) : IBedroomMotionEntities
 public interface ILivingRoomMotionEntities : IMotionAutomationEntities
 {
     BinarySensorEntity ContactSensorDoor { get; }
-    BinarySensorEntity BedroomPresenceSensors { get; }
+    BinarySensorEntity BedroomMotionSensors { get; }
     MediaPlayerEntity TclTv { get; }
     BinarySensorEntity KitchenMotionSensors { get; }
     LightEntity PantryLights { get; }
@@ -42,7 +42,7 @@ public class LivingRoomMotionEntities(Entities entities) : ILivingRoomMotionEnti
     public LightEntity Light => entities.Light.SalaLightsGroup;
     public NumberEntity SensorDelay => entities.Number.Ld2410Esp321StillTargetDelay;
     public BinarySensorEntity ContactSensorDoor => entities.BinarySensor.ContactSensorDoor;
-    public BinarySensorEntity BedroomPresenceSensors => entities.BinarySensor.BedroomPresenceSensors;
+    public BinarySensorEntity BedroomMotionSensors => entities.BinarySensor.BedroomPresenceSensors;
     public MediaPlayerEntity TclTv => entities.MediaPlayer.Tcl65c755;
     public BinarySensorEntity KitchenMotionSensors => entities.BinarySensor.KitchenMotionSensors;
     public LightEntity PantryLights => entities.Light.PantryLights;
@@ -68,7 +68,9 @@ public class PantryMotionEntities(Entities entities) : IPantryMotionEntities
     public BinarySensorEntity RoomDoor => entities.BinarySensor.ContactSensorDoor;
 }
 
-public class BathroomMotionEntities(Entities entities) : IMotionAutomationEntities
+public interface IBathroomMotionEntities : IMotionAutomationEntities;
+
+public class BathroomMotionEntities(Entities entities) : IBathroomMotionEntities
 {
     public SwitchEntity MasterSwitch => entities.Switch.BathroomMotionSensor;
     public BinarySensorEntity MotionSensor => entities.BinarySensor.BathroomPresenceSensors;

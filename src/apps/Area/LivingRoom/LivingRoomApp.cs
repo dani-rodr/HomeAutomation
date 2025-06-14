@@ -2,24 +2,21 @@ using HomeAutomation.apps.Area.LivingRoom.Automations;
 
 namespace HomeAutomation.apps.Area.LivingRoom;
 
-public class LivingRoomApp(Entities entities, ILogger<LivingRoomApp> logger) : AreaBase<LivingRoomApp>(entities, logger)
+public class LivingRoomApp(
+    ILivingRoomMotionEntities motionEntities,
+    ILivingRoomFanEntities fanEntities,
+    IAirQualityEntities airQualityEntities,
+    ITabletAutomationEntities tabletEntities,
+    ILogger<LivingRoomApp> logger
+) : AreaBase<LivingRoomApp>()
 {
     protected override IEnumerable<IAutomation> CreateAutomations()
     {
-        var sharedEntities = new LivingRoomSharedEntities(Entities);
+        DimmingLightController dimmingController = new(motionEntities.SensorDelay);
 
-        var motionEntities = new LivingRoomMotionEntities(Entities);
-        var dimmingController = new DimmingLightController(motionEntities.SensorDelay);
-
-        yield return new MotionAutomation(motionEntities, dimmingController, Logger);
-
-        var fanEntities = new LivingRoomFanEntities(Entities, sharedEntities);
-        yield return new FanAutomation(fanEntities, Logger);
-
-        var airQualityEntities = new AirQualityEntities(Entities, sharedEntities);
-        yield return new AirQualityAutomations(airQualityEntities, Logger);
-
-        var tabletEntities = new LivingRoomTabletEntities(Entities, sharedEntities);
-        yield return new TabletAutomations(tabletEntities, Logger);
+        yield return new MotionAutomation(motionEntities, dimmingController, logger);
+        yield return new FanAutomation(fanEntities, logger);
+        yield return new AirQualityAutomations(airQualityEntities, logger);
+        yield return new TabletAutomations(tabletEntities, logger);
     }
 }
