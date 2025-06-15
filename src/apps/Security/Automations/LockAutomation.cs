@@ -80,15 +80,7 @@ public class LockAutomation(
     {
         entities.Flytrap.TurnOn();
         SendUnlockedNotification(e);
-        if (e.IsPhysicallyOperated())
-        {
-            _isImmediateRelock = false;
-            return;
-        }
-        if (e.IsManuallyOperated())
-        {
-            _isImmediateRelock = true;
-        }
+        _isImmediateRelock = !e.IsPhysicallyOperated();
     }
 
     private void HandleDoorClosed(StateChange e)
@@ -109,12 +101,19 @@ public class LockAutomation(
     private void SendUnlockedNotification(StateChange e) =>
         services.NotifyPocoF4(
             message: "Door is unlocked",
-            data: GetLockNotificationData("mdi:lock-open-variant", "Lock"),
+            data: GetBaseNotificationData(
+                "mdi:lock-open-variant",
+                new[] { new { action = LOCK_ACTION, title = "Lock" } }
+            ),
             title: "Home Assistant"
         );
 
     private void SendDoorOpenedNotification(StateChange e) =>
-        services.NotifyPocoF4(message: "Door is opened", data: GetDoorNotificationData(), title: "Home Assistant");
+        services.NotifyPocoF4(
+            message: "Door is opened",
+            data: GetBaseNotificationData("mdi:door-open"),
+            title: "Home Assistant"
+        );
 
     private static object GetBaseNotificationData(string icon, object? actions = null) =>
         new
@@ -125,11 +124,6 @@ public class LockAutomation(
             notification_icon = icon,
             persistent = true,
             sticky = true,
-            actions = actions,
+            actions,
         };
-
-    private static object GetLockNotificationData(string icon, string actionTitle) =>
-        GetBaseNotificationData(icon, new[] { new { action = LOCK_ACTION, title = actionTitle } });
-
-    private static object GetDoorNotificationData() => GetBaseNotificationData("mdi:door-open");
 }
