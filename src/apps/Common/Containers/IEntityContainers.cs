@@ -9,10 +9,14 @@ public interface IMotionBase
 public interface IMotionWithLight : IMotionBase
 {
     LightEntity Light { get; }
+}
+
+public interface IMotionWithLightAndDelay : IMotionWithLight
+{
     NumberEntity SensorDelay { get; }
 }
 
-public interface IMotionAutomationEntities : IMotionWithLight;
+public interface IMotionAutomationEntities : IMotionWithLightAndDelay;
 
 public interface IBedroomMotionEntities : IMotionAutomationEntities
 {
@@ -53,7 +57,7 @@ public interface IAirQualityEntities : IMotionBase
     SwitchEntity LedStatus { get; }
 }
 
-public interface ICookingAutomationEntities
+public interface ICookingEntities
 {
     NumericSensorEntity RiceCookerPower { get; }
     SwitchEntity RiceCookerSwitch { get; }
@@ -70,17 +74,17 @@ public interface IWeatherSensor
     WeatherEntity Weather { get; }
 }
 
-public interface IClimateAutomationEntities : IWeatherSensor, IMotionBase
+public interface IClimateEntities : IWeatherSensor, IMotionBase
 {
     ClimateEntity AirConditioner { get; }
     BinarySensorEntity Door { get; }
     SwitchEntity FanSwitch { get; }
     InputBooleanEntity PowerSavingMode { get; }
-    BinarySensorEntity HouseSensor { get; }
+    BinarySensorEntity HouseMotionSensor { get; }
     ButtonEntity AcFanModeToggle { get; }
 }
 
-public interface IDisplayAutomationEntities
+public interface IDisplayEntities
 {
     SwitchEntity LgScreen { get; }
     InputNumberEntity LgTvBrightness { get; }
@@ -101,18 +105,18 @@ public interface ILgDisplayEntities
     MediaPlayerEntity LgWebosSmartTv { get; }
 }
 
-public interface ITabletAutomationEntities : IMotionBase
+public interface ITabletEntities : IMotionBase
 {
     LightEntity TabletScreen { get; }
     BinarySensorEntity TabletActive { get; }
 }
 
-public interface IFanAutomationEntities : IMotionBase
+public interface IFanEntities : IMotionBase
 {
     IEnumerable<SwitchEntity> Fans { get; }
 }
 
-public interface ILivingRoomFanEntities : IFanAutomationEntities
+public interface ILivingRoomFanEntities : IFanEntities
 {
     BinarySensorEntity BedroomMotionSensor { get; }
 }
@@ -123,4 +127,12 @@ public interface IDesktopEntities
     BinarySensorEntity NetworkStatus { get; }
     SwitchEntity PowerSwitch { get; }
     InputButtonEntity RemotePcButton { get; }
+}
+
+public interface ILockingEntities : IMotionBase
+{
+    LockEntity Lock { get; }
+    BinarySensorEntity Door { get; }
+    BinarySensorEntity HouseStatus { get; }
+    SwitchEntity Flytrap { get; }
 }

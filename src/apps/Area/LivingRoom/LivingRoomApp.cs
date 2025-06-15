@@ -6,7 +6,7 @@ public class LivingRoomApp(
     ILivingRoomMotionEntities motionEntities,
     ILivingRoomFanEntities fanEntities,
     IAirQualityEntities airQualityEntities,
-    ITabletAutomationEntities tabletEntities,
+    ITabletEntities tabletEntities,
     ILogger<LivingRoomApp> logger
 ) : AppBase<LivingRoomApp>()
 {

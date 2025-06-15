@@ -1,6 +1,6 @@
 namespace HomeAutomation.apps.Area.LivingRoom.Automations;
 
-public class TabletAutomations(ITabletAutomationEntities entities, ILogger logger)
+public class TabletAutomations(ITabletEntities entities, ILogger logger)
     : MotionAutomationBase(entities.MasterSwitch, entities.MotionSensor, entities.TabletScreen, logger)
 {
     protected override IEnumerable<IDisposable> GetSensorDelayAutomations() => [];

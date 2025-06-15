@@ -57,4 +57,5 @@ public static class HaIdentity
 public static class NFC_ID
 {
     public const string DESK = "0aa9e8b4-4b8b-427e-b90e-7f5ac17a15f3";
+    public const string DOOR_LOCK = "89a6ad29-f22b-4aec-a7b0-0a8cef95c16b";
 }

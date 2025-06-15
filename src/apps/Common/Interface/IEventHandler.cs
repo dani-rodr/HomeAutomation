@@ -8,4 +8,5 @@ public interface IEventHandler
     IDisposable Subscribe(string eventType, Action callback);
     IObservable<Event> WhenEventTriggered(string eventType);
     IObservable<string> OnNfcScan(string tagId);
+    IObservable<string> OnMobileEvent(string action);
 }

@@ -9,6 +9,7 @@ public static class ServiceCollectionExtensions
         return services
             .AddScoped<IEventHandler, HaEventHandler>()
             .AddTransientEntity<CommonEntities, CommonEntities>()
+            .AddTransientEntity<ILockingEntities, LockingEntities>()
             .AddTransient<INotificationServices>(p => new NotificationServices(
                 p.GetRequiredService<Services>(),
                 p.GetRequiredService<ILogger<NotificationServices>>()
@@ -30,14 +31,14 @@ public static class ServiceCollectionExtensions
     {
         return services
             .AddTransientEntity<IBedroomMotionEntities, BedroomMotionEntities>()
-            .AddTransientEntity<IFanAutomationEntities, BedroomFanEntities>()
-            .AddTransientEntity<IClimateAutomationEntities, BedroomClimateEntities>();
+            .AddTransientEntity<IFanEntities, BedroomFanEntities>()
+            .AddTransientEntity<IClimateEntities, BedroomClimateEntities>();
     }
 
     private static IServiceCollection AddDeskEntities(this IServiceCollection services)
     {
         return services
-            .AddTransientEntity<IDisplayAutomationEntities, DeskDisplayEntities>()
+            .AddTransientEntity<IDisplayEntities, DeskDisplayEntities>()
             .AddTransientEntity<ILgDisplayEntities, DeskLgDisplayEntities>()
             .AddTransientEntity<IDesktopEntities, DeskDesktopEntities>()
             .AddTransientEntity<ILaptopEntities, LaptopEntities>();
@@ -52,7 +53,7 @@ public static class ServiceCollectionExtensions
     {
         return services
             .AddTransientEntity<IKitchenMotionEntities, KitchenMotionEntities>()
-            .AddTransientEntity<ICookingAutomationEntities, KitchenCookingEntities>();
+            .AddTransientEntity<ICookingEntities, KitchenCookingEntities>();
     }
 
     private static IServiceCollection AddLivingRoomEntities(this IServiceCollection services)
@@ -61,7 +62,7 @@ public static class ServiceCollectionExtensions
             .AddTransientEntity<ILivingRoomMotionEntities, LivingRoomMotionEntities>()
             .AddTransientEntity<ILivingRoomFanEntities, LivingRoomFanEntities>()
             .AddTransientEntity<IAirQualityEntities, AirQualityEntities>()
-            .AddTransientEntity<ITabletAutomationEntities, LivingRoomTabletEntities>();
+            .AddTransientEntity<ITabletEntities, LivingRoomTabletEntities>();
     }
 
     private static IServiceCollection AddPantryEntities(this IServiceCollection services)

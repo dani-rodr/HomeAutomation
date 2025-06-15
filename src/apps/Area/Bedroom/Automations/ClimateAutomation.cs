@@ -3,7 +3,7 @@ using NetDaemon.Extensions.Scheduler;
 
 namespace HomeAutomation.apps.Area.Bedroom.Automations;
 
-public class ClimateAutomation(IClimateAutomationEntities entities, IScheduler scheduler, ILogger logger)
+public class ClimateAutomation(IClimateEntities entities, IScheduler scheduler, ILogger logger)
     : AutomationBase(logger, entities.MasterSwitch)
 {
     private readonly IScheduler _scheduler = scheduler;
@@ -181,9 +181,9 @@ public class ClimateAutomation(IClimateAutomationEntities entities, IScheduler s
 
     private IEnumerable<IDisposable> GetHousePresenceAutomations()
     {
-        var houseEmpty = entities.HouseSensor;
-        yield return houseEmpty.StateChanges().IsOffForHours(1).Subscribe(_ => _ac.TurnOff());
-        yield return houseEmpty
+        var houseOccupancy = entities.HouseMotionSensor;
+        yield return houseOccupancy.StateChanges().IsOffForHours(1).Subscribe(_ => _ac.TurnOff());
+        yield return houseOccupancy
             .StateChanges()
             .IsOn()
             .Subscribe(e =>

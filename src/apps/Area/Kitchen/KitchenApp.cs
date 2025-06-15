@@ -4,7 +4,7 @@ namespace HomeAutomation.apps.Area.Kitchen;
 
 public class KitchenApp(
     IKitchenMotionEntities motionEntities,
-    ICookingAutomationEntities cookingEntities,
+    ICookingEntities cookingEntities,
     ILogger<KitchenApp> logger
 ) : AppBase<KitchenApp>()
 {

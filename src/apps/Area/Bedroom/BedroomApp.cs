@@ -5,8 +5,8 @@ namespace HomeAutomation.apps.Area.Bedroom;
 public class BedroomApp(
     ILogger<BedroomApp> logger,
     IBedroomMotionEntities motionEntities,
-    IFanAutomationEntities fanEntities,
-    IClimateAutomationEntities climateEntities,
+    IFanEntities fanEntities,
+    IClimateEntities climateEntities,
     IScheduler scheduler
 ) : AppBase<BedroomApp>()
 {

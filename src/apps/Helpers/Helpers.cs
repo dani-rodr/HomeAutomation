@@ -13,17 +13,22 @@ public static class StateChangeObservableExtensions
             e.New?.State != null && states.Any(s => s.Equals(e.New.State, StringComparison.OrdinalIgnoreCase))
         );
 
+    // Basic State Checks
     public static IObservable<StateChange> IsOn(this IObservable<StateChange> source) =>
         source.IsAnyOfStates(HaEntityStates.ON);
 
-    public static IObservable<StateChange> IsOpen(this IObservable<StateChange> source) =>
-        source.IsAnyOfStates(HaEntityStates.ON);
+    public static IObservable<StateChange> IsOpen(this IObservable<StateChange> source) => source.IsOn();
 
     public static IObservable<StateChange> IsOff(this IObservable<StateChange> source) =>
         source.IsAnyOfStates(HaEntityStates.OFF);
 
-    public static IObservable<StateChange> IsClosed(this IObservable<StateChange> source) =>
-        source.IsAnyOfStates(HaEntityStates.OFF);
+    public static IObservable<StateChange> IsClosed(this IObservable<StateChange> source) => source.IsOff();
+
+    public static IObservable<StateChange> IsLocked(this IObservable<StateChange> source) =>
+        source.IsAnyOfStates(HaEntityStates.LOCKED);
+
+    public static IObservable<StateChange> IsUnlocked(this IObservable<StateChange> source) =>
+        source.IsAnyOfStates(HaEntityStates.UNLOCKED);
 
     public static IObservable<StateChange> IsUnavailable(this IObservable<StateChange> source) =>
         source.IsAnyOfStates(HaEntityStates.UNAVAILABLE);
@@ -79,6 +84,24 @@ public static class StateChangeObservableExtensions
     public static IObservable<StateChange> IsOffForHours(this IObservable<StateChange> source, int time) =>
         source.WhenStateIsForHours(HaEntityStates.OFF, time);
 
+    public static IObservable<StateChange> IsLockedForSeconds(this IObservable<StateChange> source, int time) =>
+        source.WhenStateIsForSeconds(HaEntityStates.LOCKED, time);
+
+    public static IObservable<StateChange> IsLockedForMinutes(this IObservable<StateChange> source, int time) =>
+        source.WhenStateIsForMinutes(HaEntityStates.LOCKED, time);
+
+    public static IObservable<StateChange> IsLockedForHours(this IObservable<StateChange> source, int time) =>
+        source.WhenStateIsForHours(HaEntityStates.LOCKED, time);
+
+    public static IObservable<StateChange> IsUnlockedForSeconds(this IObservable<StateChange> source, int time) =>
+        source.WhenStateIsForSeconds(HaEntityStates.UNLOCKED, time);
+
+    public static IObservable<StateChange> IsUnlockedForMinutes(this IObservable<StateChange> source, int time) =>
+        source.WhenStateIsForMinutes(HaEntityStates.UNLOCKED, time);
+
+    public static IObservable<StateChange> IsUnlockedForHours(this IObservable<StateChange> source, int time) =>
+        source.WhenStateIsForHours(HaEntityStates.UNLOCKED, time);
+
     public static IObservable<StateChange<T, TState>> WhenStateIsForSeconds<T, TState>(
         this IObservable<StateChange<T, TState>> source,
         Func<TState?, bool> predicate,
@@ -111,6 +134,7 @@ public static class StateChangeObservableExtensions
     {
         return source.WhenStateIsFor(predicate, TimeSpan.FromHours(time), Scheduler.Default);
     }
+
 }
 
 public static class StateExtensions
@@ -170,6 +194,12 @@ public static class StateExtensions
     }
 
     public static bool IsValidButtonPress(this StateChange e) => DateTime.TryParse(e?.New?.State, out _);
+
+    public static bool IsManuallyOperated(this StateChange e) => HaIdentity.IsManuallyOperated(e.UserId());
+
+    public static bool IsPhysicallyOperated(this StateChange e) => HaIdentity.IsPhysicallyOperated(e.UserId());
+
+    public static bool IsAutomated(this StateChange e) => HaIdentity.IsAutomated(e.UserId());
 
     public static bool IsOn(this StateChange e) => e?.New?.State?.IsOn() ?? false;
 
@@ -284,6 +314,13 @@ public static class NumberEntityExtensions
     {
         entity.CallService("set_value", new { value });
     }
+}
+
+public static class LockEntityExtensions
+{
+    public static bool IsLocked(this LockEntity entity) => entity.State.IsLocked();
+
+    public static bool IsUnlocked(this LockEntity entity) => entity.State.IsUnlocked();
 }
 
 public static class SwitchEntityExtensions

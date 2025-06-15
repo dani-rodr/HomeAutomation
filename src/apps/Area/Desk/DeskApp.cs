@@ -10,7 +10,7 @@ public class DeskApp(
     ILgDisplayEntities lgDisplayEntities,
     IDesktopEntities desktopEntities,
     ILaptopEntities laptopEntities,
-    IDisplayAutomationEntities displayEntities,
+    IDisplayEntities displayEntities,
     ILogger<DeskApp> logger
 ) : AppBase<DeskApp>()
 {

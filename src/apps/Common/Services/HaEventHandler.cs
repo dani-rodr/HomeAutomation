@@ -1,10 +1,13 @@
 using System.Reactive.Disposables;
+using System.Text.Json;
 
 namespace HomeAutomation.apps.Common.Services;
 
 public class HaEventHandler(IHaContext haContext, ILogger<HaEventHandler> logger) : IEventHandler, IDisposable
 {
     private const string NFC_EVENT = "tag_scanned";
+    private const string MOBILE_EVENT = "mobile_app_notification_action";
+
     private readonly CompositeDisposable _disposables = [];
 
     public IDisposable Subscribe(string eventType, Action<Event> handler)
@@ -31,19 +34,41 @@ public class HaEventHandler(IHaContext haContext, ILogger<HaEventHandler> logger
         return haContext.Events.Where(e => e.EventType == eventType);
     }
 
-    public IObservable<string> OnNfcScan(string tagId)
-    {
-        return WhenEventTriggered(NFC_EVENT)
+    public IObservable<string> OnNfcScan(string tagId) =>
+        MatchEventByProperty(NFC_EVENT, "tag_id", tagId, logLabel: "NFC scanned");
+
+    public IObservable<string> OnMobileEvent(string action) => MatchEventByProperty(MOBILE_EVENT, "action", action);
+
+    private IObservable<string> MatchEventByProperty(
+        string eventType,
+        string propertyName,
+        string expectedValue,
+        string? logLabel = null
+    ) =>
+        WhenEventTriggered(eventType)
             .Where(e =>
             {
-                var scannedId = e.DataElement?.GetProperty("tag_id").GetString();
-                var match = scannedId == tagId;
-                logger.LogInformation("NFC scanned: {Id} (match: {Match})", scannedId ?? "null", match);
+                var value = e.DataElement?.GetProperty(propertyName).GetString();
+                var isMatch = value == expectedValue;
 
-                return match;
+                if (logLabel is not null)
+                    logger.LogInformation("{Label}: {Value} (match: {Match})", logLabel, value ?? "null", isMatch);
+
+                return isMatch;
             })
-            .Select(_ => tagId);
-    }
+            .Select(e =>
+            {
+                if (
+                    e.DataElement is JsonElement data
+                    && data.TryGetProperty("context", out var context)
+                    && context.TryGetProperty("user_id", out var userId)
+                )
+                {
+                    return userId.GetString() ?? string.Empty;
+                }
+
+                return string.Empty;
+            });
 
     public void Dispose()
     {
