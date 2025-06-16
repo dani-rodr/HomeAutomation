@@ -24,7 +24,7 @@ public class ClimateAutomation(IClimateEntities entities, IScheduler scheduler, 
         _cachedAcSettings = new()
         {
             [TimeBlock.Sunrise] = new(
-                NormalTemp: 25,
+                NormalTemp: 27,
                 PowerSavingTemp: 27,
                 CoolTemp: 24,
                 PassiveTemp: 27,
@@ -48,7 +48,7 @@ public class ClimateAutomation(IClimateEntities entities, IScheduler scheduler, 
             [TimeBlock.Midnight] = new(
                 NormalTemp: 24,
                 PowerSavingTemp: 25,
-                CoolTemp: 20,
+                CoolTemp: 22,
                 PassiveTemp: 25,
                 Mode: HaEntityStates.COOL,
                 ActivateFan: false,

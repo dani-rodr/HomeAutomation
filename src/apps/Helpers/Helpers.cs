@@ -10,7 +10,10 @@ public static class StateChangeObservableExtensions
         params string[] states
     ) =>
         source.Where(e =>
-            e.New?.State != null && states.Any(s => s.Equals(e.New.State, StringComparison.OrdinalIgnoreCase))
+            e.Old?.State != null
+            && !e.Old.State.IsUnavailable()
+            && e.New?.State != null
+            && states.Any(s => s.Equals(e.New.State, StringComparison.OrdinalIgnoreCase))
         );
 
     // Basic State Checks
@@ -134,7 +137,6 @@ public static class StateChangeObservableExtensions
     {
         return source.WhenStateIsFor(predicate, TimeSpan.FromHours(time), Scheduler.Default);
     }
-
 }
 
 public static class StateExtensions
