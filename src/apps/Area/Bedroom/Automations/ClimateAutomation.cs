@@ -35,10 +35,10 @@ public class ClimateAutomation(IClimateEntities entities, IScheduler scheduler, 
             ),
 
             [TimeBlock.Sunset] = new(
-                NormalTemp: 24,
+                NormalTemp: 25,
                 PowerSavingTemp: 27,
-                CoolTemp: 22,
-                PassiveTemp: 25,
+                CoolTemp: 23,
+                PassiveTemp: 27,
                 Mode: HaEntityStates.COOL,
                 ActivateFan: false,
                 HourStart: entities.SunSetting.LocalHour(),

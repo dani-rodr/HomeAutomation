@@ -87,6 +87,24 @@ public static class StateChangeObservableExtensions
     public static IObservable<StateChange> IsOffForHours(this IObservable<StateChange> source, int time) =>
         source.WhenStateIsForHours(HaEntityStates.OFF, time);
 
+    public static IObservable<StateChange> IsClosedForSeconds(this IObservable<StateChange> source, int time) =>
+        source.WhenStateIsForSeconds(HaEntityStates.OFF, time);
+
+    public static IObservable<StateChange> IsClosedForMinutes(this IObservable<StateChange> source, int time) =>
+        source.WhenStateIsForMinutes(HaEntityStates.OFF, time);
+
+    public static IObservable<StateChange> IsClosedForHours(this IObservable<StateChange> source, int time) =>
+        source.WhenStateIsForHours(HaEntityStates.OFF, time);
+
+    public static IObservable<StateChange> IsOpenForSeconds(this IObservable<StateChange> source, int time) =>
+        source.WhenStateIsForSeconds(HaEntityStates.ON, time);
+
+    public static IObservable<StateChange> IsOpenForMinutes(this IObservable<StateChange> source, int time) =>
+        source.WhenStateIsForMinutes(HaEntityStates.ON, time);
+
+    public static IObservable<StateChange> IsOpenForHours(this IObservable<StateChange> source, int time) =>
+        source.WhenStateIsForHours(HaEntityStates.ON, time);
+
     public static IObservable<StateChange> IsLockedForSeconds(this IObservable<StateChange> source, int time) =>
         source.WhenStateIsForSeconds(HaEntityStates.LOCKED, time);
 

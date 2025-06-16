@@ -12,7 +12,7 @@ public class LockAutomation(
     private const string LOCK_TAG = "lock";
     private const string LOCK_ACTION = "LOCK_ACTION";
     private bool _isImmediateRelock = false;
-    private const int AUTO_UNLOCK_IN_MINUTES = 5;
+    private const int AUTO_LOCK_IN_MINUTES = 5;
 
     protected override IEnumerable<IDisposable> GetPersistentAutomations() => [];
 
@@ -23,11 +23,13 @@ public class LockAutomation(
 
         yield return lockChanges.IsLocked().Subscribe(HandleDoorLocked);
         yield return lockChanges.IsUnlocked().Subscribe(HandleDoorUnlocked);
-
+        yield return lockChanges
+            .IsUnlockedForMinutes(AUTO_LOCK_IN_MINUTES)
+            .Where(_ => entities.Door.IsClosed() && ShouldAutoLockAfterTime)
+            .Subscribe(Lock);
         yield return doorChanges.IsClosed().Subscribe(HandleDoorClosed);
         yield return doorChanges.IsOpen().Subscribe(SendDoorOpenedNotification);
-
-        yield return AutoLockOnClosedTimer();
+        yield return doorChanges.IsOpenForMinutes(AUTO_LOCK_IN_MINUTES).Subscribe(SendDoorOpenedNotification);
 
         yield return eventHandler.OnMobileEvent(LOCK_ACTION).Subscribe(_ => entities.Lock.Lock());
         yield return eventHandler
@@ -58,16 +60,6 @@ public class LockAutomation(
 
     private bool ShouldAutoLockAfterTime =>
         (entities.MotionSensor.IsOn() || entities.HouseStatus.IsOff()) && entities.Lock.IsUnlocked();
-
-    private IDisposable AutoLockOnClosedTimer()
-    {
-        return entities
-            .Lock.StateChanges()
-            .IsUnlockedForMinutes(AUTO_UNLOCK_IN_MINUTES)
-            .Where(_ => ShouldAutoLockAfterTime)
-            .SelectMany(_ => entities.Door.StateChangesWithCurrent().IsClosed().Take(1))
-            .Subscribe(Lock);
-    }
 
     private void HandleDoorLocked(StateChange e)
     {
