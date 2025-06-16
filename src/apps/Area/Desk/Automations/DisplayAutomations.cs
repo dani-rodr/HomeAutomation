@@ -26,18 +26,14 @@ public class DisplayAutomations(
 
     private void ToggleMonitor(string tagId)
     {
-        if (desktop.IsOn() && monitor.IsShowingPc)
+        if (!desktop.IsOn() || monitor.IsShowingPc)
         {
             laptop.TurnOn();
             ShowLaptop(true);
         }
-        else if (desktop.IsOn())
-        {
-            ShowPc(true);
-        }
         else
         {
-            ShowLaptop(true);
+            ShowPc(true);
         }
     }
 
