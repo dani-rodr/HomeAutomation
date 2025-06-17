@@ -47,6 +47,10 @@ public abstract class MotionAutomationBase(
             .StateChanges()
             .IsOffForSeconds(SensorWaitTime)
             .Subscribe(_ => SensorDelay?.SetNumericValue(SensorInactiveDelayValue));
+        yield return MotionSensor
+            .StateChanges()
+            .IsFlickering()
+            .Subscribe(_ => SensorDelay?.SetNumericValue(SensorActiveDelayValue));
     }
 
     private void ControlMasterSwitchOnLightChange(StateChange evt)

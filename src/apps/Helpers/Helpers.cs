@@ -123,6 +123,17 @@ public static class StateChangeObservableExtensions
     public static IObservable<StateChange> IsUnlockedForHours(this IObservable<StateChange> source, int time) =>
         source.WhenStateIsForHours(HaEntityStates.UNLOCKED, time);
 
+    public static IObservable<IList<StateChange>> IsFlickering(
+        this IObservable<StateChange> source,
+        int minimumFlips = 4,
+        int window = 10
+    ) =>
+        source
+            .Where(e => e.New?.State != null)
+            .DistinctUntilChanged(e => e.New?.State)
+            .Buffer(TimeSpan.FromSeconds(window))
+            .Where(events => events.Count >= minimumFlips);
+
     public static IObservable<StateChange<T, TState>> WhenStateIsForSeconds<T, TState>(
         this IObservable<StateChange<T, TState>> source,
         Func<TState?, bool> predicate,

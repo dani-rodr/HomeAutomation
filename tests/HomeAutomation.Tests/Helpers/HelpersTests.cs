@@ -1,6 +1,3 @@
-using System.Reactive.Subjects;
-using System.Text.Json;
-
 namespace HomeAutomation.Tests.Helpers;
 
 /// <summary>
@@ -430,6 +427,39 @@ public class HelpersTests : IDisposable
         {
             results.Should().BeEmpty();
         }
+    }
+
+    [Fact]
+    public void IsFlickering_Should_Emit_WhenMultipleFlipsOccurWithinWindow()
+    {
+        // Arrange
+        var results = new List<IList<StateChange>>();
+        var flipSubject = new Subject<StateChange>();
+
+        flipSubject.IsFlickering(minimumFlips: 4, window: 3).Subscribe(results.Add);
+
+        var flipSequence = new[]
+        {
+            StateChangeHelpers.CreateStateChange(_motionSensor, "off", "on"),
+            StateChangeHelpers.CreateStateChange(_motionSensor, "on", "off"),
+            StateChangeHelpers.CreateStateChange(_motionSensor, "off", "on"),
+            StateChangeHelpers.CreateStateChange(_motionSensor, "on", "off"),
+        };
+
+        // Act
+        foreach (var change in flipSequence)
+        {
+            flipSubject.OnNext(change);
+            Thread.Sleep(500); // small delay between flips to stay within window
+        }
+
+        // Wait for the buffer window to close and emit
+        Thread.Sleep(3500);
+
+        // Assert
+        results.Should().HaveCount(1, "Four distinct state flips occurred within 3 seconds");
+        results[0].Should().HaveCount(4);
+        results[0].Select(e => e.New?.State).Should().ContainInOrder("on", "off", "on", "off");
     }
 
     #endregion
