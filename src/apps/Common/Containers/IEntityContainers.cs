@@ -134,3 +134,8 @@ public interface ILockingEntities : IMotionBase
     BinarySensorEntity HouseStatus { get; }
     SwitchEntity Flytrap { get; }
 }
+
+public interface ILaptopSchedulerEntities
+{
+    InputBooleanEntity ProjectNationWeek { get; }
+}

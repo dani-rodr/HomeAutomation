@@ -15,6 +15,7 @@ public class LaptopTests : IDisposable
     private readonly MockHaContext _mockHaContext;
     private readonly Mock<IEventHandler> _mockEventHandler;
     private readonly Mock<ILogger> _mockLogger;
+    private readonly Mock<ILaptopScheduler> _mockScheduler;
     private readonly TestLaptopEntities _entities;
     private readonly Laptop _laptop;
 
@@ -23,15 +24,16 @@ public class LaptopTests : IDisposable
         _mockHaContext = new MockHaContext();
         _mockEventHandler = new Mock<IEventHandler>();
         _mockLogger = new Mock<ILogger>();
-
+        _mockScheduler = new Mock<ILaptopScheduler>();
         // Setup event handler mocks to return empty observables by default
         _mockEventHandler.Setup(x => x.WhenEventTriggered("show_laptop")).Returns(new Subject<Event>().AsObservable());
         _mockEventHandler.Setup(x => x.WhenEventTriggered("hide_laptop")).Returns(new Subject<Event>().AsObservable());
-
+        // Return no schedules by default to isolate behavior
+        _mockScheduler.Setup(s => s.GetSchedules(It.IsAny<Action>())).Returns([]);
         // Create test entities wrapper
         _entities = new TestLaptopEntities(_mockHaContext);
 
-        _laptop = new Laptop(_entities, _mockEventHandler.Object, _mockLogger.Object);
+        _laptop = new Laptop(_entities, _mockScheduler.Object, _mockEventHandler.Object, _mockLogger.Object);
 
         // Clear any initialization service calls
         _mockHaContext.ClearServiceCalls();

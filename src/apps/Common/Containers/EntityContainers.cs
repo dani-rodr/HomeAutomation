@@ -188,3 +188,8 @@ public class LockingEntities(Entities entities, CommonEntities common) : ILockin
 
     public SwitchEntity Flytrap => entities.Switch.Flytrap;
 }
+
+public class LaptopSchedulerEntities(Entities entities) : ILaptopSchedulerEntities
+{
+    public InputBooleanEntity ProjectNationWeek => entities.InputBoolean.ProjectNationWeek;
+}

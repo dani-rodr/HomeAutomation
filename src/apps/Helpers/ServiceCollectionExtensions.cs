@@ -41,7 +41,12 @@ public static class ServiceCollectionExtensions
             .AddTransientEntity<IDeskMotionEntities, DeskMotionEntities>()
             .AddTransientEntity<ILgDisplayEntities, DeskLgDisplayEntities>()
             .AddTransientEntity<IDesktopEntities, DeskDesktopEntities>()
-            .AddTransientEntity<ILaptopEntities, LaptopEntities>();
+            .AddTransientEntity<ILaptopEntities, LaptopEntities>()
+            .AddTransientEntity<ILaptopSchedulerEntities, LaptopSchedulerEntities>()
+            .AddTransient<ILaptopScheduler>(p => new LaptopScheduler(
+                p.GetRequiredService<ILaptopSchedulerEntities>(),
+                p.GetRequiredService<IScheduler>()
+            ));
     }
 
     private static IServiceCollection AddBathroomEntities(this IServiceCollection services)

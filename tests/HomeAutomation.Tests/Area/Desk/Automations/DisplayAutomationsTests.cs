@@ -24,6 +24,7 @@ public class DisplayAutomationsTests : IDisposable
     private readonly Mock<ILogger<LgDisplay>> _mockMonitorLogger;
     private readonly Mock<ILogger<Desktop>> _mockDesktopLogger;
     private readonly Mock<ILogger<Laptop>> _mockLaptopLogger;
+    private readonly Mock<ILaptopScheduler> _mockScheduler;
     private readonly Mock<INotificationServices> _mockNotificationServices;
 
     private readonly TestDesktopEntities _desktopEntities;
@@ -49,6 +50,7 @@ public class DisplayAutomationsTests : IDisposable
         _mockMonitorLogger = new Mock<ILogger<LgDisplay>>();
         _mockDesktopLogger = new Mock<ILogger<Desktop>>();
         _mockLaptopLogger = new Mock<ILogger<Laptop>>();
+        _mockScheduler = new Mock<ILaptopScheduler>();
         _mockNotificationServices = new Mock<INotificationServices>();
 
         // Create entity containers
@@ -81,6 +83,8 @@ public class DisplayAutomationsTests : IDisposable
         _mockEventHandler
             .Setup(x => x.WhenEventTriggered("hide_laptop"))
             .Returns(_hideLaptopSubject.Select(_ => new Event { EventType = "hide_laptop" }));
+        // Return no schedules by default to isolate behavior
+        _mockScheduler.Setup(s => s.GetSchedules(It.IsAny<Action>())).Returns(Array.Empty<IDisposable>());
 
         // Create device instances
         var mockServices = CreateMockServices();
@@ -91,7 +95,12 @@ public class DisplayAutomationsTests : IDisposable
             _mockNotificationServices.Object,
             _mockDesktopLogger.Object
         );
-        _laptop = new Laptop(_laptopEntities, _mockEventHandler.Object, _mockLaptopLogger.Object);
+        _laptop = new Laptop(
+            _laptopEntities,
+            _mockScheduler.Object,
+            _mockEventHandler.Object,
+            _mockLaptopLogger.Object
+        );
 
         // Create automation under test
         _automation = new DisplayAutomations(_monitor, _desktop, _laptop, _mockEventHandler.Object, _mockLogger.Object);

@@ -8,7 +8,7 @@ public class Laptop : ComputerBase
     protected override string HideEvent { get; } = "hide_laptop";
     private readonly ILaptopEntities _entities;
 
-    public Laptop(ILaptopEntities entities, IEventHandler eventHandler, ILogger logger)
+    public Laptop(ILaptopEntities entities, ILaptopScheduler scheduler, IEventHandler eventHandler, ILogger logger)
         : base(eventHandler, logger)
     {
         _entities = entities;
@@ -28,6 +28,7 @@ public class Laptop : ComputerBase
                     }
                 })
         );
+        AddLogoffSchedules(scheduler);
     }
 
     public override bool IsOn() => IsOnline(_entities.VirtualSwitch.IsOn(), _entities.Session.IsUnlocked());
@@ -71,4 +72,24 @@ public class Laptop : ComputerBase
     }
 
     private static bool IsOnline(bool switchState, bool sessionState) => switchState || sessionState;
+
+    private void AddLogoffSchedules(ILaptopScheduler scheduler)
+    {
+        var logoffSchedules = scheduler.GetSchedules(() =>
+        {
+            if (!IsOn())
+            {
+                Logger.LogInformation("Scheduled logoff triggered: Laptop is not on, executing TurnOff.");
+                TurnOff();
+            }
+            else
+            {
+                Logger.LogInformation("Scheduled logoff triggered: Laptop is currently on, skipping TurnOff.");
+            }
+        });
+        foreach (var schedule in logoffSchedules)
+        {
+            Automations.Add(schedule);
+        }
+    }
 }
