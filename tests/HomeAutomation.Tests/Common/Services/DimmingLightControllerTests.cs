@@ -131,7 +131,7 @@ public class DimmingLightControllerTests : IDisposable
     {
         // Arrange
         _mockHaContext.SetEntityState(_sensorDelay.EntityId, "25");
-
+        _controller.SetDimParameters(brightnessPct: 80, delaySeconds: 1);
         // Act - Set active delay to match sensor state
         _controller.SetSensorActiveDelayValue(25);
 
@@ -174,6 +174,7 @@ public class DimmingLightControllerTests : IDisposable
     public async Task SensorDelayState_Null_Should_TreatAsZero()
     {
         // Arrange - Sensor returns null state (entity not set)
+        _controller.SetDimParameters(brightnessPct: 80, delaySeconds: 1);
         _controller.SetSensorActiveDelayValue(0); // Should match null (treated as 0)
 
         // Act
@@ -191,7 +192,8 @@ public class DimmingLightControllerTests : IDisposable
     [Fact]
     public async Task DefaultConfiguration_Should_WorkCorrectly()
     {
-        // Arrange - Use defaults (sensor active delay: 5, brightness: 80%, delay: 5s)
+        // Arrange - Use (sensor active delay: 1, brightness: 80%, delay: 5s)
+        _controller.SetDimParameters(brightnessPct: 80, delaySeconds: 1);
         _mockHaContext.SetEntityState(_sensorDelay.EntityId, "5");
 
         // Act - Should use default configuration

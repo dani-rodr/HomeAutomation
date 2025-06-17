@@ -50,7 +50,7 @@ public class LgDisplay : MediaPlayerBase
 
         SendCommand("system.notifications/createAlert", CreateBrightnessPayload(value));
 
-        await Task.Delay(20);
+        await Task.Delay(150);
 
         SendButtonCommand("ENTER");
 
