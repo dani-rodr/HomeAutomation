@@ -16,7 +16,7 @@ public class HaEventHandler(IHaContext haContext, ILogger<HaEventHandler> logger
             .Events.Where(e => e.EventType == eventType)
             .Subscribe(e =>
             {
-                logger.LogInformation("Event '{EventType}' received with data: {Data}", eventType, e.DataElement);
+                logger.LogDebug("Event '{EventType}' received with data: {Data}", eventType, e.DataElement);
                 handler(e);
             });
 
@@ -54,13 +54,13 @@ public class HaEventHandler(IHaContext haContext, ILogger<HaEventHandler> logger
                     var isMatch = value == expectedValue;
 
                     if (logLabel is not null)
-                        logger.LogInformation("{Label}: {Value} (match: {Match})", logLabel, value ?? "null", isMatch);
+                        logger.LogDebug("{Label}: {Value} (match: {Match})", logLabel, value ?? "null", isMatch);
 
                     return isMatch;
                 }
 
                 if (logLabel is not null)
-                    logger.LogInformation("{Label}: property not found (match: False)", logLabel);
+                    logger.LogDebug("{Label}: property not found (match: False)", logLabel);
 
                 return false;
             })
@@ -82,6 +82,6 @@ public class HaEventHandler(IHaContext haContext, ILogger<HaEventHandler> logger
     {
         GC.SuppressFinalize(this);
         _disposables.Dispose();
-        logger.LogInformation("HaEventHandler disposed and subscriptions cleaned up.");
+        logger.LogDebug("HaEventHandler disposed and subscriptions cleaned up.");
     }
 }

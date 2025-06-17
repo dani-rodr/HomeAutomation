@@ -24,10 +24,7 @@ public class CookingAutomation(ICookingEntities entities, ILogger logger) : Auto
                 if (entities.AirFryerStatus.IsUnavailable())
                 {
                     _inductionTurnOff.Press();
-                    Logger.LogInformation(
-                        "Auto-turned off induction cooker after {Minutes} minutes of boiling",
-                        minutes
-                    );
+                    Logger.LogDebug("Auto-turned off induction cooker after {Minutes} minutes of boiling", minutes);
                 }
             });
     }
@@ -41,7 +38,7 @@ public class CookingAutomation(ICookingEntities entities, ILogger logger) : Auto
             .Subscribe(_ =>
             {
                 entities.RiceCookerSwitch.TurnOff();
-                Logger.LogInformation("Auto-turned off rice cooker after {Minutes} minutes idle", minutes);
+                Logger.LogDebug("Auto-turned off rice cooker after {Minutes} minutes idle", minutes);
             });
     }
 }

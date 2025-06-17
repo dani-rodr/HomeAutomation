@@ -49,10 +49,12 @@ public class AirQualityAutomations(IAirQualityEntities entities, ILogger logger)
             .WhenStateIsForSeconds(s => s?.State <= cleanAirThreshold, waitTime)
             .Subscribe(e =>
             {
-                Logger.LogInformation(
-                    "Air quality improved (value: {Value} ≤ threshold: {Threshold}). Turning off fan.",
+                Logger.LogDebug(
+                    "Air quality EXCELLENT (value: {Value} ≤ threshold: {Threshold}). IsCleaningAir={IsCleaningAir}, ShouldActivateFan={ShouldActivateFan}. Turning off main fan.",
                     e.New?.State,
-                    cleanAirThreshold
+                    cleanAirThreshold,
+                    IsCleaningAir,
+                    ShouldActivateFan
                 );
                 Fan.TurnOff();
             });
@@ -62,14 +64,34 @@ public class AirQualityAutomations(IAirQualityEntities entities, ILogger logger)
             .WhenStateIsForSeconds(s => s?.State > cleanAirThreshold && s?.State <= dirtyAirThreshold, waitTime)
             .Subscribe(e =>
             {
+                Logger.LogDebug(
+                    "Air quality MODERATE (value: {Value}, range: {MinThreshold}-{MaxThreshold}). IsCleaningAir={IsCleaningAir}, ShouldActivateFan={ShouldActivateFan}",
+                    e.New?.State,
+                    cleanAirThreshold,
+                    dirtyAirThreshold,
+                    IsCleaningAir,
+                    ShouldActivateFan
+                );
+
                 Fan.TurnOn();
                 if (IsCleaningAir && !ShouldActivateFan)
                 {
-                    Logger.LogInformation("Air quality moderate (value: {Value}). Turning on main fan.", e.New?.State);
+                    Logger.LogDebug(
+                        "Transitioning from cleaning mode: Supporting fan OFF, main fan ON. IsCleaningAir: {PreviousState} → false",
+                        IsCleaningAir
+                    );
 
                     supportingFan.TurnOff();
                     IsCleaningAir = false;
                     ShouldActivateFan = false;
+                }
+                else
+                {
+                    Logger.LogDebug(
+                        "No transition needed: IsCleaningAir={IsCleaningAir}, ShouldActivateFan={ShouldActivateFan}",
+                        IsCleaningAir,
+                        ShouldActivateFan
+                    );
                 }
             });
         yield return _airQuality
@@ -77,21 +99,51 @@ public class AirQualityAutomations(IAirQualityEntities entities, ILogger logger)
             .WhenStateIsForSeconds(s => s?.State > dirtyAirThreshold, waitTime)
             .Subscribe(e =>
             {
+                Logger.LogDebug(
+                    "Air quality POOR (value: {Value} > threshold: {Threshold}). ShouldActivateFan={ShouldActivateFan}, IsCleaningAir={IsCleaningAir}",
+                    e.New?.State,
+                    dirtyAirThreshold,
+                    ShouldActivateFan,
+                    IsCleaningAir
+                );
+
                 if (!ShouldActivateFan)
                 {
-                    Logger.LogInformation(
-                        "Air quality poor (value: {Value} > threshold: {Threshold}). Activating supporting fan.",
-                        e.New?.State,
-                        dirtyAirThreshold
+                    Logger.LogDebug(
+                        "Activating supporting fan for poor air quality. IsCleaningAir: {PreviousState} → true",
+                        IsCleaningAir
                     );
                     supportingFan.TurnOn();
                     IsCleaningAir = true;
                     ShouldActivateFan = false;
                 }
+                else
+                {
+                    Logger.LogDebug("Supporting fan not activated: ShouldActivateFan=true (manual override active)");
+                }
             });
 
-        yield return supportingFan.StateChanges().IsManuallyOperated().Subscribe(_ => ShouldActivateFan = true);
-        yield return supportingFan.StateChanges().IsOffForMinutes(10).Subscribe(_ => ShouldActivateFan = false);
+        yield return supportingFan
+            .StateChanges()
+            .IsManuallyOperated()
+            .Subscribe(e =>
+            {
+                Logger.LogDebug(
+                    "Supporting fan manually operated: {OldState} → {NewState} by {UserId}. Setting ShouldActivateFan=true",
+                    e.Old?.State,
+                    e.New?.State,
+                    e.UserId() ?? "unknown"
+                );
+                ShouldActivateFan = true;
+            });
+        yield return supportingFan
+            .StateChanges()
+            .IsOffForMinutes(10)
+            .Subscribe(e =>
+            {
+                Logger.LogDebug("Supporting fan OFF for 10+ minutes. Resetting ShouldActivateFan: true → false");
+                ShouldActivateFan = false;
+            });
     }
 
     private void SyncLedWithFan(StateChange e)

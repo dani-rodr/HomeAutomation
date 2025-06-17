@@ -75,7 +75,7 @@ public class ClimateAutomation(IClimateEntities entities, IScheduler scheduler, 
             "0 0 * * *",
             () =>
             {
-                Logger.LogInformation("Midnight AC schedule refresh triggered");
+                Logger.LogDebug("Midnight AC schedule refresh triggered");
                 InvalidateAcSettingsCache();
             }
         );
@@ -94,7 +94,7 @@ public class ClimateAutomation(IClimateEntities entities, IScheduler scheduler, 
         if (oldTemp.HasValue && newTemp.HasValue && oldTemp != newTemp)
         {
             MasterSwitch?.TurnOff();
-            Logger.LogInformation(
+            Logger.LogDebug(
                 "AC state changed: {OldState} ➜ {NewState} | Temp: {OldTemp} ➜ {NewTemp} | By: {User}",
                 e.Old?.State,
                 e.New?.State,
@@ -200,13 +200,13 @@ public class ClimateAutomation(IClimateEntities entities, IScheduler scheduler, 
                 var durationEmptyMinutes = (current.Value - last.Value).TotalMinutes;
                 if (durationEmptyMinutes < timeThresholdMinutes)
                 {
-                    Logger.LogInformation(
+                    Logger.LogDebug(
                         "House was only empty for {Minutes} minutes. Skipping AC change.",
                         durationEmptyMinutes
                     );
                     return;
                 }
-                Logger.LogInformation("House was empty for {Minutes} minutes", durationEmptyMinutes);
+                Logger.LogDebug("House was empty for {Minutes} minutes", durationEmptyMinutes);
                 _ac.TurnOn();
                 ApplyTimeBasedAcSetting(e);
             });
@@ -235,45 +235,77 @@ public class ClimateAutomation(IClimateEntities entities, IScheduler scheduler, 
 
     private TimeBlock? FindTimeBlock()
     {
+        var currentHour = DateTime.Now.Hour;
+        Logger.LogDebug("Finding time block for current hour: {CurrentHour}", currentHour);
+
         foreach (var kv in GetCurrentAcScheduleSettings())
         {
             if (TimeRange.IsCurrentTimeInBetween(kv.Value.HourStart, kv.Value.HourEnd))
             {
+                Logger.LogDebug(
+                    "Found matching time block: {TimeBlock} (range: {StartHour}-{EndHour})",
+                    kv.Key,
+                    kv.Value.HourStart,
+                    kv.Value.HourEnd
+                );
                 return kv.Key;
             }
         }
+
+        Logger.LogDebug("No time block found for current hour {CurrentHour}", currentHour);
         return null;
     }
 
     private void ApplyScheduledAcSettings(TimeBlock? timeBlock)
     {
-        if (
-            timeBlock is null
-            || !GetCurrentAcScheduleSettings().TryGetValue(timeBlock.Value, out var setting)
-            || !_ac.IsOn()
-        )
+        Logger.LogDebug(
+            "AC settings evaluation: TimeBlock={TimeBlock}, AC.IsOn={AcOn}",
+            timeBlock?.ToString() ?? "None",
+            _ac.IsOn()
+        );
+
+        if (timeBlock is null)
         {
+            Logger.LogDebug("Skipping AC settings: No active time block");
+            return;
+        }
+
+        if (!GetCurrentAcScheduleSettings().TryGetValue(timeBlock.Value, out var setting))
+        {
+            Logger.LogDebug("Skipping AC settings: No settings found for time block {TimeBlock}", timeBlock.Value);
+            return;
+        }
+
+        if (!_ac.IsOn())
+        {
+            Logger.LogDebug("Skipping AC settings: AC is currently OFF");
             return;
         }
 
         int targetTemp = GetTemperature(setting);
-        if (
-            _ac.Attributes?.Temperature == targetTemp
-            && string.Equals(_ac.State, setting.Mode, StringComparison.OrdinalIgnoreCase)
-        )
+        var currentTemp = _ac.Attributes?.Temperature;
+        var currentMode = _ac.State;
+
+        if (currentTemp == targetTemp && string.Equals(currentMode, setting.Mode, StringComparison.OrdinalIgnoreCase))
         {
             Logger.LogDebug(
-                "Skipping ApplyAcSettings: AC already set equal TargetTemp {Temp} and Mode {Mode}",
+                "Skipping AC settings: Already configured correctly - Temp: {CurrentTemp}°C = {TargetTemp}°C, Mode: {CurrentMode} = {TargetMode}",
+                currentTemp,
                 targetTemp,
+                currentMode,
                 setting.Mode
             );
             return;
         }
+
         Logger.LogDebug(
-            "ApplyAcSchedule: Applying schedule for {TimeBlock} with target temp {TargetTemp} and mode {Mode}.",
+            "Applying AC schedule for {TimeBlock}: {CurrentTemp}°C → {TargetTemp}°C, {CurrentMode} → {TargetMode}, ActivateFan={ActivateFan}",
             timeBlock.Value,
+            currentTemp,
             targetTemp,
-            setting.Mode
+            currentMode,
+            setting.Mode,
+            setting.ActivateFan
         );
         SetAcTemperatureAndMode(targetTemp, setting.Mode);
         ConditionallyActivateFan(setting.ActivateFan, targetTemp);
@@ -287,22 +319,36 @@ public class ClimateAutomation(IClimateEntities entities, IScheduler scheduler, 
         var weather = entities.Weather;
         bool isColdWeather = !weather.IsSunny();
 
-        Logger.LogInformation(
-            "Occupied: {Occupied}, DoorOpen: {DoorOpen}, PowerSaving: {PowerSaving} Weather: {WeatherCondition}",
+        Logger.LogDebug(
+            "Temperature decision inputs: Occupied={Occupied}, DoorOpen={DoorOpen}, PowerSaving={PowerSaving}, Weather={WeatherCondition}, IsCold={IsColdWeather}",
             isOccupied,
             isDoorOpen,
             isPowerSaving,
-            weather?.State
+            weather?.State,
+            isColdWeather
         );
-        return (isOccupied, isDoorOpen, isPowerSaving, isColdWeather) switch
+
+        var (selectedTemp, tempType) = (isOccupied, isDoorOpen, isPowerSaving, isColdWeather) switch
         {
-            (_, _, true, _) => setting.PowerSavingTemp,
-            (true, false, _, _) => setting.CoolTemp,
-            (_, true, _, true) => setting.NormalTemp,
-            (true, true, _, false) => setting.NormalTemp,
-            (false, true, _, false) => setting.PassiveTemp,
-            (false, false, _, _) => setting.PassiveTemp,
+            (_, _, true, _) => (setting.PowerSavingTemp, "PowerSaving"),
+            (true, false, _, _) => (setting.CoolTemp, "Cool"),
+            (_, true, _, true) => (setting.NormalTemp, "Normal"),
+            (true, true, _, false) => (setting.NormalTemp, "Normal"),
+            (false, true, _, false) => (setting.PassiveTemp, "Passive"),
+            (false, false, _, _) => (setting.PassiveTemp, "Passive"),
         };
+
+        Logger.LogDebug(
+            "Temperature decision: Selected {TempType} temperature {Temperature}°C based on pattern: (occupied:{Occupied}, doorOpen:{DoorOpen}, powerSaving:{PowerSaving}, coldWeather:{ColdWeather})",
+            tempType,
+            selectedTemp,
+            isOccupied,
+            isDoorOpen,
+            isPowerSaving,
+            isColdWeather
+        );
+
+        return selectedTemp;
     }
 
     private void SetAcTemperatureAndMode(int temperature, string hvacMode)

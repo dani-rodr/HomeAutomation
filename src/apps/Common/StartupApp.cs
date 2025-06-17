@@ -9,6 +9,6 @@ public class StartupApp : AppBase<StartupApp>
         : base()
     {
         services.BrowserMod.Notification(new() { Message = "NetDaemonApp has started", ActionText = "Dismiss" });
-        logger.LogInformation("NetDaemonApp has started");
+        logger.LogDebug("NetDaemonApp has started");
     }
 }

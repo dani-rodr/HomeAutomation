@@ -30,13 +30,13 @@ public class NotificationServices(IServices services, ILogger logger) : INotific
 
     public void LaunchAppPocoF4(string packageName)
     {
-        logger.LogInformation("Sending 'command_launch_app' to PocoF4 GT for package: {PackageName}", packageName);
+        logger.LogDebug("Sending 'command_launch_app' to PocoF4 GT for package: {PackageName}", packageName);
         NotifyPocoF4("command_launch_app", new { package_name = packageName });
     }
 
     public void LaunchAppMiPad(string packageName)
     {
-        logger.LogInformation("Sending 'command_launch_app' to MiPad for package: {PackageName}", packageName);
+        logger.LogDebug("Sending 'command_launch_app' to MiPad for package: {PackageName}", packageName);
         NotifyPocoF4("command_launch_app", new { package_name = packageName });
     }
 }

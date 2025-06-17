@@ -39,18 +39,55 @@ public abstract class MotionAutomationBase(
 
     protected virtual IEnumerable<IDisposable> GetSensorDelayAutomations()
     {
+        if (SensorDelay == null)
+        {
+            Logger.LogDebug("No sensor delay entity configured for {AutomationType}", GetType().Name);
+            yield break;
+        }
+
+        Logger.LogDebug(
+            "Configuring sensor delay automations: ActiveValue={ActiveValue}, InactiveValue={InactiveValue}, WaitTime={WaitTime}s",
+            SensorActiveDelayValue,
+            SensorInactiveDelayValue,
+            SensorWaitTime
+        );
+
         yield return MotionSensor
             .StateChanges()
             .IsOnForSeconds(SensorWaitTime)
-            .Subscribe(_ => SensorDelay?.SetNumericValue(SensorActiveDelayValue));
+            .Subscribe(_ =>
+            {
+                Logger.LogDebug(
+                    "Motion sustained for {WaitTime}s - setting sensor delay to active value {Value}",
+                    SensorWaitTime,
+                    SensorActiveDelayValue
+                );
+                SensorDelay.SetNumericValue(SensorActiveDelayValue);
+            });
         yield return MotionSensor
             .StateChanges()
             .IsOffForSeconds(SensorWaitTime)
-            .Subscribe(_ => SensorDelay?.SetNumericValue(SensorInactiveDelayValue));
+            .Subscribe(_ =>
+            {
+                Logger.LogDebug(
+                    "Motion cleared for {WaitTime}s - setting sensor delay to inactive value {Value}",
+                    SensorWaitTime,
+                    SensorInactiveDelayValue
+                );
+                SensorDelay.SetNumericValue(SensorInactiveDelayValue);
+            });
         yield return MotionSensor
             .StateChanges()
             .IsFlickering()
-            .Subscribe(_ => SensorDelay?.SetNumericValue(SensorActiveDelayValue));
+            .Subscribe(events =>
+            {
+                Logger.LogDebug(
+                    "Motion sensor flickering detected ({EventCount} events) - setting sensor delay to active value {Value}",
+                    events.Count,
+                    SensorActiveDelayValue
+                );
+                SensorDelay.SetNumericValue(SensorActiveDelayValue);
+            });
     }
 
     private void ControlMasterSwitchOnLightChange(StateChange evt)
@@ -77,11 +114,22 @@ public abstract class MotionAutomationBase(
 
     private void ControlLightOnMotionChange(StateChange evt)
     {
+        Logger.LogDebug(
+            "Motion state changed: {OldState} → {NewState} for {EntityId} by {UserId}",
+            evt.Old?.State,
+            evt.New?.State,
+            MotionSensor.EntityId,
+            evt.UserId() ?? "unknown"
+        );
+
         if (MotionSensor.IsOn())
         {
+            Logger.LogDebug("Motion detected - turning on light {EntityId}", Light.EntityId);
             Light.TurnOn();
             return;
         }
+
+        Logger.LogDebug("Motion cleared - turning off light {EntityId}", Light.EntityId);
         Light.TurnOff();
     }
 }
