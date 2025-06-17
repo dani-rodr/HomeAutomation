@@ -18,6 +18,22 @@ public static class StateChangeHelpers
     }
 
     /// <summary>
+    /// Creates a StateChange for an entity transitioning from one state to another with user context
+    /// </summary>
+    public static StateChange CreateStateChange(IEntityCore entity, string oldState, string newState, string? userId)
+    {
+        return new StateChange(
+            (Entity)entity,
+            new EntityState { State = oldState },
+            new EntityState
+            {
+                State = newState,
+                Context = new Context { UserId = userId },
+            }
+        );
+    }
+
+    /// <summary>
     /// Creates a StateChange for a motion sensor turning on
     /// </summary>
     public static StateChange MotionDetected(BinarySensorEntity motionSensor) =>
@@ -61,4 +77,24 @@ public static class StateChangeHelpers
     /// </summary>
     public static StateChange SwitchTurnedOff(SwitchEntity switchEntity) =>
         CreateStateChange(switchEntity, "on", "off");
+
+    /// <summary>
+    /// Creates a StateChange for a switch with user context
+    /// </summary>
+    public static StateChange CreateSwitchStateChange(
+        SwitchEntity switchEntity,
+        string oldState,
+        string newState,
+        string? userId
+    ) => CreateStateChange(switchEntity, oldState, newState, userId);
+
+    /// <summary>
+    /// Creates a StateChange for a light with user context
+    /// </summary>
+    public static StateChange CreateLightStateChange(
+        LightEntity lightEntity,
+        string oldState,
+        string newState,
+        string? userId
+    ) => CreateStateChange(lightEntity, oldState, newState, userId);
 }

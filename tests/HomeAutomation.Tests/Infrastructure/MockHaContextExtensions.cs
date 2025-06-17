@@ -38,6 +38,21 @@ public static class MockHaContextExtensions
     }
 
     /// <summary>
+    /// Verify that a light entity's Toggle() method was called
+    /// </summary>
+    public static void ShouldHaveCalledLightToggle(this MockHaContext mock, string entityId)
+    {
+        var lightCalls = mock.GetServiceCalls("light").ToList();
+        var toggleCall = lightCalls.FirstOrDefault(call =>
+            call.Service == "toggle" && call.Target?.EntityIds?.Contains(entityId) == true
+        );
+
+        toggleCall
+            .Should()
+            .NotBeNull($"Expected light.toggle to be called for entity '{entityId}' but it was not found");
+    }
+
+    /// <summary>
     /// Verify that a switch entity's TurnOn() method was called
     /// </summary>
     public static void ShouldHaveCalledSwitchTurnOn(this MockHaContext mock, string entityId)
@@ -134,6 +149,29 @@ public static class MockHaContextExtensions
             .HaveCount(
                 times,
                 $"Expected light.{service} to be called exactly {times} times for entity '{entityId}' but was called {calls.Count} times"
+            );
+    }
+
+    /// <summary>
+    /// Verify that exactly the specified number of calls were made to a specific switch entity
+    /// </summary>
+    public static void ShouldHaveCalledSwitchExactly(
+        this MockHaContext mock,
+        string entityId,
+        string service,
+        int times
+    )
+    {
+        var switchCalls = mock.GetServiceCalls("switch").ToList();
+        var calls = switchCalls
+            .Where(call => call.Service == service && call.Target?.EntityIds?.Contains(entityId) == true)
+            .ToList();
+
+        calls
+            .Should()
+            .HaveCount(
+                times,
+                $"Expected switch.{service} to be called exactly {times} times for entity '{entityId}' but was called {calls.Count} times"
             );
     }
 
