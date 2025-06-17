@@ -2,11 +2,10 @@ using System.Reactive.Disposables;
 
 namespace HomeAutomation.apps.Common.Base;
 
-public abstract class ComputerBase(IEventHandler eventHandler, ILogger logger) : IComputer
+public abstract class ComputerBase(IEventHandler eventHandler, ILogger logger) : AutomationDeviceBase, IComputer
 {
     protected abstract string ShowEvent { get; }
     protected abstract string HideEvent { get; }
-    protected CompositeDisposable Automations = [];
 
     protected readonly ILogger Logger = logger;
     public abstract void TurnOn();
@@ -18,10 +17,4 @@ public abstract class ComputerBase(IEventHandler eventHandler, ILogger logger) :
     public virtual IObservable<bool> OnHideRequested() => eventHandler.WhenEventTriggered(HideEvent).Select(_ => true);
 
     public abstract bool IsOn();
-
-    public virtual void Dispose()
-    {
-        Automations.Dispose();
-        GC.SuppressFinalize(this);
-    }
 }

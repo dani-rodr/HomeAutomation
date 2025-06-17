@@ -109,12 +109,6 @@ public class DeskDesktopEntities(Entities entities) : IDesktopEntities
     public InputButtonEntity RemotePcButton => entities.InputButton.RemotePc;
 }
 
-public class DeskDisplayEntities(Entities entities) : IDisplayEntities
-{
-    public SwitchEntity LgScreen => entities.Switch.LgScreen;
-    public InputNumberEntity LgTvBrightness => entities.InputNumber.LgTvBrightness;
-}
-
 public class BedroomFanEntities(CommonEntities common) : IFanEntities
 {
     public SwitchEntity MasterSwitch => common.BedroomMotionSwitch;
@@ -138,7 +132,9 @@ public class LaptopEntities(Entities entities) : ILaptopEntities
 
 public class DeskLgDisplayEntities(Entities entities) : ILgDisplayEntities
 {
-    public MediaPlayerEntity LgWebosSmartTv => entities.MediaPlayer.LgWebosSmartTv;
+    public MediaPlayerEntity MediaPlayer => entities.MediaPlayer.LgWebosSmartTv;
+    public SwitchEntity Screen => entities.Switch.LgScreen;
+    public InputNumberEntity Brightness => entities.InputNumber.LgTvBrightness;
 }
 
 public class LivingRoomFanEntities(Entities entities, CommonEntities common) : ILivingRoomFanEntities

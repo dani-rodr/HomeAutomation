@@ -2,7 +2,7 @@ using System.Linq;
 
 namespace HomeAutomation.apps.Common.Base;
 
-public abstract class MediaPlayerBase : IMediaPlayer
+public abstract class MediaPlayerBase : AutomationDeviceBase, IMediaPlayer
 {
     public string EntityId => Entity.EntityId;
     public double? VolumeLevel => Entity.Attributes?.VolumeLevel;
@@ -19,12 +19,28 @@ public abstract class MediaPlayerBase : IMediaPlayer
     protected ILogger Logger { get; }
     protected readonly Dictionary<string, string> Sources;
 
+    private string _queuedSource = string.Empty;
+
     public MediaPlayerBase(MediaPlayerEntity entity, ILogger logger)
     {
         Entity = entity;
         Logger = logger;
         Sources = SourceList?.ToDictionary(s => s, s => s) ?? [];
         ExtendSourceDictionary(Sources);
+        Automations.Add(
+            Entity
+                .StateChanges()
+                .IsOn()
+                .Subscribe(_ =>
+                {
+                    if (string.IsNullOrEmpty(_queuedSource))
+                    {
+                        return;
+                    }
+                    SelectSource(_queuedSource);
+                    _queuedSource = string.Empty;
+                })
+        );
     }
 
     public void SetVolume(double volumeLevel) => Entity.VolumeSet(volumeLevel);
@@ -56,8 +72,11 @@ public abstract class MediaPlayerBase : IMediaPlayer
         if (IsOff())
         {
             TurnOn();
+            _queuedSource = source;
+            return;
         }
 
-        SelectSource(source);
+        _queuedSource = "";
+        Entity.SelectSource(source);
     }
 }

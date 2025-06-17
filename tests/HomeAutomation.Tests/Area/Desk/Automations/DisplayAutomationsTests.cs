@@ -118,11 +118,11 @@ public class DisplayAutomationsTests : IDisposable
         // Set initial entity states
         _mockHaContext.SetEntityState(_displayEntities.LgScreen.EntityId, HaEntityStates.OFF);
         _mockHaContext.SetEntityState(_displayEntities.LgTvBrightness.EntityId, "90");
-        _mockHaContext.SetEntityState(_lgDisplayEntities.LgWebosSmartTv.EntityId, HaEntityStates.OFF);
+        _mockHaContext.SetEntityState(_lgDisplayEntities.MediaPlayer.EntityId, HaEntityStates.OFF);
 
         // Set up media player source list for LG Display
         _mockHaContext.SetEntityAttributes(
-            _lgDisplayEntities.LgWebosSmartTv.EntityId,
+            _lgDisplayEntities.MediaPlayer.EntityId,
             new
             {
                 source_list = new[] { "HDMI 1", "HDMI 3", "Always Ready" },
@@ -660,15 +660,15 @@ public class DisplayAutomationsTests : IDisposable
     private void SimulateMonitorShowingPc()
     {
         // Set the TV to HDMI 1 (PC source)
-        _mockHaContext.SetEntityState(_lgDisplayEntities.LgWebosSmartTv.EntityId, HaEntityStates.ON);
-        _mockHaContext.SetEntityAttributes(_lgDisplayEntities.LgWebosSmartTv.EntityId, new { source = "HDMI 1" });
+        _mockHaContext.SetEntityState(_lgDisplayEntities.MediaPlayer.EntityId, HaEntityStates.ON);
+        _mockHaContext.SetEntityAttributes(_lgDisplayEntities.MediaPlayer.EntityId, new { source = "HDMI 1" });
     }
 
     private void SimulateMonitorShowingLaptop()
     {
         // Set the TV to HDMI 3 (Laptop source)
-        _mockHaContext.SetEntityState(_lgDisplayEntities.LgWebosSmartTv.EntityId, HaEntityStates.ON);
-        _mockHaContext.SetEntityAttributes(_lgDisplayEntities.LgWebosSmartTv.EntityId, new { source = "HDMI 3" });
+        _mockHaContext.SetEntityState(_lgDisplayEntities.MediaPlayer.EntityId, HaEntityStates.ON);
+        _mockHaContext.SetEntityAttributes(_lgDisplayEntities.MediaPlayer.EntityId, new { source = "HDMI 3" });
     }
 
     #endregion
@@ -770,10 +770,10 @@ public class DisplayAutomationsTests : IDisposable
     {
         public TestLgDisplayEntities(IHaContext haContext)
         {
-            LgWebosSmartTv = new MediaPlayerEntity(haContext, "media_player.lg_webos_smart_tv");
+            MediaPlayer = new MediaPlayerEntity(haContext, "media_player.lg_webos_smart_tv");
         }
 
-        public MediaPlayerEntity LgWebosSmartTv { get; }
+        public MediaPlayerEntity MediaPlayer { get; }
     }
 
     #endregion

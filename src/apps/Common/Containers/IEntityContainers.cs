@@ -86,12 +86,6 @@ public interface IClimateEntities : IWeatherSensor, IMotionBase
     ButtonEntity AcFanModeToggle { get; }
 }
 
-public interface IDisplayEntities
-{
-    SwitchEntity LgScreen { get; }
-    InputNumberEntity LgTvBrightness { get; }
-}
-
 public interface ILaptopEntities
 {
     SwitchEntity VirtualSwitch { get; }
@@ -104,7 +98,9 @@ public interface ILaptopEntities
 
 public interface ILgDisplayEntities
 {
-    MediaPlayerEntity LgWebosSmartTv { get; }
+    MediaPlayerEntity MediaPlayer { get; }
+    SwitchEntity Screen { get; }
+    InputNumberEntity Brightness { get; }
 }
 
 public interface ITabletEntities : IMotionBase

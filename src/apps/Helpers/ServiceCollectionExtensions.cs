@@ -39,7 +39,6 @@ public static class ServiceCollectionExtensions
     {
         return services
             .AddTransientEntity<IDeskMotionEntities, DeskMotionEntities>()
-            .AddTransientEntity<IDisplayEntities, DeskDisplayEntities>()
             .AddTransientEntity<ILgDisplayEntities, DeskLgDisplayEntities>()
             .AddTransientEntity<IDesktopEntities, DeskDesktopEntities>()
             .AddTransientEntity<ILaptopEntities, LaptopEntities>();

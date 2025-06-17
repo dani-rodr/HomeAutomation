@@ -10,7 +10,6 @@ public class DeskApp(
     ILgDisplayEntities lgDisplayEntities,
     IDesktopEntities desktopEntities,
     ILaptopEntities laptopEntities,
-    IDisplayEntities displayEntities,
     ILogger<DeskApp> logger
 ) : AppBase<DeskApp>()
 {
@@ -20,6 +19,6 @@ public class DeskApp(
         Desktop desktop = new(desktopEntities, eventHandler, notificationServices, logger);
         Laptop laptop = new(laptopEntities, eventHandler, logger);
         // yield return new MotionAutomation(deskMotionEntities, dimmingController, logger);
-        yield return new DisplayAutomations(displayEntities, monitor, desktop, laptop, eventHandler, logger);
+        yield return new DisplayAutomations(monitor, desktop, laptop, eventHandler, logger);
     }
 }

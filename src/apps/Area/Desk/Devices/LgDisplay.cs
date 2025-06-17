@@ -7,15 +7,39 @@ public enum DisplaySource
     ScreenSaver,
 }
 
-public class LgDisplay(ILgDisplayEntities entities, Services services, ILogger logger)
-    : MediaPlayerBase(entities.LgWebosSmartTv, logger)
+public class LgDisplay : MediaPlayerBase
 {
     private const string MAC_ADDRESS = "D4:8D:26:B8:C4:AA";
     private bool IsScreenOn { get; set; }
-    private readonly WebostvServices _services = services.Webostv;
+    private readonly WebostvServices _webosServices;
+    private readonly WakeOnLanServices _wolServices;
     private int _brightness = 90;
     public bool IsShowingPc => CurrentSource == Sources[DisplaySource.PC.ToString()];
     public bool IsShowingLaptop => CurrentSource == Sources[DisplaySource.Laptop.ToString()];
+
+    public LgDisplay(ILgDisplayEntities entities, Services services, ILogger logger)
+        : base(entities.MediaPlayer, logger)
+    {
+        _webosServices = services.Webostv;
+        _wolServices = services.WakeOnLan;
+        Automations.Add(GetScreenStateAutomation(entities.Screen));
+        Automations.Add(GetScreenBrightnessAutomation(entities.Brightness));
+        Automations.Add(
+            Entity
+                .StateChangesWithCurrent()
+                .Subscribe(e =>
+                {
+                    if (e.IsOn())
+                    {
+                        entities.Screen.TurnOn();
+                    }
+                    if (e.IsOff())
+                    {
+                        entities.Screen.TurnOff();
+                    }
+                })
+        );
+    }
 
     public async Task SetBrightnessAsync(int value)
     {
@@ -50,7 +74,7 @@ public class LgDisplay(ILgDisplayEntities entities, Services services, ILogger l
 
     public override void TurnOn()
     {
-        services.WakeOnLan.SendMagicPacket(MAC_ADDRESS);
+        _wolServices.SendMagicPacket(MAC_ADDRESS);
         TurnOnScreen();
     }
 
@@ -61,9 +85,10 @@ public class LgDisplay(ILgDisplayEntities entities, Services services, ILogger l
         sources[DisplaySource.ScreenSaver.ToString()] = "Always Ready";
     }
 
-    private void SendCommand(string command, object? payload = null) => _services.Command(EntityId, command, payload);
+    private void SendCommand(string command, object? payload = null) =>
+        _webosServices.Command(EntityId, command, payload);
 
-    private void SendButtonCommand(string command) => _services.Button(EntityId, command);
+    private void SendButtonCommand(string command) => _webosServices.Button(EntityId, command);
 
     private static object CreateBrightnessPayload(int value)
     {
@@ -100,5 +125,37 @@ public class LgDisplay(ILgDisplayEntities entities, Services services, ILogger l
             : "com.webos.service.tvpower/power/turnOffScreen";
 
         SendCommand(command);
+    }
+
+    private IDisposable GetScreenStateAutomation(SwitchEntity screen)
+    {
+        return screen
+            .StateChanges()
+            .Subscribe(e =>
+            {
+                if (e.IsOn())
+                {
+                    TurnOnScreen();
+                    return;
+                }
+                if (e.IsOff())
+                {
+                    TurnOffScreen();
+                }
+            });
+    }
+
+    private IDisposable GetScreenBrightnessAutomation(InputNumberEntity brightness)
+    {
+        return brightness
+            .StateChanges()
+            .Subscribe(async e =>
+            {
+                var newValue = e?.New?.State;
+                if (newValue is double value)
+                {
+                    await SetBrightnessAsync((int)value);
+                }
+            });
     }
 }

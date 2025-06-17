@@ -3,7 +3,6 @@ using HomeAutomation.apps.Area.Desk.Devices;
 namespace HomeAutomation.apps.Area.Desk.Automations;
 
 public class DisplayAutomations(
-    IDisplayEntities entities,
     LgDisplay monitor,
     Desktop desktop,
     Laptop laptop,
@@ -12,13 +11,7 @@ public class DisplayAutomations(
 ) : AutomationBase(logger)
 {
     protected override IEnumerable<IDisposable> GetPersistentAutomations() =>
-        [
-            GetScreenBrightnessAutomation(),
-            GetScreenStateAutomation(),
-            GetNfcAutomation(),
-            .. GetPcAutomations(),
-            .. GetLaptopAutomations(),
-        ];
+        [GetNfcAutomation(), .. GetPcAutomations(), .. GetLaptopAutomations()];
 
     protected override IEnumerable<IDisposable> GetToggleableAutomations() => [];
 
@@ -86,37 +79,5 @@ public class DisplayAutomations(
         }
 
         monitor.TurnOff();
-    }
-
-    private IDisposable GetScreenStateAutomation()
-    {
-        return entities
-            .LgScreen.StateChanges()
-            .Subscribe(e =>
-            {
-                if (e.IsOn())
-                {
-                    monitor.TurnOnScreen();
-                    return;
-                }
-                if (e.IsOff())
-                {
-                    monitor.TurnOffScreen();
-                }
-            });
-    }
-
-    private IDisposable GetScreenBrightnessAutomation()
-    {
-        return entities
-            .LgTvBrightness.StateChanges()
-            .Subscribe(async e =>
-            {
-                var newValue = e?.New?.State;
-                if (newValue is double value)
-                {
-                    await monitor.SetBrightnessAsync((int)value);
-                }
-            });
     }
 }

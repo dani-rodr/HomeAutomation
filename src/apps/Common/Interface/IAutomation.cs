@@ -1,6 +1,6 @@
 namespace HomeAutomation.apps.Common.Interface;
 
-public interface IAutomation
+public interface IAutomation : IDisposable
 {
     void StartAutomation();
 }
