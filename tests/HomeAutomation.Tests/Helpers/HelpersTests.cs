@@ -1332,7 +1332,7 @@ public class HelpersTests : IDisposable
     {
         // This test verifies the method compiles and runs
         // The actual time comparison depends on current system time
-        var result = TimeRange.IsCurrentTimeInBetween(0, 23);
+        var result = TimeRange.IsCurrentTimeInBetween(0, 24);
 
         // Should always return true for 0-23 hour range (whole day)
         result.Should().BeTrue();

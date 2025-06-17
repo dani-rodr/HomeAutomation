@@ -26,7 +26,6 @@ public class DisplayAutomationsTests : IDisposable
     private readonly Mock<ILogger<Laptop>> _mockLaptopLogger;
     private readonly Mock<INotificationServices> _mockNotificationServices;
 
-    private readonly TestDisplayEntities _displayEntities;
     private readonly TestDesktopEntities _desktopEntities;
     private readonly TestLaptopEntities _laptopEntities;
     private readonly TestLgDisplayEntities _lgDisplayEntities;
@@ -53,7 +52,6 @@ public class DisplayAutomationsTests : IDisposable
         _mockNotificationServices = new Mock<INotificationServices>();
 
         // Create entity containers
-        _displayEntities = new TestDisplayEntities(_mockHaContext);
         _desktopEntities = new TestDesktopEntities(_mockHaContext);
         _laptopEntities = new TestLaptopEntities(_mockHaContext);
         _lgDisplayEntities = new TestLgDisplayEntities(_mockHaContext);
@@ -96,14 +94,7 @@ public class DisplayAutomationsTests : IDisposable
         _laptop = new Laptop(_laptopEntities, _mockEventHandler.Object, _mockLaptopLogger.Object);
 
         // Create automation under test
-        _automation = new DisplayAutomations(
-            _displayEntities,
-            _monitor,
-            _desktop,
-            _laptop,
-            _mockEventHandler.Object,
-            _mockLogger.Object
-        );
+        _automation = new DisplayAutomations(_monitor, _desktop, _laptop, _mockEventHandler.Object, _mockLogger.Object);
 
         // Initialize all devices and automation
         SetupInitialStates();
@@ -116,8 +107,6 @@ public class DisplayAutomationsTests : IDisposable
     private void SetupInitialStates()
     {
         // Set initial entity states
-        _mockHaContext.SetEntityState(_displayEntities.LgScreen.EntityId, HaEntityStates.OFF);
-        _mockHaContext.SetEntityState(_displayEntities.LgTvBrightness.EntityId, "90");
         _mockHaContext.SetEntityState(_lgDisplayEntities.MediaPlayer.EntityId, HaEntityStates.OFF);
 
         // Set up media player source list for LG Display
@@ -403,48 +392,6 @@ public class DisplayAutomationsTests : IDisposable
 
     #endregion
 
-    #region Screen Management Tests
-
-    [Fact]
-    public void LgScreenStateChange_WhenTurnsOn_Should_TurnOnMonitorScreen()
-    {
-        // Act - Simulate LG screen entity turning on
-        _mockHaContext.SimulateStateChange(_displayEntities.LgScreen.EntityId, HaEntityStates.OFF, HaEntityStates.ON);
-
-        // Assert - Monitor screen should be turned on
-        // This would be verified through the webostv service calls in a real implementation
-        // For now, we verify the state change was processed
-        var newState = _mockHaContext.GetState(_displayEntities.LgScreen.EntityId);
-        newState?.State.Should().Be(HaEntityStates.ON);
-    }
-
-    [Fact]
-    public void LgScreenStateChange_WhenTurnsOff_Should_TurnOffMonitorScreen()
-    {
-        // Arrange - Screen initially on
-        _mockHaContext.SetEntityState(_displayEntities.LgScreen.EntityId, HaEntityStates.ON);
-
-        // Act - Simulate LG screen entity turning off
-        _mockHaContext.SimulateStateChange(_displayEntities.LgScreen.EntityId, HaEntityStates.ON, HaEntityStates.OFF);
-
-        // Assert - Monitor screen should be turned off
-        var newState = _mockHaContext.GetState(_displayEntities.LgScreen.EntityId);
-        newState?.State.Should().Be(HaEntityStates.OFF);
-    }
-
-    [Fact]
-    public void BrightnessChange_Should_SetMonitorBrightness()
-    {
-        // Act - Simulate brightness change
-        _mockHaContext.SimulateStateChange(_displayEntities.LgTvBrightness.EntityId, "90", "75");
-
-        // Assert - Brightness state should be updated (verify through mock context)
-        var newState = _mockHaContext.GetState(_displayEntities.LgTvBrightness.EntityId);
-        newState?.State.Should().Be("75");
-    }
-
-    #endregion
-
     #region Desktop Device Specific Tests
 
     [Fact]
@@ -569,14 +516,6 @@ public class DisplayAutomationsTests : IDisposable
         // Test NFC subscription
         _nfcScanSubject.OnNext(NFC_ID.DESK);
         // Should respond to NFC scans (verified by lack of exceptions)
-
-        // Test state change subscriptions
-        _mockHaContext.SimulateStateChange(_displayEntities.LgScreen.EntityId, HaEntityStates.OFF, HaEntityStates.ON);
-        // Should respond to screen state changes (verified by lack of exceptions)
-
-        // Test brightness subscription
-        _mockHaContext.SimulateStateChange(_displayEntities.LgTvBrightness.EntityId, "90", "75");
-        // Should respond to brightness changes (verified by lack of exceptions)
 
         // Test device state subscriptions
         SimulateDesktopOn();
@@ -714,18 +653,6 @@ public class DisplayAutomationsTests : IDisposable
 
     #region Test Entity Implementations
 
-    private class TestDisplayEntities : IDisplayEntities
-    {
-        public TestDisplayEntities(IHaContext haContext)
-        {
-            LgScreen = new SwitchEntity(haContext, "switch.lg_screen");
-            LgTvBrightness = new InputNumberEntity(haContext, "input_number.lg_tv_brightness");
-        }
-
-        public SwitchEntity LgScreen { get; }
-        public InputNumberEntity LgTvBrightness { get; }
-    }
-
     private class TestDesktopEntities : IDesktopEntities
     {
         public TestDesktopEntities(IHaContext haContext)
@@ -766,14 +693,13 @@ public class DisplayAutomationsTests : IDisposable
         public ButtonEntity Lock { get; }
     }
 
-    private class TestLgDisplayEntities : ILgDisplayEntities
+    private class TestLgDisplayEntities(IHaContext haContext) : ILgDisplayEntities
     {
-        public TestLgDisplayEntities(IHaContext haContext)
-        {
-            MediaPlayer = new MediaPlayerEntity(haContext, "media_player.lg_webos_smart_tv");
-        }
+        public MediaPlayerEntity MediaPlayer => new(haContext, "media_player.lg_webos_smart_tv");
 
-        public MediaPlayerEntity MediaPlayer { get; }
+        public SwitchEntity Screen => new(haContext, "Switch.LgScreen");
+
+        public InputNumberEntity Brightness => new(haContext, "InputNumber.LgTvBrightness");
     }
 
     #endregion
