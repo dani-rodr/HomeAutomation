@@ -97,4 +97,83 @@ public static class StateChangeHelpers
         string newState,
         string? userId
     ) => CreateStateChange(lightEntity, oldState, newState, userId);
+
+    /// <summary>
+    /// Creates a StateChange for a climate entity with user context
+    /// </summary>
+    public static StateChange CreateClimateStateChange(
+        ClimateEntity climateEntity,
+        string oldState,
+        string newState,
+        string? userId
+    ) => CreateStateChange(climateEntity, oldState, newState, userId);
+
+    /// <summary>
+    /// Creates a StateChange for a weather entity
+    /// </summary>
+    public static StateChange CreateWeatherStateChange(WeatherEntity weatherEntity, string oldState, string newState) =>
+        CreateStateChange(weatherEntity, oldState, newState);
+
+    /// <summary>
+    /// Creates a StateChange for an input boolean entity
+    /// </summary>
+    public static StateChange CreateInputBooleanStateChange(
+        InputBooleanEntity inputBoolean,
+        string oldState,
+        string newState
+    ) => CreateStateChange(inputBoolean, oldState, newState);
+
+    /// <summary>
+    /// Creates a StateChange for a button press
+    /// </summary>
+    public static StateChange CreateButtonPress(ButtonEntity button) =>
+        CreateStateChange(button, "", DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"));
+
+    /// <summary>
+    /// Creates a StateChange for a button press with user context
+    /// </summary>
+    public static StateChange CreateButtonPress(ButtonEntity button, string? userId) =>
+        CreateStateChange(button, "", DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"), userId);
+
+    /// <summary>
+    /// Creates a StateChange for an input button press
+    /// </summary>
+    public static StateChange CreateButtonPress(InputButtonEntity button) =>
+        CreateStateChange(button, "", DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"));
+
+    /// <summary>
+    /// Creates a StateChange for an input button press with user context
+    /// </summary>
+    public static StateChange CreateButtonPress(InputButtonEntity button, string? userId) =>
+        CreateStateChange(button, "", DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"), userId);
+
+    /// <summary>
+    /// Creates a StateChange for a lock being locked
+    /// </summary>
+    public static StateChange LockLocked(LockEntity lockEntity) => CreateStateChange(lockEntity, "unlocked", "locked");
+
+    /// <summary>
+    /// Creates a StateChange for a lock being unlocked
+    /// </summary>
+    public static StateChange LockUnlocked(LockEntity lockEntity) =>
+        CreateStateChange(lockEntity, "locked", "unlocked");
+
+    /// <summary>
+    /// Creates a StateChange for a lock with user context
+    /// </summary>
+    public static StateChange CreateLockStateChange(
+        LockEntity lockEntity,
+        string oldState,
+        string newState,
+        string? userId
+    ) => CreateStateChange(lockEntity, oldState, newState, userId);
+
+    /// <summary>
+    /// Creates a StateChange for a numeric sensor transitioning from one value to another
+    /// </summary>
+    public static StateChange CreateNumericSensorStateChange(
+        NumericSensorEntity sensor,
+        string oldValue,
+        string newValue
+    ) => CreateStateChange(sensor, oldValue, newValue);
 }

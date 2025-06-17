@@ -17,7 +17,14 @@
       "Bash(dotnet.exe test tests/HomeAutomation.Tests/Area/LivingRoom/Automations/TabletAutomationsTests.cs)",
       "Bash(dotnet.exe test:*)",
       "Bash(csharp:*)",
-      "Bash(find:*)"
+      "Bash(find:*)",
+      "Bash(git checkout:*)",
+      "Bash(dotnet build:*)",
+      "Bash(dotnet.exe run:*)",
+      "Bash(pwsh:*)",
+      "Bash(dotnet.exe tool list:*)",
+      "Bash(dotnet.exe tool run reportgenerator:*)",
+      "Bash(sed:*)"
     ],
     "deny": []
   }

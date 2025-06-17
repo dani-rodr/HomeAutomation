@@ -44,6 +44,8 @@ public interface IPantryMotionEntities : IMotionAutomationEntities
 
 public interface IBathroomMotionEntities : IMotionAutomationEntities;
 
+public interface IDeskMotionEntities : IMotionAutomationEntities;
+
 public interface IKitchenMotionEntities : IMotionAutomationEntities
 {
     BinarySensorEntity PowerPlug { get; }

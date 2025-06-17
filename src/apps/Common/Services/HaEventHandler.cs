@@ -48,13 +48,21 @@ public class HaEventHandler(IHaContext haContext, ILogger<HaEventHandler> logger
         WhenEventTriggered(eventType)
             .Where(e =>
             {
-                var value = e.DataElement?.GetProperty(propertyName).GetString();
-                var isMatch = value == expectedValue;
+                if (e.DataElement?.TryGetProperty(propertyName, out var property) == true)
+                {
+                    var value = property.GetString();
+                    var isMatch = value == expectedValue;
+
+                    if (logLabel is not null)
+                        logger.LogInformation("{Label}: {Value} (match: {Match})", logLabel, value ?? "null", isMatch);
+
+                    return isMatch;
+                }
 
                 if (logLabel is not null)
-                    logger.LogInformation("{Label}: {Value} (match: {Match})", logLabel, value ?? "null", isMatch);
+                    logger.LogInformation("{Label}: property not found (match: False)", logLabel);
 
-                return isMatch;
+                return false;
             })
             .Select(e =>
             {

@@ -58,6 +58,14 @@ public class BathroomMotionEntities(Entities entities) : IBathroomMotionEntities
     public NumberEntity SensorDelay => entities.Number.ZEsp32C62StillTargetDelay;
 }
 
+public class DeskMotionEntities(Entities entities) : IDeskMotionEntities
+{
+    public SwitchEntity MasterSwitch => entities.Switch.MotionSensors;
+    public BinarySensorEntity MotionSensor => entities.BinarySensor.DeskSmartPresence;
+    public LightEntity Light => entities.Light.RgbLightStrip;
+    public NumberEntity SensorDelay => entities.Number.ZEsp32C61StillTargetDelay2;
+}
+
 public class AirQualityEntities(Entities entities, CommonEntities common) : IAirQualityEntities
 {
     public SwitchEntity MasterSwitch => entities.Switch.CleanAir;

@@ -119,10 +119,11 @@ echo %MAGENTA%🔧 Running tests with coverage%RESET%
 
 dotnet.exe test --collect:"XPlat Code Coverage" --settings coverlet.runsettings
 if errorlevel 1 (
-    echo %RED%❌ Tests failed%RESET%
-    exit /b 1
+    echo %YELLOW%⚠️  Some tests failed, but coverage data was still collected%RESET%
+    set "TESTS_FAILED=1"
 ) else (
     echo %GREEN%✅ Tests with coverage completed successfully%RESET%
+    set "TESTS_FAILED=0"
 )
 goto :Exit
 
@@ -130,8 +131,17 @@ goto :Exit
 call :CheckRequirements
 if errorlevel 1 exit /b 1
 
-call :RunCoverage
-if errorlevel 1 exit /b 1
+echo.
+echo %MAGENTA%🔧 Running tests with coverage%RESET%
+
+dotnet.exe test --collect:"XPlat Code Coverage" --settings coverlet.runsettings
+if errorlevel 1 (
+    echo %YELLOW%⚠️  Some tests failed, but coverage data was still collected%RESET%
+    set "TESTS_FAILED=1"
+) else (
+    echo %GREEN%✅ Tests with coverage completed successfully%RESET%
+    set "TESTS_FAILED=0"
+)
 
 echo.
 echo %MAGENTA%🔧 Generating HTML coverage report%RESET%
@@ -144,7 +154,7 @@ if errorlevel 1 (
 )
 
 if not exist "TestResults" (
-    echo %RED%❌ Coverage results not found. Run coverage first.%RESET%
+    echo %RED%❌ Coverage results not found. Coverage collection may have failed.%RESET%
     exit /b 1
 )
 
@@ -153,7 +163,12 @@ if errorlevel 1 (
     echo %RED%❌ Failed to generate coverage report%RESET%
     exit /b 1
 ) else (
-    echo %GREEN%✅ HTML coverage report generated in .\coverage-report\%RESET%
+    if "%TESTS_FAILED%"=="1" (
+        echo %YELLOW%⚠️  HTML coverage report generated despite test failures in .\coverage-report\%RESET%
+        echo %CYAN%ℹ️  Review the report to identify areas needing more test coverage%RESET%
+    ) else (
+        echo %GREEN%✅ HTML coverage report generated in .\coverage-report\%RESET%
+    )
 )
 goto :Exit
 
@@ -161,8 +176,17 @@ goto :Exit
 call :CheckRequirements
 if errorlevel 1 exit /b 1
 
-call :RunCoverage
-if errorlevel 1 exit /b 1
+echo.
+echo %MAGENTA%🔧 Running tests with coverage%RESET%
+
+dotnet.exe test --collect:"XPlat Code Coverage" --settings coverlet.runsettings
+if errorlevel 1 (
+    echo %YELLOW%⚠️  Some tests failed, but coverage data was still collected%RESET%
+    set "TESTS_FAILED=1"
+) else (
+    echo %GREEN%✅ Tests with coverage completed successfully%RESET%
+    set "TESTS_FAILED=0"
+)
 
 echo.
 echo %MAGENTA%🔧 Generating HTML coverage report%RESET%
@@ -175,7 +199,7 @@ if errorlevel 1 (
 )
 
 if not exist "TestResults" (
-    echo %RED%❌ Coverage results not found. Run coverage first.%RESET%
+    echo %RED%❌ Coverage results not found. Coverage collection may have failed.%RESET%
     exit /b 1
 )
 
@@ -184,17 +208,29 @@ if errorlevel 1 (
     echo %RED%❌ Failed to generate coverage report%RESET%
     exit /b 1
 ) else (
-    echo %GREEN%✅ HTML coverage report generated in .\coverage-report\%RESET%
+    if "%TESTS_FAILED%"=="1" (
+        echo %YELLOW%⚠️  HTML coverage report generated despite test failures in .\coverage-report\%RESET%
+        echo %CYAN%ℹ️  Review the report to identify areas needing more test coverage%RESET%
+    ) else (
+        echo %GREEN%✅ HTML coverage report generated in .\coverage-report\%RESET%
+    )
 )
 
 if exist "coverage-report\index.html" (
     echo %CYAN%ℹ️  Opening coverage report in browser...%RESET%
     start "" "coverage-report\index.html"
+    if "%TESTS_FAILED%"=="1" (
+        echo %YELLOW%⚠️  Note: Some tests failed. Use the coverage report to identify which areas need attention.%RESET%
+    )
 ) else (
     echo %YELLOW%⚠️  Coverage report not found at coverage-report\index.html%RESET%
 )
 
-echo %GREEN%✅ All operations completed successfully!%RESET%
+if "%TESTS_FAILED%"=="1" (
+    echo %YELLOW%⚠️  All operations completed with test failures - coverage report is available%RESET%
+) else (
+    echo %GREEN%✅ All operations completed successfully!%RESET%
+)
 goto :Exit
 
 :Usage

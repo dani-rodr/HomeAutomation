@@ -34,6 +34,11 @@ public class MockHaContext : IHaContext
     /// </summary>
     private readonly Dictionary<string, string> _entityStates = new();
 
+    /// <summary>
+    /// Dictionary to track entity attributes for testing
+    /// </summary>
+    private readonly Dictionary<string, Dictionary<string, object>> _entityAttributes = new();
+
     // Core testing methods
     public void CallService(string domain, string service, ServiceTarget? target = null, object? data = null)
     {
@@ -106,6 +111,19 @@ public class MockHaContext : IHaContext
     public void SetEntityState(string entityId, string state)
     {
         _entityStates[entityId] = state;
+    }
+
+    /// <summary>
+    /// Helper method to set an entity's attributes (useful for test setup)
+    /// </summary>
+    public void SetEntityAttributes(string entityId, object attributes)
+    {
+        var attributeDict = new Dictionary<string, object>();
+        foreach (var prop in attributes.GetType().GetProperties())
+        {
+            attributeDict[prop.Name] = prop.GetValue(attributes) ?? new object();
+        }
+        _entityAttributes[entityId] = attributeDict;
     }
 
     /// <summary>
