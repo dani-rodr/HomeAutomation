@@ -108,6 +108,29 @@ public static class MockHaContextExtensions
     }
 
     /// <summary>
+    /// Verify a webostv service call was made for a specific entity
+    /// WebOSTV services pass entity ID in the data parameter, not the target
+    /// </summary>
+    public static void ShouldHaveCalledWebostvService(this MockHaContext mock, string service, string entityId)
+    {
+        var serviceCalls = mock.GetServiceCalls("webostv").ToList();
+        var call = serviceCalls.FirstOrDefault(c => c.Service == service && HasEntityIdInData(c.Data, entityId));
+
+        call.Should()
+            .NotBeNull($"Expected webostv.{service} to be called for entity '{entityId}' but it was not found");
+    }
+
+    private static bool HasEntityIdInData(object? data, string entityId)
+    {
+        if (data == null)
+            return false;
+
+        // Check if data has EntityId property that matches
+        var entityIdProperty = data.GetType().GetProperty("EntityId");
+        return entityIdProperty?.GetValue(data)?.ToString() == entityId;
+    }
+
+    /// <summary>
     /// Verify that no service calls were made
     /// </summary>
     public static void ShouldHaveNoServiceCalls(this MockHaContext mock)
@@ -166,21 +189,6 @@ public static class MockHaContextExtensions
         turnOffCall
             .Should()
             .NotBeNull($"Expected media_player.turn_off to be called for entity '{entityId}' but it was not found");
-    }
-
-    /// <summary>
-    /// Verify that a webostv service call was made
-    /// </summary>
-    public static void ShouldHaveCalledWebostvService(this MockHaContext mock, string service, string entityId)
-    {
-        var webostvCalls = mock.GetServiceCalls("webostv").ToList();
-        var serviceCall = webostvCalls.FirstOrDefault(call =>
-            call.Service == service && call.Target?.EntityIds?.Contains(entityId) == true
-        );
-
-        serviceCall
-            .Should()
-            .NotBeNull($"Expected webostv.{service} to be called for entity '{entityId}' but it was not found");
     }
 
     /// <summary>

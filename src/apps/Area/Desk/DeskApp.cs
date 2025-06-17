@@ -7,12 +7,10 @@ public class DeskApp(
     Services services,
     IEventHandler eventHandler,
     INotificationServices notificationServices,
-    IDeskMotionEntities deskMotionEntities,
     ILgDisplayEntities lgDisplayEntities,
     IDesktopEntities desktopEntities,
     ILaptopEntities laptopEntities,
     IDisplayEntities displayEntities,
-    IDimmingLightController dimmingController,
     ILogger<DeskApp> logger
 ) : AppBase<DeskApp>()
 {

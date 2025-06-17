@@ -1,4 +1,3 @@
-using System.Reactive.Subjects;
 using System.Text.Json;
 
 namespace HomeAutomation.Tests.Infrastructure;
@@ -55,7 +54,20 @@ public class MockHaContext : IHaContext
     public EntityState? GetState(string entityId)
     {
         var state = _entityStates.GetValueOrDefault(entityId, "unknown");
-        return new EntityState { State = state };
+        var attributes = _entityAttributes.GetValueOrDefault(entityId, new Dictionary<string, object>());
+
+        // Convert attributes dictionary to JsonElement for proper deserialization
+        var attributesJson = JsonSerializer.SerializeToElement(attributes);
+
+        // Create EntityState with reflection since Attributes property is read-only
+        var entityState = new EntityState { State = state };
+        var attributesProperty = typeof(EntityState).GetProperty("Attributes");
+        if (attributesProperty?.SetMethod != null)
+        {
+            attributesProperty.SetValue(entityState, attributesJson);
+        }
+
+        return entityState;
     }
 
     public IReadOnlyList<Entity> GetAllEntities() => [];

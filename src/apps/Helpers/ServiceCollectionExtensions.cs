@@ -8,7 +8,7 @@ public static class ServiceCollectionExtensions
     {
         return services
             .AddScoped<IEventHandler, HaEventHandler>()
-            .AddTransientEntity<CommonEntities, CommonEntities>()
+            .AddTransient<CommonEntities>()
             .AddTransientEntity<ILockingEntities, LockingEntities>()
             .AddTransient<INotificationServices>(p => new NotificationServices(
                 p.GetRequiredService<Services>(),
