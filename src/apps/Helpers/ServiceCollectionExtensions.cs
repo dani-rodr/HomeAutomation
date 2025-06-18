@@ -1,3 +1,4 @@
+using HomeAutomation.apps.Area.Desk.Devices;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace HomeAutomation.apps.Helpers;
@@ -46,6 +47,11 @@ public static class ServiceCollectionExtensions
             .AddTransient<ILaptopScheduler>(p => new LaptopScheduler(
                 p.GetRequiredService<ILaptopSchedulerEntities>(),
                 p.GetRequiredService<IScheduler>()
+            ))
+            .AddTransient<ILgDisplay>(p => new LgDisplay(
+                p.GetRequiredService<ILgDisplayEntities>(),
+                p.GetRequiredService<Services>(),
+                p.GetRequiredService<ILogger<LgDisplay>>()
             ));
     }
 

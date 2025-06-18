@@ -19,7 +19,7 @@ public class LgDisplay : MediaPlayerBase, ILgDisplay
     public bool IsShowingPc => CurrentSource == Sources[DisplaySource.PC.ToString()];
     public bool IsShowingLaptop => CurrentSource == Sources[DisplaySource.Laptop.ToString()];
 
-    public LgDisplay(ILgDisplayEntities entities, Services services, ILogger logger)
+    public LgDisplay(ILgDisplayEntities entities, IServices services, ILogger logger)
         : base(entities.MediaPlayer, logger)
     {
         _webosServices = services.Webostv;
