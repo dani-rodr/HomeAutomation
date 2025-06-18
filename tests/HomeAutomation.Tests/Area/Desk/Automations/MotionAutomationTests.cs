@@ -13,7 +13,7 @@ public class MotionAutomationTests : IDisposable
 {
     private readonly MockHaContext _mockHaContext;
     private readonly Mock<ILogger<MotionAutomation>> _mockLogger;
-    private readonly Mock<IDimmingLightController> _mockDimmingController;
+    private readonly Mock<ILgDisplay> _mockLgDisplay;
     private readonly TestEntities _entities;
     private readonly MotionAutomation _automation;
 
@@ -21,12 +21,12 @@ public class MotionAutomationTests : IDisposable
     {
         _mockHaContext = new MockHaContext();
         _mockLogger = new Mock<ILogger<MotionAutomation>>();
-        _mockDimmingController = new Mock<IDimmingLightController>();
+        _mockLgDisplay = new Mock<ILgDisplay>();
 
         // Create test entities wrapper for desk-specific entities
         _entities = new TestEntities(_mockHaContext);
 
-        _automation = new MotionAutomation(_entities, _mockLogger.Object);
+        _automation = new MotionAutomation(_entities, _mockLgDisplay.Object, _mockLogger.Object);
 
         // Start the automation to set up subscriptions
         _automation.StartAutomation();
@@ -42,7 +42,6 @@ public class MotionAutomationTests : IDisposable
     {
         _automation?.Dispose();
         _mockHaContext?.Dispose();
-        _mockDimmingController?.Object.Dispose();
     }
 
     /// <summary>

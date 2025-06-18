@@ -6,4 +6,5 @@ public interface IMediaPlayer
     void TurnOff();
     bool IsOn();
     bool IsOff();
+    IObservable<string?> OnSourceChange();
 }

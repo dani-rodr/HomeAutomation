@@ -60,9 +60,9 @@ public class BathroomMotionEntities(Entities entities) : IBathroomMotionEntities
 
 public class DeskMotionEntities(Entities entities) : IDeskMotionEntities
 {
-    public SwitchEntity MasterSwitch => entities.Switch.MotionSensors;
+    public SwitchEntity MasterSwitch => entities.Switch.LgTvMotionSensor;
     public BinarySensorEntity MotionSensor => entities.BinarySensor.DeskSmartPresence;
-    public LightEntity Light => entities.Light.RgbLightStrip;
+    public LightEntity Light => entities.Light.LgDisplay;
     public NumberEntity SensorDelay => entities.Number.ZEsp32C61StillTargetDelay2;
 }
 

@@ -1,11 +1,35 @@
 namespace HomeAutomation.apps.Area.Desk.Automations;
 
-public class MotionAutomation(IMotionAutomationEntities entities, ILogger logger)
+public class MotionAutomation(IMotionAutomationEntities entities, ILgDisplay monitor, ILogger logger)
     : MotionAutomationBase(entities.MasterSwitch, entities.MotionSensor, entities.Light, logger, entities.SensorDelay)
 {
-    protected override IEnumerable<IDisposable> GetLightAutomations()
+    private const double LONG_SENSOR_DELAY = 60;
+    private const double SHORT_SENSOR_DELAY = 20;
+
+    protected override IEnumerable<IDisposable> GetLightAutomations() =>
+        [MotionSensor.StateChanges().Subscribe(HandleMotionSensor)];
+
+    protected override IEnumerable<IDisposable> GetSensorDelayAutomations()
     {
-        yield return MotionSensor.StateChanges().IsOn().Subscribe(e => Light.TurnOn());
-        yield return MotionSensor.StateChanges().IsOff().Subscribe(e => Light.TurnOff());
+        yield return monitor
+            .OnSourceChange()
+            .Subscribe(source =>
+            {
+                var delay = monitor.IsShowingPc ? LONG_SENSOR_DELAY : SHORT_SENSOR_DELAY;
+                SensorDelay?.SetNumericValue(delay);
+            });
+    }
+
+    private void HandleMotionSensor(StateChange e)
+    {
+        return;
+        if (e.IsOn())
+        {
+            Light.TurnOn();
+        }
+        else if (e.IsOff())
+        {
+            Light.TurnOff();
+        }
     }
 }
