@@ -1,3 +1,5 @@
+using System.Text.Json;
+
 namespace HomeAutomation.apps.Area.Desk.Devices;
 
 public enum DisplaySource
@@ -35,9 +37,7 @@ public class LgDisplay : MediaPlayerBase
             return;
         }
 
-        SendCommand("system.notifications/createAlert", CreateBrightnessPayload(value));
-
-        await Task.Delay(150);
+        await SendCommandAsync("system.notifications/createAlert", CreateBrightnessPayload(value));
 
         SendButtonCommand("ENTER");
 
@@ -67,6 +67,16 @@ public class LgDisplay : MediaPlayerBase
     private void SendCommand(string command, object? payload = null) =>
         _webosServices.Command(EntityId, command, payload);
 
+    private Task<JsonElement?> SendCommandAsync(string command, object? payload = null) =>
+        _webosServices.CommandAsync(
+            new WebostvCommandParameters
+            {
+                EntityId = EntityId,
+                Command = command,
+                Payload = payload,
+            }
+        );
+
     private void SendButtonCommand(string command) => _webosServices.Button(EntityId, command);
 
     private static object CreateBrightnessPayload(int value)
@@ -91,7 +101,7 @@ public class LgDisplay : MediaPlayerBase
         };
     }
 
-    private void SetScreenPower(bool on)
+    private async Task SetScreenPowerAsync(bool on)
     {
         if (IsOff())
         {
@@ -102,11 +112,11 @@ public class LgDisplay : MediaPlayerBase
         var command = on
             ? "com.webos.service.tvpower/power/turnOnScreen"
             : "com.webos.service.tvpower/power/turnOffScreen";
-
-        SendCommand(command);
+        await SendCommandAsync(command);
     }
 
-    private IDisposable ToggleScreenAutomation() => _screen.StateChanges().Subscribe(e => SetScreenPower(e.IsOn()));
+    private IDisposable ToggleScreenAutomation() =>
+        _screen.StateChanges().Subscribe(async e => await SetScreenPowerAsync(e.IsOn()));
 
     private IDisposable SyncScreenSwitchWithMediaState() =>
         Entity

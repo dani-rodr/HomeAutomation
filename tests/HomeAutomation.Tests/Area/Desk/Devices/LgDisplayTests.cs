@@ -572,11 +572,12 @@ public class LgDisplayTests : IDisposable
     }
 
     [Fact]
-    public void BrightnessChange_Should_TriggerSetBrightnessCommand()
+    public void BrightnessChange_Should_SendCommand_And_ButtonPress()
     {
         // Arrange - Simulate brightness change on the screen light entity
         const int newBrightness = 191;
         const int newBrightnessPct = 74;
+        const string buttonEnterPressed = "ENTER";
         _mockHaContext.SimulateStateChange(
             _entities.Display.EntityId,
             "on",
@@ -585,13 +586,22 @@ public class LgDisplayTests : IDisposable
         );
 
         // Assert - Should invoke SetBrightnessAsync with correct value
-        var lastCall = _mockHaContext.GetLastServiceCall();
+        var calls = _mockHaContext.ServiceCalls;
+        var firstCall = calls.FirstOrDefault();
+        firstCall.Should().NotBeNull();
+        firstCall!.Domain.Should().Be("webostv"); // or whatever domain your SetBrightnessAsync uses
+        firstCall.Service.Should().Be("command");
+
+        var lastCall = calls.LastOrDefault();
         lastCall.Should().NotBeNull();
         lastCall!.Domain.Should().Be("webostv"); // or whatever domain your SetBrightnessAsync uses
-        lastCall.Service.Should().Be("command");
+        lastCall.Service.Should().Be("button");
 
-        var dataJson = JsonSerializer.Serialize(lastCall.Data);
-        dataJson.Should().Contain($"{newBrightnessPct}");
+        var brightnessDataJson = JsonSerializer.Serialize(firstCall.Data);
+        brightnessDataJson.Should().Contain($"{newBrightnessPct}");
+
+        var buttonDataJson = JsonSerializer.Serialize(lastCall.Data);
+        buttonDataJson.Should().Contain(buttonEnterPressed);
     }
 
     [Fact]
