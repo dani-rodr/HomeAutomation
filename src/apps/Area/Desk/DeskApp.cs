@@ -17,7 +17,7 @@ public class DeskApp(
     {
         Desktop desktop = new(desktopEntities, eventHandler, notificationServices, logger);
         Laptop laptop = new(laptopEntities, laptopScheduler, eventHandler, logger);
-        // yield return new MotionAutomation(deskMotionEntities, dimmingController, logger);
+        // yield return new MotionAutomation(deskMotionEntities, logger);
         yield return new DisplayAutomations(lgDisplay, desktop, laptop, eventHandler, logger);
     }
 }

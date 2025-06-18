@@ -1,11 +1,9 @@
-using HomeAutomation.apps.Area.Desk.Devices;
-
 namespace HomeAutomation.apps.Area.Desk.Automations;
 
 public class DisplayAutomations(
     ILgDisplay monitor,
-    Desktop desktop,
-    Laptop laptop,
+    IComputer desktop,
+    IComputer laptop,
     IEventHandler eventHandler,
     ILogger logger
 ) : AutomationBase(logger)
@@ -31,7 +29,7 @@ public class DisplayAutomations(
     }
 
     private static IEnumerable<IDisposable> GetComputerAutomations(
-        ComputerBase device,
+        IComputer device,
         Action<bool> onShow,
         Action<bool> onHide
     )
