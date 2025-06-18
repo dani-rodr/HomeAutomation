@@ -1,3 +1,4 @@
+using System.Reflection;
 using System.Text.Json;
 
 namespace HomeAutomation.Tests.Infrastructure;
@@ -109,6 +110,37 @@ public class MockHaContext : IHaContext
             new EntityState { State = oldState },
             new EntityState { State = newState }
         );
+        StateChangeSubject.OnNext(stateChange);
+    }
+
+    public void SimulateStateChange<TAttributes>(
+        string entityId,
+        string oldState,
+        string newState,
+        TAttributes attributes
+    )
+        where TAttributes : class
+    {
+        _entityStates[entityId] = newState;
+
+        var attributesJson = JsonSerializer.SerializeToElement(attributes);
+
+        var oldEntityState = new EntityState
+        {
+            EntityId = entityId,
+            State = oldState,
+            AttributesJson = JsonDocument.Parse("{}").RootElement,
+        };
+
+        var newEntityState = new EntityState
+        {
+            EntityId = entityId,
+            State = newState,
+            AttributesJson = attributesJson,
+        };
+
+        var stateChange = new StateChange(new Entity(this, entityId), oldEntityState, newEntityState);
+
         StateChangeSubject.OnNext(stateChange);
     }
 

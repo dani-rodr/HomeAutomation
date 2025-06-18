@@ -44,6 +44,11 @@
           "cSharpName": "Ld2410Esp325BlueStatusLight"
         },
         {
+          "id": "light.lg_display",
+          "friendlyName": "LG Display",
+          "cSharpName": "LgDisplay"
+        },
+        {
           "id": "light.mipad_screen",
           "friendlyName": "MiPad Screen",
           "cSharpName": "MipadScreen"

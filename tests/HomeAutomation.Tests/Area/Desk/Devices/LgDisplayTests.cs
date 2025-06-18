@@ -313,99 +313,6 @@ public class LgDisplayTests : IDisposable
 
     #endregion
 
-    #region Screen Power Management Tests
-
-    [Fact]
-    public void TurnOnScreen_Should_CallWebOSTvTurnOnScreenCommand()
-    {
-        // Act
-        _lgDisplay.TurnOnScreen();
-
-        // Assert
-        _mockHaContext.ShouldHaveCalledWebostvService("command", _entities.MediaPlayer.EntityId);
-
-        var commandCall = _mockHaContext
-            .ServiceCalls.Where(c => c.Service == "command" && c.Domain == "webostv")
-            .FirstOrDefault();
-
-        var commandProperty = commandCall!.Data?.GetType().GetProperty("command");
-        commandProperty
-            ?.GetValue(commandCall.Data)
-            ?.ToString()
-            .Should()
-            .Be("com.webos.service.tvpower/power/turnOnScreen", "Should call turn on screen command");
-    }
-
-    [Fact]
-    public void TurnOffScreen_Should_CallWebOSTvTurnOffScreenCommand()
-    {
-        // Arrange - Turn on screen first so turn off will trigger a command
-        _lgDisplay.TurnOnScreen();
-        _mockHaContext.ClearServiceCalls();
-
-        // Act
-        _lgDisplay.TurnOffScreen();
-
-        // Assert
-        _mockHaContext.ShouldHaveCalledWebostvService("command", _entities.MediaPlayer.EntityId);
-
-        var commandCall = _mockHaContext
-            .ServiceCalls.Where(c => c.Service == "command" && c.Domain == "webostv")
-            .FirstOrDefault();
-
-        var commandProperty = commandCall!.Data?.GetType().GetProperty("command");
-        commandProperty
-            ?.GetValue(commandCall.Data)
-            ?.ToString()
-            .Should()
-            .Be("com.webos.service.tvpower/power/turnOffScreen", "Should call turn off screen command");
-    }
-
-    [Fact]
-    public void TurnOnScreen_WhenAlreadyOn_Should_NotSendDuplicateCommand()
-    {
-        // Arrange - Turn on screen once
-        _lgDisplay.TurnOnScreen();
-        _mockHaContext.ClearServiceCalls();
-
-        // Act - Try to turn on again
-        _lgDisplay.TurnOnScreen();
-
-        // Assert
-        _mockHaContext.ServiceCalls.Should().BeEmpty("Should not send command when screen is already on");
-    }
-
-    [Fact]
-    public void TurnOffScreen_WhenAlreadyOff_Should_NotSendDuplicateCommand()
-    {
-        // Arrange - Screen starts off by default, try to turn off
-        _lgDisplay.TurnOffScreen();
-        _mockHaContext.ClearServiceCalls();
-
-        // Act - Try to turn off again
-        _lgDisplay.TurnOffScreen();
-
-        // Assert
-        _mockHaContext.ServiceCalls.Should().BeEmpty("Should not send command when screen is already off");
-    }
-
-    [Fact]
-    public void ScreenPowerToggle_Should_WorkCorrectly()
-    {
-        // Act - Turn on, then off, then on again
-        _lgDisplay.TurnOnScreen();
-        _lgDisplay.TurnOffScreen();
-        _lgDisplay.TurnOnScreen();
-
-        // Assert
-        var commandCalls = _mockHaContext
-            .ServiceCalls.Where(c => c.Service == "command" && c.Domain == "webostv")
-            .ToList();
-
-        commandCalls.Should().HaveCount(3, "Should send three commands for on-off-on sequence");
-    }
-
-    #endregion
 
     #region Toast Notification Tests
 
@@ -619,7 +526,6 @@ public class LgDisplayTests : IDisposable
         // Act - Perform multiple operations in sequence
         _lgDisplay.ShowToast("Starting");
         _lgDisplay.ShowPC();
-        _lgDisplay.TurnOffScreen();
         _lgDisplay.ShowToast("Done");
 
         // Assert - Should handle all operations
@@ -642,12 +548,12 @@ public class LgDisplayTests : IDisposable
     public void LgScreenStateChange_WhenTurnsOn_Should_TurnOnMonitorScreen()
     {
         // Act - Simulate LG screen entity turning on
-        _mockHaContext.SimulateStateChange(_entities.Screen.EntityId, HaEntityStates.OFF, HaEntityStates.ON);
+        _mockHaContext.SimulateStateChange(_entities.Display.EntityId, HaEntityStates.OFF, HaEntityStates.ON);
 
         // Assert - Monitor screen should be turned on
         // This would be verified through the webostv service calls in a real implementation
         // For now, we verify the state change was processed
-        var newState = _mockHaContext.GetState(_entities.Screen.EntityId);
+        var newState = _mockHaContext.GetState(_entities.Display.EntityId);
         newState?.State.Should().Be(HaEntityStates.ON);
     }
 
@@ -655,24 +561,47 @@ public class LgDisplayTests : IDisposable
     public void LgScreenStateChange_WhenTurnsOff_Should_TurnOffMonitorScreen()
     {
         // Arrange - Screen initially on
-        _mockHaContext.SetEntityState(_entities.Screen.EntityId, HaEntityStates.ON);
+        _mockHaContext.SetEntityState(_entities.Display.EntityId, HaEntityStates.ON);
 
         // Act - Simulate LG screen entity turning off
-        _mockHaContext.SimulateStateChange(_entities.Screen.EntityId, HaEntityStates.ON, HaEntityStates.OFF);
+        _mockHaContext.SimulateStateChange(_entities.Display.EntityId, HaEntityStates.ON, HaEntityStates.OFF);
 
         // Assert - Monitor screen should be turned off
-        var newState = _mockHaContext.GetState(_entities.Screen.EntityId);
+        var newState = _mockHaContext.GetState(_entities.Display.EntityId);
         newState?.State.Should().Be(HaEntityStates.OFF);
+    }
+
+    [Fact]
+    public void BrightnessChange_Should_TriggerSetBrightnessCommand()
+    {
+        // Arrange - Simulate brightness change on the screen light entity
+        const int newBrightness = 191;
+        const int newBrightnessPct = 74;
+        _mockHaContext.SimulateStateChange(
+            _entities.Display.EntityId,
+            "on",
+            "on",
+            new LightAttributes { Brightness = newBrightness }
+        );
+
+        // Assert - Should invoke SetBrightnessAsync with correct value
+        var lastCall = _mockHaContext.GetLastServiceCall();
+        lastCall.Should().NotBeNull();
+        lastCall!.Domain.Should().Be("webostv"); // or whatever domain your SetBrightnessAsync uses
+        lastCall.Service.Should().Be("command");
+
+        var dataJson = JsonSerializer.Serialize(lastCall.Data);
+        dataJson.Should().Contain($"{newBrightnessPct}");
     }
 
     [Fact]
     public void BrightnessChange_Should_SetMonitorBrightness()
     {
         // Act - Simulate brightness change
-        _mockHaContext.SimulateStateChange(_entities.Brightness.EntityId, "90", "75");
+        _mockHaContext.SimulateStateChange(_entities.Display.EntityId, "90", "75");
 
         // Assert - Brightness state should be updated (verify through mock context)
-        var newState = _mockHaContext.GetState(_entities.Brightness.EntityId);
+        var newState = _mockHaContext.GetState(_entities.Display.EntityId);
         newState?.State.Should().Be("75");
     }
 
@@ -715,10 +644,7 @@ public class LgDisplayTests : IDisposable
     private class TestLgDisplayEntities(IHaContext haContext) : ILgDisplayEntities
     {
         public MediaPlayerEntity MediaPlayer => new(haContext, "media_player.lg_webos_smart_tv");
-
-        public SwitchEntity Screen => new(haContext, "switch.lgscreen");
-
-        public InputNumberEntity Brightness => new(haContext, "inputNumber.lgtvbrightness");
+        public LightEntity Display => new(haContext, "light.lgdisplay");
     }
 
     /// <summary>

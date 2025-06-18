@@ -99,8 +99,7 @@ public interface ILaptopEntities
 public interface ILgDisplayEntities
 {
     MediaPlayerEntity MediaPlayer { get; }
-    SwitchEntity Screen { get; }
-    InputNumberEntity Brightness { get; }
+    LightEntity Display { get; }
 }
 
 public interface ITabletEntities : IMotionBase

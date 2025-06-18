@@ -706,9 +706,7 @@ public class DisplayAutomationsTests : IDisposable
     {
         public MediaPlayerEntity MediaPlayer => new(haContext, "media_player.lg_webos_smart_tv");
 
-        public SwitchEntity Screen => new(haContext, "Switch.LgScreen");
-
-        public InputNumberEntity Brightness => new(haContext, "InputNumber.LgTvBrightness");
+        public LightEntity Display => new(haContext, "light.lgdisplay");
     }
 
     #endregion

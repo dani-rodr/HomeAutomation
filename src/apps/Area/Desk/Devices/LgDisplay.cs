@@ -10,9 +10,9 @@ public enum DisplaySource
 public class LgDisplay : MediaPlayerBase
 {
     private const string MAC_ADDRESS = "D4:8D:26:B8:C4:AA";
-    private bool IsScreenOn { get; set; }
     private readonly WebostvServices _webosServices;
     private readonly WakeOnLanServices _wolServices;
+    private readonly LightEntity _screen;
     private int _brightness = 90;
     public bool IsShowingPc => CurrentSource == Sources[DisplaySource.PC.ToString()];
     public bool IsShowingLaptop => CurrentSource == Sources[DisplaySource.Laptop.ToString()];
@@ -22,9 +22,10 @@ public class LgDisplay : MediaPlayerBase
     {
         _webosServices = services.Webostv;
         _wolServices = services.WakeOnLan;
-        Automations.Add(AdjustBrightnessFromInput(entities.Brightness));
-        Automations.Add(ToggleScreenAutomation(entities.Screen));
-        Automations.Add(SyncScreenSwitchWithMediaState(entities.Screen));
+        _screen = entities.Display;
+        Automations.Add(AdjustBrightnessFromInput());
+        Automations.Add(ToggleScreenAutomation());
+        Automations.Add(SyncScreenSwitchWithMediaState());
     }
 
     public async Task SetBrightnessAsync(int value)
@@ -53,10 +54,6 @@ public class LgDisplay : MediaPlayerBase
     public void ShowLaptop() => ShowSource(DisplaySource.Laptop.ToString());
 
     public void ShowScreenSaver() => ShowSource(DisplaySource.ScreenSaver.ToString());
-
-    public void TurnOnScreen() => SetScreenPower(true);
-
-    public void TurnOffScreen() => SetScreenPower(false);
 
     public override void TurnOn() => _wolServices.SendMagicPacket(MAC_ADDRESS);
 
@@ -96,12 +93,12 @@ public class LgDisplay : MediaPlayerBase
 
     private void SetScreenPower(bool on)
     {
-        if (IsScreenOn == on)
+        if (IsOff())
         {
+            Logger.LogWarning("TV is off, cannot control screen power.");
             return;
         }
 
-        IsScreenOn = on;
         var command = on
             ? "com.webos.service.tvpower/power/turnOnScreen"
             : "com.webos.service.tvpower/power/turnOffScreen";
@@ -109,34 +106,33 @@ public class LgDisplay : MediaPlayerBase
         SendCommand(command);
     }
 
-    private IDisposable ToggleScreenAutomation(SwitchEntity screen) =>
-        screen.StateChanges().Subscribe(e => SetScreenPower(e.IsOn()));
+    private IDisposable ToggleScreenAutomation() => _screen.StateChanges().Subscribe(e => SetScreenPower(e.IsOn()));
 
-    private IDisposable SyncScreenSwitchWithMediaState(SwitchEntity screen) =>
+    private IDisposable SyncScreenSwitchWithMediaState() =>
         Entity
             .StateChangesWithCurrent()
             .Subscribe(e =>
             {
                 if (e.IsOn())
                 {
-                    screen.TurnOn();
+                    _screen.TurnOn();
                 }
                 else if (e.IsOff())
                 {
-                    screen.TurnOff();
+                    _screen.TurnOff();
                 }
             });
 
-    private IDisposable AdjustBrightnessFromInput(InputNumberEntity brightness)
+    private IDisposable AdjustBrightnessFromInput()
     {
-        return brightness
-            .StateChanges()
+        return _screen
+            .StateAllChanges()
             .Subscribe(async e =>
             {
-                var newValue = e?.New?.State;
-                if (newValue is double value)
+                if (e.IsOn() && e?.New?.Attributes?.Brightness is double brightness)
                 {
-                    await SetBrightnessAsync((int)value);
+                    var brightnessPercent = (int)(brightness / 255.0 * 100);
+                    await SetBrightnessAsync(brightnessPercent);
                 }
             });
     }

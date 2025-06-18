@@ -133,8 +133,7 @@ public class LaptopEntities(Entities entities) : ILaptopEntities
 public class DeskLgDisplayEntities(Entities entities) : ILgDisplayEntities
 {
     public MediaPlayerEntity MediaPlayer => entities.MediaPlayer.LgWebosSmartTv;
-    public SwitchEntity Screen => entities.Switch.LgScreen;
-    public InputNumberEntity Brightness => entities.InputNumber.LgTvBrightness;
+    public LightEntity Display => entities.Light.LgDisplay;
 }
 
 public class LivingRoomFanEntities(Entities entities, CommonEntities common) : ILivingRoomFanEntities
