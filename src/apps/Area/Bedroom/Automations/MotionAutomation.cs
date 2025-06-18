@@ -7,8 +7,10 @@ public class MotionAutomation(IBedroomMotionEntities entities, ILogger logger)
 {
     private readonly SwitchEntity _rightSideEmptySwitch = entities.RightSideEmptySwitch;
     private readonly SwitchEntity _leftSideFanSwitch = entities.LeftSideFanSwitch;
+    protected override int SensorActiveDelayValue => 45;
 
-    protected override IEnumerable<IDisposable> GetAdditionalPersistentAutomations() => GetLightSwitchAutomations();
+    protected override IEnumerable<IDisposable> GetAdditionalPersistentAutomations() =>
+        [.. GetLightSwitchAutomations(), .. GetSensorDelayAutomations()];
 
     protected override IEnumerable<IDisposable> GetLightAutomations()
     {

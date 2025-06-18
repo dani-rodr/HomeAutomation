@@ -78,7 +78,7 @@ public class HaEventHandlerTests : IDisposable
     }
 
     [Fact]
-    public void Subscribe_Should_LogEventInformation()
+    public void Subscribe_Should_LogEventDebug()
     {
         // Arrange
         var subscription = _eventHandler.Subscribe("logged_event", _ => { });
@@ -90,7 +90,7 @@ public class HaEventHandlerTests : IDisposable
         _mockLogger.Verify(
             x =>
                 x.Log(
-                    LogLevel.Information,
+                    LogLevel.Debug,
                     It.IsAny<EventId>(),
                     It.Is<It.IsAnyType>((v, t) => v.ToString()!.Contains("Event 'logged_event' received with data:")),
                     It.IsAny<Exception>(),
@@ -208,7 +208,7 @@ public class HaEventHandlerTests : IDisposable
         _mockLogger.Verify(
             x =>
                 x.Log(
-                    LogLevel.Information,
+                    LogLevel.Debug,
                     It.IsAny<EventId>(),
                     It.Is<It.IsAnyType>((v, t) => v.ToString()!.Contains("NFC scanned:")),
                     It.IsAny<Exception>(),
@@ -492,7 +492,7 @@ public class HaEventHandlerTests : IDisposable
         _mockLogger.Verify(
             x =>
                 x.Log(
-                    LogLevel.Information,
+                    LogLevel.Debug,
                     It.IsAny<EventId>(),
                     It.Is<It.IsAnyType>(
                         (v, t) => v.ToString()!.Contains("HaEventHandler disposed and subscriptions cleaned up")

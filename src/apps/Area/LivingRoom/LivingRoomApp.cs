@@ -7,8 +7,7 @@ public class LivingRoomApp(
     ILivingRoomFanEntities fanEntities,
     IAirQualityEntities airQualityEntities,
     ITabletEntities tabletEntities,
-    ILogger<LivingRoomApp> logger,
-    ILogger<DimmingLightController> dimmingLogger
+    ILogger<LivingRoomApp> logger
 ) : AppBase<LivingRoomApp>()
 {
     protected override IEnumerable<IAutomation> CreateAutomations()
@@ -18,7 +17,7 @@ public class LivingRoomApp(
         yield return new TabletAutomations(tabletEntities, logger);
         yield return new MotionAutomation(
             motionEntities,
-            new DimmingLightController(motionEntities.SensorDelay, dimmingLogger),
+            new DimmingLightController(motionEntities.SensorDelay, logger),
             logger
         );
     }

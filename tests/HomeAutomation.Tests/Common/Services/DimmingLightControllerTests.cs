@@ -11,6 +11,7 @@ public class DimmingLightControllerTests : IDisposable
 {
     private readonly MockHaContext _mockHaContext;
     private readonly NumberEntity _sensorDelay;
+    private readonly Mock<ILogger<DimmingLightController>> _mockLogger;
     private readonly LightEntity _light;
     private readonly DimmingLightController _controller;
 
@@ -19,7 +20,8 @@ public class DimmingLightControllerTests : IDisposable
         _mockHaContext = new MockHaContext();
         _sensorDelay = new NumberEntity(_mockHaContext, "number.test_sensor_delay");
         _light = new LightEntity(_mockHaContext, "light.test_light");
-        _controller = new DimmingLightController(_sensorDelay);
+        _mockLogger = new Mock<ILogger<DimmingLightController>>();
+        _controller = new DimmingLightController(_sensorDelay, _mockLogger.Object);
     }
 
     [Fact]

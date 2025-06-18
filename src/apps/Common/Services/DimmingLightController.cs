@@ -1,7 +1,6 @@
 namespace HomeAutomation.apps.Common.Services;
 
-public class DimmingLightController(NumberEntity sensorDelay, ILogger<DimmingLightController> logger)
-    : IDimmingLightController
+public class DimmingLightController(NumberEntity sensorDelay, ILogger logger) : IDimmingLightController
 {
     private CancellationTokenSource? _lightTurnOffCancellationToken;
     private int _sensorActiveDelayValue = 5;

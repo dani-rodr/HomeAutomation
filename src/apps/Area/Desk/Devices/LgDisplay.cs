@@ -22,23 +22,9 @@ public class LgDisplay : MediaPlayerBase
     {
         _webosServices = services.Webostv;
         _wolServices = services.WakeOnLan;
-        Automations.Add(GetScreenStateAutomation(entities.Screen));
-        Automations.Add(GetScreenBrightnessAutomation(entities.Brightness));
-        Automations.Add(
-            Entity
-                .StateChangesWithCurrent()
-                .Subscribe(e =>
-                {
-                    if (e.IsOn())
-                    {
-                        entities.Screen.TurnOn();
-                    }
-                    if (e.IsOff())
-                    {
-                        entities.Screen.TurnOff();
-                    }
-                })
-        );
+        Automations.Add(AdjustBrightnessFromInput(entities.Brightness));
+        Automations.Add(ToggleScreenAutomation(entities.Screen));
+        Automations.Add(SyncScreenSwitchWithMediaState(entities.Screen));
     }
 
     public async Task SetBrightnessAsync(int value)
@@ -72,11 +58,7 @@ public class LgDisplay : MediaPlayerBase
 
     public void TurnOffScreen() => SetScreenPower(false);
 
-    public override void TurnOn()
-    {
-        _wolServices.SendMagicPacket(MAC_ADDRESS);
-        TurnOnScreen();
-    }
+    public override void TurnOn() => _wolServices.SendMagicPacket(MAC_ADDRESS);
 
     protected override void ExtendSourceDictionary(Dictionary<string, string> sources)
     {
@@ -127,25 +109,25 @@ public class LgDisplay : MediaPlayerBase
         SendCommand(command);
     }
 
-    private IDisposable GetScreenStateAutomation(SwitchEntity screen)
-    {
-        return screen
-            .StateChanges()
+    private IDisposable ToggleScreenAutomation(SwitchEntity screen) =>
+        screen.StateChanges().Subscribe(e => SetScreenPower(e.IsOn()));
+
+    private IDisposable SyncScreenSwitchWithMediaState(SwitchEntity screen) =>
+        Entity
+            .StateChangesWithCurrent()
             .Subscribe(e =>
             {
                 if (e.IsOn())
                 {
-                    TurnOnScreen();
-                    return;
+                    screen.TurnOn();
                 }
-                if (e.IsOff())
+                else if (e.IsOff())
                 {
-                    TurnOffScreen();
+                    screen.TurnOff();
                 }
             });
-    }
 
-    private IDisposable GetScreenBrightnessAutomation(InputNumberEntity brightness)
+    private IDisposable AdjustBrightnessFromInput(InputNumberEntity brightness)
     {
         return brightness
             .StateChanges()

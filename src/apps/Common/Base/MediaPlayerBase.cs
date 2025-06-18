@@ -19,7 +19,7 @@ public abstract class MediaPlayerBase : AutomationDeviceBase, IMediaPlayer
     protected ILogger Logger { get; }
     protected readonly Dictionary<string, string> Sources;
 
-    private string _queuedSource = string.Empty;
+    private string _queuedSourceKey = string.Empty;
 
     public MediaPlayerBase(MediaPlayerEntity entity, ILogger logger)
     {
@@ -33,12 +33,12 @@ public abstract class MediaPlayerBase : AutomationDeviceBase, IMediaPlayer
                 .IsOn()
                 .Subscribe(_ =>
                 {
-                    if (string.IsNullOrEmpty(_queuedSource))
+                    if (string.IsNullOrEmpty(_queuedSourceKey))
                     {
                         return;
                     }
-                    SelectSource(_queuedSource);
-                    _queuedSource = string.Empty;
+                    ShowSource(_queuedSourceKey);
+                    _queuedSourceKey = string.Empty;
                 })
         );
     }
@@ -72,11 +72,11 @@ public abstract class MediaPlayerBase : AutomationDeviceBase, IMediaPlayer
         if (IsOff())
         {
             TurnOn();
-            _queuedSource = source;
+            _queuedSourceKey = key;
             return;
         }
 
-        _queuedSource = "";
+        _queuedSourceKey = "";
         Entity.SelectSource(source);
     }
 }

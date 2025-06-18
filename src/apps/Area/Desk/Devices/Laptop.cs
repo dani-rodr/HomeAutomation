@@ -77,14 +77,14 @@ public class Laptop : ComputerBase
     {
         var logoffSchedules = scheduler.GetSchedules(() =>
         {
-            if (!IsOn())
+            if (IsOn())
             {
-                Logger.LogDebug("Scheduled logoff triggered: Laptop is not on, executing TurnOff.");
+                Logger.LogDebug("Scheduled logoff triggered: Laptop is on, executing TurnOff.");
                 TurnOff();
             }
             else
             {
-                Logger.LogDebug("Scheduled logoff triggered: Laptop is currently on, skipping TurnOff.");
+                Logger.LogDebug("Scheduled logoff triggered: Laptop is not on, skipping TurnOff.");
             }
         });
         foreach (var schedule in logoffSchedules)

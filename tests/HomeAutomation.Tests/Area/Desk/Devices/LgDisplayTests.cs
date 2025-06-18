@@ -106,7 +106,6 @@ public class LgDisplayTests : IDisposable
 
         // Assert
         _mockHaContext.ShouldHaveCalledService("wake_on_lan", "send_magic_packet");
-        _mockHaContext.ShouldHaveCalledWebostvService("command", _entities.MediaPlayer.EntityId);
     }
 
     [Fact]
@@ -492,25 +491,19 @@ public class LgDisplayTests : IDisposable
     }
 
     [Fact]
-    public void TurnOn_Should_TurnOnScreenAfterWakeOnLan()
+    public void TurnOn_Should_Only_SendMagicPacket()
     {
         // Act
         _lgDisplay.TurnOn();
 
-        // Assert - Should call both WOL and screen power on
+        // Assert
         _mockHaContext.ShouldHaveCalledService("wake_on_lan", "send_magic_packet");
-        _mockHaContext.ShouldHaveCalledWebostvService("command", _entities.MediaPlayer.EntityId);
 
-        var commandCall = _mockHaContext
-            .ServiceCalls.Where(c => c.Service == "command" && c.Domain == "webostv")
-            .FirstOrDefault();
-
-        var commandProperty = commandCall!.Data?.GetType().GetProperty("command");
-        commandProperty
-            ?.GetValue(commandCall.Data)
-            ?.ToString()
+        // Ensure no WebOS command was sent directly by TurnOn()
+        _mockHaContext
+            .ServiceCalls.Any(c => c.Domain == "webostv" && c.Service == "command")
             .Should()
-            .Be("com.webos.service.tvpower/power/turnOnScreen", "Should turn on screen after WOL");
+            .BeFalse("TurnOn should not send webostv command directly");
     }
 
     #endregion
@@ -618,7 +611,6 @@ public class LgDisplayTests : IDisposable
 
         // Assert - Should call WOL, screen power on, and source selection
         _mockHaContext.ShouldHaveCalledService("wake_on_lan", "send_magic_packet");
-        _mockHaContext.ShouldHaveCalledWebostvService("command", _entities.MediaPlayer.EntityId);
     }
 
     [Fact(Skip = "Temporarily disabled - display logic under review")]
