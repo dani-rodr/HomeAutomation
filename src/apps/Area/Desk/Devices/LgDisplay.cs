@@ -9,7 +9,7 @@ public enum DisplaySource
     ScreenSaver,
 }
 
-public class LgDisplay : MediaPlayerBase
+public class LgDisplay : MediaPlayerBase, ILgDisplay
 {
     private const string MAC_ADDRESS = "D4:8D:26:B8:C4:AA";
     private readonly WebostvServices _webosServices;
@@ -30,7 +30,7 @@ public class LgDisplay : MediaPlayerBase
         Automations.Add(SyncScreenSwitchWithMediaState());
     }
 
-    public async Task SetBrightnessAsync(int value)
+    private async Task SetBrightnessAsync(int value)
     {
         if (value == _brightness)
         {

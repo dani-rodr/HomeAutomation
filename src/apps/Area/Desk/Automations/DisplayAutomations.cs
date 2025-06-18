@@ -3,7 +3,7 @@ using HomeAutomation.apps.Area.Desk.Devices;
 namespace HomeAutomation.apps.Area.Desk.Automations;
 
 public class DisplayAutomations(
-    LgDisplay monitor,
+    ILgDisplay monitor,
     Desktop desktop,
     Laptop laptop,
     IEventHandler eventHandler,
