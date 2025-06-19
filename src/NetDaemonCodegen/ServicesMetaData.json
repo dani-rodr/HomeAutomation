@@ -2463,6 +2463,72 @@
       "fields": {}
     }
   },
+  "conversation": {
+    "process": {
+      "name": "Process",
+      "description": "Launches a conversation from a transcribed text.",
+      "fields": {
+        "text": {
+          "example": "Turn all lights on",
+          "required": true,
+          "selector": {
+            "text": null
+          },
+          "name": "Text",
+          "description": "Transcribed text input."
+        },
+        "language": {
+          "example": "NL",
+          "selector": {
+            "text": null
+          },
+          "name": "Language",
+          "description": "Language of text. Defaults to server language."
+        },
+        "agent_id": {
+          "example": "homeassistant",
+          "selector": {
+            "conversation_agent": null
+          },
+          "name": "Agent",
+          "description": "Conversation agent to process your request. The conversation agent is the brains of your assistant. It processes the incoming text commands."
+        },
+        "conversation_id": {
+          "example": "my_conversation_1",
+          "selector": {
+            "text": null
+          },
+          "name": "Conversation ID",
+          "description": "ID of the conversation, to be able to continue a previous conversation"
+        }
+      },
+      "response": {
+        "optional": true
+      }
+    },
+    "reload": {
+      "name": "Reload",
+      "description": "Reloads the intent configuration.",
+      "fields": {
+        "language": {
+          "example": "NL",
+          "selector": {
+            "text": null
+          },
+          "name": "Language",
+          "description": "Language to clear cached intents for. Defaults to server language."
+        },
+        "agent_id": {
+          "example": "homeassistant",
+          "selector": {
+            "conversation_agent": null
+          },
+          "name": "Agent",
+          "description": "Conversation agent to reload."
+        }
+      }
+    }
+  },
   "camera": {
     "enable_motion_detection": {
       "name": "Enable motion detection",
@@ -2736,72 +2802,6 @@
       }
     }
   },
-  "conversation": {
-    "process": {
-      "name": "Process",
-      "description": "Launches a conversation from a transcribed text.",
-      "fields": {
-        "text": {
-          "example": "Turn all lights on",
-          "required": true,
-          "selector": {
-            "text": null
-          },
-          "name": "Text",
-          "description": "Transcribed text input."
-        },
-        "language": {
-          "example": "NL",
-          "selector": {
-            "text": null
-          },
-          "name": "Language",
-          "description": "Language of text. Defaults to server language."
-        },
-        "agent_id": {
-          "example": "homeassistant",
-          "selector": {
-            "conversation_agent": null
-          },
-          "name": "Agent",
-          "description": "Conversation agent to process your request. The conversation agent is the brains of your assistant. It processes the incoming text commands."
-        },
-        "conversation_id": {
-          "example": "my_conversation_1",
-          "selector": {
-            "text": null
-          },
-          "name": "Conversation ID",
-          "description": "ID of the conversation, to be able to continue a previous conversation"
-        }
-      },
-      "response": {
-        "optional": true
-      }
-    },
-    "reload": {
-      "name": "Reload",
-      "description": "Reloads the intent configuration.",
-      "fields": {
-        "language": {
-          "example": "NL",
-          "selector": {
-            "text": null
-          },
-          "name": "Language",
-          "description": "Language to clear cached intents for. Defaults to server language."
-        },
-        "agent_id": {
-          "example": "homeassistant",
-          "selector": {
-            "conversation_agent": null
-          },
-          "name": "Agent",
-          "description": "Conversation agent to reload."
-        }
-      }
-    }
-  },
   "google_assistant": {
     "request_sync": {
       "name": "Request sync",
@@ -2843,6 +2843,106 @@
       "name": "Disable remote access",
       "description": "Disconnects the instance UI from Home Assistant Cloud. This disables access to it from outside your local network.",
       "fields": {}
+    }
+  },
+  "number": {
+    "set_value": {
+      "name": "Set",
+      "description": "Sets the value of a number.",
+      "fields": {
+        "value": {
+          "example": 42,
+          "required": true,
+          "selector": {
+            "text": null
+          },
+          "name": "Value",
+          "description": "The target value to set."
+        }
+      },
+      "target": {
+        "entity": [
+          {
+            "domain": [
+              "number"
+            ]
+          }
+        ]
+      }
+    },
+    "min": {
+      "name": "Set minimum value \uD83D\uDC7B",
+      "description": "Set a number entity to its minimum value.",
+      "fields": {},
+      "target": {
+        "entity": [
+          {
+            "domain": [
+              "number"
+            ]
+          }
+        ]
+      }
+    },
+    "increment": {
+      "name": "Increase value \uD83D\uDC7B",
+      "description": "Increase a number entity value by a certain amount.",
+      "fields": {
+        "amount": {
+          "name": "Amount",
+          "description": "The amount to increase the number with. If not provided, the step of the number entity will be used.",
+          "required": false,
+          "selector": {
+            "number": null
+          }
+        }
+      },
+      "target": {
+        "entity": [
+          {
+            "domain": [
+              "number"
+            ]
+          }
+        ]
+      }
+    },
+    "max": {
+      "name": "Set maximum value \uD83D\uDC7B",
+      "description": "Set a number entity to its maximum value.",
+      "fields": {},
+      "target": {
+        "entity": [
+          {
+            "domain": [
+              "number"
+            ]
+          }
+        ]
+      }
+    },
+    "decrement": {
+      "name": "Decrease value \uD83D\uDC7B",
+      "description": "Decrease a number entity value by a certain amount.",
+      "fields": {
+        "amount": {
+          "name": "Amount",
+          "description": "The amount to decrease the number with. If not provided, the step of the number entity will be used.",
+          "required": false,
+          "selector": {
+            "number": null
+          }
+        }
+      },
+      "target": {
+        "entity": [
+          {
+            "domain": [
+              "number"
+            ]
+          }
+        ]
+      }
     }
   },
   "select": {
@@ -2968,6 +3068,122 @@
       }
     }
   },
+  "assist_satellite": {
+    "announce": {
+      "name": "Announce",
+      "description": "Lets a satellite announce a message.",
+      "fields": {
+        "message": {
+          "required": false,
+          "example": "Time to wake up!",
+          "default": "",
+          "selector": {
+            "text": null
+          },
+          "name": "Message",
+          "description": "The message to announce."
+        },
+        "media_id": {
+          "required": false,
+          "selector": {
+            "text": null
+          },
+          "name": "Media ID",
+          "description": "The media ID to announce instead of using text-to-speech."
+        },
+        "preannounce": {
+          "required": false,
+          "default": true,
+          "selector": {
+            "boolean": null
+          },
+          "name": "Preannounce",
+          "description": "Play a sound before the announcement."
+        },
+        "preannounce_media_id": {
+          "required": false,
+          "selector": {
+            "text": null
+          },
+          "name": "Preannounce media ID",
+          "description": "Custom media ID to play before the announcement."
+        }
+      },
+      "target": {
+        "entity": [
+          {
+            "domain": [
+              "assist_satellite"
+            ],
+            "supported_features": [
+              1
+            ]
+          }
+        ]
+      }
+    },
+    "start_conversation": {
+      "name": "Start conversation",
+      "description": "Starts a conversation from a satellite.",
+      "fields": {
+        "start_message": {
+          "required": false,
+          "example": "You left the lights on in the living room. Turn them off?",
+          "default": "",
+          "selector": {
+            "text": null
+          },
+          "name": "Message",
+          "description": "The message to start with."
+        },
+        "start_media_id": {
+          "required": false,
+          "selector": {
+            "text": null
+          },
+          "name": "Media ID",
+          "description": "The media ID to start with instead of using text-to-speech."
+        },
+        "extra_system_prompt": {
+          "required": false,
+          "selector": {
+            "text": null
+          },
+          "name": "Extra system prompt",
+          "description": "Provide background information to the AI about the request."
+        },
+        "preannounce": {
+          "required": false,
+          "default": true,
+          "selector": {
+            "boolean": null
+          },
+          "name": "Preannounce",
+          "description": "Play a sound before the start message or media."
+        },
+        "preannounce_media_id": {
+          "required": false,
+          "selector": {
+            "text": null
+          },
+          "name": "Preannounce media ID",
+          "description": "Custom media ID to play before the start message or media."
+        }
+      },
+      "target": {
+        "entity": [
+          {
+            "domain": [
+              "assist_satellite"
+            ],
+            "supported_features": [
+              2
+            ]
+          }
+        ]
+      }
+    }
+  },
   "scene": {
     "reload": {
       "name": "Reload",
@@ -3076,103 +3292,125 @@
       }
     }
   },
-  "number": {
-    "set_value": {
-      "name": "Set",
-      "description": "Sets the value of a number.",
+  "script": {
+    "launch_moonlight_on_mi_pad_5": {
+      "name": "Launch Moonlight on Mi Pad 5",
+      "description": "",
+      "fields": {},
+      "response": {
+        "optional": true
+      }
+    },
+    "1714535235439": {
+      "name": "Launch App",
+      "description": "",
+      "fields": {},
+      "response": {
+        "optional": true
+      }
+    },
+    "send_tv_notification": {
+      "name": "Send TV Notification",
+      "description": "",
+      "fields": {},
+      "response": {
+        "optional": true
+      }
+    },
+    "launch_hlk_radar_tool": {
+      "name": "Launch HLK Radar Tool",
+      "description": "",
+      "fields": {},
+      "response": {
+        "optional": true
+      }
+    },
+    "reload": {
+      "name": "Reload",
+      "description": "Reloads all the available scripts.",
+      "fields": {}
+    },
+    "turn_on": {
+      "name": "Turn on",
+      "description": "Runs the sequence of actions defined in a script.",
+      "fields": {},
+      "target": {
+        "entity": [
+          {
+            "domain": [
+              "script"
+            ]
+          }
+        ]
+      }
+    },
+    "turn_off": {
+      "name": "Turn off",
+      "description": "Stops a running script.",
+      "fields": {},
+      "target": {
+        "entity": [
+          {
+            "domain": [
+              "script"
+            ]
+          }
+        ]
+      }
+    },
+    "toggle": {
+      "name": "Toggle",
+      "description": "Starts a script if it isn\u0027t running, stops it otherwise.",
+      "fields": {},
+      "target": {
+        "entity": [
+          {
+            "domain": [
+              "script"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "logbook": {
+    "log": {
+      "name": "Log",
+      "description": "Creates a custom entry in the logbook.",
       "fields": {
-        "value": {
-          "example": 42,
+        "name": {
           "required": true,
+          "example": "Kitchen",
           "selector": {
             "text": null
           },
-          "name": "Value",
-          "description": "The target value to set."
-        }
-      },
-      "target": {
-        "entity": [
-          {
-            "domain": [
-              "number"
-            ]
-          }
-        ]
-      }
-    },
-    "min": {
-      "name": "Set minimum value \uD83D\uDC7B",
-      "description": "Set a number entity to its minimum value.",
-      "fields": {},
-      "target": {
-        "entity": [
-          {
-            "domain": [
-              "number"
-            ]
-          }
-        ]
-      }
-    },
-    "increment": {
-      "name": "Increase value \uD83D\uDC7B",
-      "description": "Increase a number entity value by a certain amount.",
-      "fields": {
-        "amount": {
-          "name": "Amount",
-          "description": "The amount to increase the number with. If not provided, the step of the number entity will be used.",
-          "required": false,
+          "name": "Name",
+          "description": "Custom name for an entity, can be referenced using the \u0027Entity ID\u0027 field."
+        },
+        "message": {
+          "required": true,
+          "example": "is being used",
           "selector": {
-            "number": null
-          }
-        }
-      },
-      "target": {
-        "entity": [
-          {
-            "domain": [
-              "number"
-            ]
-          }
-        ]
-      }
-    },
-    "max": {
-      "name": "Set maximum value \uD83D\uDC7B",
-      "description": "Set a number entity to its maximum value.",
-      "fields": {},
-      "target": {
-        "entity": [
-          {
-            "domain": [
-              "number"
-            ]
-          }
-        ]
-      }
-    },
-    "decrement": {
-      "name": "Decrease value \uD83D\uDC7B",
-      "description": "Decrease a number entity value by a certain amount.",
-      "fields": {
-        "amount": {
-          "name": "Amount",
-          "description": "The amount to decrease the number with. If not provided, the step of the number entity will be used.",
-          "required": false,
+            "text": null
+          },
+          "name": "Message",
+          "description": "Message of the logbook entry."
+        },
+        "entity_id": {
           "selector": {
-            "number": null
-          }
+            "entity": null
+          },
+          "name": "Entity ID",
+          "description": "Entity to reference in the logbook entry."
+        },
+        "domain": {
+          "example": "light",
+          "selector": {
+            "text": null
+          },
+          "name": "Domain",
+          "description": "Determines which icon is used in the logbook entry. The icon illustrates the integration domain related to this logbook entry."
         }
-      },
-      "target": {
-        "entity": [
-          {
-            "domain": [
-              "number"
-            ]
-          }
-        ]
       }
     }
   },
@@ -4297,128 +4535,6 @@
       }
     }
   },
-  "logbook": {
-    "log": {
-      "name": "Log",
-      "description": "Creates a custom entry in the logbook.",
-      "fields": {
-        "name": {
-          "required": true,
-          "example": "Kitchen",
-          "selector": {
-            "text": null
-          },
-          "name": "Name",
-          "description": "Custom name for an entity, can be referenced using the \u0027Entity ID\u0027 field."
-        },
-        "message": {
-          "required": true,
-          "example": "is being used",
-          "selector": {
-            "text": null
-          },
-          "name": "Message",
-          "description": "Message of the logbook entry."
-        },
-        "entity_id": {
-          "selector": {
-            "entity": null
-          },
-          "name": "Entity ID",
-          "description": "Entity to reference in the logbook entry."
-        },
-        "domain": {
-          "example": "light",
-          "selector": {
-            "text": null
-          },
-          "name": "Domain",
-          "description": "Determines which icon is used in the logbook entry. The icon illustrates the integration domain related to this logbook entry."
-        }
-      }
-    }
-  },
-  "script": {
-    "launch_moonlight_on_mi_pad_5": {
-      "name": "Launch Moonlight on Mi Pad 5",
-      "description": "",
-      "fields": {},
-      "response": {
-        "optional": true
-      }
-    },
-    "1714535235439": {
-      "name": "Launch App",
-      "description": "",
-      "fields": {},
-      "response": {
-        "optional": true
-      }
-    },
-    "send_tv_notification": {
-      "name": "Send TV Notification",
-      "description": "",
-      "fields": {},
-      "response": {
-        "optional": true
-      }
-    },
-    "launch_hlk_radar_tool": {
-      "name": "Launch HLK Radar Tool",
-      "description": "",
-      "fields": {},
-      "response": {
-        "optional": true
-      }
-    },
-    "reload": {
-      "name": "Reload",
-      "description": "Reloads all the available scripts.",
-      "fields": {}
-    },
-    "turn_on": {
-      "name": "Turn on",
-      "description": "Runs the sequence of actions defined in a script.",
-      "fields": {},
-      "target": {
-        "entity": [
-          {
-            "domain": [
-              "script"
-            ]
-          }
-        ]
-      }
-    },
-    "turn_off": {
-      "name": "Turn off",
-      "description": "Stops a running script.",
-      "fields": {},
-      "target": {
-        "entity": [
-          {
-            "domain": [
-              "script"
-            ]
-          }
-        ]
-      }
-    },
-    "toggle": {
-      "name": "Toggle",
-      "description": "Starts a script if it isn\u0027t running, stops it otherwise.",
-      "fields": {},
-      "target": {
-        "entity": [
-          {
-            "domain": [
-              "script"
-            ]
-          }
-        ]
-      }
-    }
-  },
   "zone": {
     "reload": {
       "name": "Reload",
@@ -4668,6 +4784,27 @@
             }
           }
         }
+      }
+    }
+  },
+  "input_button": {
+    "reload": {
+      "name": "Reload",
+      "description": "Reloads helpers from the YAML-configuration.",
+      "fields": {}
+    },
+    "press": {
+      "name": "Press",
+      "description": "Mimics the physical button press on the device.",
+      "fields": {},
+      "target": {
+        "entity": [
+          {
+            "domain": [
+              "input_button"
+            ]
+          }
+        ]
       }
     }
   },
@@ -5083,27 +5220,6 @@
       }
     }
   },
-  "input_button": {
-    "reload": {
-      "name": "Reload",
-      "description": "Reloads helpers from the YAML-configuration.",
-      "fields": {}
-    },
-    "press": {
-      "name": "Press",
-      "description": "Mimics the physical button press on the device.",
-      "fields": {},
-      "target": {
-        "entity": [
-          {
-            "domain": [
-              "input_button"
-            ]
-          }
-        ]
-      }
-    }
-  },
   "input_boolean": {
     "reload": {
       "name": "Reload",
@@ -5480,122 +5596,6 @@
       }
     }
   },
-  "assist_satellite": {
-    "announce": {
-      "name": "Announce",
-      "description": "Lets a satellite announce a message.",
-      "fields": {
-        "message": {
-          "required": false,
-          "example": "Time to wake up!",
-          "default": "",
-          "selector": {
-            "text": null
-          },
-          "name": "Message",
-          "description": "The message to announce."
-        },
-        "media_id": {
-          "required": false,
-          "selector": {
-            "text": null
-          },
-          "name": "Media ID",
-          "description": "The media ID to announce instead of using text-to-speech."
-        },
-        "preannounce": {
-          "required": false,
-          "default": true,
-          "selector": {
-            "boolean": null
-          },
-          "name": "Preannounce",
-          "description": "Play a sound before the announcement."
-        },
-        "preannounce_media_id": {
-          "required": false,
-          "selector": {
-            "text": null
-          },
-          "name": "Preannounce media ID",
-          "description": "Custom media ID to play before the announcement."
-        }
-      },
-      "target": {
-        "entity": [
-          {
-            "domain": [
-              "assist_satellite"
-            ],
-            "supported_features": [
-              1
-            ]
-          }
-        ]
-      }
-    },
-    "start_conversation": {
-      "name": "Start conversation",
-      "description": "Starts a conversation from a satellite.",
-      "fields": {
-        "start_message": {
-          "required": false,
-          "example": "You left the lights on in the living room. Turn them off?",
-          "default": "",
-          "selector": {
-            "text": null
-          },
-          "name": "Message",
-          "description": "The message to start with."
-        },
-        "start_media_id": {
-          "required": false,
-          "selector": {
-            "text": null
-          },
-          "name": "Media ID",
-          "description": "The media ID to start with instead of using text-to-speech."
-        },
-        "extra_system_prompt": {
-          "required": false,
-          "selector": {
-            "text": null
-          },
-          "name": "Extra system prompt",
-          "description": "Provide background information to the AI about the request."
-        },
-        "preannounce": {
-          "required": false,
-          "default": true,
-          "selector": {
-            "boolean": null
-          },
-          "name": "Preannounce",
-          "description": "Play a sound before the start message or media."
-        },
-        "preannounce_media_id": {
-          "required": false,
-          "selector": {
-            "text": null
-          },
-          "name": "Preannounce media ID",
-          "description": "Custom media ID to play before the start message or media."
-        }
-      },
-      "target": {
-        "entity": [
-          {
-            "domain": [
-              "assist_satellite"
-            ],
-            "supported_features": [
-              2
-            ]
-          }
-        ]
-      }
-    }
-  },
   "cast": {
     "show_lovelace_view": {
       "name": "Show dashboard view",
@@ -5628,119 +5628,6 @@
           },
           "name": "View path",
           "description": "The URL path of the dashboard view to show."
-        }
-      }
-    }
-  },
-  "counter": {
-    "increment": {
-      "name": "Increment",
-      "description": "Increments a counter by its step size.",
-      "fields": {},
-      "target": {
-        "entity": [
-          {
-            "domain": [
-              "counter"
-            ]
-          }
-        ]
-      }
-    },
-    "decrement": {
-      "name": "Decrement",
-      "description": "Decrements a counter by its step size.",
-      "fields": {},
-      "target": {
-        "entity": [
-          {
-            "domain": [
-              "counter"
-            ]
-          }
-        ]
-      }
-    },
-    "reset": {
-      "name": "Reset",
-      "description": "Resets a counter to its initial value.",
-      "fields": {},
-      "target": {
-        "entity": [
-          {
-            "domain": [
-              "counter"
-            ]
-          }
-        ]
-      }
-    },
-    "set_value": {
-      "name": "Set",
-      "description": "Sets the counter to a specific value.",
-      "fields": {
-        "value": {
-          "required": true,
-          "selector": {
-            "number": {
-              "min": 0,
-              "max": 9223372036854775807,
-              "mode": "box"
-            }
-          },
-          "name": "Value",
-          "description": "The new counter value the entity should be set to."
-        }
-      },
-      "target": {
-        "entity": [
-          {
-            "domain": [
-              "counter"
-            ]
-          }
-        ]
-      }
-    }
-  },
-  "schedule": {
-    "reload": {
-      "name": "Reload",
-      "description": "Reloads schedules from the YAML-configuration.",
-      "fields": {}
-    },
-    "get_schedule": {
-      "name": "Get schedule",
-      "description": "Retrieves the configured time ranges of one or multiple schedules.",
-      "fields": {},
-      "target": {
-        "entity": [
-          {
-            "domain": [
-              "schedule"
-            ]
-          }
-        ]
-      },
-      "response": {
-        "optional": false
-      }
-    }
-  },
-  "sonoff": {
-    "send_command": {
-      "name": "Send Command",
-      "description": "Sends a command to a device.",
-      "fields": {
-        "device": {
-          "name": "Device",
-          "description": "Device ID to send command to.",
-          "example": "1000123456"
-        },
-        "cmd": {
-          "name": "Command",
-          "description": "A single command to send.",
-          "example": "switch"
         }
       }
     }
@@ -5833,6 +5720,180 @@
       "fields": {}
     }
   },
+  "schedule": {
+    "reload": {
+      "name": "Reload",
+      "description": "Reloads schedules from the YAML-configuration.",
+      "fields": {}
+    },
+    "get_schedule": {
+      "name": "Get schedule",
+      "description": "Retrieves the configured time ranges of one or multiple schedules.",
+      "fields": {},
+      "target": {
+        "entity": [
+          {
+            "domain": [
+              "schedule"
+            ]
+          }
+        ]
+      },
+      "response": {
+        "optional": false
+      }
+    }
+  },
+  "google_generative_ai_conversation": {
+    "generate_content": {
+      "name": "Generate content",
+      "description": "Generate content from a prompt consisting of text and optionally images",
+      "fields": {
+        "prompt": {
+          "required": true,
+          "selector": {
+            "text": {
+              "multiline": true
+            }
+          },
+          "name": "Prompt",
+          "description": "The prompt",
+          "example": "Describe what you see in these images"
+        },
+        "image_filename": {
+          "required": false,
+          "selector": {
+            "object": null
+          },
+          "name": "Image filename",
+          "description": "Deprecated. Use filenames instead.",
+          "example": "/config/www/image.jpg"
+        },
+        "filenames": {
+          "required": false,
+          "selector": {
+            "text": {
+              "multiple": true
+            }
+          },
+          "name": "Attachment filenames",
+          "description": "Attachments to add to the prompt (images, PDFs, etc)",
+          "example": "/config/www/image.jpg"
+        }
+      },
+      "response": {
+        "optional": false
+      }
+    }
+  },
+  "counter": {
+    "increment": {
+      "name": "Increment",
+      "description": "Increments a counter by its step size.",
+      "fields": {},
+      "target": {
+        "entity": [
+          {
+            "domain": [
+              "counter"
+            ]
+          }
+        ]
+      }
+    },
+    "decrement": {
+      "name": "Decrement",
+      "description": "Decrements a counter by its step size.",
+      "fields": {},
+      "target": {
+        "entity": [
+          {
+            "domain": [
+              "counter"
+            ]
+          }
+        ]
+      }
+    },
+    "reset": {
+      "name": "Reset",
+      "description": "Resets a counter to its initial value.",
+      "fields": {},
+      "target": {
+        "entity": [
+          {
+            "domain": [
+              "counter"
+            ]
+          }
+        ]
+      }
+    },
+    "set_value": {
+      "name": "Set",
+      "description": "Sets the counter to a specific value.",
+      "fields": {
+        "value": {
+          "required": true,
+          "selector": {
+            "number": {
+              "min": 0,
+              "max": 9223372036854775807,
+              "mode": "box"
+            }
+          },
+          "name": "Value",
+          "description": "The new counter value the entity should be set to."
+        }
+      },
+      "target": {
+        "entity": [
+          {
+            "domain": [
+              "counter"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "wake_on_lan": {
+    "send_magic_packet": {
+      "name": "Send magic packet",
+      "description": "Sends a \u0027magic packet\u0027 to wake up a device with \u0027Wake-On-LAN\u0027 capabilities.",
+      "fields": {
+        "mac": {
+          "required": true,
+          "example": "aa:bb:cc:dd:ee:ff",
+          "selector": {
+            "text": null
+          },
+          "name": "MAC address",
+          "description": "MAC address of the device to wake up."
+        },
+        "broadcast_address": {
+          "example": "192.168.255.255",
+          "selector": {
+            "text": null
+          },
+          "name": "Broadcast address",
+          "description": "The IP address of the host to send the magic packet to. Defaults to \u0060255.255.255.255\u0060 and is normally not changed."
+        },
+        "broadcast_port": {
+          "default": 9,
+          "selector": {
+            "number": {
+              "min": 1,
+              "max": 65535,
+              "mode": "box"
+            }
+          },
+          "name": "Broadcast port",
+          "description": "The port to send the magic packet to. Defaults to \u00609\u0060 and is normally not changed."
+        }
+      }
+    }
+  },
   "input_datetime": {
     "reload": {
       "name": "Reload",
@@ -5888,6 +5949,84 @@
           }
         ]
       }
+    }
+  },
+  "input_text": {
+    "reload": {
+      "name": "Reload",
+      "description": "Reloads helpers from the YAML-configuration.",
+      "fields": {}
+    },
+    "set_value": {
+      "name": "Set",
+      "description": "Sets the value.",
+      "fields": {
+        "value": {
+          "required": true,
+          "example": "This is an example text",
+          "selector": {
+            "text": null
+          },
+          "name": "Value",
+          "description": "The target value."
+        }
+      },
+      "target": {
+        "entity": [
+          {
+            "domain": [
+              "input_text"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "sonoff": {
+    "send_command": {
+      "name": "Send Command",
+      "description": "Sends a command to a device.",
+      "fields": {
+        "device": {
+          "name": "Device",
+          "description": "Device ID to send command to.",
+          "example": "1000123456"
+        },
+        "cmd": {
+          "name": "Command",
+          "description": "A single command to send.",
+          "example": "switch"
+        }
+      }
+    }
+  },
+  "homekit": {
+    "reset_accessory": {
+      "name": "Reset accessory",
+      "description": "Resets a HomeKit accessory.",
+      "fields": {},
+      "target": {
+        "entity": [
+          {}
+        ]
+      }
+    },
+    "unpair": {
+      "name": "Unpair an accessory or bridge",
+      "description": "Forcefully removes all pairings from an accessory to allow re-pairing. Use this action if the accessory is no longer responsive, and you want to avoid deleting and re-adding the entry. Room locations, and accessory preferences will be lost.",
+      "fields": {},
+      "target": {
+        "device": [
+          {
+            "integration": "homekit"
+          }
+        ]
+      }
+    },
+    "reload": {
+      "name": "Reload",
+      "description": "Reloads HomeKit and re-processes the YAML-configuration.",
+      "fields": {}
     }
   },
   "browser_mod": {
@@ -7288,142 +7427,61 @@
       }
     }
   },
-  "wake_on_lan": {
-    "send_magic_packet": {
-      "name": "Send magic packet",
-      "description": "Sends a \u0027magic packet\u0027 to wake up a device with \u0027Wake-On-LAN\u0027 capabilities.",
+  "watchman": {
+    "report": {
+      "name": "Report",
+      "description": "Run the Watchman report",
       "fields": {
-        "mac": {
-          "required": true,
-          "example": "aa:bb:cc:dd:ee:ff",
-          "selector": {
-            "text": null
-          },
-          "name": "MAC address",
-          "description": "MAC address of the device to wake up."
-        },
-        "broadcast_address": {
-          "example": "192.168.255.255",
-          "selector": {
-            "text": null
-          },
-          "name": "Broadcast address",
-          "description": "The IP address of the host to send the magic packet to. Defaults to \u0060255.255.255.255\u0060 and is normally not changed."
-        },
-        "broadcast_port": {
-          "default": 9,
-          "selector": {
-            "number": {
-              "min": 1,
-              "max": 65535,
-              "mode": "box"
-            }
-          },
-          "name": "Broadcast port",
-          "description": "The port to send the magic packet to. Defaults to \u00609\u0060 and is normally not changed."
-        }
-      }
-    }
-  },
-  "google_generative_ai_conversation": {
-    "generate_content": {
-      "name": "Generate content",
-      "description": "Generate content from a prompt consisting of text and optionally images",
-      "fields": {
-        "prompt": {
-          "required": true,
-          "selector": {
-            "text": {
-              "multiline": true
-            }
-          },
-          "name": "Prompt",
-          "description": "The prompt",
-          "example": "Describe what you see in these images"
-        },
-        "image_filename": {
+        "parse_config": {
+          "example": true,
+          "default": false,
           "required": false,
           "selector": {
-            "object": null
+            "boolean": null
           },
-          "name": "Image filename",
-          "description": "Deprecated. Use filenames instead.",
-          "example": "/config/www/image.jpg"
+          "name": "Force configuration parsing",
+          "description": "Parse configuration files before generating the report. Usually, this is done automatically by Watchman, so this flag is typically not required."
         },
-        "filenames": {
-          "required": false,
-          "selector": {
-            "text": {
-              "multiple": true
+        "advanced_options": {
+          "collapsed": true,
+          "fields": {
+            "action": {
+              "example": "persistent_notification.create",
+              "default": "persistent_notification.create",
+              "required": false,
+              "advanced": true,
+              "selector": {
+                "text": null
+              }
+            },
+            "data": {
+              "example": "title: Watchman Report",
+              "required": false,
+              "advanced": true
+            },
+            "chunk_size": {
+              "example": 3500,
+              "default": 3500,
+              "required": false,
+              "advanced": true,
+              "selector": {
+                "number": {
+                  "min": 0,
+                  "max": 100000,
+                  "mode": "box"
+                }
+              }
+            },
+            "create_file": {
+              "example": true,
+              "default": true,
+              "required": false,
+              "selector": {
+                "boolean": null
+              }
             }
-          },
-          "name": "Attachment filenames",
-          "description": "Attachments to add to the prompt (images, PDFs, etc)",
-          "example": "/config/www/image.jpg"
-        }
-      },
-      "response": {
-        "optional": false
-      }
-    }
-  },
-  "homekit": {
-    "reset_accessory": {
-      "name": "Reset accessory",
-      "description": "Resets a HomeKit accessory.",
-      "fields": {},
-      "target": {
-        "entity": [
-          {}
-        ]
-      }
-    },
-    "unpair": {
-      "name": "Unpair an accessory or bridge",
-      "description": "Forcefully removes all pairings from an accessory to allow re-pairing. Use this action if the accessory is no longer responsive, and you want to avoid deleting and re-adding the entry. Room locations, and accessory preferences will be lost.",
-      "fields": {},
-      "target": {
-        "device": [
-          {
-            "integration": "homekit"
           }
-        ]
-      }
-    },
-    "reload": {
-      "name": "Reload",
-      "description": "Reloads HomeKit and re-processes the YAML-configuration.",
-      "fields": {}
-    }
-  },
-  "input_text": {
-    "reload": {
-      "name": "Reload",
-      "description": "Reloads helpers from the YAML-configuration.",
-      "fields": {}
-    },
-    "set_value": {
-      "name": "Set",
-      "description": "Sets the value.",
-      "fields": {
-        "value": {
-          "required": true,
-          "example": "This is an example text",
-          "selector": {
-            "text": null
-          },
-          "name": "Value",
-          "description": "The target value."
         }
-      },
-      "target": {
-        "entity": [
-          {
-            "domain": [
-              "input_text"
-            ]
-          }
-        ]
       }
     }
   },
@@ -7713,209 +7771,6 @@
       }
     }
   },
-  "flux_led": {
-    "set_custom_effect": {
-      "name": "Set custom effect",
-      "description": "Sets a custom light effect.",
-      "fields": {
-        "colors": {
-          "example": "- [255,0,0]\n- [0,255,0]\n- [0,0,255]\n",
-          "required": true,
-          "selector": {
-            "object": null
-          },
-          "name": "Colors",
-          "description": "List of colors for the custom effect (RGB). (Max 16 Colors)."
-        },
-        "speed_pct": {
-          "example": 80,
-          "default": 50,
-          "required": false,
-          "selector": {
-            "number": {
-              "min": 1,
-              "step": 1,
-              "max": 100,
-              "unit_of_measurement": "%"
-            }
-          },
-          "name": "Speed",
-          "description": "The speed of the effect in % (0-100, default 50)."
-        },
-        "transition": {
-          "example": "jump",
-          "default": "gradual",
-          "required": false,
-          "selector": {
-            "select": {
-              "options": [
-                "gradual",
-                "jump",
-                "strobe"
-              ]
-            }
-          },
-          "name": "Transition",
-          "description": "Effect transition."
-        }
-      },
-      "target": {
-        "entity": [
-          {
-            "integration": "flux_led",
-            "domain": [
-              "light"
-            ]
-          }
-        ]
-      }
-    },
-    "set_zones": {
-      "name": "Set zones",
-      "description": "Sets strip zones for Addressable v3 controllers (0xA3).",
-      "fields": {
-        "colors": {
-          "example": "- [255,0,0]\n- [0,255,0]\n- [0,0,255]\n- [255,255,255]\n",
-          "required": true,
-          "selector": {
-            "object": null
-          },
-          "name": "Colors",
-          "description": "List of colors for each zone (RGB). The length of each zone is the number of pixels per segment divided by the number of colors. (Max 2048 Colors)."
-        },
-        "speed_pct": {
-          "example": 80,
-          "default": 50,
-          "required": false,
-          "selector": {
-            "number": {
-              "min": 1,
-              "step": 1,
-              "max": 100,
-              "unit_of_measurement": "%"
-            }
-          },
-          "name": "Speed",
-          "description": "The speed of the effect in % (0-100, default 50)."
-        },
-        "effect": {
-          "example": "running_water",
-          "default": "static",
-          "required": false,
-          "selector": {
-            "select": {
-              "options": [
-                "static",
-                "running_water",
-                "strobe",
-                "jump",
-                "breathing"
-              ]
-            }
-          },
-          "name": "Effect",
-          "description": "Effect."
-        }
-      },
-      "target": {
-        "entity": [
-          {
-            "integration": "flux_led",
-            "domain": [
-              "light"
-            ]
-          }
-        ]
-      }
-    },
-    "set_music_mode": {
-      "name": "Set music mode",
-      "description": "Configures music mode on Controller RGB with MIC (0x08), Addressable v2 (0xA2), and Addressable v3 (0xA3) devices that have a built-in microphone.",
-      "fields": {
-        "sensitivity": {
-          "example": 80,
-          "default": 100,
-          "required": false,
-          "selector": {
-            "number": {
-              "min": 1,
-              "step": 1,
-              "max": 100,
-              "unit_of_measurement": "%"
-            }
-          },
-          "name": "Sensitivity",
-          "description": "Microphone sensitivity (0-100)."
-        },
-        "brightness": {
-          "example": 80,
-          "default": 100,
-          "required": false,
-          "selector": {
-            "number": {
-              "min": 1,
-              "step": 1,
-              "max": 100,
-              "unit_of_measurement": "%"
-            }
-          },
-          "name": "Brightness",
-          "description": "Light brightness (0-100)."
-        },
-        "light_screen": {
-          "default": false,
-          "required": false,
-          "selector": {
-            "boolean": null
-          },
-          "name": "Light screen",
-          "description": "Light screen mode for 2 dimensional pixels (Addressable models only)."
-        },
-        "effect": {
-          "example": 1,
-          "default": 1,
-          "required": false,
-          "selector": {
-            "number": {
-              "min": 0,
-              "step": 1,
-              "max": 16
-            }
-          },
-          "name": "Effect",
-          "description": "Effect (1-16 on Addressable models, 0-3 on RGB with MIC models)."
-        },
-        "foreground_color": {
-          "example": "[255, 100, 100]",
-          "required": false,
-          "selector": {
-            "color_rgb": null
-          },
-          "name": "Foreground color",
-          "description": "The foreground RGB color."
-        },
-        "background_color": {
-          "example": "[255, 100, 100]",
-          "required": false,
-          "selector": {
-            "color_rgb": null
-          },
-          "name": "Background color",
-          "description": "The background RGB color (Addressable models only)."
-        }
-      },
-      "target": {
-        "entity": [
-          {
-            "integration": "flux_led",
-            "domain": [
-              "light"
-            ]
-          }
-        ]
-      }
-    }
-  },
   "webostv": {
     "button": {
       "name": "Button",
@@ -8008,211 +7863,6 @@
       },
       "response": {
         "optional": true
-      }
-    }
-  },
-  "watchman": {
-    "report": {
-      "name": "Report",
-      "description": "Run the Watchman report",
-      "fields": {
-        "parse_config": {
-          "example": true,
-          "default": false,
-          "required": false,
-          "selector": {
-            "boolean": null
-          },
-          "name": "Force configuration parsing",
-          "description": "Parse configuration files before generating the report. Usually, this is done automatically by Watchman, so this flag is typically not required."
-        },
-        "advanced_options": {
-          "collapsed": true,
-          "fields": {
-            "action": {
-              "example": "persistent_notification.create",
-              "default": "persistent_notification.create",
-              "required": false,
-              "advanced": true,
-              "selector": {
-                "text": null
-              }
-            },
-            "data": {
-              "example": "title: Watchman Report",
-              "required": false,
-              "advanced": true
-            },
-            "chunk_size": {
-              "example": 3500,
-              "default": 3500,
-              "required": false,
-              "advanced": true,
-              "selector": {
-                "number": {
-                  "min": 0,
-                  "max": 100000,
-                  "mode": "box"
-                }
-              }
-            },
-            "create_file": {
-              "example": true,
-              "default": true,
-              "required": false,
-              "selector": {
-                "boolean": null
-              }
-            }
-          }
-        }
-      }
-    }
-  },
-  "automation": {
-    "trigger": {
-      "name": "Trigger",
-      "description": "Triggers the actions of an automation.",
-      "fields": {
-        "skip_condition": {
-          "default": true,
-          "selector": {
-            "boolean": null
-          },
-          "name": "Skip conditions",
-          "description": "Defines whether or not the conditions will be skipped."
-        }
-      },
-      "target": {
-        "entity": [
-          {
-            "domain": [
-              "automation"
-            ]
-          }
-        ]
-      }
-    },
-    "toggle": {
-      "name": "Toggle",
-      "description": "Toggles (enable / disable) an automation.",
-      "fields": {},
-      "target": {
-        "entity": [
-          {
-            "domain": [
-              "automation"
-            ]
-          }
-        ]
-      }
-    },
-    "turn_on": {
-      "name": "Turn on",
-      "description": "Enables an automation.",
-      "fields": {},
-      "target": {
-        "entity": [
-          {
-            "domain": [
-              "automation"
-            ]
-          }
-        ]
-      }
-    },
-    "turn_off": {
-      "name": "Turn off",
-      "description": "Disables an automation.",
-      "fields": {
-        "stop_actions": {
-          "default": true,
-          "selector": {
-            "boolean": null
-          },
-          "name": "Stop actions",
-          "description": "Stops currently running actions."
-        }
-      },
-      "target": {
-        "entity": [
-          {
-            "domain": [
-              "automation"
-            ]
-          }
-        ]
-      }
-    },
-    "reload": {
-      "name": "Reload",
-      "description": "Reloads the automation configuration.",
-      "fields": {}
-    }
-  },
-  "weather": {
-    "get_forecasts": {
-      "name": "Get forecasts",
-      "description": "Retrieves the forecast from selected weather services.",
-      "fields": {
-        "type": {
-          "required": true,
-          "selector": {
-            "select": {
-              "options": [
-                "daily",
-                "hourly",
-                "twice_daily"
-              ],
-              "translation_key": "forecast_type"
-            }
-          },
-          "name": "Forecast type",
-          "description": "The scope of the weather forecast."
-        }
-      },
-      "target": {
-        "entity": [
-          {
-            "domain": [
-              "weather"
-            ],
-            "supported_features": [
-              1,
-              2,
-              4
-            ]
-          }
-        ]
-      },
-      "response": {
-        "optional": false
-      }
-    }
-  },
-  "text": {
-    "set_value": {
-      "name": "Set value",
-      "description": "Sets the value.",
-      "fields": {
-        "value": {
-          "required": true,
-          "example": "Hello world!",
-          "selector": {
-            "text": null
-          },
-          "name": "Value",
-          "description": "Enter your text."
-        }
-      },
-      "target": {
-        "entity": [
-          {
-            "domain": [
-              "text"
-            ]
-          }
-        ]
       }
     }
   },
@@ -8752,6 +8402,153 @@
       }
     }
   },
+  "weather": {
+    "get_forecasts": {
+      "name": "Get forecasts",
+      "description": "Retrieves the forecast from selected weather services.",
+      "fields": {
+        "type": {
+          "required": true,
+          "selector": {
+            "select": {
+              "options": [
+                "daily",
+                "hourly",
+                "twice_daily"
+              ],
+              "translation_key": "forecast_type"
+            }
+          },
+          "name": "Forecast type",
+          "description": "The scope of the weather forecast."
+        }
+      },
+      "target": {
+        "entity": [
+          {
+            "domain": [
+              "weather"
+            ],
+            "supported_features": [
+              1,
+              2,
+              4
+            ]
+          }
+        ]
+      },
+      "response": {
+        "optional": false
+      }
+    }
+  },
+  "text": {
+    "set_value": {
+      "name": "Set value",
+      "description": "Sets the value.",
+      "fields": {
+        "value": {
+          "required": true,
+          "example": "Hello world!",
+          "selector": {
+            "text": null
+          },
+          "name": "Value",
+          "description": "Enter your text."
+        }
+      },
+      "target": {
+        "entity": [
+          {
+            "domain": [
+              "text"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "automation": {
+    "trigger": {
+      "name": "Trigger",
+      "description": "Triggers the actions of an automation.",
+      "fields": {
+        "skip_condition": {
+          "default": true,
+          "selector": {
+            "boolean": null
+          },
+          "name": "Skip conditions",
+          "description": "Defines whether or not the conditions will be skipped."
+        }
+      },
+      "target": {
+        "entity": [
+          {
+            "domain": [
+              "automation"
+            ]
+          }
+        ]
+      }
+    },
+    "toggle": {
+      "name": "Toggle",
+      "description": "Toggles (enable / disable) an automation.",
+      "fields": {},
+      "target": {
+        "entity": [
+          {
+            "domain": [
+              "automation"
+            ]
+          }
+        ]
+      }
+    },
+    "turn_on": {
+      "name": "Turn on",
+      "description": "Enables an automation.",
+      "fields": {},
+      "target": {
+        "entity": [
+          {
+            "domain": [
+              "automation"
+            ]
+          }
+        ]
+      }
+    },
+    "turn_off": {
+      "name": "Turn off",
+      "description": "Disables an automation.",
+      "fields": {
+        "stop_actions": {
+          "default": true,
+          "selector": {
+            "boolean": null
+          },
+          "name": "Stop actions",
+          "description": "Stops currently running actions."
+        }
+      },
+      "target": {
+        "entity": [
+          {
+            "domain": [
+              "automation"
+            ]
+          }
+        ]
+      }
+    },
+    "reload": {
+      "name": "Reload",
+      "description": "Reloads the automation configuration.",
+      "fields": {}
+    }
+  },
   "switch": {
     "turn_off": {
       "name": "Turn off",
@@ -8796,113 +8593,203 @@
       }
     }
   },
-  "water_heater": {
-    "turn_on": {
-      "name": "Turn on",
-      "description": "Turns water heater on.",
-      "fields": {},
-      "target": {
-        "entity": [
-          {
-            "domain": [
-              "water_heater"
-            ]
-          }
-        ]
-      }
-    },
-    "turn_off": {
-      "name": "Turn off",
-      "description": "Turns water heater off.",
-      "fields": {},
-      "target": {
-        "entity": [
-          {
-            "domain": [
-              "water_heater"
-            ]
-          }
-        ]
-      }
-    },
-    "set_away_mode": {
-      "name": "Set away mode",
-      "description": "Turns away mode on/off.",
+  "flux_led": {
+    "set_custom_effect": {
+      "name": "Set custom effect",
+      "description": "Sets a custom light effect.",
       "fields": {
-        "away_mode": {
+        "colors": {
+          "example": "- [255,0,0]\n- [0,255,0]\n- [0,0,255]\n",
           "required": true,
+          "selector": {
+            "object": null
+          },
+          "name": "Colors",
+          "description": "List of colors for the custom effect (RGB). (Max 16 Colors)."
+        },
+        "speed_pct": {
+          "example": 80,
+          "default": 50,
+          "required": false,
+          "selector": {
+            "number": {
+              "min": 1,
+              "step": 1,
+              "max": 100,
+              "unit_of_measurement": "%"
+            }
+          },
+          "name": "Speed",
+          "description": "The speed of the effect in % (0-100, default 50)."
+        },
+        "transition": {
+          "example": "jump",
+          "default": "gradual",
+          "required": false,
+          "selector": {
+            "select": {
+              "options": [
+                "gradual",
+                "jump",
+                "strobe"
+              ]
+            }
+          },
+          "name": "Transition",
+          "description": "Effect transition."
+        }
+      },
+      "target": {
+        "entity": [
+          {
+            "integration": "flux_led",
+            "domain": [
+              "light"
+            ]
+          }
+        ]
+      }
+    },
+    "set_zones": {
+      "name": "Set zones",
+      "description": "Sets strip zones for Addressable v3 controllers (0xA3).",
+      "fields": {
+        "colors": {
+          "example": "- [255,0,0]\n- [0,255,0]\n- [0,0,255]\n- [255,255,255]\n",
+          "required": true,
+          "selector": {
+            "object": null
+          },
+          "name": "Colors",
+          "description": "List of colors for each zone (RGB). The length of each zone is the number of pixels per segment divided by the number of colors. (Max 2048 Colors)."
+        },
+        "speed_pct": {
+          "example": 80,
+          "default": 50,
+          "required": false,
+          "selector": {
+            "number": {
+              "min": 1,
+              "step": 1,
+              "max": 100,
+              "unit_of_measurement": "%"
+            }
+          },
+          "name": "Speed",
+          "description": "The speed of the effect in % (0-100, default 50)."
+        },
+        "effect": {
+          "example": "running_water",
+          "default": "static",
+          "required": false,
+          "selector": {
+            "select": {
+              "options": [
+                "static",
+                "running_water",
+                "strobe",
+                "jump",
+                "breathing"
+              ]
+            }
+          },
+          "name": "Effect",
+          "description": "Effect."
+        }
+      },
+      "target": {
+        "entity": [
+          {
+            "integration": "flux_led",
+            "domain": [
+              "light"
+            ]
+          }
+        ]
+      }
+    },
+    "set_music_mode": {
+      "name": "Set music mode",
+      "description": "Configures music mode on Controller RGB with MIC (0x08), Addressable v2 (0xA2), and Addressable v3 (0xA3) devices that have a built-in microphone.",
+      "fields": {
+        "sensitivity": {
+          "example": 80,
+          "default": 100,
+          "required": false,
+          "selector": {
+            "number": {
+              "min": 1,
+              "step": 1,
+              "max": 100,
+              "unit_of_measurement": "%"
+            }
+          },
+          "name": "Sensitivity",
+          "description": "Microphone sensitivity (0-100)."
+        },
+        "brightness": {
+          "example": 80,
+          "default": 100,
+          "required": false,
+          "selector": {
+            "number": {
+              "min": 1,
+              "step": 1,
+              "max": 100,
+              "unit_of_measurement": "%"
+            }
+          },
+          "name": "Brightness",
+          "description": "Light brightness (0-100)."
+        },
+        "light_screen": {
+          "default": false,
+          "required": false,
           "selector": {
             "boolean": null
           },
-          "name": "Away mode",
-          "description": "New value of away mode."
-        }
-      },
-      "target": {
-        "entity": [
-          {
-            "domain": [
-              "water_heater"
-            ]
-          }
-        ]
-      }
-    },
-    "set_temperature": {
-      "name": "Set temperature",
-      "description": "Sets the target temperature.",
-      "fields": {
-        "temperature": {
-          "required": true,
+          "name": "Light screen",
+          "description": "Light screen mode for 2 dimensional pixels (Addressable models only)."
+        },
+        "effect": {
+          "example": 1,
+          "default": 1,
+          "required": false,
           "selector": {
             "number": {
               "min": 0,
-              "max": 100,
-              "step": 0.5,
-              "unit_of_measurement": "\u00B0"
+              "step": 1,
+              "max": 16
             }
           },
-          "name": "Temperature",
-          "description": "New target temperature for the water heater."
+          "name": "Effect",
+          "description": "Effect (1-16 on Addressable models, 0-3 on RGB with MIC models)."
         },
-        "operation_mode": {
-          "example": "eco",
+        "foreground_color": {
+          "example": "[255, 100, 100]",
+          "required": false,
           "selector": {
-            "text": null
+            "color_rgb": null
           },
-          "name": "Operation mode",
-          "description": "New value of the operation mode. For a list of possible modes, refer to the integration documentation."
+          "name": "Foreground color",
+          "description": "The foreground RGB color."
+        },
+        "background_color": {
+          "example": "[255, 100, 100]",
+          "required": false,
+          "selector": {
+            "color_rgb": null
+          },
+          "name": "Background color",
+          "description": "The background RGB color (Addressable models only)."
         }
       },
       "target": {
         "entity": [
           {
+            "integration": "flux_led",
             "domain": [
-              "water_heater"
-            ]
-          }
-        ]
-      }
-    },
-    "set_operation_mode": {
-      "name": "Set operation mode",
-      "description": "Sets the operation mode.",
-      "fields": {
-        "operation_mode": {
-          "required": true,
-          "example": "eco",
-          "selector": {
-            "text": null
-          },
-          "name": "Operation mode",
-          "description": "New value of the operation mode. For a list of possible modes, refer to the integration documentation."
-        }
-      },
-      "target": {
-        "entity": [
-          {
-            "domain": [
-              "water_heater"
+              "light"
             ]
           }
         ]
@@ -9397,6 +9284,13 @@
       }
     }
   },
+  "template": {
+    "reload": {
+      "name": "Reload",
+      "description": "Reloads template entities from the YAML-configuration.",
+      "fields": {}
+    }
+  },
   "spook": {
     "random_fail": {
       "name": "Random fail \uD83D\uDC7B",
@@ -9522,33 +9416,113 @@
       }
     }
   },
-  "template": {
-    "reload": {
-      "name": "Reload",
-      "description": "Reloads template entities from the YAML-configuration.",
-      "fields": {}
-    }
-  },
-  "time": {
-    "set_value": {
-      "name": "Set Time",
-      "description": "Sets the time.",
+  "water_heater": {
+    "turn_on": {
+      "name": "Turn on",
+      "description": "Turns water heater on.",
+      "fields": {},
+      "target": {
+        "entity": [
+          {
+            "domain": [
+              "water_heater"
+            ]
+          }
+        ]
+      }
+    },
+    "turn_off": {
+      "name": "Turn off",
+      "description": "Turns water heater off.",
+      "fields": {},
+      "target": {
+        "entity": [
+          {
+            "domain": [
+              "water_heater"
+            ]
+          }
+        ]
+      }
+    },
+    "set_away_mode": {
+      "name": "Set away mode",
+      "description": "Turns away mode on/off.",
       "fields": {
-        "time": {
+        "away_mode": {
           "required": true,
-          "example": "22:15",
           "selector": {
-            "time": null
+            "boolean": null
           },
-          "name": "Time",
-          "description": "The time to set."
+          "name": "Away mode",
+          "description": "New value of away mode."
         }
       },
       "target": {
         "entity": [
           {
             "domain": [
-              "time"
+              "water_heater"
+            ]
+          }
+        ]
+      }
+    },
+    "set_temperature": {
+      "name": "Set temperature",
+      "description": "Sets the target temperature.",
+      "fields": {
+        "temperature": {
+          "required": true,
+          "selector": {
+            "number": {
+              "min": 0,
+              "max": 100,
+              "step": 0.5,
+              "unit_of_measurement": "\u00B0"
+            }
+          },
+          "name": "Temperature",
+          "description": "New target temperature for the water heater."
+        },
+        "operation_mode": {
+          "example": "eco",
+          "selector": {
+            "text": null
+          },
+          "name": "Operation mode",
+          "description": "New value of the operation mode. For a list of possible modes, refer to the integration documentation."
+        }
+      },
+      "target": {
+        "entity": [
+          {
+            "domain": [
+              "water_heater"
+            ]
+          }
+        ]
+      }
+    },
+    "set_operation_mode": {
+      "name": "Set operation mode",
+      "description": "Sets the operation mode.",
+      "fields": {
+        "operation_mode": {
+          "required": true,
+          "example": "eco",
+          "selector": {
+            "text": null
+          },
+          "name": "Operation mode",
+          "description": "New value of the operation mode. For a list of possible modes, refer to the integration documentation."
+        }
+      },
+      "target": {
+        "entity": [
+          {
+            "domain": [
+              "water_heater"
             ]
           }
         ]
@@ -9584,6 +9558,32 @@
       },
       "response": {
         "optional": false
+      }
+    }
+  },
+  "time": {
+    "set_value": {
+      "name": "Set Time",
+      "description": "Sets the time.",
+      "fields": {
+        "time": {
+          "required": true,
+          "example": "22:15",
+          "selector": {
+            "time": null
+          },
+          "name": "Time",
+          "description": "The time to set."
+        }
+      },
+      "target": {
+        "entity": [
+          {
+            "domain": [
+              "time"
+            ]
+          }
+        ]
       }
     }
   },

@@ -2096,6 +2096,11 @@
           "cSharpName": "AcPowerSavingMode"
         },
         {
+          "id": "input_boolean.daniel_pc",
+          "friendlyName": "Daniel PC",
+          "cSharpName": "DanielPc"
+        },
+        {
           "id": "input_boolean.netdaemon_home_automation_apps_area_bathroom_bathroom_app",
           "friendlyName": "netdaemon_home_automation_apps_area_bathroom_bathroom_app",
           "cSharpName": "NetdaemonHomeAutomationAppsAreaBathroomBathroomApp"
@@ -5007,6 +5012,66 @@
           "jsonName": "userData",
           "cSharpName": "UserData",
           "clrType": "System.Object"
+        },
+        {
+          "jsonName": "Resolution",
+          "cSharpName": "Resolution",
+          "clrType": "System.String"
+        },
+        {
+          "jsonName": "Width",
+          "cSharpName": "Width",
+          "clrType": "System.Double"
+        },
+        {
+          "jsonName": "Height",
+          "cSharpName": "Height",
+          "clrType": "System.Double"
+        },
+        {
+          "jsonName": "VirtualResolution",
+          "cSharpName": "VirtualResolution",
+          "clrType": "System.String"
+        },
+        {
+          "jsonName": "VirtualWidth",
+          "cSharpName": "VirtualWidth",
+          "clrType": "System.Double"
+        },
+        {
+          "jsonName": "VirtualHeight",
+          "cSharpName": "VirtualHeight",
+          "clrType": "System.Double"
+        },
+        {
+          "jsonName": "BitsPerPixel",
+          "cSharpName": "BitsPerPixel",
+          "clrType": "System.Double"
+        },
+        {
+          "jsonName": "PrimaryDisplay",
+          "cSharpName": "PrimaryDisplay",
+          "clrType": "System.Boolean"
+        },
+        {
+          "jsonName": "WorkingArea",
+          "cSharpName": "WorkingArea",
+          "clrType": "System.String"
+        },
+        {
+          "jsonName": "WorkingAreaWidth",
+          "cSharpName": "WorkingAreaWidth",
+          "clrType": "System.Double"
+        },
+        {
+          "jsonName": "WorkingAreaHeight",
+          "cSharpName": "WorkingAreaHeight",
+          "clrType": "System.Double"
+        },
+        {
+          "jsonName": "RotatedDegrees",
+          "cSharpName": "RotatedDegrees",
+          "clrType": "System.Double"
         }
       ]
     },

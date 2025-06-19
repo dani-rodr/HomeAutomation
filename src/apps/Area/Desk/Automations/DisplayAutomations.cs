@@ -20,62 +20,87 @@ public class DisplayAutomations(
         if (!desktop.IsOn() || monitor.IsShowingPc)
         {
             laptop.TurnOn();
-            ShowLaptop(true);
+            SwitchToLaptop();
         }
         else
         {
-            ShowPc(true);
+            SwitchToPc();
         }
     }
 
     private static IEnumerable<IDisposable> GetComputerAutomations(
         IComputer device,
-        Action<bool> onShow,
-        Action<bool> onHide
+        Action onTurnedOn,
+        Action onTurnedOff
     )
     {
-        yield return device.StateChanges().Subscribe(onShow);
-        yield return device.OnShowRequested().Subscribe(onShow);
-        yield return device.OnHideRequested().Subscribe(onHide);
+        yield return device.StateChanges().Where(isOn => isOn).Subscribe(_ => onTurnedOn());
+        yield return device.StateChanges().Where(isOn => !isOn).Subscribe(_ => onTurnedOff());
+        yield return device.OnShowRequested().Subscribe(_ => onTurnedOn());
+        yield return device.OnHideRequested().Subscribe(_ => onTurnedOff());
     }
 
-    private IEnumerable<IDisposable> GetPcAutomations() => GetComputerAutomations(desktop, ShowPc, HidePc);
+    private IEnumerable<IDisposable> GetPcAutomations() =>
+        GetComputerAutomations(desktop, OnDesktopTurnedOn, OnDesktopTurnedOff);
 
-    private IEnumerable<IDisposable> GetLaptopAutomations() => GetComputerAutomations(laptop, ShowLaptop, HideLaptop);
+    private IEnumerable<IDisposable> GetLaptopAutomations() =>
+        GetComputerAutomations(laptop, OnLaptopTurnedOn, OnLaptopTurnedOff);
 
-    private void ShowPc(bool isOn) => UpdateDisplay(isOn, monitor.ShowPC, laptop.IsOn, monitor.ShowLaptop);
+    private void OnDesktopTurnedOn() => SwitchToPc();
 
-    private void HidePc(bool _) => UpdateDisplay(false, monitor.ShowPC, laptop.IsOn, monitor.ShowLaptop);
+    private void OnDesktopTurnedOff() => HandleDesktopOff();
 
-    private void ShowLaptop(bool isOn) => UpdateDisplay(isOn, monitor.ShowLaptop, desktop.IsOn, monitor.ShowPC);
+    private void OnLaptopTurnedOn() => SwitchToLaptop();
 
-    private void HideLaptop(bool _)
+    private void OnLaptopTurnedOff()
     {
-        UpdateDisplay(false, monitor.ShowLaptop, desktop.IsOn, monitor.ShowPC);
+        HandleLaptopOff();
         laptop.TurnOff();
     }
 
-    private void UpdateDisplay(bool isPrimaryOn, Action showPrimary, Func<bool> isFallbackOn, Action showFallback)
+    private void SwitchToPc()
+    {
+        Logger.LogDebug("Switching display to PC. Desktop: {Desktop}, Laptop: {Laptop}", desktop.IsOn(), laptop.IsOn());
+        monitor.ShowPC();
+    }
+
+    private void SwitchToLaptop()
     {
         Logger.LogDebug(
-            "UpdateDisplay triggered. isPrimaryOn: {Primary}, isFallbackOn: {Fallback}, Desktop: {Desktop}, Laptop: {Laptop}",
-            isPrimaryOn,
-            isFallbackOn(),
+            "Switching display to Laptop. Desktop: {Desktop}, Laptop: {Laptop}",
             desktop.IsOn(),
             laptop.IsOn()
         );
-        if (isPrimaryOn)
-        {
-            showPrimary();
-            return;
-        }
+        monitor.ShowLaptop();
+    }
 
-        if (isFallbackOn())
-        {
-            showFallback();
-            return;
-        }
-
+    private void TurnOffDisplay()
+    {
+        Logger.LogDebug("Turning off display. Desktop: {Desktop}, Laptop: {Laptop}", desktop.IsOn(), laptop.IsOn());
         monitor.TurnOff();
+    }
+
+    private void HandleDesktopOff()
+    {
+        if (laptop.IsOn())
+        {
+            SwitchToLaptop();
+        }
+        else
+        {
+            TurnOffDisplay();
+        }
+    }
+
+    private void HandleLaptopOff()
+    {
+        if (desktop.IsOn())
+        {
+            SwitchToPc();
+        }
+        else
+        {
+            TurnOffDisplay();
+        }
     }
 }
