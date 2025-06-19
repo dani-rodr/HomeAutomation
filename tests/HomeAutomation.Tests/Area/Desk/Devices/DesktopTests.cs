@@ -13,7 +13,7 @@ namespace HomeAutomation.Tests.Area.Desk.Devices;
 public class DesktopTests : IDisposable
 {
     private readonly MockHaContext _mockHaContext;
-    private readonly Mock<ILogger<Desktop>> _mockLogger;
+    private readonly Mock<ILogger> _mockLogger;
     private readonly Mock<IEventHandler> _mockEventHandler;
     private readonly Mock<INotificationServices> _mockNotificationServices;
     private readonly TestDesktopEntities _entities;
@@ -23,7 +23,7 @@ public class DesktopTests : IDisposable
     public DesktopTests()
     {
         _mockHaContext = new MockHaContext();
-        _mockLogger = new Mock<ILogger<Desktop>>();
+        _mockLogger = new Mock<ILogger>();
         _mockEventHandler = new Mock<IEventHandler>();
         _mockNotificationServices = new Mock<INotificationServices>();
 

@@ -36,10 +36,16 @@ public class LgDisplay : MediaPlayerBase, ILgDisplay
         {
             return;
         }
+        try
+        {
+            await SendCommandAsync("system.notifications/createAlert", CreateBrightnessPayload(value));
 
-        await SendCommandAsync("system.notifications/createAlert", CreateBrightnessPayload(value));
-
-        SendButtonCommand("ENTER");
+            SendButtonCommand("ENTER");
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Failed to set brightness on LG display.");
+        }
 
         _brightness = value;
     }
@@ -112,11 +118,18 @@ public class LgDisplay : MediaPlayerBase, ILgDisplay
         var command = on
             ? "com.webos.service.tvpower/power/turnOnScreen"
             : "com.webos.service.tvpower/power/turnOffScreen";
-        await SendCommandAsync(command);
+        try
+        {
+            await SendCommandAsync(command);
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Failed to set screen power state on LG display.");
+        }
     }
 
     private IDisposable ToggleScreenAutomation() =>
-        _screen.StateChanges().Subscribe(async e => await SetScreenPowerAsync(e.IsOn()));
+        _screen.StateChanges().SubscribeAsync(async e => await SetScreenPowerAsync(e.IsOn()));
 
     private IDisposable SyncScreenSwitchWithMediaState() =>
         Entity
@@ -137,7 +150,7 @@ public class LgDisplay : MediaPlayerBase, ILgDisplay
     {
         return _screen
             .StateAllChanges()
-            .Subscribe(async e =>
+            .SubscribeAsync(async e =>
             {
                 if (e.IsOn() && e?.New?.Attributes?.Brightness is double brightness)
                 {

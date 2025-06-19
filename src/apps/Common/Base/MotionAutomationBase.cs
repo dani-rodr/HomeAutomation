@@ -15,7 +15,7 @@ public abstract class MotionAutomationBase(
     protected virtual int SensorActiveDelayValue => 5;
     protected virtual int SensorInactiveDelayValue => 1;
 
-    protected sealed override IEnumerable<IDisposable> GetPersistentAutomations()
+    protected override IEnumerable<IDisposable> GetPersistentAutomations()
     {
         yield return Light.StateChanges().IsManuallyOperated().Subscribe(ControlMasterSwitchOnLightChange);
         if (MasterSwitch != null)
@@ -28,7 +28,7 @@ public abstract class MotionAutomationBase(
         }
     }
 
-    protected sealed override IEnumerable<IDisposable> GetToggleableAutomations() =>
+    protected override IEnumerable<IDisposable> GetToggleableAutomations() =>
         [.. GetLightAutomations(), .. GetSensorDelayAutomations(), .. GetAdditionalSwitchableAutomations()];
 
     protected virtual IEnumerable<IDisposable> GetLightAutomations() => [];

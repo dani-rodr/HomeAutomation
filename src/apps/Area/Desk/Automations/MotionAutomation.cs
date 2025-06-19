@@ -9,6 +9,8 @@ public class MotionAutomation(IMotionAutomationEntities entities, ILgDisplay mon
     protected override IEnumerable<IDisposable> GetLightAutomations() =>
         [MotionSensor.StateChanges().Subscribe(HandleMotionSensor)];
 
+    protected override IEnumerable<IDisposable> GetPersistentAutomations() => [];
+
     protected override IEnumerable<IDisposable> GetSensorDelayAutomations()
     {
         yield return monitor

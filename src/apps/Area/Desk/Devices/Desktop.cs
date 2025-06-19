@@ -20,39 +20,41 @@ public class Desktop : ComputerBase
         powerPlugThreshold = entities.PowerPlugThreshold;
         networkStatus = entities.NetworkStatus;
         powerSwitch = entities.PowerSwitch;
-        Automations.Add(
-            entities
-                .RemotePcButton.StateChanges()
-                .IsValidButtonPress()
-                .Subscribe(e =>
-                {
-                    if (e.UserId() == HaIdentity.DANIEL_RODRIGUEZ)
-                    {
-                        notificationServices.LaunchAppPocoF4(MOONLIGHT_APP);
-                        return;
-                    }
-                    if (e.UserId() == HaIdentity.MIPAD5)
-                    {
-                        notificationServices.LaunchAppMiPad(MOONLIGHT_APP);
-                        return;
-                    }
-                })
-        );
+        Automations.Add(LaunchMoonlightApp(entities.RemotePcButton, notificationServices));
     }
 
     public override bool IsOn() => GetPowerState(powerPlugThreshold.State, networkStatus.State);
 
-    public override IObservable<bool> StateChanges()
-    {
-        return Observable
+    public override IObservable<bool> StateChanges() =>
+        Observable
             .CombineLatest(
-                powerPlugThreshold.StateChanges().Select(s => s.New?.State),
-                networkStatus.StateChanges().Select(s => s.New?.State),
-                GetPowerState
+                powerPlugThreshold.StateChanges(),
+                networkStatus.StateChanges(),
+                (powerState, networkState) => GetPowerState(powerState.New?.State, networkState.New?.State)
             )
             .StartWith(GetPowerState(powerPlugThreshold.State, networkStatus.State))
             .DistinctUntilChanged();
-    }
+
+    private static IDisposable LaunchMoonlightApp(
+        InputButtonEntity button,
+        INotificationServices notificationServices
+    ) =>
+        button
+            .StateChanges()
+            .IsValidButtonPress()
+            .Subscribe(e =>
+            {
+                if (e.UserId() == HaIdentity.DANIEL_RODRIGUEZ)
+                {
+                    notificationServices.LaunchAppPocoF4(MOONLIGHT_APP);
+                    return;
+                }
+                if (e.UserId() == HaIdentity.MIPAD5)
+                {
+                    notificationServices.LaunchAppMiPad(MOONLIGHT_APP);
+                    return;
+                }
+            });
 
     private static bool GetPowerState(string? powerState, string? netState)
     {
