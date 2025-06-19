@@ -118,12 +118,23 @@ public class LgDisplay : MediaPlayerBase, ILgDisplay
         var command = on
             ? "com.webos.service.tvpower/power/turnOnScreen"
             : "com.webos.service.tvpower/power/turnOffScreen";
+
         try
         {
             await SendCommandAsync(command);
         }
         catch (Exception ex)
         {
+            var msg = ex.ToString();
+
+            // Suppress only the known "screen already on" error
+            if (on && msg.Contains("errorCode': '-102'") && msg.Contains("must be 'screen off'"))
+            {
+                Logger.LogDebug("Screen is already on. Ignoring redundant turnOnScreen command.");
+                _screen.TurnOn();
+                return;
+            }
+
             Logger.LogError(ex, "Failed to set screen power state on LG display.");
         }
     }

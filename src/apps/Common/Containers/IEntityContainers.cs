@@ -120,9 +120,7 @@ public interface ILivingRoomFanEntities : IFanEntities
 
 public interface IDesktopEntities
 {
-    BinarySensorEntity PowerPlugThreshold { get; }
-    BinarySensorEntity NetworkStatus { get; }
-    SwitchEntity PowerSwitch { get; }
+    SwitchEntity Power { get; }
     InputButtonEntity RemotePcButton { get; }
 }
 

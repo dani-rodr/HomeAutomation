@@ -4,9 +4,7 @@ public class Desktop : ComputerBase
 {
     protected override string ShowEvent { get; } = "show_pc";
     protected override string HideEvent { get; } = "hide_pc";
-    private readonly BinarySensorEntity powerPlugThreshold;
-    private readonly BinarySensorEntity networkStatus;
-    private readonly SwitchEntity powerSwitch;
+    private readonly SwitchEntity power;
     private const string MOONLIGHT_APP = "com.limelight";
 
     public Desktop(
@@ -17,23 +15,13 @@ public class Desktop : ComputerBase
     )
         : base(eventHandler, logger)
     {
-        powerPlugThreshold = entities.PowerPlugThreshold;
-        networkStatus = entities.NetworkStatus;
-        powerSwitch = entities.PowerSwitch;
+        power = entities.Power;
         Automations.Add(LaunchMoonlightApp(entities.RemotePcButton, notificationServices));
     }
 
-    public override bool IsOn() => GetPowerState(powerPlugThreshold.State, networkStatus.State);
+    public override bool IsOn() => power.IsOn();
 
-    public override IObservable<bool> StateChanges() =>
-        Observable
-            .CombineLatest(
-                powerPlugThreshold.StateChanges(),
-                networkStatus.StateChanges(),
-                (powerState, networkState) => GetPowerState(powerState.New?.State, networkState.New?.State)
-            )
-            .StartWith(GetPowerState(powerPlugThreshold.State, networkStatus.State))
-            .DistinctUntilChanged();
+    public override IObservable<bool> StateChanges() => power.StateChanges().Select(s => s.IsOn());
 
     private static IDisposable LaunchMoonlightApp(
         InputButtonEntity button,
@@ -56,16 +44,7 @@ public class Desktop : ComputerBase
                 }
             });
 
-    private static bool GetPowerState(string? powerState, string? netState)
-    {
-        if (netState.IsDisconnected())
-        {
-            return false;
-        }
-        return powerState.IsOn() || netState.IsConnected();
-    }
+    public override void TurnOff() => power.TurnOff();
 
-    public override void TurnOff() => powerSwitch.TurnOff();
-
-    public override void TurnOn() => powerSwitch.TurnOn();
+    public override void TurnOn() => power.TurnOn();
 }

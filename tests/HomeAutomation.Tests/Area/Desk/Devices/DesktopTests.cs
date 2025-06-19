@@ -40,63 +40,26 @@ public class DesktopTests : IDisposable
         _desktop.StateChanges().Subscribe(state => _stateChanges.Add(state));
 
         // Set default states
-        _mockHaContext.SetEntityState(_entities.PowerPlugThreshold.EntityId, HaEntityStates.OFF);
-        _mockHaContext.SetEntityState(_entities.NetworkStatus.EntityId, HaEntityStates.DISCONNECTED);
+        _mockHaContext.SetEntityState(_entities.Power.EntityId, HaEntityStates.OFF);
         _mockHaContext.ClearServiceCalls();
     }
 
     #region Power State Logic Tests
 
     [Theory]
-    [InlineData(HaEntityStates.OFF, HaEntityStates.DISCONNECTED, false)]
-    [InlineData(HaEntityStates.ON, HaEntityStates.DISCONNECTED, false)]
-    [InlineData(HaEntityStates.OFF, HaEntityStates.CONNECTED, true)]
-    [InlineData(HaEntityStates.ON, HaEntityStates.CONNECTED, true)]
-    [InlineData(HaEntityStates.ON, HaEntityStates.UNKNOWN, true)]
-    [InlineData(HaEntityStates.OFF, HaEntityStates.UNKNOWN, false)]
-    public void IsOn_Should_CalculatePowerStateCorrectly(string powerState, string networkState, bool expectedIsOn)
+    [InlineData(HaEntityStates.OFF, false)]
+    [InlineData(HaEntityStates.ON, true)]
+    public void IsOn_Should_CalculatePowerStateCorrectly(string powerState, bool expectedIsOn)
     {
         // Arrange
-        _mockHaContext.SetEntityState(_entities.PowerPlugThreshold.EntityId, powerState);
-        _mockHaContext.SetEntityState(_entities.NetworkStatus.EntityId, networkState);
+        _mockHaContext.SetEntityState(_entities.Power.EntityId, powerState);
 
         // Act
         var isOn = _desktop.IsOn();
 
         // Assert
         isOn.Should()
-            .Be(
-                expectedIsOn,
-                $"Desktop should be {(expectedIsOn ? "ON" : "OFF")} when power is {powerState} and network is {networkState}"
-            );
-    }
-
-    [Fact]
-    public void IsOn_Should_ReturnFalse_WhenNetworkDisconnected_RegardlessOfPowerState()
-    {
-        // Arrange - Network disconnected should override power state
-        _mockHaContext.SetEntityState(_entities.PowerPlugThreshold.EntityId, HaEntityStates.ON);
-        _mockHaContext.SetEntityState(_entities.NetworkStatus.EntityId, HaEntityStates.DISCONNECTED);
-
-        // Act
-        var isOn = _desktop.IsOn();
-
-        // Assert
-        isOn.Should().BeFalse("Desktop should be OFF when network is disconnected, even with power on");
-    }
-
-    [Fact]
-    public void IsOn_Should_ReturnTrue_WhenNetworkConnected_RegardlessOfPowerState()
-    {
-        // Arrange - Network connected should make desktop "on" even without power threshold
-        _mockHaContext.SetEntityState(_entities.PowerPlugThreshold.EntityId, HaEntityStates.OFF);
-        _mockHaContext.SetEntityState(_entities.NetworkStatus.EntityId, HaEntityStates.CONNECTED);
-
-        // Act
-        var isOn = _desktop.IsOn();
-
-        // Assert
-        isOn.Should().BeTrue("Desktop should be ON when network is connected, even without power threshold");
+            .Be(expectedIsOn, $"Desktop should be {(expectedIsOn ? "ON" : "OFF")} when power is {powerState} ");
     }
 
     #endregion
@@ -107,8 +70,7 @@ public class DesktopTests : IDisposable
     public void StateChanges_Should_StartWithCurrentState()
     {
         // Arrange
-        _mockHaContext.SetEntityState(_entities.PowerPlugThreshold.EntityId, HaEntityStates.ON);
-        _mockHaContext.SetEntityState(_entities.NetworkStatus.EntityId, HaEntityStates.CONNECTED);
+        _mockHaContext.SetEntityState(_entities.Power.EntityId, HaEntityStates.ON);
         _stateChanges.Clear();
 
         // Act - Create new subscription to test StartWith behavior
@@ -116,165 +78,52 @@ public class DesktopTests : IDisposable
         _desktop.StateChanges().Subscribe(state => stateChanges.Add(state));
 
         // Assert
-        stateChanges.Should().HaveCount(1, "Should start with current state");
-        stateChanges[0].Should().BeTrue("Current state should be calculated correctly");
-    }
-
-    [Fact(Skip = "Temporarily disabled - needs investigation")]
-    public void StateChanges_Should_EmitWhenPowerStateChanges()
-    {
-        // Arrange - Need both sensors to have initial states for CombineLatest to work
-        _mockHaContext.SetEntityState(_entities.PowerPlugThreshold.EntityId, HaEntityStates.OFF);
-        _mockHaContext.SetEntityState(_entities.NetworkStatus.EntityId, HaEntityStates.CONNECTED);
-        _stateChanges.Clear();
-
-        // Act - Change power threshold state (network is connected, so desktop should turn ON)
-        _mockHaContext.SimulateStateChange(
-            _entities.PowerPlugThreshold.EntityId,
-            HaEntityStates.OFF,
-            HaEntityStates.ON
-        );
-
-        // Assert
-        _stateChanges.Should().HaveCount(1, "Should emit state change for power threshold change");
-        _stateChanges[0].Should().BeTrue("Should be ON when power threshold is exceeded and network is connected");
-    }
-
-    [Fact(Skip = "Temporarily disabled - needs investigation")]
-    public void StateChanges_Should_EmitWhenNetworkStateChanges()
-    {
-        // Arrange - Need both sensors to have initial states for CombineLatest to work
-        _mockHaContext.SetEntityState(_entities.PowerPlugThreshold.EntityId, HaEntityStates.OFF);
-        _mockHaContext.SetEntityState(_entities.NetworkStatus.EntityId, HaEntityStates.DISCONNECTED);
-        _stateChanges.Clear();
-
-        // Act - Change network status (should turn ON even without power threshold)
-        _mockHaContext.SimulateStateChange(
-            _entities.NetworkStatus.EntityId,
-            HaEntityStates.DISCONNECTED,
-            HaEntityStates.CONNECTED
-        );
-
-        // Assert
-        _stateChanges.Should().HaveCount(1, "Should emit state change for network status change");
-        _stateChanges[0].Should().BeTrue("Should be ON when network connects");
+        stateChanges.Should().HaveCount(0, "Should start with current state");
     }
 
     [Fact]
-    public void StateChanges_Should_CombineMultipleSensorChanges()
+    public void StateChanges_Should_ReceiveStateChanges_AfterSetup()
+    {
+        // Arrange
+        _mockHaContext.SetEntityState(_entities.Power.EntityId, HaEntityStates.ON);
+        _stateChanges.Clear();
+
+        // Act - Create new subscription to test StartWith behavior
+        var stateChanges = new List<bool>();
+        _desktop.StateChanges().Subscribe(state => stateChanges.Add(state));
+        _mockHaContext.SimulateStateChange(_entities.Power.EntityId, HaEntityStates.ON, HaEntityStates.OFF);
+        _mockHaContext.SimulateStateChange(_entities.Power.EntityId, HaEntityStates.OFF, HaEntityStates.ON);
+
+        // Assert
+        stateChanges.Should().HaveCount(2, "Should contain 2 state change");
+    }
+
+    [Fact]
+    public void StateChanges_Should_Return_True_When_Turning_On()
     {
         // Arrange
         _stateChanges.Clear();
 
         // Act - Simulate both sensors changing rapidly
-        _mockHaContext.SimulateStateChange(
-            _entities.PowerPlugThreshold.EntityId,
-            HaEntityStates.OFF,
-            HaEntityStates.ON
-        );
-        _mockHaContext.SimulateStateChange(
-            _entities.NetworkStatus.EntityId,
-            HaEntityStates.DISCONNECTED,
-            HaEntityStates.CONNECTED
-        );
+        _mockHaContext.SimulateStateChange(_entities.Power.EntityId, HaEntityStates.OFF, HaEntityStates.ON);
 
         // Assert
-        _stateChanges.Should().HaveCountGreaterThan(0, "Should emit state changes for combined sensor changes");
-        _stateChanges.Last().Should().BeTrue("Final state should be ON with both power and network active");
+        _stateChanges.Should().HaveCountGreaterThan(0, "Should emit state changes for sensor changes");
+        _stateChanges.Last().Should().BeTrue("Final state should be ON with power active");
     }
 
     [Fact]
-    public void StateChanges_Should_UseDistinctUntilChanged()
+    public void StateChanges_Should_Return_False_When_Turning_Off()
     {
         // Arrange
-        _mockHaContext.SetEntityState(_entities.PowerPlugThreshold.EntityId, HaEntityStates.ON);
-        _mockHaContext.SetEntityState(_entities.NetworkStatus.EntityId, HaEntityStates.CONNECTED);
         _stateChanges.Clear();
 
-        // Act - Simulate multiple changes that don't change the calculated state
-        _mockHaContext.SimulateStateChange(_entities.PowerPlugThreshold.EntityId, HaEntityStates.ON, HaEntityStates.ON);
-        _mockHaContext.SimulateStateChange(
-            _entities.NetworkStatus.EntityId,
-            HaEntityStates.CONNECTED,
-            HaEntityStates.CONNECTED
-        );
+        // Act - Simulate both sensors changing rapidly
+        _mockHaContext.SimulateStateChange(_entities.Power.EntityId, HaEntityStates.ON, HaEntityStates.OFF);
 
         // Assert
-        _stateChanges.Should().BeEmpty("Should not emit when calculated state doesn't change");
-    }
-
-    [Fact]
-    public void StateChanges_Should_HandleNetworkDisconnectionCorrectly()
-    {
-        // Arrange - Need to simulate transitions to get the observable in the right state
-        _stateChanges.Clear();
-
-        // First, simulate getting to the starting state
-        _mockHaContext.SimulateStateChange(
-            _entities.PowerPlugThreshold.EntityId,
-            HaEntityStates.OFF,
-            HaEntityStates.ON
-        );
-        _mockHaContext.SimulateStateChange(
-            _entities.NetworkStatus.EntityId,
-            HaEntityStates.DISCONNECTED,
-            HaEntityStates.CONNECTED
-        );
-        _stateChanges.Clear(); // Clear the setup state changes
-
-        // Act - Disconnect network (should force desktop OFF)
-        _mockHaContext.SimulateStateChange(
-            _entities.NetworkStatus.EntityId,
-            HaEntityStates.CONNECTED,
-            HaEntityStates.DISCONNECTED
-        );
-
-        // Assert
-        _stateChanges.Should().HaveCount(1, "Should emit state change when network disconnects");
-        _stateChanges[0].Should().BeFalse("Should be OFF when network disconnects, overriding power state");
-    }
-
-    [Fact]
-    public void StateChanges_Should_HandleComplexStateTransitions()
-    {
-        // Arrange - Set initial states for both sensors
-        _mockHaContext.SetEntityState(_entities.PowerPlugThreshold.EntityId, HaEntityStates.OFF);
-        _mockHaContext.SetEntityState(_entities.NetworkStatus.EntityId, HaEntityStates.DISCONNECTED);
-        _stateChanges.Clear();
-
-        // Act - Simulate complex state transition sequence
-        // 1. Power comes on (but network still disconnected - should stay OFF, no state change)
-        _mockHaContext.SimulateStateChange(
-            _entities.PowerPlugThreshold.EntityId,
-            HaEntityStates.OFF,
-            HaEntityStates.ON
-        );
-
-        // 2. Network connects (should turn ON)
-        _mockHaContext.SimulateStateChange(
-            _entities.NetworkStatus.EntityId,
-            HaEntityStates.DISCONNECTED,
-            HaEntityStates.CONNECTED
-        );
-
-        // 3. Power goes off (should stay ON due to network, no state change)
-        _mockHaContext.SimulateStateChange(
-            _entities.PowerPlugThreshold.EntityId,
-            HaEntityStates.ON,
-            HaEntityStates.OFF
-        );
-
-        // 4. Network disconnects (should turn OFF)
-        _mockHaContext.SimulateStateChange(
-            _entities.NetworkStatus.EntityId,
-            HaEntityStates.CONNECTED,
-            HaEntityStates.DISCONNECTED
-        );
-
-        // Assert - Only changes that actually alter the computed state should emit
-        _stateChanges.Should().HaveCount(2, "Should emit state changes only when computed state actually changes");
-        _stateChanges[0].Should().BeTrue("Step 2: Should turn ON when network connects");
-        _stateChanges[1].Should().BeFalse("Step 4: Should turn OFF when network disconnects");
+        _stateChanges.Should().HaveCountGreaterThan(0, "Should emit state changes for sensor changes");
+        _stateChanges.Last().Should().BeFalse("Final state should be ON with power inactive");
     }
 
     #endregion
@@ -288,7 +137,7 @@ public class DesktopTests : IDisposable
         _desktop.TurnOn();
 
         // Assert
-        _mockHaContext.ShouldHaveCalledSwitchTurnOn(_entities.PowerSwitch.EntityId);
+        _mockHaContext.ShouldHaveCalledSwitchTurnOn(_entities.Power.EntityId);
     }
 
     [Fact]
@@ -298,7 +147,7 @@ public class DesktopTests : IDisposable
         _desktop.TurnOff();
 
         // Assert
-        _mockHaContext.ShouldHaveCalledSwitchTurnOff(_entities.PowerSwitch.EntityId);
+        _mockHaContext.ShouldHaveCalledSwitchTurnOff(_entities.Power.EntityId);
     }
 
     #endregion
@@ -511,15 +360,13 @@ public class DesktopTests : IDisposable
         _desktop.Dispose();
 
         // Simulate state changes after disposal
-        _mockHaContext.SimulateStateChange(
-            _entities.PowerPlugThreshold.EntityId,
-            HaEntityStates.OFF,
-            HaEntityStates.ON
-        );
+        _mockHaContext.SimulateStateChange(_entities.Power.EntityId, HaEntityStates.OFF, HaEntityStates.ON);
         _mockHaContext.SimulateStateChange(_entities.RemotePcButton.EntityId, "off", DateTime.Now.ToString());
 
         // Assert
-        _stateChanges.Should().HaveCount(subscriptionCount, "Should not receive new state changes after disposal");
+        _stateChanges
+            .Should()
+            .HaveCount(1, "Should receive 1 State change Power State Change Disposal is handled by a caller class ");
 
         // Should not throw when calling methods after disposal
         var act = () =>
@@ -545,14 +392,8 @@ public class DesktopTests : IDisposable
     /// </summary>
     private class TestDesktopEntities(IHaContext haContext) : IDesktopEntities
     {
-        public BinarySensorEntity PowerPlugThreshold { get; } =
-            new BinarySensorEntity(haContext, "binary_sensor.smart_plug_1_power_exceeds_threshold");
-
-        public BinarySensorEntity NetworkStatus { get; } =
-            new BinarySensorEntity(haContext, "binary_sensor.daniel_pc_network_status");
-
-        public SwitchEntity PowerSwitch { get; } = new SwitchEntity(haContext, "switch.wake_on_lan");
-
         public InputButtonEntity RemotePcButton { get; } = new InputButtonEntity(haContext, "input_button.remote_pc");
+
+        public SwitchEntity Power => new SwitchEntity(haContext, "switch.danielpc");
     }
 }

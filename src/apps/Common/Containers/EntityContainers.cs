@@ -103,9 +103,7 @@ public class BedroomClimateEntities(Entities entities, CommonEntities common) : 
 
 public class DeskDesktopEntities(Entities entities) : IDesktopEntities
 {
-    public BinarySensorEntity PowerPlugThreshold => entities.BinarySensor.SmartPlug1PowerExceedsThreshold;
-    public BinarySensorEntity NetworkStatus => entities.BinarySensor.DanielPcNetworkStatus;
-    public SwitchEntity PowerSwitch => entities.Switch.WakeOnLan;
+    public SwitchEntity Power => entities.Switch.DanielPc;
     public InputButtonEntity RemotePcButton => entities.InputButton.RemotePc;
 }
 

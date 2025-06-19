@@ -129,9 +129,8 @@ public class DisplayAutomationsTests : IDisposable
         );
 
         // Desktop states - initially off
-        _mockHaContext.SetEntityState(_desktopEntities.PowerPlugThreshold.EntityId, HaEntityStates.OFF);
-        _mockHaContext.SetEntityState(_desktopEntities.NetworkStatus.EntityId, HaEntityStates.DISCONNECTED);
-        _mockHaContext.SetEntityState(_desktopEntities.PowerSwitch.EntityId, HaEntityStates.OFF);
+        _mockHaContext.SetEntityState(_desktopEntities.Power.EntityId, HaEntityStates.OFF);
+        _mockHaContext.SetEntityState(_desktopEntities.Power.EntityId, HaEntityStates.OFF);
 
         // Laptop states - initially off
         _mockHaContext.SetEntityState(_laptopEntities.VirtualSwitch.EntityId, HaEntityStates.OFF);
@@ -439,20 +438,11 @@ public class DisplayAutomationsTests : IDisposable
     [Fact]
     public void Desktop_IsOn_Should_ReturnCorrectStateBasedOnPowerAndNetwork()
     {
-        // Test case 1: Network disconnected - should be off regardless of power
-        SimulateDesktopNetworkDisconnected();
-        SimulateDesktopPowerOn();
-        _desktop.IsOn().Should().BeFalse("Desktop should be off when network is disconnected");
+        SimulateDesktopOff();
+        _desktop.IsOn().Should().BeFalse("Desktop should be off when switch is off");
 
-        // Test case 2: Network connected - should be on
-        SimulateDesktopNetworkConnected();
-        SimulateDesktopPowerOff();
-        _desktop.IsOn().Should().BeTrue("Desktop should be on when network is connected");
-
-        // Test case 3: Power on, network not disconnected - should be on
-        SimulateDesktopNetworkNotDisconnected();
-        SimulateDesktopPowerOn();
-        _desktop.IsOn().Should().BeTrue("Desktop should be on when power is on and network is not disconnected");
+        SimulateDesktopOn();
+        _desktop.IsOn().Should().BeTrue("Desktop should be on when switch is on");
     }
 
     #endregion
@@ -556,30 +546,13 @@ public class DisplayAutomationsTests : IDisposable
 
     private void SimulateDesktopOn()
     {
-        _mockHaContext.SetEntityState(_desktopEntities.PowerPlugThreshold.EntityId, HaEntityStates.ON);
-        _mockHaContext.SetEntityState(_desktopEntities.NetworkStatus.EntityId, HaEntityStates.CONNECTED);
+        _mockHaContext.SetEntityState(_desktopEntities.Power.EntityId, HaEntityStates.ON);
     }
 
     private void SimulateDesktopOff()
     {
-        _mockHaContext.SetEntityState(_desktopEntities.PowerPlugThreshold.EntityId, HaEntityStates.OFF);
-        _mockHaContext.SetEntityState(_desktopEntities.NetworkStatus.EntityId, HaEntityStates.DISCONNECTED);
+        _mockHaContext.SetEntityState(_desktopEntities.Power.EntityId, HaEntityStates.OFF);
     }
-
-    private void SimulateDesktopPowerOn() =>
-        _mockHaContext.SetEntityState(_desktopEntities.PowerPlugThreshold.EntityId, HaEntityStates.ON);
-
-    private void SimulateDesktopPowerOff() =>
-        _mockHaContext.SetEntityState(_desktopEntities.PowerPlugThreshold.EntityId, HaEntityStates.OFF);
-
-    private void SimulateDesktopNetworkConnected() =>
-        _mockHaContext.SetEntityState(_desktopEntities.NetworkStatus.EntityId, HaEntityStates.CONNECTED);
-
-    private void SimulateDesktopNetworkDisconnected() =>
-        _mockHaContext.SetEntityState(_desktopEntities.NetworkStatus.EntityId, HaEntityStates.DISCONNECTED);
-
-    private void SimulateDesktopNetworkNotDisconnected() =>
-        _mockHaContext.SetEntityState(_desktopEntities.NetworkStatus.EntityId, "unknown");
 
     private void SimulateLaptopOn()
     {
@@ -662,20 +635,10 @@ public class DisplayAutomationsTests : IDisposable
 
     #region Test Entity Implementations
 
-    private class TestDesktopEntities : IDesktopEntities
+    private class TestDesktopEntities(IHaContext haContext) : IDesktopEntities
     {
-        public TestDesktopEntities(IHaContext haContext)
-        {
-            PowerPlugThreshold = new BinarySensorEntity(haContext, "binary_sensor.desktop_power_threshold");
-            NetworkStatus = new BinarySensorEntity(haContext, "binary_sensor.desktop_network_status");
-            PowerSwitch = new SwitchEntity(haContext, "switch.desktop_power");
-            RemotePcButton = new InputButtonEntity(haContext, "input_button.remote_pc");
-        }
-
-        public BinarySensorEntity PowerPlugThreshold { get; }
-        public BinarySensorEntity NetworkStatus { get; }
-        public SwitchEntity PowerSwitch { get; }
-        public InputButtonEntity RemotePcButton { get; }
+        public SwitchEntity Power { get; } = new SwitchEntity(haContext, "switch.danielpc");
+        public InputButtonEntity RemotePcButton { get; } = new InputButtonEntity(haContext, "input_button.remote_pc");
     }
 
     private class TestLaptopEntities : ILaptopEntities
