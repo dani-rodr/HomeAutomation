@@ -344,8 +344,12 @@ public class LaptopTests : IDisposable
         // Act
         _laptop.StateChanges().Subscribe(results.Add);
 
-        // Assert - With sessionLocked always false, combined result is always false, so no emission
-        results.Should().BeEmpty("sessionLocked always returns false, so StateChanges never emits");
+        // Assert - StateChanges now emits initial switch state via StartWith()
+        results
+            .Should()
+            .ContainSingle("StateChanges should emit initial switch state (true)")
+            .Which.Should()
+            .BeTrue("initial switch state is 'on'");
     }
 
     [Fact]
@@ -364,9 +368,13 @@ public class LaptopTests : IDisposable
             StateChangeHelpers.CreateStateChange(_entities.VirtualSwitch, "off", "on")
         );
 
-        // Assert - With AND logic: off+locked -> false, then on+locked -> false
-        // DistinctUntilChanged() filters out the duplicate false result, so no emission
-        results.Should().BeEmpty("should not emit when combined result stays false (DistinctUntilChanged)");
+        // Assert - Switch state changes from false to true
+        // The merged observable emits switch state changes
+        results
+            .Should()
+            .ContainSingle("switch state change from off to on should emit")
+            .Which.Should()
+            .BeTrue("switch changed to 'on'");
     }
 
     [Fact]
@@ -416,8 +424,13 @@ public class LaptopTests : IDisposable
             StateChangeHelpers.CreateStateChange(_entities.Session, "locked", "unlocked")
         );
 
-        // Assert - With sessionLocked always false, combined result is always false
-        results.Should().BeEmpty("sessionLocked always returns false, so no emissions occur");
+        // Assert - Both switch changes should emit in merged observable
+        // First emission: switch off->on (true), session change doesn't emit since it's unlocked->unlocked
+        results
+            .Should()
+            .ContainSingle("switch state change should emit")
+            .Which.Should()
+            .BeTrue("switch changed to 'on'");
     }
 
     #endregion
@@ -485,10 +498,10 @@ public class LaptopTests : IDisposable
     {
         // Test unavailable states don't cause issues
 
-        // Case 1: Session unavailable, switch on -> false (AND logic requires both)
+        // Case 1: Session unavailable, switch on -> true (unavailable is not locked)
         _mockHaContext.SetEntityState(_entities.VirtualSwitch.EntityId, "on");
         _mockHaContext.SetEntityState(_entities.Session.EntityId, "unavailable");
-        _laptop.IsOn().Should().BeFalse("unavailable session with AND logic means laptop is off");
+        _laptop.IsOn().Should().BeTrue("unavailable session is not locked, so laptop can be on with switch on");
 
         // Case 2: Session unavailable, switch off -> false
         _mockHaContext.SetEntityState(_entities.VirtualSwitch.EntityId, "off");

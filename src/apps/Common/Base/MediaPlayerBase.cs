@@ -77,7 +77,10 @@ public abstract class MediaPlayerBase : AutomationDeviceBase, IMediaPlayer
         }
 
         _queuedSourceKey = "";
-        Entity.SelectSource(source);
+        if (source != CurrentSource)
+        {
+            Entity.SelectSource(source);
+        }
     }
 
     public IObservable<string?> OnSourceChange() =>
