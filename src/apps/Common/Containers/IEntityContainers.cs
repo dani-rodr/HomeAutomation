@@ -90,7 +90,6 @@ public interface ILaptopEntities
 {
     SwitchEntity VirtualSwitch { get; }
     ButtonEntity[] WakeOnLanButtons { get; }
-    SwitchEntity PowerPlug { get; }
     SensorEntity Session { get; }
     NumericSensorEntity BatteryLevel { get; }
     ButtonEntity Lock { get; }
@@ -135,4 +134,10 @@ public interface ILockingEntities : IMotionBase
 public interface ILaptopSchedulerEntities
 {
     InputBooleanEntity ProjectNationWeek { get; }
+}
+
+public interface IBatteryHandlerEntities
+{
+    NumericSensorEntity Level { get; }
+    SwitchEntity Power { get; }
 }

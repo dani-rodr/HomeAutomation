@@ -114,6 +114,8 @@ public static class StateExtensions
         return e.New?.Context?.UserId ?? string.Empty;
     }
 
+    public static string Username(this StateChange e) => HaIdentity.GetName(e.UserId());
+
     /// <summary>
     /// Validates if the state change represents a valid button press event.
     /// A valid button press has a state value that can be parsed as a DateTime.

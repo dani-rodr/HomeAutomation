@@ -119,7 +119,7 @@ public abstract class MotionAutomationBase(
             evt.Old?.State,
             evt.New?.State,
             MotionSensor.EntityId,
-            evt.UserId() ?? "unknown"
+            evt.Username() ?? "unknown"
         );
 
         if (MotionSensor.IsOn())

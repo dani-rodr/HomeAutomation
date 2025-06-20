@@ -9,6 +9,7 @@ public class DeskApp(
     IDesktopEntities desktopEntities,
     ILaptopEntities laptopEntities,
     ILaptopScheduler laptopScheduler,
+    IBatteryHandler laptopBatteryHandler,
     IDeskMotionEntities deskMotionEntities,
     ILgDisplay lgDisplay,
     ILogger<DeskApp> logger
@@ -17,7 +18,7 @@ public class DeskApp(
     protected override IEnumerable<IAutomation> CreateAutomations()
     {
         Desktop desktop = new(desktopEntities, eventHandler, notificationServices, logger);
-        Laptop laptop = new(laptopEntities, laptopScheduler, eventHandler, logger);
+        Laptop laptop = new(laptopEntities, laptopScheduler, laptopBatteryHandler, eventHandler, logger);
         yield return new MotionAutomation(deskMotionEntities, lgDisplay, logger);
         yield return new DisplayAutomations(lgDisplay, desktop, laptop, eventHandler, logger);
     }

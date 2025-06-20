@@ -44,14 +44,31 @@ public static class HaIdentity
     public const string NODERED = "880cfaa866264c9aaa59fa1f0f0949b9";
     public const string MANUAL = "";
 
-    public static bool IsManuallyOperated(string? userId) =>
-        string.IsNullOrEmpty(userId?.Trim()) || _knownUsers.Contains(userId.Trim());
+    // Mapping of userId to readable names
+    private static readonly Dictionary<string, string> _names = new(StringComparer.OrdinalIgnoreCase)
+    {
+        [DANIEL_RODRIGUEZ] = "Daniel",
+        [ATHENA_BEZOS] = "Athena",
+        [MIPAD5] = "Mi Pad 5",
+        [SUPERVISOR] = "Supervisor",
+        [NODERED] = "Node-RED",
+        [MANUAL] = "Manual",
+    };
+
+    // List of manually operated users
+    private static readonly HashSet<string> _manualUsers = [DANIEL_RODRIGUEZ, ATHENA_BEZOS, MIPAD5, MANUAL];
+
+    public static string GetName(string? userId)
+    {
+        userId = userId?.Trim() ?? "";
+        return _names.TryGetValue(userId, out var name) ? name : $"Unknown ({userId})";
+    }
+
+    public static bool IsManuallyOperated(string? userId) => _manualUsers.Contains(userId?.Trim() ?? "");
 
     public static bool IsPhysicallyOperated(string? userId) => string.IsNullOrEmpty(userId);
 
-    public static bool IsAutomated(string? userId) => userId is not null && (userId == SUPERVISOR || userId == NODERED);
-
-    private static readonly HashSet<string> _knownUsers = [ATHENA_BEZOS, DANIEL_RODRIGUEZ, MIPAD5, MANUAL];
+    public static bool IsAutomated(string? userId) => userId is SUPERVISOR or NODERED;
 }
 
 public static class NFC_ID

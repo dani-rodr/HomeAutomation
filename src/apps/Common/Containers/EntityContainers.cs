@@ -120,7 +120,6 @@ public class LaptopEntities(Entities entities) : ILaptopEntities
 
     public ButtonEntity[] WakeOnLanButtons =>
         [entities.Button.Thinkpadt14WakeOnLan, entities.Button.Thinkpadt14WakeOnWlan];
-    public SwitchEntity PowerPlug => entities.Switch.Sonoff1002380fe51;
 
     public SensorEntity Session => entities.Sensor.Thinkpadt14Sessionstate;
 
@@ -189,4 +188,11 @@ public class LockingEntities(Entities entities, CommonEntities common) : ILockin
 public class LaptopSchedulerEntities(Entities entities) : ILaptopSchedulerEntities
 {
     public InputBooleanEntity ProjectNationWeek => entities.InputBoolean.ProjectNationWeek;
+}
+
+public class LaptopBatteryHandlerEntities(Entities entities) : IBatteryHandlerEntities
+{
+    public NumericSensorEntity Level => entities.Sensor.Thinkpadt14BatteryChargeRemainingPercentage;
+
+    public SwitchEntity Power => entities.Switch.Sonoff1002380fe51;
 }

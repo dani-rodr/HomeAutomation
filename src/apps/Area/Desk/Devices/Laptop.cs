@@ -7,27 +7,20 @@ public class Laptop : ComputerBase
     protected override string ShowEvent { get; } = "show_laptop";
     protected override string HideEvent { get; } = "hide_laptop";
     private readonly ILaptopEntities _entities;
+    private readonly IBatteryHandler _batteryHandler;
 
-    public Laptop(ILaptopEntities entities, ILaptopScheduler scheduler, IEventHandler eventHandler, ILogger logger)
+    public Laptop(
+        ILaptopEntities entities,
+        ILaptopScheduler scheduler,
+        IBatteryHandler batteryHandler,
+        IEventHandler eventHandler,
+        ILogger logger
+    )
         : base(eventHandler, logger)
     {
         _entities = entities;
-        Automations.Add(
-            _entities
-                .VirtualSwitch.StateChanges()
-                .DistinctUntilChanged()
-                .Subscribe(e =>
-                {
-                    if (e.IsOn())
-                    {
-                        TurnOn();
-                    }
-                    else if (e.IsOff())
-                    {
-                        TurnOff();
-                    }
-                })
-        );
+        _batteryHandler = batteryHandler;
+        Automations.Add(GetSwitchToggleAutomations());
         AddLogoffSchedules(scheduler);
     }
 
@@ -54,7 +47,7 @@ public class Laptop : ComputerBase
     public override void TurnOn()
     {
         _entities.VirtualSwitch.TurnOn();
-        _entities.PowerPlug.TurnOn();
+        _batteryHandler.HandleLaptopTurnedOn();
         foreach (var button in _entities.WakeOnLanButtons)
         {
             button.Press();
@@ -63,6 +56,7 @@ public class Laptop : ComputerBase
 
     public override void TurnOff()
     {
+        _ = _batteryHandler.HandleLaptopTurnedOffAsync();
         _entities.VirtualSwitch.TurnOff();
 
         if (_entities.Session.State.IsUnlocked())
@@ -72,6 +66,22 @@ public class Laptop : ComputerBase
     }
 
     private static bool IsOnline(bool switchState, bool sessionState) => switchState || sessionState;
+
+    private IDisposable GetSwitchToggleAutomations() =>
+        _entities
+            .VirtualSwitch.StateChanges()
+            .DistinctUntilChanged()
+            .Subscribe(e =>
+            {
+                if (e.IsOn())
+                {
+                    TurnOn();
+                }
+                else if (e.IsOff())
+                {
+                    TurnOff();
+                }
+            });
 
     private void AddLogoffSchedules(ILaptopScheduler scheduler)
     {
