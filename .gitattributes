@@ -1,0 +1,8 @@
+# Force text files to use CRLF
+* text=auto eol=crlf
+
+# Binary files - leave line endings untouched
+*.png binary
+*.jpg binary
+*.exe binary
+*.dll binary
