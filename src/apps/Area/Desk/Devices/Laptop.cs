@@ -21,6 +21,7 @@ public class Laptop : ComputerBase
         _entities = entities;
         _batteryHandler = batteryHandler;
         Automations.Add(GetSwitchToggleAutomations());
+        Automations.Add(_batteryHandler.StartMonitoring());
         AddLogoffSchedules(scheduler);
     }
 

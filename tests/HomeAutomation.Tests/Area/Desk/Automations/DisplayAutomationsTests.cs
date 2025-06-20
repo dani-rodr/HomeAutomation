@@ -1,9 +1,8 @@
-using System.Reactive.Subjects;
+using System.Reactive.Disposables;
 using HomeAutomation.apps.Area.Desk.Automations;
 using HomeAutomation.apps.Area.Desk.Devices;
 using HomeAutomation.apps.Common.Containers;
 using HomeAutomation.apps.Common.Interface;
-using HomeAutomation.apps.Helpers;
 
 namespace HomeAutomation.Tests.Area.Desk.Automations;
 
@@ -56,6 +55,7 @@ public class DisplayAutomationsTests : IDisposable
         // Setup battery handler mocks to prevent unexpected service calls
         _mockBatteryHandler.Setup(x => x.HandleLaptopTurnedOn());
         _mockBatteryHandler.Setup(x => x.HandleLaptopTurnedOffAsync()).Returns(Task.CompletedTask);
+        _mockBatteryHandler.Setup(x => x.StartMonitoring()).Returns(Disposable.Empty);
         _mockNotificationServices = new Mock<INotificationServices>();
 
         // Create entity containers

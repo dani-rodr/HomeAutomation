@@ -1,4 +1,4 @@
-using System.Reactive.Subjects;
+using System.Reactive.Disposables;
 using HomeAutomation.apps.Area.Desk.Devices;
 using HomeAutomation.apps.Common.Containers;
 using HomeAutomation.apps.Common.Interface;
@@ -30,6 +30,7 @@ public class LaptopTests : IDisposable
         // Setup battery handler mocks to prevent unexpected service calls
         _mockBatteryHandler.Setup(x => x.HandleLaptopTurnedOn());
         _mockBatteryHandler.Setup(x => x.HandleLaptopTurnedOffAsync()).Returns(Task.CompletedTask);
+        _mockBatteryHandler.Setup(x => x.StartMonitoring()).Returns(Disposable.Empty);
         // Setup event handler mocks to return empty observables by default
         _mockEventHandler.Setup(x => x.WhenEventTriggered("show_laptop")).Returns(new Subject<Event>().AsObservable());
         _mockEventHandler.Setup(x => x.WhenEventTriggered("hide_laptop")).Returns(new Subject<Event>().AsObservable());
@@ -218,8 +219,11 @@ public class LaptopTests : IDisposable
         _laptop.TurnOn();
 
         // Assert - Should call battery handler turned on
-        _mockBatteryHandler.Verify(x => x.HandleLaptopTurnedOn(), Times.Once,
-            "Should call battery handler when laptop turns on");
+        _mockBatteryHandler.Verify(
+            x => x.HandleLaptopTurnedOn(),
+            Times.Once,
+            "Should call battery handler when laptop turns on"
+        );
     }
 
     [Fact]
@@ -229,8 +233,11 @@ public class LaptopTests : IDisposable
         _laptop.TurnOff();
 
         // Assert - Should call battery handler turned off async
-        _mockBatteryHandler.Verify(x => x.HandleLaptopTurnedOffAsync(), Times.Once,
-            "Should call battery handler async method when laptop turns off");
+        _mockBatteryHandler.Verify(
+            x => x.HandleLaptopTurnedOffAsync(),
+            Times.Once,
+            "Should call battery handler async method when laptop turns off"
+        );
     }
 
     [Fact]
@@ -241,8 +248,11 @@ public class LaptopTests : IDisposable
         _mockHaContext.StateChangeSubject.OnNext(stateChange);
 
         // Assert - Should call battery handler turned on
-        _mockBatteryHandler.Verify(x => x.HandleLaptopTurnedOn(), Times.Once,
-            "Should call battery handler when virtual switch turns on");
+        _mockBatteryHandler.Verify(
+            x => x.HandleLaptopTurnedOn(),
+            Times.Once,
+            "Should call battery handler when virtual switch turns on"
+        );
     }
 
     [Fact]
@@ -253,8 +263,11 @@ public class LaptopTests : IDisposable
         _mockHaContext.StateChangeSubject.OnNext(stateChange);
 
         // Assert - Should call battery handler turned off async
-        _mockBatteryHandler.Verify(x => x.HandleLaptopTurnedOffAsync(), Times.Once,
-            "Should call battery handler async method when virtual switch turns off");
+        _mockBatteryHandler.Verify(
+            x => x.HandleLaptopTurnedOffAsync(),
+            Times.Once,
+            "Should call battery handler async method when virtual switch turns off"
+        );
     }
 
     #endregion
