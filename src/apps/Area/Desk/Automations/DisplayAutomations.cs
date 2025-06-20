@@ -9,30 +9,34 @@ public class DisplayAutomations(
 ) : AutomationBase(logger)
 {
     protected override IEnumerable<IDisposable> GetPersistentAutomations() =>
-        [GetNfcAutomation(), .. GetPcAutomations(), .. GetLaptopAutomations()];
+        [
+            HandleNfcScan(),
+            .. ObserveComputer(desktop, ShowPcDisplay, HandlePcTurnedOff),
+            .. ObserveComputer(laptop, ShowLaptopDisplay, HandleLaptopTurnedOff),
+        ];
 
     protected override IEnumerable<IDisposable> GetToggleableAutomations() => [];
 
-    private IDisposable GetNfcAutomation() => eventHandler.OnNfcScan(NFC_ID.DESK).Subscribe(ToggleMonitor);
+    private IDisposable HandleNfcScan() => eventHandler.OnNfcScan(NFC_ID.DESK).Subscribe(ToggleDisplay);
 
-    private void ToggleMonitor(string tagId)
+    private void ToggleDisplay(string tagId)
     {
-        if (!desktop.IsOn() || monitor.IsShowingPc)
+        if (monitor.IsShowingPc && laptop.IsOn())
+        {
+            ShowLaptopDisplay();
+        }
+        else if (!desktop.IsOn())
         {
             laptop.TurnOn();
-            SwitchToLaptop();
+            ShowLaptopDisplay();
         }
         else
         {
-            SwitchToPc();
+            ShowPcDisplay();
         }
     }
 
-    private static IEnumerable<IDisposable> GetComputerAutomations(
-        IComputer device,
-        Action onTurnedOn,
-        Action onTurnedOff
-    )
+    private static IEnumerable<IDisposable> ObserveComputer(IComputer device, Action onTurnedOn, Action onTurnedOff)
     {
         yield return device
             .StateChanges()
@@ -49,34 +53,22 @@ public class DisplayAutomations(
                 }
             });
         yield return device.OnShowRequested().Subscribe(_ => onTurnedOn());
-        yield return device.OnHideRequested().Subscribe(_ => onTurnedOff());
+        yield return device
+            .OnHideRequested()
+            .Subscribe(_ =>
+            {
+                onTurnedOff();
+                device.TurnOff();
+            });
     }
 
-    private IEnumerable<IDisposable> GetPcAutomations() =>
-        GetComputerAutomations(desktop, OnDesktopTurnedOn, OnDesktopTurnedOff);
-
-    private IEnumerable<IDisposable> GetLaptopAutomations() =>
-        GetComputerAutomations(laptop, OnLaptopTurnedOn, OnLaptopTurnedOff);
-
-    private void OnDesktopTurnedOn() => SwitchToPc();
-
-    private void OnDesktopTurnedOff() => HandleDesktopOff();
-
-    private void OnLaptopTurnedOn() => SwitchToLaptop();
-
-    private void OnLaptopTurnedOff()
-    {
-        HandleLaptopOff();
-        laptop.TurnOff();
-    }
-
-    private void SwitchToPc()
+    private void ShowPcDisplay()
     {
         Logger.LogDebug("Switching display to PC. Desktop: {Desktop}, Laptop: {Laptop}", desktop.IsOn(), laptop.IsOn());
         monitor.ShowPC();
     }
 
-    private void SwitchToLaptop()
+    private void ShowLaptopDisplay()
     {
         Logger.LogDebug(
             "Switching display to Laptop. Desktop: {Desktop}, Laptop: {Laptop}",
@@ -96,11 +88,11 @@ public class DisplayAutomations(
         monitor.TurnOff();
     }
 
-    private void HandleDesktopOff()
+    private void HandlePcTurnedOff()
     {
         if (laptop.IsOn())
         {
-            SwitchToLaptop();
+            ShowLaptopDisplay();
         }
         else
         {
@@ -108,11 +100,11 @@ public class DisplayAutomations(
         }
     }
 
-    private void HandleLaptopOff()
+    private void HandleLaptopTurnedOff()
     {
         if (desktop.IsOn())
         {
-            SwitchToPc();
+            ShowPcDisplay();
         }
         else
         {
