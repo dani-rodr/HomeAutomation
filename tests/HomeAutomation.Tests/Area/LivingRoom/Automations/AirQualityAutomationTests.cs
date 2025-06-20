@@ -5,30 +5,30 @@ using HomeAutomation.apps.Helpers;
 namespace HomeAutomation.Tests.Area.LivingRoom.Automations;
 
 /// <summary>
-/// Comprehensive behavioral tests for LivingRoom AirQualityAutomations using clean assertion syntax
+/// Comprehensive behavioral tests for LivingRoom AirQualityAutomation using clean assertion syntax
 /// Tests air quality monitoring, fan control based on PM2.5 levels, and environmental automation
 /// </summary>
-public class AirQualityAutomationsTests : IDisposable
+public class AirQualityAutomationTests : IDisposable
 {
     private readonly MockHaContext _mockHaContext;
-    private readonly Mock<ILogger<AirQualityAutomations>> _mockLogger;
+    private readonly Mock<ILogger<AirQualityAutomation>> _mockLogger;
     private readonly TestEntities _entities;
-    private readonly AirQualityAutomations _automation;
+    private readonly AirQualityAutomation _automation;
 
     // Air quality thresholds from the implementation
     private const int CLEAN_AIR_THRESHOLD = 7;
     private const int DIRTY_AIR_THRESHOLD = 75;
     private const int WAIT_TIME_SECONDS = 10;
 
-    public AirQualityAutomationsTests()
+    public AirQualityAutomationTests()
     {
         _mockHaContext = new MockHaContext();
-        _mockLogger = new Mock<ILogger<AirQualityAutomations>>();
+        _mockLogger = new Mock<ILogger<AirQualityAutomation>>();
 
         // Create test entities wrapper
         _entities = new TestEntities(_mockHaContext);
 
-        _automation = new AirQualityAutomations(_entities, _mockLogger.Object);
+        _automation = new AirQualityAutomation(_entities, _mockLogger.Object);
 
         // Start the automation to set up subscriptions
         _automation.StartAutomation();

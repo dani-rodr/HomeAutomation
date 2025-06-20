@@ -1,6 +1,6 @@
-namespace HomeAutomation.apps.Area.Bedroom;
+namespace HomeAutomation.apps.Area.Bedroom.Automations;
 
-public class FanAutomation(IFanEntities entities, ILogger logger)
+public class FanAutomation(IBedroomFanEntities entities, ILogger logger)
     : FanAutomationBase(entities.MasterSwitch, entities.MotionSensor, logger, [.. entities.Fans])
 {
     protected override bool ShouldActivateFan { get; set; } = false;

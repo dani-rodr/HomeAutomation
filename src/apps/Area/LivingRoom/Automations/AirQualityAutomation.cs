@@ -1,6 +1,6 @@
 namespace HomeAutomation.apps.Area.LivingRoom.Automations;
 
-public class AirQualityAutomations(IAirQualityEntities entities, ILogger logger)
+public class AirQualityAutomation(IAirQualityEntities entities, ILogger logger)
     : FanAutomationBase(
         entities.MasterSwitch,
         entities.MotionSensor,

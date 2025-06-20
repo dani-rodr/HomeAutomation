@@ -20,6 +20,6 @@ public class DeskApp(
         Desktop desktop = new(desktopEntities, eventHandler, notificationServices, logger);
         Laptop laptop = new(laptopEntities, laptopScheduler, laptopBatteryHandler, eventHandler, logger);
         yield return new MotionAutomation(deskMotionEntities, lgDisplay, logger);
-        yield return new DisplayAutomations(lgDisplay, desktop, laptop, eventHandler, logger);
+        yield return new DisplayAutomation(lgDisplay, desktop, laptop, eventHandler, logger);
     }
 }

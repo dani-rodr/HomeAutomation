@@ -13,8 +13,8 @@ public class LivingRoomApp(
     protected override IEnumerable<IAutomation> CreateAutomations()
     {
         yield return new FanAutomation(fanEntities, logger);
-        yield return new AirQualityAutomations(airQualityEntities, logger);
-        yield return new TabletAutomations(tabletEntities, logger);
+        yield return new AirQualityAutomation(airQualityEntities, logger);
+        yield return new TabletAutomation(tabletEntities, logger);
         yield return new MotionAutomation(
             motionEntities,
             new DimmingLightController(motionEntities.SensorDelay, logger),

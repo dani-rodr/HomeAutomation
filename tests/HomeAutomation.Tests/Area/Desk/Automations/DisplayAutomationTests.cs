@@ -7,7 +7,7 @@ using HomeAutomation.apps.Common.Interface;
 namespace HomeAutomation.Tests.Area.Desk.Automations;
 
 /// <summary>
-/// Comprehensive behavioral tests for DisplayAutomations class
+/// Comprehensive behavioral tests for DisplayAutomation class
 /// Tests complex device coordination between Desktop, Laptop, and LG Monitor including:
 /// - Multi-computer state management and display switching
 /// - NFC control integration for show PC and shutdown commands
@@ -15,10 +15,10 @@ namespace HomeAutomation.Tests.Area.Desk.Automations;
 /// - Complex state decision logic and fallback behavior
 /// - Master switch automation lifecycle management
 /// </summary>
-public class DisplayAutomationsTests : IDisposable
+public class DisplayAutomationTests : IDisposable
 {
     private readonly MockHaContext _mockHaContext;
-    private readonly Mock<ILogger<DisplayAutomations>> _mockLogger;
+    private readonly Mock<ILogger<DisplayAutomation>> _mockLogger;
     private readonly Mock<IEventHandler> _mockEventHandler;
     private readonly Mock<ILogger<LgDisplay>> _mockMonitorLogger;
     private readonly Mock<ILogger<Desktop>> _mockDesktopLogger;
@@ -40,12 +40,12 @@ public class DisplayAutomationsTests : IDisposable
     private readonly LgDisplay _monitor;
     private readonly Desktop _desktop;
     private readonly Laptop _laptop;
-    private readonly DisplayAutomations _automation;
+    private readonly DisplayAutomation _automation;
 
-    public DisplayAutomationsTests()
+    public DisplayAutomationTests()
     {
         _mockHaContext = new MockHaContext();
-        _mockLogger = new Mock<ILogger<DisplayAutomations>>();
+        _mockLogger = new Mock<ILogger<DisplayAutomation>>();
         _mockEventHandler = new Mock<IEventHandler>();
         _mockMonitorLogger = new Mock<ILogger<LgDisplay>>();
         _mockDesktopLogger = new Mock<ILogger<Desktop>>();
@@ -109,7 +109,7 @@ public class DisplayAutomationsTests : IDisposable
         );
 
         // Create automation under test
-        _automation = new DisplayAutomations(_monitor, _desktop, _laptop, _mockEventHandler.Object, _mockLogger.Object);
+        _automation = new DisplayAutomation(_monitor, _desktop, _laptop, _mockEventHandler.Object, _mockLogger.Object);
 
         // Initialize all devices and automation
         SetupInitialStates();

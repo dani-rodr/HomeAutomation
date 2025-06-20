@@ -1,6 +1,6 @@
 namespace HomeAutomation.apps.Area.Desk.Automations;
 
-public class DisplayAutomations(
+public class DisplayAutomation(
     ILgDisplay monitor,
     IComputer desktop,
     IComputer laptop,

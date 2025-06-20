@@ -107,7 +107,7 @@ public class DeskDesktopEntities(Entities entities) : IDesktopEntities
     public InputButtonEntity RemotePcButton => entities.InputButton.RemotePc;
 }
 
-public class BedroomFanEntities(CommonEntities common) : IFanEntities
+public class BedroomFanEntities(CommonEntities common) : IBedroomFanEntities
 {
     public SwitchEntity MasterSwitch => common.BedroomMotionSwitch;
     public BinarySensorEntity MotionSensor => common.BedroomMotionSensor;

@@ -32,7 +32,7 @@ public static class ServiceCollectionExtensions
     {
         return services
             .AddTransientEntity<IBedroomMotionEntities, BedroomMotionEntities>()
-            .AddTransientEntity<IFanEntities, BedroomFanEntities>()
+            .AddTransientEntity<IBedroomFanEntities, BedroomFanEntities>()
             .AddTransientEntity<IClimateEntities, BedroomClimateEntities>();
     }
 

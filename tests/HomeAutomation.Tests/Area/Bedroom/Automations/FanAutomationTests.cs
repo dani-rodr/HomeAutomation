@@ -1,4 +1,4 @@
-using HomeAutomation.apps.Area.Bedroom;
+using HomeAutomation.apps.Area.Bedroom.Automations;
 using HomeAutomation.apps.Common.Containers;
 
 namespace HomeAutomation.Tests.Area.Bedroom.Automations;
@@ -7,14 +7,14 @@ namespace HomeAutomation.Tests.Area.Bedroom.Automations;
 /// Comprehensive behavioral tests for Bedroom FanAutomation using clean assertion syntax
 /// Tests fan control logic extending FanAutomationBase with motion-based activation patterns
 /// </summary>
-public class FanAutomationsTests : IDisposable
+public class FanAutomationTests : IDisposable
 {
     private readonly MockHaContext _mockHaContext;
     private readonly Mock<ILogger<FanAutomation>> _mockLogger;
     private readonly TestEntities _entities;
     private readonly FanAutomation _automation;
 
-    public FanAutomationsTests()
+    public FanAutomationTests()
     {
         _mockHaContext = new MockHaContext();
         _mockLogger = new Mock<ILogger<FanAutomation>>();
@@ -283,10 +283,10 @@ public class FanAutomationsTests : IDisposable
     }
 
     /// <summary>
-    /// Test wrapper that implements IFanEntities interface
+    /// Test wrapper that implements IBedroomFanEntities interface
     /// Creates entities internally with the appropriate entity IDs for Bedroom Fan Automation
     /// </summary>
-    private class TestEntities(IHaContext haContext) : IFanEntities
+    private class TestEntities(IHaContext haContext) : IBedroomFanEntities
     {
         public SwitchEntity MasterSwitch { get; } = new SwitchEntity(haContext, "switch.bedroom_motion_sensor");
         public BinarySensorEntity MotionSensor { get; } =

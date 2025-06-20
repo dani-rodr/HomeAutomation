@@ -4,25 +4,25 @@ using HomeAutomation.apps.Common.Containers;
 namespace HomeAutomation.Tests.Area.LivingRoom.Automations;
 
 /// <summary>
-/// Comprehensive behavioral tests for LivingRoom TabletAutomations using clean assertion syntax
+/// Comprehensive behavioral tests for LivingRoom TabletAutomation using clean assertion syntax
 /// Tests tablet screen control logic based on motion detection with simplified sensor delay behavior
 /// </summary>
-public class TabletAutomationsTests : IDisposable
+public class TabletAutomationTests : IDisposable
 {
     private readonly MockHaContext _mockHaContext;
-    private readonly Mock<ILogger<TabletAutomations>> _mockLogger;
+    private readonly Mock<ILogger<TabletAutomation>> _mockLogger;
     private readonly TestTabletEntities _entities;
-    private readonly TabletAutomations _automation;
+    private readonly TabletAutomation _automation;
 
-    public TabletAutomationsTests()
+    public TabletAutomationTests()
     {
         _mockHaContext = new MockHaContext();
-        _mockLogger = new Mock<ILogger<TabletAutomations>>();
+        _mockLogger = new Mock<ILogger<TabletAutomation>>();
 
         // Create test entities wrapper
         _entities = new TestTabletEntities(_mockHaContext);
 
-        _automation = new TabletAutomations(_entities, _mockLogger.Object);
+        _automation = new TabletAutomation(_entities, _mockLogger.Object);
 
         // Start the automation to set up subscriptions
         _automation.StartAutomation();
@@ -134,7 +134,7 @@ public class TabletAutomationsTests : IDisposable
         // Assert - Should immediately turn on tablet screen (no delay automation)
         _mockHaContext.ShouldHaveCalledLightTurnOn(_entities.TabletScreen.EntityId);
 
-        // No sensor delay entity is involved since TabletAutomations returns empty from GetSensorDelayAutomations
+        // No sensor delay entity is involved since TabletAutomation returns empty from GetSensorDelayAutomations
         // This test verifies the simplified behavior compared to other motion automations
     }
 

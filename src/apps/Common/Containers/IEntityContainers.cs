@@ -107,12 +107,14 @@ public interface ITabletEntities : IMotionBase
     BinarySensorEntity TabletActive { get; }
 }
 
-public interface IFanEntities : IMotionBase
+public interface IFanAutomationEntities : IMotionBase
 {
     IEnumerable<SwitchEntity> Fans { get; }
 }
 
-public interface ILivingRoomFanEntities : IFanEntities
+public interface IBedroomFanEntities : IFanAutomationEntities;
+
+public interface ILivingRoomFanEntities : IFanAutomationEntities
 {
     BinarySensorEntity BedroomMotionSensor { get; }
 }
