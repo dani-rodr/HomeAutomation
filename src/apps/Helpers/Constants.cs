@@ -45,7 +45,9 @@ public static class HaIdentity
     public const string MANUAL = "";
 
     // Mapping of userId to readable names
-    private static readonly Dictionary<string, string> _names = new(StringComparer.OrdinalIgnoreCase)
+    private static readonly Dictionary<string, string> _names = new(
+        StringComparer.OrdinalIgnoreCase
+    )
     {
         [DANIEL_RODRIGUEZ] = "Daniel",
         [ATHENA_BEZOS] = "Athena",
@@ -56,7 +58,13 @@ public static class HaIdentity
     };
 
     // List of manually operated users
-    private static readonly HashSet<string> _manualUsers = [DANIEL_RODRIGUEZ, ATHENA_BEZOS, MIPAD5, MANUAL];
+    private static readonly HashSet<string> _manualUsers =
+    [
+        DANIEL_RODRIGUEZ,
+        ATHENA_BEZOS,
+        MIPAD5,
+        MANUAL,
+    ];
 
     public static string GetName(string? userId)
     {
@@ -64,7 +72,8 @@ public static class HaIdentity
         return _names.TryGetValue(userId, out var name) ? name : $"Unknown ({userId})";
     }
 
-    public static bool IsManuallyOperated(string? userId) => _manualUsers.Contains(userId?.Trim() ?? "");
+    public static bool IsManuallyOperated(string? userId) =>
+        _manualUsers.Contains(userId?.Trim() ?? "");
 
     public static bool IsPhysicallyOperated(string? userId) => string.IsNullOrEmpty(userId);
 

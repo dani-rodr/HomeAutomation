@@ -115,7 +115,8 @@ public class FanAutomationTests : IDisposable
         // we verify the subscription exists and the logic pattern
 
         // Act - Verify automation doesn't throw when processing off state
-        var act = () => _mockHaContext.SimulateStateChange(_entities.CeilingFan.EntityId, "on", "off");
+        var act = () =>
+            _mockHaContext.SimulateStateChange(_entities.CeilingFan.EntityId, "on", "off");
 
         // Assert - Should not throw and automation should handle state changes
         act.Should().NotThrow();
@@ -193,7 +194,9 @@ public class FanAutomationTests : IDisposable
         // Test that the automation handles multiple fans correctly
 
         // Arrange - Verify all fans exist
-        _entities.Fans.Should().HaveCount(3, "LivingRoom should have 3 fans: ceiling, stand, and exhaust");
+        _entities
+            .Fans.Should()
+            .HaveCount(3, "LivingRoom should have 3 fans: ceiling, stand, and exhaust");
 
         var fanIds = _entities.Fans.Select(f => f.EntityId).ToList();
         fanIds.Should().Contain(_entities.CeilingFan.EntityId);
@@ -284,11 +287,21 @@ public class FanAutomationTests : IDisposable
         // Act & Assert - Should not throw with various state changes
         var act = () =>
         {
-            _mockHaContext.StateChangeSubject.OnNext(StateChangeHelpers.MotionDetected(_entities.MotionSensor));
-            _mockHaContext.StateChangeSubject.OnNext(StateChangeHelpers.MotionCleared(_entities.MotionSensor));
-            _mockHaContext.StateChangeSubject.OnNext(StateChangeHelpers.SwitchTurnedOn(_entities.CeilingFan));
-            _mockHaContext.StateChangeSubject.OnNext(StateChangeHelpers.SwitchTurnedOff(_entities.CeilingFan));
-            _mockHaContext.StateChangeSubject.OnNext(StateChangeHelpers.MotionDetected(_entities.BedroomMotionSensor));
+            _mockHaContext.StateChangeSubject.OnNext(
+                StateChangeHelpers.MotionDetected(_entities.MotionSensor)
+            );
+            _mockHaContext.StateChangeSubject.OnNext(
+                StateChangeHelpers.MotionCleared(_entities.MotionSensor)
+            );
+            _mockHaContext.StateChangeSubject.OnNext(
+                StateChangeHelpers.SwitchTurnedOn(_entities.CeilingFan)
+            );
+            _mockHaContext.StateChangeSubject.OnNext(
+                StateChangeHelpers.SwitchTurnedOff(_entities.CeilingFan)
+            );
+            _mockHaContext.StateChangeSubject.OnNext(
+                StateChangeHelpers.MotionDetected(_entities.BedroomMotionSensor)
+            );
         };
 
         act.Should().NotThrow();
@@ -309,8 +322,12 @@ public class FanAutomationTests : IDisposable
         var act = () =>
         {
             // Test typical fan automation patterns
-            _mockHaContext.StateChangeSubject.OnNext(StateChangeHelpers.MotionDetected(_entities.MotionSensor));
-            _mockHaContext.StateChangeSubject.OnNext(StateChangeHelpers.MotionCleared(_entities.MotionSensor));
+            _mockHaContext.StateChangeSubject.OnNext(
+                StateChangeHelpers.MotionDetected(_entities.MotionSensor)
+            );
+            _mockHaContext.StateChangeSubject.OnNext(
+                StateChangeHelpers.MotionCleared(_entities.MotionSensor)
+            );
         };
 
         act.Should().NotThrow();
@@ -328,7 +345,8 @@ public class FanAutomationTests : IDisposable
     /// </summary>
     private class TestEntities(IHaContext haContext) : ILivingRoomFanEntities
     {
-        public SwitchEntity MasterSwitch { get; } = new SwitchEntity(haContext, "switch.sala_motion_sensor");
+        public SwitchEntity MasterSwitch { get; } =
+            new SwitchEntity(haContext, "switch.sala_motion_sensor");
         public BinarySensorEntity MotionSensor { get; } =
             new BinarySensorEntity(haContext, "binary_sensor.living_room_presence_sensors");
         public IEnumerable<SwitchEntity> Fans { get; } =

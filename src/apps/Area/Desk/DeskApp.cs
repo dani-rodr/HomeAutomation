@@ -18,7 +18,13 @@ public class DeskApp(
     protected override IEnumerable<IAutomation> CreateAutomations()
     {
         Desktop desktop = new(desktopEntities, eventHandler, notificationServices, logger);
-        Laptop laptop = new(laptopEntities, laptopScheduler, laptopBatteryHandler, eventHandler, logger);
+        Laptop laptop = new(
+            laptopEntities,
+            laptopScheduler,
+            laptopBatteryHandler,
+            eventHandler,
+            logger
+        );
         yield return new MotionAutomation(deskMotionEntities, lgDisplay, logger);
         yield return new DisplayAutomation(lgDisplay, desktop, laptop, eventHandler, logger);
     }

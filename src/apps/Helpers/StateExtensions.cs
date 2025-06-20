@@ -122,21 +122,24 @@ public static class StateExtensions
     /// </summary>
     /// <param name="e">The state change event.</param>
     /// <returns>True if the state represents a valid button press timestamp, otherwise false.</returns>
-    public static bool IsValidButtonPress(this StateChange e) => DateTime.TryParse(e?.New?.State, out _);
+    public static bool IsValidButtonPress(this StateChange e) =>
+        DateTime.TryParse(e?.New?.State, out _);
 
     /// <summary>
     /// Determines if the state change was triggered by manual user interaction.
     /// </summary>
     /// <param name="e">The state change event.</param>
     /// <returns>True if the change was manually operated by a user, otherwise false.</returns>
-    public static bool IsManuallyOperated(this StateChange e) => HaIdentity.IsManuallyOperated(e.UserId());
+    public static bool IsManuallyOperated(this StateChange e) =>
+        HaIdentity.IsManuallyOperated(e.UserId());
 
     /// <summary>
     /// Determines if the state change was triggered by physical device interaction.
     /// </summary>
     /// <param name="e">The state change event.</param>
     /// <returns>True if the change was physically operated, otherwise false.</returns>
-    public static bool IsPhysicallyOperated(this StateChange e) => HaIdentity.IsPhysicallyOperated(e.UserId());
+    public static bool IsPhysicallyOperated(this StateChange e) =>
+        HaIdentity.IsPhysicallyOperated(e.UserId());
 
     /// <summary>
     /// Determines if the state change was triggered by an automation.

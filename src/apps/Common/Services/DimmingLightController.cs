@@ -1,6 +1,7 @@
 namespace HomeAutomation.apps.Common.Services;
 
-public class DimmingLightController(NumberEntity sensorDelay, ILogger logger) : IDimmingLightController
+public class DimmingLightController(NumberEntity sensorDelay, ILogger logger)
+    : IDimmingLightController
 {
     private CancellationTokenSource? _lightTurnOffCancellationToken;
     private int _sensorActiveDelayValue = 5;
@@ -65,17 +66,26 @@ public class DimmingLightController(NumberEntity sensorDelay, ILogger logger) : 
             await Task.Delay(TimeSpan.FromSeconds(_dimDelaySeconds), token);
             if (!token.IsCancellationRequested)
             {
-                logger.LogDebug("Dimming sequence completed for {EntityId} - turning off light", light.EntityId);
+                logger.LogDebug(
+                    "Dimming sequence completed for {EntityId} - turning off light",
+                    light.EntityId
+                );
                 light.TurnOff();
             }
             else
             {
-                logger.LogDebug("Dimming sequence cancelled for {EntityId} (new motion detected)", light.EntityId);
+                logger.LogDebug(
+                    "Dimming sequence cancelled for {EntityId} (new motion detected)",
+                    light.EntityId
+                );
             }
         }
         catch (TaskCanceledException)
         {
-            logger.LogDebug("Dimming sequence cancelled for {EntityId} due to task cancellation", light.EntityId);
+            logger.LogDebug(
+                "Dimming sequence cancelled for {EntityId} due to task cancellation",
+                light.EntityId
+            );
         }
     }
 
@@ -107,7 +117,11 @@ public class DimmingLightController(NumberEntity sensorDelay, ILogger logger) : 
 
     public void SetSensorActiveDelayValue(int value)
     {
-        logger.LogDebug("Updating sensor active delay value: {OldValue} → {NewValue}", _sensorActiveDelayValue, value);
+        logger.LogDebug(
+            "Updating sensor active delay value: {OldValue} → {NewValue}",
+            _sensorActiveDelayValue,
+            value
+        );
         _sensorActiveDelayValue = value;
     }
 

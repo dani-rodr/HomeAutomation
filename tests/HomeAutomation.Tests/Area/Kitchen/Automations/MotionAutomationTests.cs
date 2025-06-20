@@ -77,11 +77,16 @@ public class MotionAutomationTests : IDisposable
         // Act & Assert - Should not throw for any state changes
         var act = () =>
         {
-            _mockHaContext.StateChangeSubject.OnNext(StateChangeHelpers.MotionDetected(_entities.MotionSensor));
-            _mockHaContext.StateChangeSubject.OnNext(StateChangeHelpers.MotionCleared(_entities.MotionSensor));
+            _mockHaContext.StateChangeSubject.OnNext(
+                StateChangeHelpers.MotionDetected(_entities.MotionSensor)
+            );
+            _mockHaContext.StateChangeSubject.OnNext(
+                StateChangeHelpers.MotionCleared(_entities.MotionSensor)
+            );
         };
 
-        act.Should().NotThrow("Kitchen automation should handle motion state changes without throwing");
+        act.Should()
+            .NotThrow("Kitchen automation should handle motion state changes without throwing");
     }
 
     #endregion
@@ -99,12 +104,17 @@ public class MotionAutomationTests : IDisposable
         _mockHaContext.StateChangeSubject.OnNext(stateChange);
 
         // Assert - Should call number.set_value with active delay value (15)
-        _mockHaContext.ShouldHaveCalledService("number", "set_value", _entities.SensorDelay.EntityId);
+        _mockHaContext.ShouldHaveCalledService(
+            "number",
+            "set_value",
+            _entities.SensorDelay.EntityId
+        );
 
         // Verify the service call was made correctly
         var numberCalls = _mockHaContext.GetServiceCalls("number").ToList();
         var setValueCall = numberCalls.FirstOrDefault(call =>
-            call.Service == "set_value" && call.Target?.EntityIds?.Contains(_entities.SensorDelay.EntityId) == true
+            call.Service == "set_value"
+            && call.Target?.EntityIds?.Contains(_entities.SensorDelay.EntityId) == true
         );
 
         setValueCall.Should().NotBeNull("Expected sensor delay to be set when power plug turns on");
@@ -144,7 +154,8 @@ public class MotionAutomationTests : IDisposable
         var numberCalls = _mockHaContext
             .GetServiceCalls("number")
             .Where(call =>
-                call.Service == "set_value" && call.Target?.EntityIds?.Contains(_entities.SensorDelay.EntityId) == true
+                call.Service == "set_value"
+                && call.Target?.EntityIds?.Contains(_entities.SensorDelay.EntityId) == true
             )
             .ToList();
 
@@ -203,7 +214,8 @@ public class MotionAutomationTests : IDisposable
             _mockHaContext.StateChangeSubject.OnNext(motionOffStateChange);
         };
 
-        act.Should().NotThrow("Sensor delay automation should be properly configured with custom timing");
+        act.Should()
+            .NotThrow("Sensor delay automation should be properly configured with custom timing");
     }
 
     #endregion
@@ -277,19 +289,29 @@ public class MotionAutomationTests : IDisposable
         _mockHaContext.StateChangeSubject.OnNext(
             StateChangeHelpers.CreateStateChange(_entities.PowerPlug, "off", "on")
         );
-        _mockHaContext.StateChangeSubject.OnNext(StateChangeHelpers.MotionDetected(_entities.MotionSensor));
-        _mockHaContext.StateChangeSubject.OnNext(StateChangeHelpers.MotionCleared(_entities.MotionSensor));
+        _mockHaContext.StateChangeSubject.OnNext(
+            StateChangeHelpers.MotionDetected(_entities.MotionSensor)
+        );
+        _mockHaContext.StateChangeSubject.OnNext(
+            StateChangeHelpers.MotionCleared(_entities.MotionSensor)
+        );
 
         // Assert - Should have appropriate service calls
         // Power plug should set sensor delay
-        _mockHaContext.ShouldHaveCalledService("number", "set_value", _entities.SensorDelay.EntityId);
+        _mockHaContext.ShouldHaveCalledService(
+            "number",
+            "set_value",
+            _entities.SensorDelay.EntityId
+        );
 
         // Motion cleared should immediately turn off light (no delay)
         _mockHaContext.ShouldHaveCalledLightTurnOff(_entities.Light.EntityId);
 
         // Verify we have the expected service calls (power plug + light off)
         var totalCalls = _mockHaContext.ServiceCalls.Count();
-        totalCalls.Should().Be(2, "Should have made 2 service calls: sensor delay and light turn off");
+        totalCalls
+            .Should()
+            .Be(2, "Should have made 2 service calls: sensor delay and light turn off");
     }
 
     [Fact]
@@ -298,17 +320,27 @@ public class MotionAutomationTests : IDisposable
         // Test multiple motion cycles with power plug interactions
 
         // Act - Complex sequence
-        _mockHaContext.StateChangeSubject.OnNext(StateChangeHelpers.MotionDetected(_entities.MotionSensor));
+        _mockHaContext.StateChangeSubject.OnNext(
+            StateChangeHelpers.MotionDetected(_entities.MotionSensor)
+        );
         _mockHaContext.StateChangeSubject.OnNext(
             StateChangeHelpers.CreateStateChange(_entities.PowerPlug, "off", "on")
         );
-        _mockHaContext.StateChangeSubject.OnNext(StateChangeHelpers.MotionCleared(_entities.MotionSensor));
-        _mockHaContext.StateChangeSubject.OnNext(StateChangeHelpers.MotionDetected(_entities.MotionSensor));
+        _mockHaContext.StateChangeSubject.OnNext(
+            StateChangeHelpers.MotionCleared(_entities.MotionSensor)
+        );
+        _mockHaContext.StateChangeSubject.OnNext(
+            StateChangeHelpers.MotionDetected(_entities.MotionSensor)
+        );
 
         // Assert - Verify correct behavior
         // Motion detected events don't immediately turn on light (5-second delay), but motion cleared does turn off
         _mockHaContext.ShouldHaveCalledLightExactly(_entities.Light.EntityId, "turn_off", 1);
-        _mockHaContext.ShouldHaveCalledService("number", "set_value", _entities.SensorDelay.EntityId);
+        _mockHaContext.ShouldHaveCalledService(
+            "number",
+            "set_value",
+            _entities.SensorDelay.EntityId
+        );
 
         // Verify total service calls (1 sensor delay + 1 light turn off)
         var totalCalls = _mockHaContext.ServiceCalls.Count();
@@ -327,8 +359,12 @@ public class MotionAutomationTests : IDisposable
         // Act & Assert - Should not throw for any state changes
         var act = () =>
         {
-            _mockHaContext.StateChangeSubject.OnNext(StateChangeHelpers.MotionDetected(_entities.MotionSensor));
-            _mockHaContext.StateChangeSubject.OnNext(StateChangeHelpers.MotionCleared(_entities.MotionSensor));
+            _mockHaContext.StateChangeSubject.OnNext(
+                StateChangeHelpers.MotionDetected(_entities.MotionSensor)
+            );
+            _mockHaContext.StateChangeSubject.OnNext(
+                StateChangeHelpers.MotionCleared(_entities.MotionSensor)
+            );
             _mockHaContext.StateChangeSubject.OnNext(
                 StateChangeHelpers.CreateStateChange(_entities.PowerPlug, "off", "on")
             );
@@ -337,7 +373,8 @@ public class MotionAutomationTests : IDisposable
             );
         };
 
-        act.Should().NotThrow("Kitchen automation should handle all state changes without throwing");
+        act.Should()
+            .NotThrow("Kitchen automation should handle all state changes without throwing");
     }
 
     [Fact]
@@ -401,7 +438,8 @@ public class MotionAutomationTests : IDisposable
     /// </summary>
     private class TestEntities(IHaContext haContext) : IKitchenMotionEntities
     {
-        public SwitchEntity MasterSwitch { get; } = new SwitchEntity(haContext, "switch.kitchen_motion_sensor");
+        public SwitchEntity MasterSwitch { get; } =
+            new SwitchEntity(haContext, "switch.kitchen_motion_sensor");
         public BinarySensorEntity MotionSensor { get; } =
             new BinarySensorEntity(haContext, "binary_sensor.kitchen_motion_sensors");
         public LightEntity Light { get; } = new LightEntity(haContext, "light.kitchen_lights");

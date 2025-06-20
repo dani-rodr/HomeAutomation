@@ -51,7 +51,11 @@ public class FanAutomation(ILivingRoomFanEntities entities, ILogger logger)
         var fanState = Fan.IsOn();
         var motionState = MotionSensor.IsOccupied();
 
-        Logger.LogDebug("FanChange detected: Fan.IsOn={Fan}, MotionSensor.IsOccupied={Motion}", fanState, motionState);
+        Logger.LogDebug(
+            "FanChange detected: Fan.IsOn={Fan}, MotionSensor.IsOccupied={Motion}",
+            fanState,
+            motionState
+        );
 
         if (fanState == motionState)
         {

@@ -2,7 +2,8 @@ using NetDaemon.Extensions.Scheduler;
 
 namespace HomeAutomation.apps.Common.Services;
 
-public class LaptopScheduler(ILaptopSchedulerEntities entities, IScheduler scheduler) : ILaptopScheduler
+public class LaptopScheduler(ILaptopSchedulerEntities entities, IScheduler scheduler)
+    : ILaptopScheduler
 {
     public IEnumerable<IDisposable> GetSchedules(Action action)
     {

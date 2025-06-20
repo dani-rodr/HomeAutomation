@@ -17,7 +17,10 @@ public abstract class MotionAutomationBase(
 
     protected override IEnumerable<IDisposable> GetPersistentAutomations()
     {
-        yield return Light.StateChanges().IsManuallyOperated().Subscribe(ControlMasterSwitchOnLightChange);
+        yield return Light
+            .StateChanges()
+            .IsManuallyOperated()
+            .Subscribe(ControlMasterSwitchOnLightChange);
         if (MasterSwitch != null)
         {
             yield return MasterSwitch.StateChanges().IsOn().Subscribe(ControlLightOnMotionChange);
@@ -29,7 +32,11 @@ public abstract class MotionAutomationBase(
     }
 
     protected override IEnumerable<IDisposable> GetToggleableAutomations() =>
-        [.. GetLightAutomations(), .. GetSensorDelayAutomations(), .. GetAdditionalSwitchableAutomations()];
+        [
+            .. GetLightAutomations(),
+            .. GetSensorDelayAutomations(),
+            .. GetAdditionalSwitchableAutomations(),
+        ];
 
     protected virtual IEnumerable<IDisposable> GetLightAutomations() => [];
 
@@ -41,7 +48,10 @@ public abstract class MotionAutomationBase(
     {
         if (SensorDelay == null)
         {
-            Logger.LogDebug("No sensor delay entity configured for {AutomationType}", GetType().Name);
+            Logger.LogDebug(
+                "No sensor delay entity configured for {AutomationType}",
+                GetType().Name
+            );
             yield break;
         }
 

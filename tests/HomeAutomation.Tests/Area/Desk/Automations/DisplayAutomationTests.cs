@@ -71,7 +71,9 @@ public class DisplayAutomationTests : IDisposable
         _hideLaptopSubject = new Subject<bool>();
 
         // Setup event handler mocks
-        _mockEventHandler.Setup(x => x.OnNfcScan(NFC_ID.DESK)).Returns(_nfcScanSubject.AsObservable());
+        _mockEventHandler
+            .Setup(x => x.OnNfcScan(NFC_ID.DESK))
+            .Returns(_nfcScanSubject.AsObservable());
 
         _mockEventHandler
             .Setup(x => x.WhenEventTriggered("show_pc"))
@@ -89,7 +91,9 @@ public class DisplayAutomationTests : IDisposable
             .Setup(x => x.WhenEventTriggered("hide_laptop"))
             .Returns(_hideLaptopSubject.Select(_ => new Event { EventType = "hide_laptop" }));
         // Return no schedules by default to isolate behavior
-        _mockScheduler.Setup(s => s.GetSchedules(It.IsAny<Action>())).Returns(Array.Empty<IDisposable>());
+        _mockScheduler
+            .Setup(s => s.GetSchedules(It.IsAny<Action>()))
+            .Returns(Array.Empty<IDisposable>());
 
         // Create device instances
         var mockServices = CreateMockServices();
@@ -109,7 +113,13 @@ public class DisplayAutomationTests : IDisposable
         );
 
         // Create automation under test
-        _automation = new DisplayAutomation(_monitor, _desktop, _laptop, _mockEventHandler.Object, _mockLogger.Object);
+        _automation = new DisplayAutomation(
+            _monitor,
+            _desktop,
+            _laptop,
+            _mockEventHandler.Object,
+            _mockLogger.Object
+        );
 
         // Initialize all devices and automation
         SetupInitialStates();
@@ -428,7 +438,10 @@ public class DisplayAutomationTests : IDisposable
     public void Desktop_RemoteButtonPress_WithMiPadUser_Should_LaunchMoonlightOnMiPad()
     {
         // Act - Simulate button press by MiPad
-        var stateChange = StateChangeHelpers.CreateButtonPress(_desktopEntities.RemotePcButton, HaIdentity.MIPAD5);
+        var stateChange = StateChangeHelpers.CreateButtonPress(
+            _desktopEntities.RemotePcButton,
+            HaIdentity.MIPAD5
+        );
         _mockHaContext.StateChangeSubject.OnNext(stateChange);
 
         // Assert - Should launch Moonlight app on MiPad
@@ -502,7 +515,10 @@ public class DisplayAutomationTests : IDisposable
         // Test case 3: Both switch off and session locked - should be off
         SimulateLaptopSwitchOff();
         SimulateLaptopSessionLocked();
-        _laptop.IsOn().Should().BeFalse("Laptop should be off when both switch is off and session is locked");
+        _laptop
+            .IsOn()
+            .Should()
+            .BeFalse("Laptop should be off when both switch is off and session is locked");
     }
 
     #endregion
@@ -585,14 +601,20 @@ public class DisplayAutomationTests : IDisposable
     {
         // Set the TV to HDMI 1 (PC source)
         _mockHaContext.SetEntityState(_lgDisplayEntities.MediaPlayer.EntityId, HaEntityStates.ON);
-        _mockHaContext.SetEntityAttributes(_lgDisplayEntities.MediaPlayer.EntityId, new { source = "HDMI 1" });
+        _mockHaContext.SetEntityAttributes(
+            _lgDisplayEntities.MediaPlayer.EntityId,
+            new { source = "HDMI 1" }
+        );
     }
 
     private void SimulateMonitorShowingLaptop()
     {
         // Set the TV to HDMI 3 (Laptop source)
         _mockHaContext.SetEntityState(_lgDisplayEntities.MediaPlayer.EntityId, HaEntityStates.ON);
-        _mockHaContext.SetEntityAttributes(_lgDisplayEntities.MediaPlayer.EntityId, new { source = "HDMI 3" });
+        _mockHaContext.SetEntityAttributes(
+            _lgDisplayEntities.MediaPlayer.EntityId,
+            new { source = "HDMI 3" }
+        );
     }
 
     #endregion
@@ -641,7 +663,8 @@ public class DisplayAutomationTests : IDisposable
     private class TestDesktopEntities(IHaContext haContext) : IDesktopEntities
     {
         public SwitchEntity Power { get; } = new SwitchEntity(haContext, "switch.danielpc");
-        public InputButtonEntity RemotePcButton { get; } = new InputButtonEntity(haContext, "input_button.remote_pc");
+        public InputButtonEntity RemotePcButton { get; } =
+            new InputButtonEntity(haContext, "input_button.remote_pc");
     }
 
     private class TestLaptopEntities : ILaptopEntities

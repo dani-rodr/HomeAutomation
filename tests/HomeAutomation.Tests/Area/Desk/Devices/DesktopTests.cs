@@ -59,7 +59,10 @@ public class DesktopTests : IDisposable
 
         // Assert
         isOn.Should()
-            .Be(expectedIsOn, $"Desktop should be {(expectedIsOn ? "ON" : "OFF")} when power is {powerState} ");
+            .Be(
+                expectedIsOn,
+                $"Desktop should be {(expectedIsOn ? "ON" : "OFF")} when power is {powerState} "
+            );
     }
 
     #endregion
@@ -91,8 +94,16 @@ public class DesktopTests : IDisposable
         // Act - Create new subscription to test StartWith behavior
         var stateChanges = new List<bool>();
         _desktop.StateChanges().Subscribe(state => stateChanges.Add(state));
-        _mockHaContext.SimulateStateChange(_entities.Power.EntityId, HaEntityStates.ON, HaEntityStates.OFF);
-        _mockHaContext.SimulateStateChange(_entities.Power.EntityId, HaEntityStates.OFF, HaEntityStates.ON);
+        _mockHaContext.SimulateStateChange(
+            _entities.Power.EntityId,
+            HaEntityStates.ON,
+            HaEntityStates.OFF
+        );
+        _mockHaContext.SimulateStateChange(
+            _entities.Power.EntityId,
+            HaEntityStates.OFF,
+            HaEntityStates.ON
+        );
 
         // Assert
         stateChanges.Should().HaveCount(2, "Should contain 2 state change");
@@ -105,10 +116,16 @@ public class DesktopTests : IDisposable
         _stateChanges.Clear();
 
         // Act - Simulate both sensors changing rapidly
-        _mockHaContext.SimulateStateChange(_entities.Power.EntityId, HaEntityStates.OFF, HaEntityStates.ON);
+        _mockHaContext.SimulateStateChange(
+            _entities.Power.EntityId,
+            HaEntityStates.OFF,
+            HaEntityStates.ON
+        );
 
         // Assert
-        _stateChanges.Should().HaveCountGreaterThan(0, "Should emit state changes for sensor changes");
+        _stateChanges
+            .Should()
+            .HaveCountGreaterThan(0, "Should emit state changes for sensor changes");
         _stateChanges.Last().Should().BeTrue("Final state should be ON with power active");
     }
 
@@ -119,10 +136,16 @@ public class DesktopTests : IDisposable
         _stateChanges.Clear();
 
         // Act - Simulate both sensors changing rapidly
-        _mockHaContext.SimulateStateChange(_entities.Power.EntityId, HaEntityStates.ON, HaEntityStates.OFF);
+        _mockHaContext.SimulateStateChange(
+            _entities.Power.EntityId,
+            HaEntityStates.ON,
+            HaEntityStates.OFF
+        );
 
         // Assert
-        _stateChanges.Should().HaveCountGreaterThan(0, "Should emit state changes for sensor changes");
+        _stateChanges
+            .Should()
+            .HaveCountGreaterThan(0, "Should emit state changes for sensor changes");
         _stateChanges.Last().Should().BeFalse("Final state should be ON with power inactive");
     }
 
@@ -291,8 +314,9 @@ public class DesktopTests : IDisposable
     {
         // Act & Assert - Access through reflection since ShowEvent is protected
         var showEvent =
-            typeof(Desktop).GetProperty("ShowEvent", BindingFlags.NonPublic | BindingFlags.Instance)?.GetValue(_desktop)
-            as string;
+            typeof(Desktop)
+                .GetProperty("ShowEvent", BindingFlags.NonPublic | BindingFlags.Instance)
+                ?.GetValue(_desktop) as string;
 
         showEvent.Should().Be("show_pc", "ShowEvent should be 'show_pc' for Desktop");
     }
@@ -302,8 +326,9 @@ public class DesktopTests : IDisposable
     {
         // Act & Assert - Access through reflection since HideEvent is protected
         var hideEvent =
-            typeof(Desktop).GetProperty("HideEvent", BindingFlags.NonPublic | BindingFlags.Instance)?.GetValue(_desktop)
-            as string;
+            typeof(Desktop)
+                .GetProperty("HideEvent", BindingFlags.NonPublic | BindingFlags.Instance)
+                ?.GetValue(_desktop) as string;
 
         hideEvent.Should().Be("hide_pc", "HideEvent should be 'hide_pc' for Desktop");
     }
@@ -360,13 +385,24 @@ public class DesktopTests : IDisposable
         _desktop.Dispose();
 
         // Simulate state changes after disposal
-        _mockHaContext.SimulateStateChange(_entities.Power.EntityId, HaEntityStates.OFF, HaEntityStates.ON);
-        _mockHaContext.SimulateStateChange(_entities.RemotePcButton.EntityId, "off", DateTime.Now.ToString());
+        _mockHaContext.SimulateStateChange(
+            _entities.Power.EntityId,
+            HaEntityStates.OFF,
+            HaEntityStates.ON
+        );
+        _mockHaContext.SimulateStateChange(
+            _entities.RemotePcButton.EntityId,
+            "off",
+            DateTime.Now.ToString()
+        );
 
         // Assert
         _stateChanges
             .Should()
-            .HaveCount(1, "Should receive 1 State change Power State Change Disposal is handled by a caller class ");
+            .HaveCount(
+                1,
+                "Should receive 1 State change Power State Change Disposal is handled by a caller class "
+            );
 
         // Should not throw when calling methods after disposal
         var act = () =>
@@ -392,7 +428,8 @@ public class DesktopTests : IDisposable
     /// </summary>
     private class TestDesktopEntities(IHaContext haContext) : IDesktopEntities
     {
-        public InputButtonEntity RemotePcButton { get; } = new InputButtonEntity(haContext, "input_button.remote_pc");
+        public InputButtonEntity RemotePcButton { get; } =
+            new InputButtonEntity(haContext, "input_button.remote_pc");
 
         public SwitchEntity Power => new SwitchEntity(haContext, "switch.danielpc");
     }

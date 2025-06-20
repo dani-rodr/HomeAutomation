@@ -179,7 +179,11 @@ public class AirQualityAutomationTests : IDisposable
         _mockHaContext.StateChangeSubject.OnNext(poorAirStateChange);
 
         // Supporting fan should not be turned on again since it's manually controlled
-        _mockHaContext.ShouldHaveCalledSwitchExactly(_entities.SupportingFan.EntityId, "turn_on", 0);
+        _mockHaContext.ShouldHaveCalledSwitchExactly(
+            _entities.SupportingFan.EntityId,
+            "turn_on",
+            0
+        );
     }
 
     [Theory(Skip = "Temporarily disabled - air quality automation logic under review")]
@@ -332,26 +336,42 @@ public class AirQualityAutomationTests : IDisposable
         // Test a complete sequence: excellent -> poor -> moderate -> excellent
 
         // 1. Excellent air quality (≤7)
-        var excellentAir = StateChangeHelpers.CreateNumericSensorStateChange(_entities.Pm25Sensor, "50.0", "5.0");
+        var excellentAir = StateChangeHelpers.CreateNumericSensorStateChange(
+            _entities.Pm25Sensor,
+            "50.0",
+            "5.0"
+        );
         _mockHaContext.StateChangeSubject.OnNext(excellentAir);
         _mockHaContext.ShouldHaveCalledSwitchTurnOff(_entities.AirPurifierFan.EntityId);
         _mockHaContext.ClearServiceCalls();
 
         // 2. Poor air quality (>75) - should activate supporting fan
-        var poorAir = StateChangeHelpers.CreateNumericSensorStateChange(_entities.Pm25Sensor, "5.0", "100.0");
+        var poorAir = StateChangeHelpers.CreateNumericSensorStateChange(
+            _entities.Pm25Sensor,
+            "5.0",
+            "100.0"
+        );
         _mockHaContext.StateChangeSubject.OnNext(poorAir);
         _mockHaContext.ShouldHaveCalledSwitchTurnOn(_entities.SupportingFan.EntityId);
         _mockHaContext.ClearServiceCalls();
 
         // 3. Moderate air quality (7-75) - should turn on main fan and off supporting fan
-        var moderateAir = StateChangeHelpers.CreateNumericSensorStateChange(_entities.Pm25Sensor, "100.0", "30.0");
+        var moderateAir = StateChangeHelpers.CreateNumericSensorStateChange(
+            _entities.Pm25Sensor,
+            "100.0",
+            "30.0"
+        );
         _mockHaContext.StateChangeSubject.OnNext(moderateAir);
         _mockHaContext.ShouldHaveCalledSwitchTurnOn(_entities.AirPurifierFan.EntityId);
         _mockHaContext.ShouldHaveCalledSwitchTurnOff(_entities.SupportingFan.EntityId);
         _mockHaContext.ClearServiceCalls();
 
         // 4. Back to excellent - should turn off main fan
-        var excellentAirAgain = StateChangeHelpers.CreateNumericSensorStateChange(_entities.Pm25Sensor, "30.0", "4.0");
+        var excellentAirAgain = StateChangeHelpers.CreateNumericSensorStateChange(
+            _entities.Pm25Sensor,
+            "30.0",
+            "4.0"
+        );
         _mockHaContext.StateChangeSubject.OnNext(excellentAirAgain);
         _mockHaContext.ShouldHaveCalledSwitchTurnOff(_entities.AirPurifierFan.EntityId);
     }
@@ -489,12 +509,22 @@ public class AirQualityAutomationTests : IDisposable
         var act = () =>
         {
             _mockHaContext.StateChangeSubject.OnNext(
-                StateChangeHelpers.CreateNumericSensorStateChange(_entities.Pm25Sensor, "50.0", "5.0")
+                StateChangeHelpers.CreateNumericSensorStateChange(
+                    _entities.Pm25Sensor,
+                    "50.0",
+                    "5.0"
+                )
             );
             _mockHaContext.StateChangeSubject.OnNext(
-                StateChangeHelpers.CreateNumericSensorStateChange(_entities.Pm25Sensor, "5.0", "100.0")
+                StateChangeHelpers.CreateNumericSensorStateChange(
+                    _entities.Pm25Sensor,
+                    "5.0",
+                    "100.0"
+                )
             );
-            _mockHaContext.StateChangeSubject.OnNext(StateChangeHelpers.SwitchTurnedOn(_entities.AirPurifierFan));
+            _mockHaContext.StateChangeSubject.OnNext(
+                StateChangeHelpers.SwitchTurnedOn(_entities.AirPurifierFan)
+            );
         };
 
         act.Should().NotThrow();
@@ -585,9 +615,13 @@ public class AirQualityAutomationTests : IDisposable
             new SwitchEntity(haContext, "switch.living_room_air_quality_master");
         public BinarySensorEntity MotionSensor { get; } =
             new BinarySensorEntity(haContext, "binary_sensor.living_room_presence_sensors");
-        public SwitchEntity AirPurifierFan { get; } = new SwitchEntity(haContext, "switch.air_purifier");
-        public SwitchEntity SupportingFan { get; } = new SwitchEntity(haContext, "switch.living_room_ceiling_fan");
-        public NumericSensorEntity Pm25Sensor { get; } = new NumericSensorEntity(haContext, "sensor.air_quality_pm2_5");
-        public SwitchEntity LedStatus { get; } = new SwitchEntity(haContext, "switch.air_purifier_led");
+        public SwitchEntity AirPurifierFan { get; } =
+            new SwitchEntity(haContext, "switch.air_purifier");
+        public SwitchEntity SupportingFan { get; } =
+            new SwitchEntity(haContext, "switch.living_room_ceiling_fan");
+        public NumericSensorEntity Pm25Sensor { get; } =
+            new NumericSensorEntity(haContext, "sensor.air_quality_pm2_5");
+        public SwitchEntity LedStatus { get; } =
+            new SwitchEntity(haContext, "switch.air_purifier_led");
     }
 }

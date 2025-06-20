@@ -40,7 +40,12 @@ public class MockHaContext : IHaContext
     private readonly Dictionary<string, Dictionary<string, object>> _entityAttributes = new();
 
     // Core testing methods
-    public void CallService(string domain, string service, ServiceTarget? target = null, object? data = null)
+    public void CallService(
+        string domain,
+        string service,
+        ServiceTarget? target = null,
+        object? data = null
+    )
     {
         ServiceCalls.Add(new ServiceCall(domain, service, target, data));
     }
@@ -55,7 +60,10 @@ public class MockHaContext : IHaContext
     public EntityState? GetState(string entityId)
     {
         var state = _entityStates.GetValueOrDefault(entityId, "unknown");
-        var attributes = _entityAttributes.GetValueOrDefault(entityId, new Dictionary<string, object>());
+        var attributes = _entityAttributes.GetValueOrDefault(
+            entityId,
+            new Dictionary<string, object>()
+        );
 
         // Convert attributes dictionary to JsonElement for proper deserialization
         var attributesJson = JsonSerializer.SerializeToElement(attributes);
@@ -92,7 +100,8 @@ public class MockHaContext : IHaContext
     public void SendEvent(string eventType, object? data = null)
     {
         // For testing, trigger the event through our subject
-        var jsonElement = data != null ? JsonSerializer.SerializeToElement(data) : (JsonElement?)null;
+        var jsonElement =
+            data != null ? JsonSerializer.SerializeToElement(data) : (JsonElement?)null;
         EventSubject.OnNext(new Event { EventType = eventType, DataElement = jsonElement });
     }
 
@@ -139,7 +148,11 @@ public class MockHaContext : IHaContext
             AttributesJson = attributesJson,
         };
 
-        var stateChange = new StateChange(new Entity(this, entityId), oldEntityState, newEntityState);
+        var stateChange = new StateChange(
+            new Entity(this, entityId),
+            oldEntityState,
+            newEntityState
+        );
 
         StateChangeSubject.OnNext(stateChange);
     }
@@ -173,7 +186,8 @@ public class MockHaContext : IHaContext
     /// <summary>
     /// Helper method to get service calls for a specific domain
     /// </summary>
-    public IEnumerable<ServiceCall> GetServiceCalls(string domain) => ServiceCalls.Where(call => call.Domain == domain);
+    public IEnumerable<ServiceCall> GetServiceCalls(string domain) =>
+        ServiceCalls.Where(call => call.Domain == domain);
 
     /// <summary>
     /// Helper method to get the most recent service call

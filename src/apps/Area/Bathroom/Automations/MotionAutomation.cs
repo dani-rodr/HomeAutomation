@@ -4,7 +4,14 @@ public class MotionAutomation(
     IMotionAutomationEntities entities,
     IDimmingLightController dimmingController,
     ILogger logger
-) : MotionAutomationBase(entities.MasterSwitch, entities.MotionSensor, entities.Light, logger, entities.SensorDelay)
+)
+    : MotionAutomationBase(
+        entities.MasterSwitch,
+        entities.MotionSensor,
+        entities.Light,
+        logger,
+        entities.SensorDelay
+    )
 {
     public override void StartAutomation()
     {
@@ -15,7 +22,10 @@ public class MotionAutomation(
 
     protected override IEnumerable<IDisposable> GetLightAutomations()
     {
-        yield return MotionSensor.StateChanges().IsOn().Subscribe(e => dimmingController.OnMotionDetected(Light));
+        yield return MotionSensor
+            .StateChanges()
+            .IsOn()
+            .Subscribe(e => dimmingController.OnMotionDetected(Light));
         yield return MotionSensor
             .StateChanges()
             .IsOff()

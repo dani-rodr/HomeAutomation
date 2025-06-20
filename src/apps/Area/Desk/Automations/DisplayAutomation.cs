@@ -17,7 +17,8 @@ public class DisplayAutomation(
 
     protected override IEnumerable<IDisposable> GetToggleableAutomations() => [];
 
-    private IDisposable HandleNfcScan() => eventHandler.OnNfcScan(NFC_ID.DESK).Subscribe(ToggleDisplay);
+    private IDisposable HandleNfcScan() =>
+        eventHandler.OnNfcScan(NFC_ID.DESK).Subscribe(ToggleDisplay);
 
     private void ToggleDisplay(string tagId)
     {
@@ -36,7 +37,11 @@ public class DisplayAutomation(
         }
     }
 
-    private static IEnumerable<IDisposable> ObserveComputer(IComputer device, Action onTurnedOn, Action onTurnedOff)
+    private static IEnumerable<IDisposable> ObserveComputer(
+        IComputer device,
+        Action onTurnedOn,
+        Action onTurnedOff
+    )
     {
         yield return device
             .StateChanges()
@@ -64,7 +69,11 @@ public class DisplayAutomation(
 
     private void ShowPcDisplay()
     {
-        Logger.LogDebug("Switching display to PC. Desktop: {Desktop}, Laptop: {Laptop}", desktop.IsOn(), laptop.IsOn());
+        Logger.LogDebug(
+            "Switching display to PC. Desktop: {Desktop}, Laptop: {Laptop}",
+            desktop.IsOn(),
+            laptop.IsOn()
+        );
         monitor.ShowPC();
     }
 
@@ -84,7 +93,11 @@ public class DisplayAutomation(
 
     private void TurnOffDisplay()
     {
-        Logger.LogDebug("Turning off display. Desktop: {Desktop}, Laptop: {Laptop}", desktop.IsOn(), laptop.IsOn());
+        Logger.LogDebug(
+            "Turning off display. Desktop: {Desktop}, Laptop: {Laptop}",
+            desktop.IsOn(),
+            laptop.IsOn()
+        );
         monitor.TurnOff();
     }
 

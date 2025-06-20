@@ -8,7 +8,11 @@ public static class StateChangeHelpers
     /// <summary>
     /// Creates a StateChange for an entity transitioning from one state to another
     /// </summary>
-    public static StateChange CreateStateChange(IEntityCore entity, string oldState, string newState)
+    public static StateChange CreateStateChange(
+        IEntityCore entity,
+        string oldState,
+        string newState
+    )
     {
         return new StateChange(
             (Entity)entity,
@@ -20,7 +24,12 @@ public static class StateChangeHelpers
     /// <summary>
     /// Creates a StateChange for an entity transitioning from one state to another with user context
     /// </summary>
-    public static StateChange CreateStateChange(IEntityCore entity, string oldState, string newState, string? userId)
+    public static StateChange CreateStateChange(
+        IEntityCore entity,
+        string oldState,
+        string newState,
+        string? userId
+    )
     {
         return new StateChange(
             (Entity)entity,
@@ -60,17 +69,20 @@ public static class StateChangeHelpers
     /// <summary>
     /// Creates a StateChange for a door sensor opening
     /// </summary>
-    public static StateChange DoorOpened(BinarySensorEntity doorSensor) => CreateStateChange(doorSensor, "off", "on");
+    public static StateChange DoorOpened(BinarySensorEntity doorSensor) =>
+        CreateStateChange(doorSensor, "off", "on");
 
     /// <summary>
     /// Creates a StateChange for a door sensor closing
     /// </summary>
-    public static StateChange DoorClosed(BinarySensorEntity doorSensor) => CreateStateChange(doorSensor, "on", "off");
+    public static StateChange DoorClosed(BinarySensorEntity doorSensor) =>
+        CreateStateChange(doorSensor, "on", "off");
 
     /// <summary>
     /// Creates a StateChange for a switch turning on
     /// </summary>
-    public static StateChange SwitchTurnedOn(SwitchEntity switchEntity) => CreateStateChange(switchEntity, "off", "on");
+    public static StateChange SwitchTurnedOn(SwitchEntity switchEntity) =>
+        CreateStateChange(switchEntity, "off", "on");
 
     /// <summary>
     /// Creates a StateChange for a switch turning off
@@ -111,8 +123,11 @@ public static class StateChangeHelpers
     /// <summary>
     /// Creates a StateChange for a weather entity
     /// </summary>
-    public static StateChange CreateWeatherStateChange(WeatherEntity weatherEntity, string oldState, string newState) =>
-        CreateStateChange(weatherEntity, oldState, newState);
+    public static StateChange CreateWeatherStateChange(
+        WeatherEntity weatherEntity,
+        string oldState,
+        string newState
+    ) => CreateStateChange(weatherEntity, oldState, newState);
 
     /// <summary>
     /// Creates a StateChange for an input boolean entity
@@ -150,7 +165,8 @@ public static class StateChangeHelpers
     /// <summary>
     /// Creates a StateChange for a lock being locked
     /// </summary>
-    public static StateChange LockLocked(LockEntity lockEntity) => CreateStateChange(lockEntity, "unlocked", "locked");
+    public static StateChange LockLocked(LockEntity lockEntity) =>
+        CreateStateChange(lockEntity, "unlocked", "locked");
 
     /// <summary>
     /// Creates a StateChange for a lock being unlocked

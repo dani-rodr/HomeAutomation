@@ -92,7 +92,9 @@ public class HaEventHandlerTests : IDisposable
                 x.Log(
                     LogLevel.Debug,
                     It.IsAny<EventId>(),
-                    It.Is<It.IsAnyType>((v, t) => v.ToString()!.Contains("Event 'logged_event' received with data:")),
+                    It.Is<It.IsAnyType>(
+                        (v, t) => v.ToString()!.Contains("Event 'logged_event' received with data:")
+                    ),
                     It.IsAny<Exception>(),
                     It.IsAny<Func<It.IsAnyType, Exception?, string>>()
                 ),
@@ -133,7 +135,9 @@ public class HaEventHandlerTests : IDisposable
         var receivedEvents = new List<Event>();
 
         // Act
-        var subscription = _eventHandler.WhenEventTriggered("observable_test").Subscribe(receivedEvents.Add);
+        var subscription = _eventHandler
+            .WhenEventTriggered("observable_test")
+            .Subscribe(receivedEvents.Add);
 
         _mockHaContext.SendEvent("observable_test", new { data = "test1" });
         _mockHaContext.SendEvent("other_event", new { data = "test2" });
@@ -230,7 +234,11 @@ public class HaEventHandlerTests : IDisposable
         var subscription = _eventHandler.OnNfcScan(TEST_TAG_ID).Subscribe(receivedUserIds.Add);
 
         // Send NFC event without tag_id property
-        var incompleteEventData = new { device_id = "test-device", context = new { user_id = TEST_USER_ID } };
+        var incompleteEventData = new
+        {
+            device_id = "test-device",
+            context = new { user_id = TEST_USER_ID },
+        };
         _mockHaContext.SendEvent("tag_scanned", incompleteEventData);
 
         // Assert
@@ -250,7 +258,9 @@ public class HaEventHandlerTests : IDisposable
         var receivedUserIds = new List<string>();
 
         // Act
-        var subscription = _eventHandler.OnMobileEvent(TEST_ACTION_ID).Subscribe(receivedUserIds.Add);
+        var subscription = _eventHandler
+            .OnMobileEvent(TEST_ACTION_ID)
+            .Subscribe(receivedUserIds.Add);
 
         // Send matching mobile event
         var mobileEventData = CreateMobileEventData(TEST_ACTION_ID, TEST_USER_ID);
@@ -275,7 +285,9 @@ public class HaEventHandlerTests : IDisposable
         const string expectedUserId = "mobile-user-456";
 
         // Act
-        var subscription = _eventHandler.OnMobileEvent(TEST_ACTION_ID).Subscribe(receivedUserIds.Add);
+        var subscription = _eventHandler
+            .OnMobileEvent(TEST_ACTION_ID)
+            .Subscribe(receivedUserIds.Add);
 
         var mobileEventData = CreateMobileEventData(TEST_ACTION_ID, expectedUserId);
         _mockHaContext.SendEvent("mobile_app_notification_action", mobileEventData);
@@ -294,10 +306,16 @@ public class HaEventHandlerTests : IDisposable
         var receivedUserIds = new List<string>();
 
         // Act
-        var subscription = _eventHandler.OnMobileEvent(TEST_ACTION_ID).Subscribe(receivedUserIds.Add);
+        var subscription = _eventHandler
+            .OnMobileEvent(TEST_ACTION_ID)
+            .Subscribe(receivedUserIds.Add);
 
         // Send mobile event without action property
-        var incompleteEventData = new { device_id = "test-device", context = new { user_id = TEST_USER_ID } };
+        var incompleteEventData = new
+        {
+            device_id = "test-device",
+            context = new { user_id = TEST_USER_ID },
+        };
         _mockHaContext.SendEvent("mobile_app_notification_action", incompleteEventData);
 
         // Assert
@@ -325,7 +343,10 @@ public class HaEventHandlerTests : IDisposable
 
         // Assert
         receivedUserIds.Should().HaveCount(1);
-        receivedUserIds.First().Should().Be(string.Empty, "Should return empty string when context is missing");
+        receivedUserIds
+            .First()
+            .Should()
+            .Be(string.Empty, "Should return empty string when context is missing");
 
         subscription.Dispose();
     }
@@ -340,7 +361,11 @@ public class HaEventHandlerTests : IDisposable
         var subscription = _eventHandler.OnNfcScan(TEST_TAG_ID).Subscribe(receivedUserIds.Add);
 
         // Send NFC event with context but no user_id
-        var eventDataWithoutUserId = new { tag_id = TEST_TAG_ID, context = new { other_property = "value" } };
+        var eventDataWithoutUserId = new
+        {
+            tag_id = TEST_TAG_ID,
+            context = new { other_property = "value" },
+        };
         _mockHaContext.SendEvent("tag_scanned", eventDataWithoutUserId);
 
         // Assert
@@ -363,12 +388,19 @@ public class HaEventHandlerTests : IDisposable
         var subscription = _eventHandler.OnNfcScan(TEST_TAG_ID).Subscribe(receivedUserIds.Add);
 
         // Send NFC event with null user_id
-        var eventDataWithNullUserId = new { tag_id = TEST_TAG_ID, context = new { user_id = (string?)null } };
+        var eventDataWithNullUserId = new
+        {
+            tag_id = TEST_TAG_ID,
+            context = new { user_id = (string?)null },
+        };
         _mockHaContext.SendEvent("tag_scanned", eventDataWithNullUserId);
 
         // Assert
         receivedUserIds.Should().HaveCount(1);
-        receivedUserIds.First().Should().Be(string.Empty, "Should return empty string when user_id is null");
+        receivedUserIds
+            .First()
+            .Should()
+            .Be(string.Empty, "Should return empty string when user_id is null");
 
         subscription.Dispose();
     }
@@ -419,7 +451,9 @@ public class HaEventHandlerTests : IDisposable
 
         // Send first event - should throw and break the stream
         var action = () => _mockHaContext.SendEvent("error_test", new { data = "first" });
-        action.Should().Throw<InvalidOperationException>("Exception should propagate and break the stream");
+        action
+            .Should()
+            .Throw<InvalidOperationException>("Exception should propagate and break the stream");
 
         // Send second event - handler should not be called since stream is broken
         eventCount = 0; // Reset to verify second event doesn't increment
@@ -445,13 +479,20 @@ public class HaEventHandlerTests : IDisposable
         var complexEventData = new
         {
             tag_id = TEST_TAG_ID,
-            context = new { user_id = TEST_USER_ID, nested = new { deep = new { structure = "value" } } },
+            context = new
+            {
+                user_id = TEST_USER_ID,
+                nested = new { deep = new { structure = "value" } },
+            },
         };
         _mockHaContext.SendEvent("tag_scanned", complexEventData);
 
         // Assert
         receivedUserIds.Should().HaveCount(1);
-        receivedUserIds.First().Should().Be(TEST_USER_ID, "Should handle complex JSON structures correctly");
+        receivedUserIds
+            .First()
+            .Should()
+            .Be(TEST_USER_ID, "Should handle complex JSON structures correctly");
 
         subscription.Dispose();
     }
@@ -495,7 +536,9 @@ public class HaEventHandlerTests : IDisposable
                     LogLevel.Debug,
                     It.IsAny<EventId>(),
                     It.Is<It.IsAnyType>(
-                        (v, t) => v.ToString()!.Contains("HaEventHandler disposed and subscriptions cleaned up")
+                        (v, t) =>
+                            v.ToString()!
+                                .Contains("HaEventHandler disposed and subscriptions cleaned up")
                     ),
                     It.IsAny<Exception>(),
                     It.IsAny<Func<It.IsAnyType, Exception?, string>>()
@@ -555,7 +598,9 @@ public class HaEventHandlerTests : IDisposable
                 x.Log(
                     LogLevel.Information,
                     It.IsAny<EventId>(),
-                    It.Is<It.IsAnyType>((v, t) => v.ToString()!.Contains("Event 'tag_scanned' received")),
+                    It.Is<It.IsAnyType>(
+                        (v, t) => v.ToString()!.Contains("Event 'tag_scanned' received")
+                    ),
                     It.IsAny<Exception>(),
                     It.IsAny<Func<It.IsAnyType, Exception?, string>>()
                 ),

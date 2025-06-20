@@ -230,9 +230,21 @@ public class CookingAutomationTests : IDisposable
         {
             // Simulate state changes with invalid values
             _mockHaContext.SimulateStateChange(_entities.RiceCookerPower.EntityId, "50", "unknown");
-            _mockHaContext.SimulateStateChange(_entities.RiceCookerPower.EntityId, "unknown", "unavailable");
-            _mockHaContext.SimulateStateChange(_entities.InductionPower.EntityId, "1600", "unknown");
-            _mockHaContext.SimulateStateChange(_entities.InductionPower.EntityId, "unknown", "unavailable");
+            _mockHaContext.SimulateStateChange(
+                _entities.RiceCookerPower.EntityId,
+                "unknown",
+                "unavailable"
+            );
+            _mockHaContext.SimulateStateChange(
+                _entities.InductionPower.EntityId,
+                "1600",
+                "unknown"
+            );
+            _mockHaContext.SimulateStateChange(
+                _entities.InductionPower.EntityId,
+                "unknown",
+                "unavailable"
+            );
         };
 
         act.Should().NotThrow("Automation should handle invalid sensor states gracefully");
@@ -274,20 +286,28 @@ public class CookingAutomationTests : IDisposable
         // This test verifies that all required entities are properly configured
 
         // Verify rice cooker entities
-        _entities.RiceCookerPower.Should().NotBeNull("Rice cooker power sensor should be configured");
+        _entities
+            .RiceCookerPower.Should()
+            .NotBeNull("Rice cooker power sensor should be configured");
         _entities.RiceCookerSwitch.Should().NotBeNull("Rice cooker switch should be configured");
         _entities.RiceCookerPower.EntityId.Should().Be("sensor.rice_cooker_power");
         _entities.RiceCookerSwitch.EntityId.Should().Be("switch.rice_cooker_socket_1");
 
         // Verify induction cooker entities
         _entities.InductionPower.Should().NotBeNull("Induction power sensor should be configured");
-        _entities.InductionTurnOff.Should().NotBeNull("Induction turn off button should be configured");
+        _entities
+            .InductionTurnOff.Should()
+            .NotBeNull("Induction turn off button should be configured");
         _entities.InductionPower.EntityId.Should().Be("sensor.smart_plug_3_sonoff_s31_power");
         _entities.InductionTurnOff.EntityId.Should().Be("button.induction_cooker_power");
 
         // Verify air fryer status entity
-        _entities.AirFryerStatus.Should().NotBeNull("Air fryer status sensor should be configured");
-        _entities.AirFryerStatus.EntityId.Should().Be("sensor.careli_sg593061393_maf05a_status_p21");
+        _entities
+            .AirFryerStatus.Should()
+            .NotBeNull("Air fryer status sensor should be configured");
+        _entities
+            .AirFryerStatus.EntityId.Should()
+            .Be("sensor.careli_sg593061393_maf05a_status_p21");
     }
 
     [Fact]
@@ -310,10 +330,16 @@ public class CookingAutomationTests : IDisposable
 
         // These thresholds are embedded in the automation code and critical for safety
         // Any changes to these values should be done with extreme caution
-        riceCookerIdleThreshold.Should().Be(100, "Rice cooker idle threshold is a safety-critical value");
-        inductionBoilingThreshold.Should().Be(1550, "Induction boiling threshold is a safety-critical value");
+        riceCookerIdleThreshold
+            .Should()
+            .Be(100, "Rice cooker idle threshold is a safety-critical value");
+        inductionBoilingThreshold
+            .Should()
+            .Be(1550, "Induction boiling threshold is a safety-critical value");
         riceCookerTimeoutMinutes.Should().Be(10, "Rice cooker timeout is a safety-critical value");
-        inductionCookerTimeoutMinutes.Should().Be(12, "Induction cooker timeout is a safety-critical value");
+        inductionCookerTimeoutMinutes
+            .Should()
+            .Be(12, "Induction cooker timeout is a safety-critical value");
     }
 
     #endregion
@@ -348,16 +374,24 @@ public class CookingAutomationTests : IDisposable
         var act = () =>
         {
             // Valid state changes
-            _mockHaContext.StateChangeSubject.OnNext(CreatePowerStateChange(_entities.RiceCookerPower, 50));
-            _mockHaContext.StateChangeSubject.OnNext(CreatePowerStateChange(_entities.InductionPower, 1600));
+            _mockHaContext.StateChangeSubject.OnNext(
+                CreatePowerStateChange(_entities.RiceCookerPower, 50)
+            );
+            _mockHaContext.StateChangeSubject.OnNext(
+                CreatePowerStateChange(_entities.InductionPower, 1600)
+            );
 
             // Invalid state changes
             _mockHaContext.SimulateStateChange(_entities.RiceCookerPower.EntityId, "50", "invalid");
             _mockHaContext.SimulateStateChange(_entities.InductionPower.EntityId, "1600", "null");
 
             // More valid state changes
-            _mockHaContext.StateChangeSubject.OnNext(CreatePowerStateChange(_entities.RiceCookerPower, 80));
-            _mockHaContext.StateChangeSubject.OnNext(CreatePowerStateChange(_entities.InductionPower, 1700));
+            _mockHaContext.StateChangeSubject.OnNext(
+                CreatePowerStateChange(_entities.RiceCookerPower, 80)
+            );
+            _mockHaContext.StateChangeSubject.OnNext(
+                CreatePowerStateChange(_entities.InductionPower, 1700)
+            );
         };
 
         // Assert - Should handle mix of valid and invalid states
@@ -375,7 +409,10 @@ public class CookingAutomationTests : IDisposable
     /// <summary>
     /// Helper method to create a power sensor state change for testing
     /// </summary>
-    private static StateChange CreatePowerStateChange(NumericSensorEntity powerSensor, int powerValue)
+    private static StateChange CreatePowerStateChange(
+        NumericSensorEntity powerSensor,
+        int powerValue
+    )
     {
         return new StateChange(
             new Entity(powerSensor.HaContext, powerSensor.EntityId),
@@ -392,10 +429,12 @@ public class CookingAutomationTests : IDisposable
     {
         public NumericSensorEntity RiceCookerPower { get; } =
             new NumericSensorEntity(haContext, "sensor.rice_cooker_power");
-        public SwitchEntity RiceCookerSwitch { get; } = new SwitchEntity(haContext, "switch.rice_cooker_socket_1");
+        public SwitchEntity RiceCookerSwitch { get; } =
+            new SwitchEntity(haContext, "switch.rice_cooker_socket_1");
         public SensorEntity AirFryerStatus { get; } =
             new SensorEntity(haContext, "sensor.careli_sg593061393_maf05a_status_p21");
-        public ButtonEntity InductionTurnOff { get; } = new ButtonEntity(haContext, "button.induction_cooker_power");
+        public ButtonEntity InductionTurnOff { get; } =
+            new ButtonEntity(haContext, "button.induction_cooker_power");
         public NumericSensorEntity InductionPower { get; } =
             new NumericSensorEntity(haContext, "sensor.smart_plug_3_sonoff_s31_power");
     }

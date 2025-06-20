@@ -111,9 +111,15 @@ public class TabletAutomationTests : IDisposable
     public void MultipleMotionEvents_Should_HandleCorrectSequence()
     {
         // Act - Motion on, off, on again
-        _mockHaContext.StateChangeSubject.OnNext(StateChangeHelpers.MotionDetected(_entities.MotionSensor));
-        _mockHaContext.StateChangeSubject.OnNext(StateChangeHelpers.MotionCleared(_entities.MotionSensor));
-        _mockHaContext.StateChangeSubject.OnNext(StateChangeHelpers.MotionDetected(_entities.MotionSensor));
+        _mockHaContext.StateChangeSubject.OnNext(
+            StateChangeHelpers.MotionDetected(_entities.MotionSensor)
+        );
+        _mockHaContext.StateChangeSubject.OnNext(
+            StateChangeHelpers.MotionCleared(_entities.MotionSensor)
+        );
+        _mockHaContext.StateChangeSubject.OnNext(
+            StateChangeHelpers.MotionDetected(_entities.MotionSensor)
+        );
 
         // Assert - Verify exact call counts for tablet screen
         _mockHaContext.ShouldHaveCalledLightExactly(_entities.TabletScreen.EntityId, "turn_on", 2);
@@ -151,10 +157,18 @@ public class TabletAutomationTests : IDisposable
     public void ComplexScenario_With_MotionSequenceHandling()
     {
         // Act - Complex motion sequence: on -> off -> on -> off
-        _mockHaContext.StateChangeSubject.OnNext(StateChangeHelpers.MotionDetected(_entities.MotionSensor));
-        _mockHaContext.StateChangeSubject.OnNext(StateChangeHelpers.MotionCleared(_entities.MotionSensor));
-        _mockHaContext.StateChangeSubject.OnNext(StateChangeHelpers.MotionDetected(_entities.MotionSensor));
-        _mockHaContext.StateChangeSubject.OnNext(StateChangeHelpers.MotionCleared(_entities.MotionSensor));
+        _mockHaContext.StateChangeSubject.OnNext(
+            StateChangeHelpers.MotionDetected(_entities.MotionSensor)
+        );
+        _mockHaContext.StateChangeSubject.OnNext(
+            StateChangeHelpers.MotionCleared(_entities.MotionSensor)
+        );
+        _mockHaContext.StateChangeSubject.OnNext(
+            StateChangeHelpers.MotionDetected(_entities.MotionSensor)
+        );
+        _mockHaContext.StateChangeSubject.OnNext(
+            StateChangeHelpers.MotionCleared(_entities.MotionSensor)
+        );
 
         // Assert - Verify exact pattern for tablet screen control
         _mockHaContext.ShouldHaveCalledLightExactly(_entities.TabletScreen.EntityId, "turn_on", 2);
@@ -185,7 +199,10 @@ public class TabletAutomationTests : IDisposable
         newMotionState?.State.Should().Be("on");
 
         // Verify entity IsOccupied() works correctly
-        _entities.MotionSensor.IsOccupied().Should().BeTrue("motion sensor should report occupied after state change");
+        _entities
+            .MotionSensor.IsOccupied()
+            .Should()
+            .BeTrue("motion sensor should report occupied after state change");
     }
 
     [Fact]
@@ -199,7 +216,9 @@ public class TabletAutomationTests : IDisposable
 
         // Assert - Entity should be properly configured
         tabletActiveEntity.Should().NotBeNull("TabletActive entity should be available");
-        tabletActiveEntity.EntityId.Should().Be("binary_sensor.mipad", "TabletActive should have correct entity ID");
+        tabletActiveEntity
+            .EntityId.Should()
+            .Be("binary_sensor.mipad", "TabletActive should have correct entity ID");
     }
 
     [Fact]
@@ -210,8 +229,12 @@ public class TabletAutomationTests : IDisposable
         // Act & Assert - Should not throw
         var act = () =>
         {
-            _mockHaContext.StateChangeSubject.OnNext(StateChangeHelpers.MotionDetected(_entities.MotionSensor));
-            _mockHaContext.StateChangeSubject.OnNext(StateChangeHelpers.MotionCleared(_entities.MotionSensor));
+            _mockHaContext.StateChangeSubject.OnNext(
+                StateChangeHelpers.MotionDetected(_entities.MotionSensor)
+            );
+            _mockHaContext.StateChangeSubject.OnNext(
+                StateChangeHelpers.MotionCleared(_entities.MotionSensor)
+            );
             _mockHaContext.StateChangeSubject.OnNext(
                 StateChangeHelpers.CreateStateChange(_entities.TabletScreen, "off", "on")
             );
@@ -263,10 +286,12 @@ public class TabletAutomationTests : IDisposable
     /// </summary>
     private class TestTabletEntities(IHaContext haContext) : ITabletEntities
     {
-        public SwitchEntity MasterSwitch { get; } = new SwitchEntity(haContext, "switch.sala_motion_sensor");
+        public SwitchEntity MasterSwitch { get; } =
+            new SwitchEntity(haContext, "switch.sala_motion_sensor");
         public BinarySensorEntity MotionSensor { get; } =
             new BinarySensorEntity(haContext, "binary_sensor.living_room_presence_sensors");
         public LightEntity TabletScreen { get; } = new LightEntity(haContext, "light.mipad_screen");
-        public BinarySensorEntity TabletActive { get; } = new BinarySensorEntity(haContext, "binary_sensor.mipad");
+        public BinarySensorEntity TabletActive { get; } =
+            new BinarySensorEntity(haContext, "binary_sensor.mipad");
     }
 }

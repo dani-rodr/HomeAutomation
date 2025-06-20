@@ -19,7 +19,10 @@ public static class SensorEntityExtensions
     /// </remarks>
     public static int LocalHour(this SensorEntity sensor)
     {
-        if (sensor?.EntityState?.State is not string stateString || !DateTime.TryParse(stateString, out var utcTime))
+        if (
+            sensor?.EntityState?.State is not string stateString
+            || !DateTime.TryParse(stateString, out var utcTime)
+        )
         {
             return -1; // Use as fallback for invalid state
         }
@@ -49,7 +52,8 @@ public static class SensorEntityExtensions
     /// <param name="sensor">The sensor entity to check.</param>
     /// <returns>True if the sensor is unavailable, false otherwise.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool IsUnavailable(this SensorEntity sensor) => sensor?.State.IsUnavailable() == true;
+    public static bool IsUnavailable(this SensorEntity sensor) =>
+        sensor?.State.IsUnavailable() == true;
 }
 
 /// <summary>
@@ -103,7 +107,8 @@ public static class BinaryEntityExtensions
     /// <param name="sensor">The binary sensor entity to check.</param>
     /// <returns>True if the sensor indicates disconnected state, false otherwise.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool IsDisconnected(this BinarySensorEntity sensor) => sensor.State.IsDisconnected();
+    public static bool IsDisconnected(this BinarySensorEntity sensor) =>
+        sensor.State.IsDisconnected();
 }
 
 /// <summary>
@@ -177,7 +182,10 @@ public static class WeatherEntityExtensions
     /// <returns>True if weather includes any form of rain, false otherwise.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool IsRainy(this WeatherEntity climate) =>
-        climate.State is HaEntityStates.RAINY or HaEntityStates.POURING or HaEntityStates.LIGHTNING_RAINY;
+        climate.State
+            is HaEntityStates.RAINY
+                or HaEntityStates.POURING
+                or HaEntityStates.LIGHTNING_RAINY;
 
     /// <summary>
     /// Determines if the weather entity indicates cloudy conditions.
@@ -195,7 +203,11 @@ public static class WeatherEntityExtensions
     /// <returns>True if weather is clear at night, false otherwise.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool IsClearNight(this WeatherEntity climate) =>
-        string.Equals(climate.State, HaEntityStates.CLEAR_NIGHT, StringComparison.OrdinalIgnoreCase);
+        string.Equals(
+            climate.State,
+            HaEntityStates.CLEAR_NIGHT,
+            StringComparison.OrdinalIgnoreCase
+        );
 
     /// <summary>
     /// Determines if the weather entity indicates stormy conditions (lightning, hail).
@@ -204,7 +216,10 @@ public static class WeatherEntityExtensions
     /// <returns>True if weather includes storms, lightning, or hail, false otherwise.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool IsStormy(this WeatherEntity climate) =>
-        climate.State is HaEntityStates.LIGHTNING or HaEntityStates.LIGHTNING_RAINY or HaEntityStates.HAIL;
+        climate.State
+            is HaEntityStates.LIGHTNING
+                or HaEntityStates.LIGHTNING_RAINY
+                or HaEntityStates.HAIL;
 
     /// <summary>
     /// Determines if the weather entity indicates snowy conditions.
@@ -273,7 +288,9 @@ public static class SwitchEntityExtensions
     /// This method uses a sliding window approach to detect two consecutive state changes
     /// within the specified timeout period. Useful for implementing double-tap switch automations.
     /// </remarks>
-    public static IObservable<IList<StateChange<SwitchEntity, EntityState<SwitchAttributes>>>> OnDoubleClick(
+    public static IObservable<
+        IList<StateChange<SwitchEntity, EntityState<SwitchAttributes>>>
+    > OnDoubleClick(
         this IObservable<StateChange<SwitchEntity, EntityState<SwitchAttributes>>> source,
         int timeout
     )
@@ -283,7 +300,8 @@ public static class SwitchEntityExtensions
             .Timestamp() // adds timestamp to each state change
             .Buffer(maxBufferSize, 1) // sliding window of 2 consecutive changes
             .Where(pair =>
-                pair.Count == maxBufferSize && (pair[1].Timestamp - pair[0].Timestamp) <= TimeSpan.FromSeconds(timeout)
+                pair.Count == maxBufferSize
+                && (pair[1].Timestamp - pair[0].Timestamp) <= TimeSpan.FromSeconds(timeout)
             )
             .Select(pair => pair.Select(x => x.Value).ToList());
     }

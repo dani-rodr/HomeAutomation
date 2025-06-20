@@ -63,9 +63,15 @@ public class MotionAutomationTests : IDisposable
     public void MultipleMotionEvents_Should_HandleCorrectSequence()
     {
         // Act - Motion on, off, on again
-        _mockHaContext.StateChangeSubject.OnNext(StateChangeHelpers.MotionDetected(_entities.MotionSensor));
-        _mockHaContext.StateChangeSubject.OnNext(StateChangeHelpers.MotionCleared(_entities.MotionSensor));
-        _mockHaContext.StateChangeSubject.OnNext(StateChangeHelpers.MotionDetected(_entities.MotionSensor));
+        _mockHaContext.StateChangeSubject.OnNext(
+            StateChangeHelpers.MotionDetected(_entities.MotionSensor)
+        );
+        _mockHaContext.StateChangeSubject.OnNext(
+            StateChangeHelpers.MotionCleared(_entities.MotionSensor)
+        );
+        _mockHaContext.StateChangeSubject.OnNext(
+            StateChangeHelpers.MotionDetected(_entities.MotionSensor)
+        );
 
         // Assert - Verify exact call counts for the sequence
         _mockHaContext.ShouldHaveCalledLightExactly(_entities.Light.EntityId, "turn_on", 2);
@@ -282,7 +288,9 @@ public class MotionAutomationTests : IDisposable
         // Assert - Base class behavior will control master switch based on state comparison
         // Since this is complex base class behavior, we'll verify any call was made
         var switchCalls = _mockHaContext.GetServiceCalls("switch").ToList();
-        switchCalls.Should().NotBeEmpty("Manual light changes should trigger master switch control");
+        switchCalls
+            .Should()
+            .NotBeEmpty("Manual light changes should trigger master switch control");
     }
 
     [Fact]
@@ -414,7 +422,11 @@ public class MotionAutomationTests : IDisposable
 
         // Assert - Should handle each press independently
         _mockHaContext.ShouldHaveCalledLightExactly(_entities.Light.EntityId, "toggle", 3);
-        _mockHaContext.ShouldHaveCalledSwitchExactly(_entities.MasterSwitch.EntityId, "turn_off", 3);
+        _mockHaContext.ShouldHaveCalledSwitchExactly(
+            _entities.MasterSwitch.EntityId,
+            "turn_off",
+            3
+        );
         _mockHaContext.ShouldHaveServiceCallCount(6); // 3 toggles + 3 master switch offs
     }
 
@@ -430,10 +442,19 @@ public class MotionAutomationTests : IDisposable
         // Act & Assert - Should not throw
         var act = () =>
         {
-            _mockHaContext.StateChangeSubject.OnNext(StateChangeHelpers.MotionDetected(_entities.MotionSensor));
-            _mockHaContext.StateChangeSubject.OnNext(StateChangeHelpers.MotionCleared(_entities.MotionSensor));
             _mockHaContext.StateChangeSubject.OnNext(
-                StateChangeHelpers.CreateSwitchStateChange(_entities.RightSideEmptySwitch, "off", "on", userId: null)
+                StateChangeHelpers.MotionDetected(_entities.MotionSensor)
+            );
+            _mockHaContext.StateChangeSubject.OnNext(
+                StateChangeHelpers.MotionCleared(_entities.MotionSensor)
+            );
+            _mockHaContext.StateChangeSubject.OnNext(
+                StateChangeHelpers.CreateSwitchStateChange(
+                    _entities.RightSideEmptySwitch,
+                    "off",
+                    "on",
+                    userId: null
+                )
             );
 
             var firstClick = StateChangeHelpers.CreateSwitchStateChange(
@@ -475,7 +496,10 @@ public class MotionAutomationTests : IDisposable
         newState?.State.Should().Be("on");
 
         // Verify entity IsOn() works correctly
-        _entities.MotionSensor.IsOccupied().Should().BeTrue("motion sensor should report occupied after state change");
+        _entities
+            .MotionSensor.IsOccupied()
+            .Should()
+            .BeTrue("motion sensor should report occupied after state change");
     }
 
     [Fact]
@@ -535,7 +559,8 @@ public class MotionAutomationTests : IDisposable
     /// </summary>
     private class TestEntities(IHaContext haContext) : IBedroomMotionEntities
     {
-        public SwitchEntity MasterSwitch { get; } = new SwitchEntity(haContext, "switch.bedroom_motion_sensor");
+        public SwitchEntity MasterSwitch { get; } =
+            new SwitchEntity(haContext, "switch.bedroom_motion_sensor");
         public BinarySensorEntity MotionSensor { get; } =
             new BinarySensorEntity(haContext, "binary_sensor.bedroom_motion_sensors");
         public LightEntity Light { get; } = new LightEntity(haContext, "light.bedroom_lights");
@@ -543,6 +568,7 @@ public class MotionAutomationTests : IDisposable
             new NumberEntity(haContext, "number.z_esp32_c6_1_still_target_delay");
         public SwitchEntity RightSideEmptySwitch { get; } =
             new SwitchEntity(haContext, "switch.right_side_empty_switch");
-        public SwitchEntity LeftSideFanSwitch { get; } = new SwitchEntity(haContext, "switch.left_side_fan_switch");
+        public SwitchEntity LeftSideFanSwitch { get; } =
+            new SwitchEntity(haContext, "switch.left_side_fan_switch");
     }
 }

@@ -350,7 +350,11 @@ public class ClimateAutomationTests : IDisposable
         // Note: This simulates the time-based behavior
 
         // Act - Simulate house empty for extended period
-        var stateChange = StateChangeHelpers.CreateStateChange(_entities.HouseMotionSensor, "on", "off");
+        var stateChange = StateChangeHelpers.CreateStateChange(
+            _entities.HouseMotionSensor,
+            "on",
+            "off"
+        );
         _mockHaContext.StateChangeSubject.OnNext(stateChange);
 
         // Assert - Should turn off AC
@@ -366,7 +370,11 @@ public class ClimateAutomationTests : IDisposable
         // Act - Simulate house becoming occupied after long absence
         // Note: The actual time checking logic would need to be tested with a time provider
         // For this test, we're simulating the behavior when the time threshold is met
-        var stateChange = StateChangeHelpers.CreateStateChange(_entities.HouseMotionSensor, "off", "on");
+        var stateChange = StateChangeHelpers.CreateStateChange(
+            _entities.HouseMotionSensor,
+            "off",
+            "on"
+        );
         _mockHaContext.StateChangeSubject.OnNext(stateChange);
 
         // Assert - Should turn on AC and apply settings
@@ -384,7 +392,11 @@ public class ClimateAutomationTests : IDisposable
         // Act - Simulate house becoming occupied after short absence
         // Note: In the real implementation, this would check time thresholds
         // For testing, we simulate the short absence scenario
-        var stateChange = StateChangeHelpers.CreateStateChange(_entities.HouseMotionSensor, "off", "on");
+        var stateChange = StateChangeHelpers.CreateStateChange(
+            _entities.HouseMotionSensor,
+            "off",
+            "on"
+        );
 
         // Clear any previous calls to isolate this test
         _mockHaContext.ClearServiceCalls();
@@ -408,7 +420,10 @@ public class ClimateAutomationTests : IDisposable
     public void AcStateChangeWithoutTemperatureChange_Should_NotDisableMasterSwitch()
     {
         // Arrange - Set up AC with same temperature in attributes
-        _mockHaContext.SetEntityAttributes(_entities.AirConditioner.EntityId, new { temperature = 25.0 });
+        _mockHaContext.SetEntityAttributes(
+            _entities.AirConditioner.EntityId,
+            new { temperature = 25.0 }
+        );
 
         // Act - Simulate AC state change (off to cool) without temperature change
         var stateChange = StateChangeHelpers.CreateClimateStateChange(
@@ -449,10 +464,17 @@ public class ClimateAutomationTests : IDisposable
     public void AcFanModeToggle_ValidButtonPress_Should_CycleFanModes()
     {
         // Arrange - Set current fan mode to AUTO
-        _mockHaContext.SetEntityAttributes(_entities.AirConditioner.EntityId, new { fan_mode = "auto" });
+        _mockHaContext.SetEntityAttributes(
+            _entities.AirConditioner.EntityId,
+            new { fan_mode = "auto" }
+        );
 
         // Act - Simulate valid button press
-        var stateChange = StateChangeHelpers.CreateStateChange(_entities.AcFanModeToggle, "off", "on");
+        var stateChange = StateChangeHelpers.CreateStateChange(
+            _entities.AcFanModeToggle,
+            "off",
+            "on"
+        );
         _mockHaContext.StateChangeSubject.OnNext(stateChange);
 
         // Assert - Should call set fan mode service (cycles auto -> low -> medium -> high -> auto)
@@ -463,10 +485,17 @@ public class ClimateAutomationTests : IDisposable
     public void AcFanModeToggle_FromHigh_Should_CycleBackToAuto()
     {
         // Arrange - Set current fan mode to HIGH (last in cycle)
-        _mockHaContext.SetEntityAttributes(_entities.AirConditioner.EntityId, new { fan_mode = "high" });
+        _mockHaContext.SetEntityAttributes(
+            _entities.AirConditioner.EntityId,
+            new { fan_mode = "high" }
+        );
 
         // Act - Simulate valid button press
-        var stateChange = StateChangeHelpers.CreateStateChange(_entities.AcFanModeToggle, "off", "on");
+        var stateChange = StateChangeHelpers.CreateStateChange(
+            _entities.AcFanModeToggle,
+            "off",
+            "on"
+        );
         _mockHaContext.StateChangeSubject.OnNext(stateChange);
 
         // Assert - Should cycle back to AUTO
@@ -533,7 +562,9 @@ public class ClimateAutomationTests : IDisposable
         // The cron scheduling is verified through integration testing
 
         // The automation should start correctly which means cron was set up
-        _automation.Should().NotBeNull("Automation should initialize correctly with scheduler");
+        _automation
+            .Should()
+            .NotBeNull("Automation should initialize correctly with scheduler");
     }
 
     [Fact]
@@ -545,7 +576,9 @@ public class ClimateAutomationTests : IDisposable
                 x.Log(
                     LogLevel.Debug,
                     It.IsAny<EventId>(),
-                    It.Is<It.IsAnyType>((v, t) => v.ToString()!.Contains("AC schedule settings initialized")),
+                    It.Is<It.IsAnyType>(
+                        (v, t) => v.ToString()!.Contains("AC schedule settings initialized")
+                    ),
                     It.IsAny<Exception>(),
                     It.IsAny<Func<It.IsAnyType, Exception?, string>>()
                 ),
@@ -570,7 +603,11 @@ public class ClimateAutomationTests : IDisposable
         _mockHaContext.SetEntityState(_entities.PowerSavingMode.EntityId, "on");
 
         SimulateCurrentTime(18, 30); // Sunset period
-        var stateChange = StateChangeHelpers.CreateInputBooleanStateChange(_entities.PowerSavingMode, "off", "on");
+        var stateChange = StateChangeHelpers.CreateInputBooleanStateChange(
+            _entities.PowerSavingMode,
+            "off",
+            "on"
+        );
         _mockHaContext.StateChangeSubject.OnNext(stateChange);
 
         // Note: Need to trigger AC setting application separately since power saving change doesn't directly trigger it
@@ -680,7 +717,11 @@ public class ClimateAutomationTests : IDisposable
     public void NullStateValues_Should_HandleGracefully()
     {
         // Act - Simulate state change with null values
-        var stateChange = new StateChange(_entities.MotionSensor, null, new EntityState { State = "on" });
+        var stateChange = new StateChange(
+            _entities.MotionSensor,
+            null,
+            new EntityState { State = "on" }
+        );
 
         var act = () => _mockHaContext.StateChangeSubject.OnNext(stateChange);
 
@@ -761,20 +802,25 @@ public class ClimateAutomationTests : IDisposable
     /// </summary>
     private class TestEntities(IHaContext haContext) : IClimateEntities
     {
-        public SwitchEntity MasterSwitch { get; } = new SwitchEntity(haContext, "switch.bedroom_climate_master");
+        public SwitchEntity MasterSwitch { get; } =
+            new SwitchEntity(haContext, "switch.bedroom_climate_master");
         public BinarySensorEntity MotionSensor { get; } =
             new BinarySensorEntity(haContext, "binary_sensor.bedroom_motion_sensors");
-        public ClimateEntity AirConditioner { get; } = new ClimateEntity(haContext, "climate.bedroom_ac");
-        public BinarySensorEntity Door { get; } = new BinarySensorEntity(haContext, "binary_sensor.bedroom_door");
+        public ClimateEntity AirConditioner { get; } =
+            new ClimateEntity(haContext, "climate.bedroom_ac");
+        public BinarySensorEntity Door { get; } =
+            new BinarySensorEntity(haContext, "binary_sensor.bedroom_door");
         public SwitchEntity FanSwitch { get; } = new SwitchEntity(haContext, "switch.bedroom_fan");
         public InputBooleanEntity PowerSavingMode { get; } =
             new InputBooleanEntity(haContext, "input_boolean.power_saving_mode");
         public BinarySensorEntity HouseMotionSensor { get; } =
             new BinarySensorEntity(haContext, "binary_sensor.house_motion_sensors");
-        public ButtonEntity AcFanModeToggle { get; } = new ButtonEntity(haContext, "button.bedroom_ac_fan_mode_toggle");
+        public ButtonEntity AcFanModeToggle { get; } =
+            new ButtonEntity(haContext, "button.bedroom_ac_fan_mode_toggle");
         public SensorEntity SunRising { get; } = new SensorEntity(haContext, "sensor.sun_rising");
         public SensorEntity SunSetting { get; } = new SensorEntity(haContext, "sensor.sun_setting");
-        public SensorEntity SunMidnight { get; } = new SensorEntity(haContext, "sensor.sun_midnight");
+        public SensorEntity SunMidnight { get; } =
+            new SensorEntity(haContext, "sensor.sun_midnight");
         public WeatherEntity Weather { get; } = new WeatherEntity(haContext, "weather.home");
     }
 }

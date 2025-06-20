@@ -43,7 +43,9 @@ public static class TimeRange
     {
         var startTime = TimeSpan.FromHours(start);
         var endTime = TimeSpan.FromHours(end);
-        return start <= end ? now >= startTime && now <= endTime : now >= startTime || now <= endTime;
+        return start <= end
+            ? now >= startTime && now <= endTime
+            : now >= startTime || now <= endTime;
     }
 }
 
@@ -72,7 +74,10 @@ public static class StateChangeExtensions
     /// }
     /// </code>
     /// </example>
-    public static (T? Old, T? New) GetAttributeChange<T>(this StateChange change, string attributeName)
+    public static (T? Old, T? New) GetAttributeChange<T>(
+        this StateChange change,
+        string attributeName
+    )
     {
         T? oldVal = TryGetAttributeValue<T>(change.Old?.Attributes, attributeName);
         T? newVal = TryGetAttributeValue<T>(change.New?.Attributes, attributeName);
@@ -95,7 +100,10 @@ public static class StateChangeExtensions
     /// - Type conversion (using Convert.ChangeType)
     /// - All exceptions are caught and result in default values
     /// </remarks>
-    private static T? TryGetAttributeValue<T>(IReadOnlyDictionary<string, object>? attributes, string key)
+    private static T? TryGetAttributeValue<T>(
+        IReadOnlyDictionary<string, object>? attributes,
+        string key
+    )
     {
         if (attributes == null || !attributes.TryGetValue(key, out var value))
             return default;

@@ -1,7 +1,13 @@
 namespace HomeAutomation.apps.Area.Kitchen.Automations;
 
 public class MotionAutomation(IKitchenMotionEntities entities, ILogger logger)
-    : MotionAutomationBase(entities.MasterSwitch, entities.MotionSensor, entities.Light, logger, entities.SensorDelay)
+    : MotionAutomationBase(
+        entities.MasterSwitch,
+        entities.MotionSensor,
+        entities.Light,
+        logger,
+        entities.SensorDelay
+    )
 {
     private readonly BinarySensorEntity _powerPlug = entities.PowerPlug;
 
@@ -15,13 +21,17 @@ public class MotionAutomation(IKitchenMotionEntities entities, ILogger logger)
             MotionSensor.StateChanges().IsOff().Subscribe(_ => Light.TurnOff()),
         ];
 
-    protected override IEnumerable<IDisposable> GetAdditionalSwitchableAutomations() => [SetupDelayOnPowerPlug()];
+    protected override IEnumerable<IDisposable> GetAdditionalSwitchableAutomations() =>
+        [SetupDelayOnPowerPlug()];
 
     protected override IEnumerable<IDisposable> GetAdditionalPersistentAutomations() =>
         [SetupMotionSensorReactivation()];
 
     private IDisposable SetupDelayOnPowerPlug() =>
-        _powerPlug.StateChanges().IsOn().Subscribe(_ => SensorDelay?.SetNumericValue(SensorActiveDelayValue));
+        _powerPlug
+            .StateChanges()
+            .IsOn()
+            .Subscribe(_ => SensorDelay?.SetNumericValue(SensorActiveDelayValue));
 
     private IDisposable SetupMotionSensorReactivation() =>
         MotionSensor.StateChanges().IsOffForHours(1).Subscribe(_ => MasterSwitch?.TurnOn());

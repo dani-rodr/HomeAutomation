@@ -30,7 +30,11 @@ public class LgDisplayTests : IDisposable
         // Set up initial attributes with source list for the media player
         _mockHaContext.SetEntityAttributes(
             _entities.MediaPlayer.EntityId,
-            new { source_list = new[] { "HDMI 1", "HDMI 2", "HDMI 3", "Always Ready" }, source = "HDMI 1" }
+            new
+            {
+                source_list = new[] { "HDMI 1", "HDMI 2", "HDMI 3", "Always Ready" },
+                source = "HDMI 1",
+            }
         );
 
         _lgDisplay = new LgDisplay(_entities, new Services(_mockHaContext), _mockLogger.Object);
@@ -49,7 +53,11 @@ public class LgDisplayTests : IDisposable
         _lgDisplay.ShowPC();
 
         // Assert - Verify the source was mapped correctly
-        _mockHaContext.ShouldHaveCalledService("media_player", "select_source", _entities.MediaPlayer.EntityId);
+        _mockHaContext.ShouldHaveCalledService(
+            "media_player",
+            "select_source",
+            _entities.MediaPlayer.EntityId
+        );
         var serviceCall = _mockHaContext.ServiceCalls.Last();
         serviceCall
             .Data?.GetType()
@@ -64,7 +72,10 @@ public class LgDisplayTests : IDisposable
     [InlineData("PC", "HDMI 1")]
     [InlineData("Laptop", "HDMI 3")]
     [InlineData("ScreenSaver", "Always Ready")]
-    public void ShowSource_Should_MapDisplaySourceCorrectly(string sourceKey, string expectedHdmiSource)
+    public void ShowSource_Should_MapDisplaySourceCorrectly(
+        string sourceKey,
+        string expectedHdmiSource
+    )
     {
         // Arrange
         _mockHaContext.SetEntityState(_entities.MediaPlayer.EntityId, "on");
@@ -84,7 +95,11 @@ public class LgDisplayTests : IDisposable
         }
 
         // Assert
-        _mockHaContext.ShouldHaveCalledService("media_player", "select_source", _entities.MediaPlayer.EntityId);
+        _mockHaContext.ShouldHaveCalledService(
+            "media_player",
+            "select_source",
+            _entities.MediaPlayer.EntityId
+        );
         var serviceCall = _mockHaContext.ServiceCalls.Last();
         serviceCall
             .Data?.GetType()
@@ -150,7 +165,10 @@ public class LgDisplayTests : IDisposable
     public void IsShowingPc_WhenCurrentSourceIsHdmi1_Should_ReturnTrue()
     {
         // Arrange
-        _mockHaContext.SetEntityAttributes(_entities.MediaPlayer.EntityId, new { source = "HDMI 1" });
+        _mockHaContext.SetEntityAttributes(
+            _entities.MediaPlayer.EntityId,
+            new { source = "HDMI 1" }
+        );
 
         // Act
         var result = _lgDisplay.IsShowingPc;
@@ -163,20 +181,28 @@ public class LgDisplayTests : IDisposable
     public void IsShowingPc_WhenCurrentSourceIsNotHdmi1_Should_ReturnFalse()
     {
         // Arrange
-        _mockHaContext.SetEntityAttributes(_entities.MediaPlayer.EntityId, new { source = "HDMI 3" });
+        _mockHaContext.SetEntityAttributes(
+            _entities.MediaPlayer.EntityId,
+            new { source = "HDMI 3" }
+        );
 
         // Act
         var result = _lgDisplay.IsShowingPc;
 
         // Assert
-        result.Should().BeFalse("IsShowingPc should return false when current source is not HDMI 1");
+        result
+            .Should()
+            .BeFalse("IsShowingPc should return false when current source is not HDMI 1");
     }
 
     [Fact(Skip = "Temporarily disabled - display logic under review")]
     public void IsShowingLaptop_WhenCurrentSourceIsHdmi3_Should_ReturnTrue()
     {
         // Arrange
-        _mockHaContext.SetEntityAttributes(_entities.MediaPlayer.EntityId, new { source = "HDMI 3" });
+        _mockHaContext.SetEntityAttributes(
+            _entities.MediaPlayer.EntityId,
+            new { source = "HDMI 3" }
+        );
 
         // Act
         var result = _lgDisplay.IsShowingLaptop;
@@ -189,13 +215,18 @@ public class LgDisplayTests : IDisposable
     public void IsShowingLaptop_WhenCurrentSourceIsNotHdmi3_Should_ReturnFalse()
     {
         // Arrange
-        _mockHaContext.SetEntityAttributes(_entities.MediaPlayer.EntityId, new { source = "HDMI 1" });
+        _mockHaContext.SetEntityAttributes(
+            _entities.MediaPlayer.EntityId,
+            new { source = "HDMI 1" }
+        );
 
         // Act
         var result = _lgDisplay.IsShowingLaptop;
 
         // Assert
-        result.Should().BeFalse("IsShowingLaptop should return false when current source is not HDMI 3");
+        result
+            .Should()
+            .BeFalse("IsShowingLaptop should return false when current source is not HDMI 3");
     }
 
     #endregion
@@ -238,7 +269,10 @@ public class LgDisplayTests : IDisposable
 
         // Verify payload exists (exact structure testing would require reflection)
         var payloadProperty = commandCall!.Data?.GetType().GetProperty("payload");
-        payloadProperty?.GetValue(commandCall.Data).Should().NotBeNull("Command should include message payload");
+        payloadProperty
+            ?.GetValue(commandCall.Data)
+            .Should()
+            .NotBeNull("Command should include message payload");
     }
 
     [Theory]
@@ -310,14 +344,17 @@ public class LgDisplayTests : IDisposable
         var entityId = _lgDisplay.EntityId;
 
         // Assert
-        entityId.Should().Be("media_player.lg_webos_smart_tv", "Should return LG WebOS Smart TV entity ID");
+        entityId
+            .Should()
+            .Be("media_player.lg_webos_smart_tv", "Should return LG WebOS Smart TV entity ID");
     }
 
     [Fact]
     public void StateChanges_Should_DelegateToMediaPlayerEntity()
     {
         // Arrange
-        var stateChanges = new List<StateChange<MediaPlayerEntity, EntityState<MediaPlayerAttributes>>>();
+        var stateChanges =
+            new List<StateChange<MediaPlayerEntity, EntityState<MediaPlayerAttributes>>>();
 
         // Act
         _lgDisplay.StateChanges().Subscribe(stateChanges.Add);
@@ -363,7 +400,11 @@ public class LgDisplayTests : IDisposable
         _lgDisplay.SetVolume(0.75);
 
         // Assert
-        _mockHaContext.ShouldHaveCalledService("media_player", "volume_set", _entities.MediaPlayer.EntityId);
+        _mockHaContext.ShouldHaveCalledService(
+            "media_player",
+            "volume_set",
+            _entities.MediaPlayer.EntityId
+        );
     }
 
     #endregion
@@ -424,7 +465,11 @@ public class LgDisplayTests : IDisposable
 
         toastCalls.Should().Be(2, "Should have called toast notification twice");
 
-        _mockHaContext.ShouldHaveCalledService("media_player", "select_source", _entities.MediaPlayer.EntityId);
+        _mockHaContext.ShouldHaveCalledService(
+            "media_player",
+            "select_source",
+            _entities.MediaPlayer.EntityId
+        );
     }
 
     #endregion
@@ -434,7 +479,11 @@ public class LgDisplayTests : IDisposable
     public void LgScreenStateChange_WhenTurnsOn_Should_TurnOnMonitorScreen()
     {
         // Act - Simulate LG screen entity turning on
-        _mockHaContext.SimulateStateChange(_entities.Display.EntityId, HaEntityStates.OFF, HaEntityStates.ON);
+        _mockHaContext.SimulateStateChange(
+            _entities.Display.EntityId,
+            HaEntityStates.OFF,
+            HaEntityStates.ON
+        );
 
         // Assert - Monitor screen should be turned on
         // This would be verified through the webostv service calls in a real implementation
@@ -450,7 +499,11 @@ public class LgDisplayTests : IDisposable
         _mockHaContext.SetEntityState(_entities.Display.EntityId, HaEntityStates.ON);
 
         // Act - Simulate LG screen entity turning off
-        _mockHaContext.SimulateStateChange(_entities.Display.EntityId, HaEntityStates.ON, HaEntityStates.OFF);
+        _mockHaContext.SimulateStateChange(
+            _entities.Display.EntityId,
+            HaEntityStates.ON,
+            HaEntityStates.OFF
+        );
 
         // Assert - Monitor screen should be turned off
         var newState = _mockHaContext.GetState(_entities.Display.EntityId);
@@ -578,7 +631,12 @@ public class LgDisplayTests : IDisposable
 
         public void Button(string entityId, string button)
         {
-            _haContext.CallService("webostv", "button", null, new { entity_id = entityId, button = button });
+            _haContext.CallService(
+                "webostv",
+                "button",
+                null,
+                new { entity_id = entityId, button = button }
+            );
         }
     }
 
@@ -590,7 +648,11 @@ public class LgDisplayTests : IDisposable
     {
         private readonly IHaContext _haContext = haContext;
 
-        public void SendMagicPacket(string mac, string? broadcastAddress = null, double? broadcastPort = null)
+        public void SendMagicPacket(
+            string mac,
+            string? broadcastAddress = null,
+            double? broadcastPort = null
+        )
         {
             _haContext.CallService(
                 "wake_on_lan",

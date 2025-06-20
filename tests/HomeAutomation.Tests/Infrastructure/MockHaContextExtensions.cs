@@ -19,7 +19,9 @@ public static class MockHaContextExtensions
 
         turnOnCall
             .Should()
-            .NotBeNull($"Expected light.turn_on to be called for entity '{entityId}' but it was not found");
+            .NotBeNull(
+                $"Expected light.turn_on to be called for entity '{entityId}' but it was not found"
+            );
     }
 
     /// <summary>
@@ -34,7 +36,9 @@ public static class MockHaContextExtensions
 
         turnOffCall
             .Should()
-            .NotBeNull($"Expected light.turn_off to be called for entity '{entityId}' but it was not found");
+            .NotBeNull(
+                $"Expected light.turn_off to be called for entity '{entityId}' but it was not found"
+            );
     }
 
     /// <summary>
@@ -49,7 +53,9 @@ public static class MockHaContextExtensions
 
         toggleCall
             .Should()
-            .NotBeNull($"Expected light.toggle to be called for entity '{entityId}' but it was not found");
+            .NotBeNull(
+                $"Expected light.toggle to be called for entity '{entityId}' but it was not found"
+            );
     }
 
     /// <summary>
@@ -64,7 +70,9 @@ public static class MockHaContextExtensions
 
         turnOnCall
             .Should()
-            .NotBeNull($"Expected switch.turn_on to be called for entity '{entityId}' but it was not found");
+            .NotBeNull(
+                $"Expected switch.turn_on to be called for entity '{entityId}' but it was not found"
+            );
     }
 
     /// <summary>
@@ -79,13 +87,20 @@ public static class MockHaContextExtensions
 
         turnOffCall
             .Should()
-            .NotBeNull($"Expected switch.turn_off to be called for entity '{entityId}' but it was not found");
+            .NotBeNull(
+                $"Expected switch.turn_off to be called for entity '{entityId}' but it was not found"
+            );
     }
 
     /// <summary>
     /// Verify a generic service call was made
     /// </summary>
-    public static void ShouldHaveCalledService(this MockHaContext mock, string domain, string service, string entityId)
+    public static void ShouldHaveCalledService(
+        this MockHaContext mock,
+        string domain,
+        string service,
+        string entityId
+    )
     {
         var serviceCalls = mock.GetServiceCalls(domain).ToList();
         var call = serviceCalls.FirstOrDefault(c =>
@@ -93,13 +108,19 @@ public static class MockHaContextExtensions
         );
 
         call.Should()
-            .NotBeNull($"Expected {domain}.{service} to be called for entity '{entityId}' but it was not found");
+            .NotBeNull(
+                $"Expected {domain}.{service} to be called for entity '{entityId}' but it was not found"
+            );
     }
 
     /// <summary>
     /// Verify a generic service call was made (without checking entity)
     /// </summary>
-    public static void ShouldHaveCalledService(this MockHaContext mock, string domain, string service)
+    public static void ShouldHaveCalledService(
+        this MockHaContext mock,
+        string domain,
+        string service
+    )
     {
         var serviceCalls = mock.GetServiceCalls(domain).ToList();
         var call = serviceCalls.FirstOrDefault(c => c.Service == service);
@@ -111,13 +132,21 @@ public static class MockHaContextExtensions
     /// Verify a webostv service call was made for a specific entity
     /// WebOSTV services pass entity ID in the data parameter, not the target
     /// </summary>
-    public static void ShouldHaveCalledWebostvService(this MockHaContext mock, string service, string entityId)
+    public static void ShouldHaveCalledWebostvService(
+        this MockHaContext mock,
+        string service,
+        string entityId
+    )
     {
         var serviceCalls = mock.GetServiceCalls("webostv").ToList();
-        var call = serviceCalls.FirstOrDefault(c => c.Service == service && HasEntityIdInData(c.Data, entityId));
+        var call = serviceCalls.FirstOrDefault(c =>
+            c.Service == service && HasEntityIdInData(c.Data, entityId)
+        );
 
         call.Should()
-            .NotBeNull($"Expected webostv.{service} to be called for entity '{entityId}' but it was not found");
+            .NotBeNull(
+                $"Expected webostv.{service} to be called for entity '{entityId}' but it was not found"
+            );
     }
 
     private static bool HasEntityIdInData(object? data, string entityId)
@@ -143,7 +172,8 @@ public static class MockHaContextExtensions
     /// </summary>
     public static void ShouldHaveServiceCallCount(this MockHaContext mock, int expectedCount)
     {
-        mock.ServiceCalls.Should().HaveCount(expectedCount, $"Expected exactly {expectedCount} service calls");
+        mock.ServiceCalls.Should()
+            .HaveCount(expectedCount, $"Expected exactly {expectedCount} service calls");
     }
 
     /// <summary>
@@ -158,7 +188,9 @@ public static class MockHaContextExtensions
 
         pressCall
             .Should()
-            .NotBeNull($"Expected button.press to be called for entity '{entityId}' but it was not found");
+            .NotBeNull(
+                $"Expected button.press to be called for entity '{entityId}' but it was not found"
+            );
     }
 
     /// <summary>
@@ -173,7 +205,9 @@ public static class MockHaContextExtensions
 
         turnOnCall
             .Should()
-            .NotBeNull($"Expected media_player.turn_on to be called for entity '{entityId}' but it was not found");
+            .NotBeNull(
+                $"Expected media_player.turn_on to be called for entity '{entityId}' but it was not found"
+            );
     }
 
     /// <summary>
@@ -188,7 +222,9 @@ public static class MockHaContextExtensions
 
         turnOffCall
             .Should()
-            .NotBeNull($"Expected media_player.turn_off to be called for entity '{entityId}' but it was not found");
+            .NotBeNull(
+                $"Expected media_player.turn_off to be called for entity '{entityId}' but it was not found"
+            );
     }
 
     /// <summary>
@@ -199,7 +235,9 @@ public static class MockHaContextExtensions
         var wolCalls = mock.GetServiceCalls("wake_on_lan").ToList();
         var wakeCall = wolCalls.FirstOrDefault(call => call.Service == "send_magic_packet");
 
-        wakeCall.Should().NotBeNull("Expected wake_on_lan.send_magic_packet to be called but it was not found");
+        wakeCall
+            .Should()
+            .NotBeNull("Expected wake_on_lan.send_magic_packet to be called but it was not found");
 
         if (!string.IsNullOrEmpty(macAddress))
         {
@@ -216,7 +254,10 @@ public static class MockHaContextExtensions
         var lightCalls = mock.GetServiceCalls("light").ToList();
         var call = lightCalls.FirstOrDefault(c => c.Target?.EntityIds?.Contains(entityId) == true);
 
-        call.Should().BeNull($"Expected no light service calls for entity '{entityId}' but found: {call?.Service}");
+        call.Should()
+            .BeNull(
+                $"Expected no light service calls for entity '{entityId}' but found: {call?.Service}"
+            );
     }
 
     /// <summary>
@@ -227,17 +268,27 @@ public static class MockHaContextExtensions
         var switchCalls = mock.GetServiceCalls("switch").ToList();
         var call = switchCalls.FirstOrDefault(c => c.Target?.EntityIds?.Contains(entityId) == true);
 
-        call.Should().BeNull($"Expected no switch service calls for entity '{entityId}' but found: {call?.Service}");
+        call.Should()
+            .BeNull(
+                $"Expected no switch service calls for entity '{entityId}' but found: {call?.Service}"
+            );
     }
 
     /// <summary>
     /// Verify that exactly the specified number of calls were made to a specific entity
     /// </summary>
-    public static void ShouldHaveCalledLightExactly(this MockHaContext mock, string entityId, string service, int times)
+    public static void ShouldHaveCalledLightExactly(
+        this MockHaContext mock,
+        string entityId,
+        string service,
+        int times
+    )
     {
         var lightCalls = mock.GetServiceCalls("light").ToList();
         var calls = lightCalls
-            .Where(call => call.Service == service && call.Target?.EntityIds?.Contains(entityId) == true)
+            .Where(call =>
+                call.Service == service && call.Target?.EntityIds?.Contains(entityId) == true
+            )
             .ToList();
 
         calls
@@ -260,7 +311,9 @@ public static class MockHaContextExtensions
     {
         var switchCalls = mock.GetServiceCalls("switch").ToList();
         var calls = switchCalls
-            .Where(call => call.Service == service && call.Target?.EntityIds?.Contains(entityId) == true)
+            .Where(call =>
+                call.Service == service && call.Target?.EntityIds?.Contains(entityId) == true
+            )
             .ToList();
 
         calls
@@ -284,7 +337,9 @@ public static class MockHaContextExtensions
         mock.ShouldHaveCalledLightTurnOff(secondaryLight);
 
         // Verify exactly 2 turn_off calls
-        var lightOffCalls = mock.GetServiceCalls("light").Where(call => call.Service == "turn_off").ToList();
+        var lightOffCalls = mock.GetServiceCalls("light")
+            .Where(call => call.Service == "turn_off")
+            .ToList();
         lightOffCalls.Should().HaveCount(2, "Expected exactly 2 light turn_off calls");
     }
 
@@ -298,7 +353,11 @@ public static class MockHaContextExtensions
             call.Service == "lock" && call.Target?.EntityIds?.Contains(entityId) == true
         );
 
-        lockCall.Should().NotBeNull($"Expected lock.lock to be called for entity '{entityId}' but it was not found");
+        lockCall
+            .Should()
+            .NotBeNull(
+                $"Expected lock.lock to be called for entity '{entityId}' but it was not found"
+            );
     }
 
     /// <summary>
@@ -313,7 +372,9 @@ public static class MockHaContextExtensions
 
         unlockCall
             .Should()
-            .NotBeNull($"Expected lock.unlock to be called for entity '{entityId}' but it was not found");
+            .NotBeNull(
+                $"Expected lock.unlock to be called for entity '{entityId}' but it was not found"
+            );
     }
 
     /// <summary>
@@ -324,7 +385,10 @@ public static class MockHaContextExtensions
         var lockCalls = mock.GetServiceCalls("lock").ToList();
         var call = lockCalls.FirstOrDefault(c => c.Target?.EntityIds?.Contains(entityId) == true);
 
-        call.Should().BeNull($"Expected no lock service calls for entity '{entityId}' but found: {call?.Service}");
+        call.Should()
+            .BeNull(
+                $"Expected no lock service calls for entity '{entityId}' but found: {call?.Service}"
+            );
     }
 
     /// <summary>
@@ -339,7 +403,9 @@ public static class MockHaContextExtensions
 
         turnOnCall
             .Should()
-            .NotBeNull($"Expected climate.turn_on to be called for entity '{entityId}' but it was not found");
+            .NotBeNull(
+                $"Expected climate.turn_on to be called for entity '{entityId}' but it was not found"
+            );
     }
 
     /// <summary>
@@ -354,13 +420,18 @@ public static class MockHaContextExtensions
 
         turnOffCall
             .Should()
-            .NotBeNull($"Expected climate.turn_off to be called for entity '{entityId}' but it was not found");
+            .NotBeNull(
+                $"Expected climate.turn_off to be called for entity '{entityId}' but it was not found"
+            );
     }
 
     /// <summary>
     /// Verify that a climate entity's SetTemperature() method was called
     /// </summary>
-    public static void ShouldHaveCalledClimateSetTemperature(this MockHaContext mock, string entityId)
+    public static void ShouldHaveCalledClimateSetTemperature(
+        this MockHaContext mock,
+        string entityId
+    )
     {
         var climateCalls = mock.GetServiceCalls("climate").ToList();
         var setTempCall = climateCalls.FirstOrDefault(call =>
@@ -369,7 +440,9 @@ public static class MockHaContextExtensions
 
         setTempCall
             .Should()
-            .NotBeNull($"Expected climate.set_temperature to be called for entity '{entityId}' but it was not found");
+            .NotBeNull(
+                $"Expected climate.set_temperature to be called for entity '{entityId}' but it was not found"
+            );
     }
 
     /// <summary>
@@ -384,7 +457,9 @@ public static class MockHaContextExtensions
 
         setModeCall
             .Should()
-            .NotBeNull($"Expected climate.set_hvac_mode to be called for entity '{entityId}' but it was not found");
+            .NotBeNull(
+                $"Expected climate.set_hvac_mode to be called for entity '{entityId}' but it was not found"
+            );
     }
 
     /// <summary>
@@ -399,7 +474,9 @@ public static class MockHaContextExtensions
 
         setFanModeCall
             .Should()
-            .NotBeNull($"Expected climate.set_fan_mode to be called for entity '{entityId}' but it was not found");
+            .NotBeNull(
+                $"Expected climate.set_fan_mode to be called for entity '{entityId}' but it was not found"
+            );
     }
 
     /// <summary>
@@ -408,9 +485,14 @@ public static class MockHaContextExtensions
     public static void ShouldNeverHaveCalledClimate(this MockHaContext mock, string entityId)
     {
         var climateCalls = mock.GetServiceCalls("climate").ToList();
-        var call = climateCalls.FirstOrDefault(c => c.Target?.EntityIds?.Contains(entityId) == true);
+        var call = climateCalls.FirstOrDefault(c =>
+            c.Target?.EntityIds?.Contains(entityId) == true
+        );
 
-        call.Should().BeNull($"Expected no climate service calls for entity '{entityId}' but found: {call?.Service}");
+        call.Should()
+            .BeNull(
+                $"Expected no climate service calls for entity '{entityId}' but found: {call?.Service}"
+            );
     }
 
     /// <summary>
@@ -425,7 +507,9 @@ public static class MockHaContextExtensions
     {
         var climateCalls = mock.GetServiceCalls("climate").ToList();
         var calls = climateCalls
-            .Where(call => call.Service == service && call.Target?.EntityIds?.Contains(entityId) == true)
+            .Where(call =>
+                call.Service == service && call.Target?.EntityIds?.Contains(entityId) == true
+            )
             .ToList();
 
         calls

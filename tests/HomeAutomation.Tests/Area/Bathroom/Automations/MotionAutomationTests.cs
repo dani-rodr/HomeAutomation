@@ -25,7 +25,11 @@ public class MotionAutomationTests : IDisposable
         // Create test entities wrapper - much simpler!
         _entities = new TestEntities(_mockHaContext);
 
-        _automation = new MotionAutomation(_entities, _mockDimmingController.Object, _mockLogger.Object);
+        _automation = new MotionAutomation(
+            _entities,
+            _mockDimmingController.Object,
+            _mockLogger.Object
+        );
 
         // Start the automation to set up subscriptions
         _automation.StartAutomation();
@@ -99,9 +103,15 @@ public class MotionAutomationTests : IDisposable
     public void MultipleMotionEvents_Should_HandleCorrectSequence()
     {
         // Act - Motion on, off, on again
-        _mockHaContext.StateChangeSubject.OnNext(StateChangeHelpers.MotionDetected(_entities.MotionSensor));
-        _mockHaContext.StateChangeSubject.OnNext(StateChangeHelpers.MotionCleared(_entities.MotionSensor));
-        _mockHaContext.StateChangeSubject.OnNext(StateChangeHelpers.MotionDetected(_entities.MotionSensor));
+        _mockHaContext.StateChangeSubject.OnNext(
+            StateChangeHelpers.MotionDetected(_entities.MotionSensor)
+        );
+        _mockHaContext.StateChangeSubject.OnNext(
+            StateChangeHelpers.MotionCleared(_entities.MotionSensor)
+        );
+        _mockHaContext.StateChangeSubject.OnNext(
+            StateChangeHelpers.MotionDetected(_entities.MotionSensor)
+        );
 
         // Assert - Verify dimming controller calls in sequence
         _mockDimmingController.Verify(
@@ -154,7 +164,10 @@ public class MotionAutomationTests : IDisposable
         newState?.State.Should().Be("on");
 
         // Verify entity IsOn() works correctly
-        _entities.MotionSensor.IsOccupied().Should().BeTrue("motion sensor should report occupied after state change");
+        _entities
+            .MotionSensor.IsOccupied()
+            .Should()
+            .BeTrue("motion sensor should report occupied after state change");
     }
 
     [Fact]
@@ -183,8 +196,12 @@ public class MotionAutomationTests : IDisposable
         // Act & Assert - Should not throw
         var act = () =>
         {
-            _mockHaContext.StateChangeSubject.OnNext(StateChangeHelpers.MotionDetected(_entities.MotionSensor));
-            _mockHaContext.StateChangeSubject.OnNext(StateChangeHelpers.MotionCleared(_entities.MotionSensor));
+            _mockHaContext.StateChangeSubject.OnNext(
+                StateChangeHelpers.MotionDetected(_entities.MotionSensor)
+            );
+            _mockHaContext.StateChangeSubject.OnNext(
+                StateChangeHelpers.MotionCleared(_entities.MotionSensor)
+            );
         };
 
         act.Should().NotThrow();
@@ -203,7 +220,8 @@ public class MotionAutomationTests : IDisposable
     /// </summary>
     private class TestEntities(IHaContext haContext) : IMotionAutomationEntities
     {
-        public SwitchEntity MasterSwitch { get; } = new SwitchEntity(haContext, "switch.bathroom_motion_sensor");
+        public SwitchEntity MasterSwitch { get; } =
+            new SwitchEntity(haContext, "switch.bathroom_motion_sensor");
         public BinarySensorEntity MotionSensor { get; } =
             new BinarySensorEntity(haContext, "binary_sensor.bathroom_presence_sensors");
         public LightEntity Light { get; } = new LightEntity(haContext, "light.bathroom_lights");

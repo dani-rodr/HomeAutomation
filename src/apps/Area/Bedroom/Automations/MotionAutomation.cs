@@ -3,7 +3,13 @@ using System.Linq;
 namespace HomeAutomation.apps.Area.Bedroom.Automations;
 
 public class MotionAutomation(IBedroomMotionEntities entities, ILogger logger)
-    : MotionAutomationBase(entities.MasterSwitch, entities.MotionSensor, entities.Light, logger, entities.SensorDelay)
+    : MotionAutomationBase(
+        entities.MasterSwitch,
+        entities.MotionSensor,
+        entities.Light,
+        logger,
+        entities.SensorDelay
+    )
 {
     private readonly SwitchEntity _rightSideEmptySwitch = entities.RightSideEmptySwitch;
     private readonly SwitchEntity _leftSideFanSwitch = entities.LeftSideFanSwitch;
@@ -39,7 +45,11 @@ public class MotionAutomation(IBedroomMotionEntities entities, ILogger logger)
                 ToggleLightsViaSwitch(e.First());
             });
         yield return _rightSideEmptySwitch.StateChanges().Subscribe(ToggleLightsViaSwitch);
-        yield return Light.StateChanges().IsAutomated().IsOn().Subscribe(_ => MasterSwitch?.TurnOn());
+        yield return Light
+            .StateChanges()
+            .IsAutomated()
+            .IsOn()
+            .Subscribe(_ => MasterSwitch?.TurnOn());
     }
 
     private void ToggleLightsViaSwitch(StateChange e)

@@ -83,10 +83,14 @@ public static class ServiceCollectionExtensions
         return services.AddTransientEntity<IPantryMotionEntities, PantryMotionEntities>();
     }
 
-    private static IServiceCollection AddTransientEntity<TInterface, TImplementation>(this IServiceCollection services)
+    private static IServiceCollection AddTransientEntity<TInterface, TImplementation>(
+        this IServiceCollection services
+    )
         where TInterface : class
         where TImplementation : class, TInterface
     {
-        return services.AddTransient<TInterface>(sp => ActivatorUtilities.CreateInstance<TImplementation>(sp));
+        return services.AddTransient<TInterface>(sp =>
+            ActivatorUtilities.CreateInstance<TImplementation>(sp)
+        );
     }
 }

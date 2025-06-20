@@ -51,7 +51,8 @@ public class MotionAutomationTests : IDisposable
     /// </summary>
     private class TestEntities(IHaContext haContext) : IDeskMotionEntities
     {
-        public SwitchEntity MasterSwitch { get; } = new SwitchEntity(haContext, "switch.motion_sensors");
+        public SwitchEntity MasterSwitch { get; } =
+            new SwitchEntity(haContext, "switch.motion_sensors");
         public BinarySensorEntity MotionSensor { get; } =
             new BinarySensorEntity(haContext, "binary_sensor.desk_smart_presence");
         public LightEntity Light { get; } = new LightEntity(haContext, "light.rgb_light_strip");

@@ -79,7 +79,9 @@ public class ClimateAutomation(IClimateEntities entities, IScheduler scheduler, 
                 InvalidateAcSettingsCache();
             }
         );
-        yield return _ac.StateAllChanges().IsManuallyOperated().Subscribe(TurnOffMasterSwitchOnManualOperation);
+        yield return _ac.StateAllChanges()
+            .IsManuallyOperated()
+            .Subscribe(TurnOffMasterSwitchOnManualOperation);
         yield return _motionSensor
             .StateChangesWithCurrent()
             .IsOffForHours(1)
@@ -163,8 +165,14 @@ public class ClimateAutomation(IClimateEntities entities, IScheduler scheduler, 
     private IEnumerable<IDisposable> GetSensorBasedAutomations()
     {
         yield return _doorSensor.StateChanges().IsClosed().Subscribe(ApplyTimeBasedAcSetting);
-        yield return _doorSensor.StateChanges().IsOnForMinutes(5).Subscribe(ApplyTimeBasedAcSetting);
-        yield return _motionSensor.StateChanges().IsOffForMinutes(10).Subscribe(ApplyTimeBasedAcSetting);
+        yield return _doorSensor
+            .StateChanges()
+            .IsOnForMinutes(5)
+            .Subscribe(ApplyTimeBasedAcSetting);
+        yield return _motionSensor
+            .StateChanges()
+            .IsOffForMinutes(10)
+            .Subscribe(ApplyTimeBasedAcSetting);
         yield return _motionSensor.StateChanges().IsOn().Subscribe(ApplyTimeBasedAcSetting);
     }
 
@@ -272,7 +280,10 @@ public class ClimateAutomation(IClimateEntities entities, IScheduler scheduler, 
 
         if (!GetCurrentAcScheduleSettings().TryGetValue(timeBlock.Value, out var setting))
         {
-            Logger.LogDebug("Skipping AC settings: No settings found for time block {TimeBlock}", timeBlock.Value);
+            Logger.LogDebug(
+                "Skipping AC settings: No settings found for time block {TimeBlock}",
+                timeBlock.Value
+            );
             return;
         }
 
@@ -286,7 +297,10 @@ public class ClimateAutomation(IClimateEntities entities, IScheduler scheduler, 
         var currentTemp = _ac.Attributes?.Temperature;
         var currentMode = _ac.State;
 
-        if (currentTemp == targetTemp && string.Equals(currentMode, setting.Mode, StringComparison.OrdinalIgnoreCase))
+        if (
+            currentTemp == targetTemp
+            && string.Equals(currentMode, setting.Mode, StringComparison.OrdinalIgnoreCase)
+        )
         {
             Logger.LogDebug(
                 "Skipping AC settings: Already configured correctly - Temp: {CurrentTemp}°C = {TargetTemp}°C, Mode: {CurrentMode} = {TargetMode}",

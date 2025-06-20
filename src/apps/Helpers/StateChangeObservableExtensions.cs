@@ -72,7 +72,8 @@ public static class StateChangeObservableExtensions
     /// <returns>An observable that emits when the entity state changes to "on" (open).</returns>
     /// <remarks>Commonly used for door sensors, window sensors, and other binary sensors.</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static IObservable<StateChange> IsOpen(this IObservable<StateChange> source) => source.IsOn();
+    public static IObservable<StateChange> IsOpen(this IObservable<StateChange> source) =>
+        source.IsOn();
 
     /// <summary>
     /// Filters state changes to only emit when the entity turns off.
@@ -90,7 +91,8 @@ public static class StateChangeObservableExtensions
     /// <returns>An observable that emits when the entity state changes to "off" (closed).</returns>
     /// <remarks>Commonly used for door sensors, window sensors, and other binary sensors.</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static IObservable<StateChange> IsClosed(this IObservable<StateChange> source) => source.IsOff();
+    public static IObservable<StateChange> IsClosed(this IObservable<StateChange> source) =>
+        source.IsOff();
 
     /// <summary>
     /// Filters state changes to only emit when the entity becomes locked.
@@ -139,8 +141,9 @@ public static class StateChangeObservableExtensions
     /// Manual operations include actions through Home Assistant UI, mobile apps, or voice assistants.
     /// Uses HaIdentity.IsManuallyOperated() to determine user context.
     /// </remarks>
-    public static IObservable<StateChange> IsManuallyOperated(this IObservable<StateChange> source) =>
-        source.Where(s => HaIdentity.IsManuallyOperated(s.UserId()));
+    public static IObservable<StateChange> IsManuallyOperated(
+        this IObservable<StateChange> source
+    ) => source.Where(s => HaIdentity.IsManuallyOperated(s.UserId()));
 
     /// <summary>
     /// Filters state changes to only emit when the change was triggered by physical interaction.
@@ -151,8 +154,9 @@ public static class StateChangeObservableExtensions
     /// Physical operations include wall switches, physical buttons, and hardware controls.
     /// Uses HaIdentity.IsPhysicallyOperated() to determine interaction context.
     /// </remarks>
-    public static IObservable<StateChange> IsPhysicallyOperated(this IObservable<StateChange> source) =>
-        source.Where(s => HaIdentity.IsPhysicallyOperated(s.UserId()));
+    public static IObservable<StateChange> IsPhysicallyOperated(
+        this IObservable<StateChange> source
+    ) => source.Where(s => HaIdentity.IsPhysicallyOperated(s.UserId()));
 
     /// <summary>
     /// Filters state changes to only emit when the change was triggered by automation.
@@ -175,8 +179,9 @@ public static class StateChangeObservableExtensions
     /// Button presses are validated by checking if the state can be parsed as a DateTime.
     /// This is commonly used with Zigbee buttons and other event-based devices.
     /// </remarks>
-    public static IObservable<StateChange> IsValidButtonPress(this IObservable<StateChange> source) =>
-        source.Where(s => s.IsValidButtonPress());
+    public static IObservable<StateChange> IsValidButtonPress(
+        this IObservable<StateChange> source
+    ) => source.Where(s => s.IsValidButtonPress());
 
     /// <summary>
     /// Core unified method for time-based state persistence filtering.
@@ -322,8 +327,10 @@ public static class StateChangeObservableExtensions
     /// <param name="time">The number of seconds the entity must remain on.</param>
     /// <returns>An observable that emits when the entity stays on for the specified duration.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static IObservable<StateChange> IsOnForSeconds(this IObservable<StateChange> source, int time) =>
-        source.ForEntityStateAndTime(HaEntityStates.ON, time, TimeUnit.Seconds);
+    public static IObservable<StateChange> IsOnForSeconds(
+        this IObservable<StateChange> source,
+        int time
+    ) => source.ForEntityStateAndTime(HaEntityStates.ON, time, TimeUnit.Seconds);
 
     /// <summary>
     /// Emits state changes only when the entity remains "on" for the specified number of minutes.
@@ -332,8 +339,10 @@ public static class StateChangeObservableExtensions
     /// <param name="time">The number of minutes the entity must remain on.</param>
     /// <returns>An observable that emits when the entity stays on for the specified duration.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static IObservable<StateChange> IsOnForMinutes(this IObservable<StateChange> source, int time) =>
-        source.ForEntityStateAndTime(HaEntityStates.ON, time, TimeUnit.Minutes);
+    public static IObservable<StateChange> IsOnForMinutes(
+        this IObservable<StateChange> source,
+        int time
+    ) => source.ForEntityStateAndTime(HaEntityStates.ON, time, TimeUnit.Minutes);
 
     /// <summary>
     /// Emits state changes only when the entity remains "on" for the specified number of hours.
@@ -342,8 +351,10 @@ public static class StateChangeObservableExtensions
     /// <param name="time">The number of hours the entity must remain on.</param>
     /// <returns>An observable that emits when the entity stays on for the specified duration.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static IObservable<StateChange> IsOnForHours(this IObservable<StateChange> source, int time) =>
-        source.ForEntityStateAndTime(HaEntityStates.ON, time, TimeUnit.Hours);
+    public static IObservable<StateChange> IsOnForHours(
+        this IObservable<StateChange> source,
+        int time
+    ) => source.ForEntityStateAndTime(HaEntityStates.ON, time, TimeUnit.Hours);
 
     /// <summary>
     /// Emits state changes only when the entity remains "off" for the specified number of seconds.
@@ -352,8 +363,10 @@ public static class StateChangeObservableExtensions
     /// <param name="time">The number of seconds the entity must remain off.</param>
     /// <returns>An observable that emits when the entity stays off for the specified duration.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static IObservable<StateChange> IsOffForSeconds(this IObservable<StateChange> source, int time) =>
-        source.ForEntityStateAndTime(HaEntityStates.OFF, time, TimeUnit.Seconds);
+    public static IObservable<StateChange> IsOffForSeconds(
+        this IObservable<StateChange> source,
+        int time
+    ) => source.ForEntityStateAndTime(HaEntityStates.OFF, time, TimeUnit.Seconds);
 
     /// <summary>
     /// Emits state changes only when the entity remains "off" for the specified number of minutes.
@@ -362,8 +375,10 @@ public static class StateChangeObservableExtensions
     /// <param name="time">The number of minutes the entity must remain off.</param>
     /// <returns>An observable that emits when the entity stays off for the specified duration.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static IObservable<StateChange> IsOffForMinutes(this IObservable<StateChange> source, int time) =>
-        source.ForEntityStateAndTime(HaEntityStates.OFF, time, TimeUnit.Minutes);
+    public static IObservable<StateChange> IsOffForMinutes(
+        this IObservable<StateChange> source,
+        int time
+    ) => source.ForEntityStateAndTime(HaEntityStates.OFF, time, TimeUnit.Minutes);
 
     /// <summary>
     /// Emits state changes only when the entity remains "off" for the specified number of hours.
@@ -372,8 +387,10 @@ public static class StateChangeObservableExtensions
     /// <param name="time">The number of hours the entity must remain off.</param>
     /// <returns>An observable that emits when the entity stays off for the specified duration.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static IObservable<StateChange> IsOffForHours(this IObservable<StateChange> source, int time) =>
-        source.ForEntityStateAndTime(HaEntityStates.OFF, time, TimeUnit.Hours);
+    public static IObservable<StateChange> IsOffForHours(
+        this IObservable<StateChange> source,
+        int time
+    ) => source.ForEntityStateAndTime(HaEntityStates.OFF, time, TimeUnit.Hours);
 
     /// <summary>
     /// Emits state changes only when the entity remains "closed" for the specified number of seconds.
@@ -383,8 +400,10 @@ public static class StateChangeObservableExtensions
     /// <returns>An observable that emits when the entity stays closed for the specified duration.</returns>
     /// <remarks>Closed state is equivalent to "off" state for most binary sensors.</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static IObservable<StateChange> IsClosedForSeconds(this IObservable<StateChange> source, int time) =>
-        source.ForEntityStateAndTime(HaEntityStates.OFF, time, TimeUnit.Seconds);
+    public static IObservable<StateChange> IsClosedForSeconds(
+        this IObservable<StateChange> source,
+        int time
+    ) => source.ForEntityStateAndTime(HaEntityStates.OFF, time, TimeUnit.Seconds);
 
     /// <summary>
     /// Emits state changes only when the entity remains "closed" for the specified number of minutes.
@@ -394,8 +413,10 @@ public static class StateChangeObservableExtensions
     /// <returns>An observable that emits when the entity stays closed for the specified duration.</returns>
     /// <remarks>Closed state is equivalent to "off" state for most binary sensors.</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static IObservable<StateChange> IsClosedForMinutes(this IObservable<StateChange> source, int time) =>
-        source.ForEntityStateAndTime(HaEntityStates.OFF, time, TimeUnit.Minutes);
+    public static IObservable<StateChange> IsClosedForMinutes(
+        this IObservable<StateChange> source,
+        int time
+    ) => source.ForEntityStateAndTime(HaEntityStates.OFF, time, TimeUnit.Minutes);
 
     /// <summary>
     /// Emits state changes only when the entity remains "closed" for the specified number of hours.
@@ -405,8 +426,10 @@ public static class StateChangeObservableExtensions
     /// <returns>An observable that emits when the entity stays closed for the specified duration.</returns>
     /// <remarks>Closed state is equivalent to "off" state for most binary sensors.</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static IObservable<StateChange> IsClosedForHours(this IObservable<StateChange> source, int time) =>
-        source.ForEntityStateAndTime(HaEntityStates.OFF, time, TimeUnit.Hours);
+    public static IObservable<StateChange> IsClosedForHours(
+        this IObservable<StateChange> source,
+        int time
+    ) => source.ForEntityStateAndTime(HaEntityStates.OFF, time, TimeUnit.Hours);
 
     /// <summary>
     /// Emits state changes only when the entity remains "open" for the specified number of seconds.
@@ -416,8 +439,10 @@ public static class StateChangeObservableExtensions
     /// <returns>An observable that emits when the entity stays open for the specified duration.</returns>
     /// <remarks>Open state is equivalent to "on" state for most binary sensors.</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static IObservable<StateChange> IsOpenForSeconds(this IObservable<StateChange> source, int time) =>
-        source.ForEntityStateAndTime(HaEntityStates.ON, time, TimeUnit.Seconds);
+    public static IObservable<StateChange> IsOpenForSeconds(
+        this IObservable<StateChange> source,
+        int time
+    ) => source.ForEntityStateAndTime(HaEntityStates.ON, time, TimeUnit.Seconds);
 
     /// <summary>
     /// Emits state changes only when the entity remains "open" for the specified number of minutes.
@@ -427,8 +452,10 @@ public static class StateChangeObservableExtensions
     /// <returns>An observable that emits when the entity stays open for the specified duration.</returns>
     /// <remarks>Open state is equivalent to "on" state for most binary sensors.</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static IObservable<StateChange> IsOpenForMinutes(this IObservable<StateChange> source, int time) =>
-        source.ForEntityStateAndTime(HaEntityStates.ON, time, TimeUnit.Minutes);
+    public static IObservable<StateChange> IsOpenForMinutes(
+        this IObservable<StateChange> source,
+        int time
+    ) => source.ForEntityStateAndTime(HaEntityStates.ON, time, TimeUnit.Minutes);
 
     /// <summary>
     /// Emits state changes only when the entity remains "open" for the specified number of hours.
@@ -438,8 +465,10 @@ public static class StateChangeObservableExtensions
     /// <returns>An observable that emits when the entity stays open for the specified duration.</returns>
     /// <remarks>Open state is equivalent to "on" state for most binary sensors.</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static IObservable<StateChange> IsOpenForHours(this IObservable<StateChange> source, int time) =>
-        source.ForEntityStateAndTime(HaEntityStates.ON, time, TimeUnit.Hours);
+    public static IObservable<StateChange> IsOpenForHours(
+        this IObservable<StateChange> source,
+        int time
+    ) => source.ForEntityStateAndTime(HaEntityStates.ON, time, TimeUnit.Hours);
 
     /// <summary>
     /// Emits state changes only when the entity remains "locked" for the specified number of seconds.
@@ -448,8 +477,10 @@ public static class StateChangeObservableExtensions
     /// <param name="time">The number of seconds the entity must remain locked.</param>
     /// <returns>An observable that emits when the entity stays locked for the specified duration.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static IObservable<StateChange> IsLockedForSeconds(this IObservable<StateChange> source, int time) =>
-        source.ForEntityStateAndTime(HaEntityStates.LOCKED, time, TimeUnit.Seconds);
+    public static IObservable<StateChange> IsLockedForSeconds(
+        this IObservable<StateChange> source,
+        int time
+    ) => source.ForEntityStateAndTime(HaEntityStates.LOCKED, time, TimeUnit.Seconds);
 
     /// <summary>
     /// Emits state changes only when the entity remains "locked" for the specified number of minutes.
@@ -458,8 +489,10 @@ public static class StateChangeObservableExtensions
     /// <param name="time">The number of minutes the entity must remain locked.</param>
     /// <returns>An observable that emits when the entity stays locked for the specified duration.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static IObservable<StateChange> IsLockedForMinutes(this IObservable<StateChange> source, int time) =>
-        source.ForEntityStateAndTime(HaEntityStates.LOCKED, time, TimeUnit.Minutes);
+    public static IObservable<StateChange> IsLockedForMinutes(
+        this IObservable<StateChange> source,
+        int time
+    ) => source.ForEntityStateAndTime(HaEntityStates.LOCKED, time, TimeUnit.Minutes);
 
     /// <summary>
     /// Emits state changes only when the entity remains "locked" for the specified number of hours.
@@ -468,8 +501,10 @@ public static class StateChangeObservableExtensions
     /// <param name="time">The number of hours the entity must remain locked.</param>
     /// <returns>An observable that emits when the entity stays locked for the specified duration.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static IObservable<StateChange> IsLockedForHours(this IObservable<StateChange> source, int time) =>
-        source.ForEntityStateAndTime(HaEntityStates.LOCKED, time, TimeUnit.Hours);
+    public static IObservable<StateChange> IsLockedForHours(
+        this IObservable<StateChange> source,
+        int time
+    ) => source.ForEntityStateAndTime(HaEntityStates.LOCKED, time, TimeUnit.Hours);
 
     /// <summary>
     /// Emits state changes only when the entity remains "unlocked" for the specified number of seconds.
@@ -478,8 +513,10 @@ public static class StateChangeObservableExtensions
     /// <param name="time">The number of seconds the entity must remain unlocked.</param>
     /// <returns>An observable that emits when the entity stays unlocked for the specified duration.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static IObservable<StateChange> IsUnlockedForSeconds(this IObservable<StateChange> source, int time) =>
-        source.ForEntityStateAndTime(HaEntityStates.UNLOCKED, time, TimeUnit.Seconds);
+    public static IObservable<StateChange> IsUnlockedForSeconds(
+        this IObservable<StateChange> source,
+        int time
+    ) => source.ForEntityStateAndTime(HaEntityStates.UNLOCKED, time, TimeUnit.Seconds);
 
     /// <summary>
     /// Emits state changes only when the entity remains "unlocked" for the specified number of minutes.
@@ -488,8 +525,10 @@ public static class StateChangeObservableExtensions
     /// <param name="time">The number of minutes the entity must remain unlocked.</param>
     /// <returns>An observable that emits when the entity stays unlocked for the specified duration.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static IObservable<StateChange> IsUnlockedForMinutes(this IObservable<StateChange> source, int time) =>
-        source.ForEntityStateAndTime(HaEntityStates.UNLOCKED, time, TimeUnit.Minutes);
+    public static IObservable<StateChange> IsUnlockedForMinutes(
+        this IObservable<StateChange> source,
+        int time
+    ) => source.ForEntityStateAndTime(HaEntityStates.UNLOCKED, time, TimeUnit.Minutes);
 
     /// <summary>
     /// Emits state changes only when the entity remains "unlocked" for the specified number of hours.
@@ -498,8 +537,10 @@ public static class StateChangeObservableExtensions
     /// <param name="time">The number of hours the entity must remain unlocked.</param>
     /// <returns>An observable that emits when the entity stays unlocked for the specified duration.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static IObservable<StateChange> IsUnlockedForHours(this IObservable<StateChange> source, int time) =>
-        source.ForEntityStateAndTime(HaEntityStates.UNLOCKED, time, TimeUnit.Hours);
+    public static IObservable<StateChange> IsUnlockedForHours(
+        this IObservable<StateChange> source,
+        int time
+    ) => source.ForEntityStateAndTime(HaEntityStates.UNLOCKED, time, TimeUnit.Hours);
 
     /// <summary>
     /// Detects flickering behavior in entity state changes over a specified time window.

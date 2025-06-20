@@ -7,7 +7,9 @@ public class FanAutomation(IBedroomFanEntities entities, ILogger logger)
 
     protected override IEnumerable<IDisposable> GetPersistentAutomations()
     {
-        yield return Fan.StateChanges().IsManuallyOperated().Subscribe(_ => ShouldActivateFan = Fan.State.IsOn());
+        yield return Fan.StateChanges()
+            .IsManuallyOperated()
+            .Subscribe(_ => ShouldActivateFan = Fan.State.IsOn());
         yield return MotionSensor.StateChanges().Subscribe(HandleMotionDetection);
     }
 

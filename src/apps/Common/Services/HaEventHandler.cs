@@ -3,7 +3,9 @@ using System.Text.Json;
 
 namespace HomeAutomation.apps.Common.Services;
 
-public class HaEventHandler(IHaContext haContext, ILogger<HaEventHandler> logger) : IEventHandler, IDisposable
+public class HaEventHandler(IHaContext haContext, ILogger<HaEventHandler> logger)
+    : IEventHandler,
+        IDisposable
 {
     private const string NFC_EVENT = "tag_scanned";
     private const string MOBILE_EVENT = "mobile_app_notification_action";
@@ -16,7 +18,11 @@ public class HaEventHandler(IHaContext haContext, ILogger<HaEventHandler> logger
             .Events.Where(e => e.EventType == eventType)
             .Subscribe(e =>
             {
-                logger.LogDebug("Event '{EventType}' received with data: {Data}", eventType, e.DataElement);
+                logger.LogDebug(
+                    "Event '{EventType}' received with data: {Data}",
+                    eventType,
+                    e.DataElement
+                );
                 handler(e);
             });
 
@@ -37,7 +43,8 @@ public class HaEventHandler(IHaContext haContext, ILogger<HaEventHandler> logger
     public IObservable<string> OnNfcScan(string tagId) =>
         MatchEventByProperty(NFC_EVENT, "tag_id", tagId, logLabel: "NFC scanned");
 
-    public IObservable<string> OnMobileEvent(string action) => MatchEventByProperty(MOBILE_EVENT, "action", action);
+    public IObservable<string> OnMobileEvent(string action) =>
+        MatchEventByProperty(MOBILE_EVENT, "action", action);
 
     private IObservable<string> MatchEventByProperty(
         string eventType,
@@ -54,7 +61,12 @@ public class HaEventHandler(IHaContext haContext, ILogger<HaEventHandler> logger
                     var isMatch = value == expectedValue;
 
                     if (logLabel is not null)
-                        logger.LogDebug("{Label}: {Value} (match: {Match})", logLabel, value ?? "null", isMatch);
+                        logger.LogDebug(
+                            "{Label}: {Value} (match: {Match})",
+                            logLabel,
+                            value ?? "null",
+                            isMatch
+                        );
 
                     return isMatch;
                 }

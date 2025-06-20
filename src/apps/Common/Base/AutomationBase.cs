@@ -2,7 +2,9 @@ using System.Reactive.Disposables;
 
 namespace HomeAutomation.apps.Common.Base;
 
-public abstract class AutomationBase(ILogger logger, SwitchEntity? masterSwitch = null) : IAutomation, IDisposable
+public abstract class AutomationBase(ILogger logger, SwitchEntity? masterSwitch = null)
+    : IAutomation,
+        IDisposable
 {
     protected SwitchEntity? MasterSwitch { get; } = masterSwitch;
     protected ILogger Logger { get; } = logger;
@@ -27,7 +29,10 @@ public abstract class AutomationBase(ILogger logger, SwitchEntity? masterSwitch 
 
             if (MasterSwitch is not null)
             {
-                Logger.LogDebug("Configuring master switch monitoring for {EntityId}", MasterSwitch.EntityId);
+                Logger.LogDebug(
+                    "Configuring master switch monitoring for {EntityId}",
+                    MasterSwitch.EntityId
+                );
                 _persistentAutomations.Add(
                     MasterSwitch
                         .StateAllChangesWithCurrent()
@@ -56,7 +61,10 @@ public abstract class AutomationBase(ILogger logger, SwitchEntity? masterSwitch 
     {
         if (_toggleableAutomations != null)
         {
-            Logger.LogDebug("Toggleable automations already enabled for {AutomationType}", GetType().Name);
+            Logger.LogDebug(
+                "Toggleable automations already enabled for {AutomationType}",
+                GetType().Name
+            );
             return;
         }
 
@@ -75,7 +83,11 @@ public abstract class AutomationBase(ILogger logger, SwitchEntity? masterSwitch 
         var count = _toggleableAutomations?.Count ?? 0;
         if (count > 0)
         {
-            Logger.LogDebug("Disabling {Count} toggleable automations for {AutomationType}", count, GetType().Name);
+            Logger.LogDebug(
+                "Disabling {Count} toggleable automations for {AutomationType}",
+                count,
+                GetType().Name
+            );
         }
         _toggleableAutomations?.Dispose();
         _toggleableAutomations = null;
@@ -93,12 +105,18 @@ public abstract class AutomationBase(ILogger logger, SwitchEntity? masterSwitch 
 
         if (MasterSwitch?.State != HaEntityStates.ON)
         {
-            Logger.LogDebug("Master switch OFF - disabling automations for {AutomationType}", GetType().Name);
+            Logger.LogDebug(
+                "Master switch OFF - disabling automations for {AutomationType}",
+                GetType().Name
+            );
             DisableAutomations();
             return;
         }
 
-        Logger.LogDebug("Master switch ON - enabling automations for {AutomationType}", GetType().Name);
+        Logger.LogDebug(
+            "Master switch ON - enabling automations for {AutomationType}",
+            GetType().Name
+        );
         EnableAutomations();
     }
 

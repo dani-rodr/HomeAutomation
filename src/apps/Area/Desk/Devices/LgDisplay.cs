@@ -38,7 +38,10 @@ public class LgDisplay : MediaPlayerBase, ILgDisplay
         }
         try
         {
-            await SendCommandAsync("system.notifications/createAlert", CreateBrightnessPayload(value));
+            await SendCommandAsync(
+                "system.notifications/createAlert",
+                CreateBrightnessPayload(value)
+            );
 
             SendButtonCommand("ENTER");
         }
@@ -50,10 +53,12 @@ public class LgDisplay : MediaPlayerBase, ILgDisplay
         _brightness = value;
     }
 
-    public IObservable<StateChange<MediaPlayerEntity, EntityState<MediaPlayerAttributes>>> StateChanges() =>
-        Entity.StateChanges();
+    public IObservable<
+        StateChange<MediaPlayerEntity, EntityState<MediaPlayerAttributes>>
+    > StateChanges() => Entity.StateChanges();
 
-    public void ShowToast(string msg) => SendCommand("system.notifications/createToast", new { message = msg });
+    public void ShowToast(string msg) =>
+        SendCommand("system.notifications/createToast", new { message = msg });
 
     public void ShowPC() => ShowSource(DisplaySource.PC.ToString());
 
@@ -99,7 +104,11 @@ public class LgDisplay : MediaPlayerBase, ILgDisplay
                     focus = true,
                     buttonType = "ok",
                     onClick = "luna://com.webos.settingsservice/setSystemSettings",
-                    @params = new { category = "picture", settings = new { backlight = value.ToString() } },
+                    @params = new
+                    {
+                        category = "picture",
+                        settings = new { backlight = value.ToString() },
+                    },
                 },
             },
             type = "confirm",

@@ -29,7 +29,9 @@ public class LockAutomation(
             .Subscribe(Lock);
         yield return doorChanges.IsClosed().Subscribe(HandleDoorClosed);
         yield return doorChanges.IsOpen().Subscribe(SendDoorOpenedNotification);
-        yield return doorChanges.IsOpenForMinutes(AUTO_LOCK_IN_MINUTES).Subscribe(SendDoorOpenedNotification);
+        yield return doorChanges
+            .IsOpenForMinutes(AUTO_LOCK_IN_MINUTES)
+            .Subscribe(SendDoorOpenedNotification);
 
         yield return eventHandler.OnMobileEvent(LOCK_ACTION).Subscribe(_ => entities.Lock.Lock());
         yield return eventHandler
@@ -59,7 +61,8 @@ public class LockAutomation(
     }
 
     private bool ShouldAutoLockAfterTime =>
-        (entities.MotionSensor.IsOn() || entities.HouseStatus.IsOff()) && entities.Lock.IsUnlocked();
+        (entities.MotionSensor.IsOn() || entities.HouseStatus.IsOff())
+        && entities.Lock.IsUnlocked();
 
     private void HandleDoorLocked(StateChange e)
     {

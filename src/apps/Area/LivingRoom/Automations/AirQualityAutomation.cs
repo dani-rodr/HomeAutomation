@@ -61,7 +61,10 @@ public class AirQualityAutomation(IAirQualityEntities entities, ILogger logger)
 
         yield return _airQuality
             .StateChanges()
-            .WhenStateIsForSeconds(s => s?.State > cleanAirThreshold && s?.State <= dirtyAirThreshold, waitTime)
+            .WhenStateIsForSeconds(
+                s => s?.State > cleanAirThreshold && s?.State <= dirtyAirThreshold,
+                waitTime
+            )
             .Subscribe(e =>
             {
                 Logger.LogDebug(
@@ -119,7 +122,9 @@ public class AirQualityAutomation(IAirQualityEntities entities, ILogger logger)
                 }
                 else
                 {
-                    Logger.LogDebug("Supporting fan not activated: ShouldActivateFan=true (manual override active)");
+                    Logger.LogDebug(
+                        "Supporting fan not activated: ShouldActivateFan=true (manual override active)"
+                    );
                 }
             });
 
@@ -141,7 +146,9 @@ public class AirQualityAutomation(IAirQualityEntities entities, ILogger logger)
             .IsOffForMinutes(10)
             .Subscribe(e =>
             {
-                Logger.LogDebug("Supporting fan OFF for 10+ minutes. Resetting ShouldActivateFan: true → false");
+                Logger.LogDebug(
+                    "Supporting fan OFF for 10+ minutes. Resetting ShouldActivateFan: true → false"
+                );
                 ShouldActivateFan = false;
             });
     }

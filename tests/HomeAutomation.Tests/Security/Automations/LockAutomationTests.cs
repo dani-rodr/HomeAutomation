@@ -26,8 +26,12 @@ public class LockAutomationTests : IDisposable
         _mockEventHandler = new Mock<IEventHandler>();
 
         // Set up event handler mocks to return proper observables
-        _mockEventHandler.Setup(x => x.OnMobileEvent(It.IsAny<string>())).Returns(Observable.Never<string>());
-        _mockEventHandler.Setup(x => x.OnNfcScan(It.IsAny<string>())).Returns(Observable.Never<string>());
+        _mockEventHandler
+            .Setup(x => x.OnMobileEvent(It.IsAny<string>()))
+            .Returns(Observable.Never<string>());
+        _mockEventHandler
+            .Setup(x => x.OnNfcScan(It.IsAny<string>()))
+            .Returns(Observable.Never<string>());
 
         // Create test entities wrapper
         _entities = new TestEntities(_mockHaContext);
@@ -114,8 +118,13 @@ public class LockAutomationTests : IDisposable
         _mockHaContext.StateChangeSubject.OnNext(doorClosedChange);
 
         // Assert - Should NOT call lock service (no immediate relock)
-        var lockCalls = _mockHaContext.GetServiceCalls("lock").Where(c => c.Service == "lock").ToList();
-        lockCalls.Should().BeEmpty("Should not immediately relock when unlocked by physical operation");
+        var lockCalls = _mockHaContext
+            .GetServiceCalls("lock")
+            .Where(c => c.Service == "lock")
+            .ToList();
+        lockCalls
+            .Should()
+            .BeEmpty("Should not immediately relock when unlocked by physical operation");
     }
 
     [Fact]
@@ -209,7 +218,10 @@ public class LockAutomationTests : IDisposable
         _mockHaContext.StateChangeSubject.OnNext(stateChange);
 
         // Assert - Should send unlocked notification instead of locking
-        var lockCalls = _mockHaContext.GetServiceCalls("lock").Where(c => c.Service == "lock").ToList();
+        var lockCalls = _mockHaContext
+            .GetServiceCalls("lock")
+            .Where(c => c.Service == "lock")
+            .ToList();
         lockCalls.Should().BeEmpty("Should not lock door when immediate relock is not set");
 
         _mockNotificationServices.Verify(
@@ -271,7 +283,10 @@ public class LockAutomationTests : IDisposable
         _mockHaContext.StateChangeSubject.OnNext(stateChange);
 
         // Assert - Should NOT lock the door when door is open
-        var lockCalls = _mockHaContext.GetServiceCalls("lock").Where(c => c.Service == "lock").ToList();
+        var lockCalls = _mockHaContext
+            .GetServiceCalls("lock")
+            .Where(c => c.Service == "lock")
+            .ToList();
         lockCalls.Should().BeEmpty("Should not auto-lock when door is open");
     }
 
@@ -293,7 +308,10 @@ public class LockAutomationTests : IDisposable
         _mockHaContext.StateChangeSubject.OnNext(stateChange);
 
         // Assert - Should NOT lock the door when conditions are not met
-        var lockCalls = _mockHaContext.GetServiceCalls("lock").Where(c => c.Service == "lock").ToList();
+        var lockCalls = _mockHaContext
+            .GetServiceCalls("lock")
+            .Where(c => c.Service == "lock")
+            .ToList();
         lockCalls.Should().BeEmpty("Should not auto-lock when motion is off and house is occupied");
     }
 
@@ -309,7 +327,9 @@ public class LockAutomationTests : IDisposable
 
         // Setup event handler to return observable for NFC scan
         var nfcSubject = new Subject<string>();
-        _mockEventHandler.Setup(x => x.OnNfcScan(NFC_ID.DOOR_LOCK)).Returns(nfcSubject.AsObservable());
+        _mockEventHandler
+            .Setup(x => x.OnNfcScan(NFC_ID.DOOR_LOCK))
+            .Returns(nfcSubject.AsObservable());
 
         // Re-create automation to pick up the mock setup
         var automation = new LockAutomation(
@@ -337,7 +357,9 @@ public class LockAutomationTests : IDisposable
 
         // Setup event handler to return observable for NFC scan
         var nfcSubject = new Subject<string>();
-        _mockEventHandler.Setup(x => x.OnNfcScan(NFC_ID.DOOR_LOCK)).Returns(nfcSubject.AsObservable());
+        _mockEventHandler
+            .Setup(x => x.OnNfcScan(NFC_ID.DOOR_LOCK))
+            .Returns(nfcSubject.AsObservable());
 
         // Re-create automation to pick up the mock setup
         var automation = new LockAutomation(
@@ -365,7 +387,9 @@ public class LockAutomationTests : IDisposable
 
         // Setup event handler to return observable for NFC scan
         var nfcSubject = new Subject<string>();
-        _mockEventHandler.Setup(x => x.OnNfcScan(NFC_ID.DOOR_LOCK)).Returns(nfcSubject.AsObservable());
+        _mockEventHandler
+            .Setup(x => x.OnNfcScan(NFC_ID.DOOR_LOCK))
+            .Returns(nfcSubject.AsObservable());
 
         // Re-create automation to pick up the mock setup
         var automation = new LockAutomation(
@@ -395,7 +419,9 @@ public class LockAutomationTests : IDisposable
     {
         // Arrange - Setup event handler to return observable for mobile event
         var mobileSubject = new Subject<string>();
-        _mockEventHandler.Setup(x => x.OnMobileEvent("LOCK_ACTION")).Returns(mobileSubject.AsObservable());
+        _mockEventHandler
+            .Setup(x => x.OnMobileEvent("LOCK_ACTION"))
+            .Returns(mobileSubject.AsObservable());
 
         // Re-create automation to pick up the mock setup
         var automation = new LockAutomation(
@@ -488,8 +514,13 @@ public class LockAutomationTests : IDisposable
         _mockHaContext.StateChangeSubject.OnNext(stateChange);
 
         // Assert - Should not call lock service when already locked
-        var lockServiceCalls = _mockHaContext.GetServiceCalls("lock").Where(c => c.Service == "lock").ToList();
-        lockServiceCalls.Should().BeEmpty("Should not call lock service when door is already locked");
+        var lockServiceCalls = _mockHaContext
+            .GetServiceCalls("lock")
+            .Where(c => c.Service == "lock")
+            .ToList();
+        lockServiceCalls
+            .Should()
+            .BeEmpty("Should not call lock service when door is already locked");
     }
 
     [Fact]
@@ -503,7 +534,9 @@ public class LockAutomationTests : IDisposable
 
         // Setup event handler for NFC
         var nfcSubject = new Subject<string>();
-        _mockEventHandler.Setup(x => x.OnNfcScan(NFC_ID.DOOR_LOCK)).Returns(nfcSubject.AsObservable());
+        _mockEventHandler
+            .Setup(x => x.OnNfcScan(NFC_ID.DOOR_LOCK))
+            .Returns(nfcSubject.AsObservable());
 
         var automation = new LockAutomation(
             _entities,
@@ -551,11 +584,13 @@ public class LockAutomationTests : IDisposable
 
     private class TestEntities(IHaContext haContext) : ILockingEntities
     {
-        public SwitchEntity MasterSwitch { get; } = new SwitchEntity(haContext, "switch.security_automation_master");
+        public SwitchEntity MasterSwitch { get; } =
+            new SwitchEntity(haContext, "switch.security_automation_master");
         public BinarySensorEntity MotionSensor { get; } =
             new BinarySensorEntity(haContext, "binary_sensor.front_door_motion");
         public LockEntity Lock { get; } = new LockEntity(haContext, "lock.front_door_2");
-        public BinarySensorEntity Door { get; } = new BinarySensorEntity(haContext, "binary_sensor.front_door_contact");
+        public BinarySensorEntity Door { get; } =
+            new BinarySensorEntity(haContext, "binary_sensor.front_door_contact");
         public BinarySensorEntity HouseStatus { get; } =
             new BinarySensorEntity(haContext, "binary_sensor.house_occupied");
         public SwitchEntity Flytrap { get; } = new SwitchEntity(haContext, "switch.flytrap_outlet");

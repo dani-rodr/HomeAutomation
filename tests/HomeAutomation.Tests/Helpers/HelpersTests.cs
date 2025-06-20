@@ -83,8 +83,16 @@ public class HelpersTests : IDisposable
         var results = new List<StateChange>();
         _stateChangeSubject.IsAnyOfStates("on").Subscribe(results.Add);
 
-        var changeWithNullOld = new StateChange((Entity)_light, null, new EntityState { State = "on" });
-        var changeWithNullNew = new StateChange((Entity)_light, new EntityState { State = "off" }, null);
+        var changeWithNullOld = new StateChange(
+            (Entity)_light,
+            null,
+            new EntityState { State = "on" }
+        );
+        var changeWithNullNew = new StateChange(
+            (Entity)_light,
+            new EntityState { State = "off" },
+            null
+        );
 
         // Act
         _stateChangeSubject.OnNext(changeWithNullOld);
@@ -257,7 +265,10 @@ public class HelpersTests : IDisposable
     [InlineData("UNAVAILABLE", true)]
     [InlineData("on", false)]
     [InlineData("off", false)]
-    public void IsUnavailable_Should_FilterUnavailableStatesCorrectly(string state, bool shouldMatch)
+    public void IsUnavailable_Should_FilterUnavailableStatesCorrectly(
+        string state,
+        bool shouldMatch
+    )
     {
         // Arrange
         var results = new List<StateChange>();
@@ -318,7 +329,10 @@ public class HelpersTests : IDisposable
     [InlineData(HaIdentity.SUPERVISOR, false)]
     [InlineData(HaIdentity.NODERED, false)]
     [InlineData("unknown_user", false)]
-    public void IsManuallyOperated_Should_FilterManualOperationsCorrectly(string? userId, bool shouldMatch)
+    public void IsManuallyOperated_Should_FilterManualOperationsCorrectly(
+        string? userId,
+        bool shouldMatch
+    )
     {
         // Arrange
         var results = new List<StateChange>();
@@ -346,7 +360,10 @@ public class HelpersTests : IDisposable
     [InlineData(null, true)]
     [InlineData(HaIdentity.DANIEL_RODRIGUEZ, false)]
     [InlineData(HaIdentity.SUPERVISOR, false)]
-    public void IsPhysicallyOperated_Should_FilterPhysicalOperationsCorrectly(string? userId, bool shouldMatch)
+    public void IsPhysicallyOperated_Should_FilterPhysicalOperationsCorrectly(
+        string? userId,
+        bool shouldMatch
+    )
     {
         // Arrange
         var results = new List<StateChange>();
@@ -375,7 +392,10 @@ public class HelpersTests : IDisposable
     [InlineData("", false)]
     [InlineData(null, false)]
     [InlineData("unknown_automation", false)]
-    public void IsAutomated_Should_FilterAutomatedOperationsCorrectly(string? userId, bool shouldMatch)
+    public void IsAutomated_Should_FilterAutomatedOperationsCorrectly(
+        string? userId,
+        bool shouldMatch
+    )
     {
         // Arrange
         var results = new List<StateChange>();
@@ -697,7 +717,10 @@ public class HelpersTests : IDisposable
     [InlineData("UNAVAILABLE", true)]
     [InlineData("on", false)]
     [InlineData("off", false)]
-    public void GenericStateChange_IsUnavailable_Should_CheckUnavailableState(string state, bool expected)
+    public void GenericStateChange_IsUnavailable_Should_CheckUnavailableState(
+        string state,
+        bool expected
+    )
     {
         // Arrange
         var change = StateChangeHelpers.CreateStateChange(_light, "on", state);
@@ -738,7 +761,10 @@ public class HelpersTests : IDisposable
     [InlineData(HaIdentity.SUPERVISOR, false)]
     [InlineData("", true)]
     [InlineData(null, true)]
-    public void StateChange_IsManuallyOperated_Should_CheckManualOperation(string? userId, bool expected)
+    public void StateChange_IsManuallyOperated_Should_CheckManualOperation(
+        string? userId,
+        bool expected
+    )
     {
         // Arrange
         var change = StateChangeHelpers.CreateStateChange(_light, "off", "on", userId);
@@ -754,7 +780,10 @@ public class HelpersTests : IDisposable
     [InlineData("", true)]
     [InlineData(null, true)]
     [InlineData(HaIdentity.DANIEL_RODRIGUEZ, false)]
-    public void StateChange_IsPhysicallyOperated_Should_CheckPhysicalOperation(string? userId, bool expected)
+    public void StateChange_IsPhysicallyOperated_Should_CheckPhysicalOperation(
+        string? userId,
+        bool expected
+    )
     {
         // Arrange
         var change = StateChangeHelpers.CreateStateChange(_light, "off", "on", userId);
@@ -771,7 +800,10 @@ public class HelpersTests : IDisposable
     [InlineData(HaIdentity.NODERED, true)]
     [InlineData(HaIdentity.DANIEL_RODRIGUEZ, false)]
     [InlineData("", false)]
-    public void StateChange_IsAutomated_Should_CheckAutomatedOperation(string? userId, bool expected)
+    public void StateChange_IsAutomated_Should_CheckAutomatedOperation(
+        string? userId,
+        bool expected
+    )
     {
         // Arrange
         var change = StateChangeHelpers.CreateStateChange(_light, "off", "on", userId);
@@ -1061,7 +1093,10 @@ public class HelpersTests : IDisposable
     [Theory]
     [InlineData("connected", true)]
     [InlineData("disconnected", false)]
-    public void BinarySensorEntity_IsConnected_Should_CheckConnectedState(string state, bool expected)
+    public void BinarySensorEntity_IsConnected_Should_CheckConnectedState(
+        string state,
+        bool expected
+    )
     {
         // Arrange
         _mockHaContext.SetEntityState(_motionSensor.EntityId, state);
@@ -1076,7 +1111,10 @@ public class HelpersTests : IDisposable
     [Theory]
     [InlineData("disconnected", true)]
     [InlineData("connected", false)]
-    public void BinarySensorEntity_IsDisconnected_Should_CheckDisconnectedState(string state, bool expected)
+    public void BinarySensorEntity_IsDisconnected_Should_CheckDisconnectedState(
+        string state,
+        bool expected
+    )
     {
         // Arrange
         _mockHaContext.SetEntityState(_motionSensor.EntityId, state);
@@ -1469,7 +1507,8 @@ public class HelpersTests : IDisposable
     public void OnDoubleClick_Should_ReturnObservableOfBufferedChanges()
     {
         // Arrange
-        var switchChangeSubject = new Subject<StateChange<SwitchEntity, EntityState<SwitchAttributes>>>();
+        var switchChangeSubject =
+            new Subject<StateChange<SwitchEntity, EntityState<SwitchAttributes>>>();
         var results = new List<IList<StateChange<SwitchEntity, EntityState<SwitchAttributes>>>>();
 
         switchChangeSubject.OnDoubleClick(2).Subscribe(results.Add);

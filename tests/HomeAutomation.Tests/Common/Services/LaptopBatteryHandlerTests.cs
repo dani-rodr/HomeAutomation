@@ -107,14 +107,21 @@ public class LaptopBatteryHandlerTests : IDisposable
     [InlineData(20, true)] // Low battery threshold - turn on
     [InlineData(15, true)] // Very low battery - turn on
     [InlineData(10, true)] // Critical battery - turn on
-    public void ApplyChargingLogic_BatteryThresholds_Should_ControlPowerCorrectly(int batteryLevel, bool shouldTurnOn)
+    public void ApplyChargingLogic_BatteryThresholds_Should_ControlPowerCorrectly(
+        int batteryLevel,
+        bool shouldTurnOn
+    )
     {
         // Arrange
         _mockHaContext.SetEntityState(_entities.Level.EntityId, batteryLevel.ToString());
 
         // Act - Trigger charging logic through monitoring
         var subscription = _batteryHandler.StartMonitoring();
-        var stateChange = StateChangeHelpers.CreateStateChange(_entities.Level, "0", batteryLevel.ToString());
+        var stateChange = StateChangeHelpers.CreateStateChange(
+            _entities.Level,
+            "0",
+            batteryLevel.ToString()
+        );
         _mockHaContext.StateChangeSubject.OnNext(stateChange);
 
         // Assert

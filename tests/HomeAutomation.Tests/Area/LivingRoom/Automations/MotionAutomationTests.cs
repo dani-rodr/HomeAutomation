@@ -26,7 +26,11 @@ public class MotionAutomationTests : IDisposable
         // Create test entities wrapper with all complex cross-area dependencies
         _entities = new TestEntities(_mockHaContext);
 
-        _automation = new MotionAutomation(_entities, _mockDimmingController.Object, _mockLogger.Object);
+        _automation = new MotionAutomation(
+            _entities,
+            _mockDimmingController.Object,
+            _mockLogger.Object
+        );
 
         // Start the automation to set up subscriptions
         _automation.StartAutomation();
@@ -223,7 +227,11 @@ public class MotionAutomationTests : IDisposable
         _entities.SensorDelay.SetNumericValue(45); // SensorActiveDelayValue
 
         // Assert - Should set sensor delay to active value (45)
-        _mockHaContext.ShouldHaveCalledService("number", "set_value", _entities.SensorDelay.EntityId);
+        _mockHaContext.ShouldHaveCalledService(
+            "number",
+            "set_value",
+            _entities.SensorDelay.EntityId
+        );
     }
 
     [Fact]
@@ -361,7 +369,11 @@ public class MotionAutomationTests : IDisposable
         _entities.SensorDelay.SetNumericValue(45); // SensorActiveDelayValue
 
         // Assert - Should set sensor delay to custom active value
-        _mockHaContext.ShouldHaveCalledService("number", "set_value", _entities.SensorDelay.EntityId);
+        _mockHaContext.ShouldHaveCalledService(
+            "number",
+            "set_value",
+            _entities.SensorDelay.EntityId
+        );
     }
 
     #endregion
@@ -397,7 +409,11 @@ public class MotionAutomationTests : IDisposable
         );
 
         // Assert - Verify sensor delay was updated for kitchen activity
-        _mockHaContext.ShouldHaveCalledService("number", "set_value", _entities.SensorDelay.EntityId);
+        _mockHaContext.ShouldHaveCalledService(
+            "number",
+            "set_value",
+            _entities.SensorDelay.EntityId
+        );
     }
 
     [Fact]
@@ -486,11 +502,17 @@ public class MotionAutomationTests : IDisposable
 
         // Bedroom door
         _mockHaContext.SetEntityState(_entities.BedroomDoor.EntityId, "off");
-        _entities.BedroomDoor.IsClosed().Should().BeTrue("bedroom door should report closed when off");
+        _entities
+            .BedroomDoor.IsClosed()
+            .Should()
+            .BeTrue("bedroom door should report closed when off");
 
         // Kitchen motion sensors
         _mockHaContext.SetEntityState(_entities.KitchenMotionSensors.EntityId, "on");
-        _entities.KitchenMotionSensors.IsOccupied().Should().BeTrue("kitchen motion sensors should report occupied");
+        _entities
+            .KitchenMotionSensors.IsOccupied()
+            .Should()
+            .BeTrue("kitchen motion sensors should report occupied");
     }
 
     [Fact]
@@ -501,14 +523,24 @@ public class MotionAutomationTests : IDisposable
         // Act & Assert - Should not throw
         var act = () =>
         {
-            _mockHaContext.StateChangeSubject.OnNext(StateChangeHelpers.MotionDetected(_entities.MotionSensor));
-            _mockHaContext.StateChangeSubject.OnNext(StateChangeHelpers.MotionCleared(_entities.MotionSensor));
-            _mockHaContext.StateChangeSubject.OnNext(StateChangeHelpers.MotionDetected(_entities.KitchenMotionSensors));
+            _mockHaContext.StateChangeSubject.OnNext(
+                StateChangeHelpers.MotionDetected(_entities.MotionSensor)
+            );
+            _mockHaContext.StateChangeSubject.OnNext(
+                StateChangeHelpers.MotionCleared(_entities.MotionSensor)
+            );
+            _mockHaContext.StateChangeSubject.OnNext(
+                StateChangeHelpers.MotionDetected(_entities.KitchenMotionSensors)
+            );
             _mockHaContext.StateChangeSubject.OnNext(
                 StateChangeHelpers.CreateStateChange(_entities.TclTv, "on", "off")
             );
-            _mockHaContext.StateChangeSubject.OnNext(StateChangeHelpers.DoorClosed(_entities.BedroomDoor));
-            _mockHaContext.StateChangeSubject.OnNext(StateChangeHelpers.MotionDetected(_entities.BedroomMotionSensors));
+            _mockHaContext.StateChangeSubject.OnNext(
+                StateChangeHelpers.DoorClosed(_entities.BedroomDoor)
+            );
+            _mockHaContext.StateChangeSubject.OnNext(
+                StateChangeHelpers.MotionDetected(_entities.BedroomMotionSensors)
+            );
             _mockHaContext.StateChangeSubject.OnNext(
                 StateChangeHelpers.CreateStateChange(_entities.Light, "on", "off")
             );
@@ -552,7 +584,8 @@ public class MotionAutomationTests : IDisposable
     private class TestEntities(IHaContext haContext) : ILivingRoomMotionEntities
     {
         // Base motion automation entities
-        public SwitchEntity MasterSwitch { get; } = new SwitchEntity(haContext, "switch.living_room_motion_sensor");
+        public SwitchEntity MasterSwitch { get; } =
+            new SwitchEntity(haContext, "switch.living_room_motion_sensor");
         public BinarySensorEntity MotionSensor { get; } =
             new BinarySensorEntity(haContext, "binary_sensor.living_room_motion_sensors");
         public LightEntity Light { get; } = new LightEntity(haContext, "light.living_room_lights");
@@ -566,15 +599,18 @@ public class MotionAutomationTests : IDisposable
             new BinarySensorEntity(haContext, "binary_sensor.bedroom_motion_sensors");
 
         // TV integration
-        public MediaPlayerEntity TclTv { get; } = new MediaPlayerEntity(haContext, "media_player.tcl_android_tv");
+        public MediaPlayerEntity TclTv { get; } =
+            new MediaPlayerEntity(haContext, "media_player.tcl_android_tv");
 
         // Cross-area kitchen dependencies
         public BinarySensorEntity KitchenMotionSensors { get; } =
             new BinarySensorEntity(haContext, "binary_sensor.kitchen_motion_sensors");
 
         // Cross-area pantry dependencies
-        public LightEntity PantryLights { get; } = new LightEntity(haContext, "light.pantry_lights");
-        public SwitchEntity PantryMotionSensor { get; } = new SwitchEntity(haContext, "switch.pantry_motion_sensor");
+        public LightEntity PantryLights { get; } =
+            new LightEntity(haContext, "light.pantry_lights");
+        public SwitchEntity PantryMotionSensor { get; } =
+            new SwitchEntity(haContext, "switch.pantry_motion_sensor");
         public BinarySensorEntity PantryMotionSensors { get; } =
             new BinarySensorEntity(haContext, "binary_sensor.pantry_motion_sensors");
     }

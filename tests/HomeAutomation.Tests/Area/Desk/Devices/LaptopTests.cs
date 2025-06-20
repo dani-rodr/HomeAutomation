@@ -32,8 +32,12 @@ public class LaptopTests : IDisposable
         _mockBatteryHandler.Setup(x => x.HandleLaptopTurnedOffAsync()).Returns(Task.CompletedTask);
         _mockBatteryHandler.Setup(x => x.StartMonitoring()).Returns(Disposable.Empty);
         // Setup event handler mocks to return empty observables by default
-        _mockEventHandler.Setup(x => x.WhenEventTriggered("show_laptop")).Returns(new Subject<Event>().AsObservable());
-        _mockEventHandler.Setup(x => x.WhenEventTriggered("hide_laptop")).Returns(new Subject<Event>().AsObservable());
+        _mockEventHandler
+            .Setup(x => x.WhenEventTriggered("show_laptop"))
+            .Returns(new Subject<Event>().AsObservable());
+        _mockEventHandler
+            .Setup(x => x.WhenEventTriggered("hide_laptop"))
+            .Returns(new Subject<Event>().AsObservable());
         // Return no schedules by default to isolate behavior
         _mockScheduler.Setup(s => s.GetSchedules(It.IsAny<Action>())).Returns([]);
         // Create test entities wrapper
@@ -64,7 +68,9 @@ public class LaptopTests : IDisposable
         var result = _laptop.IsOn();
 
         // Assert
-        result.Should().BeTrue("laptop should be considered on when both switch and session are active");
+        result
+            .Should()
+            .BeTrue("laptop should be considered on when both switch and session are active");
     }
 
     [Fact]
@@ -78,7 +84,11 @@ public class LaptopTests : IDisposable
         var result = _laptop.IsOn();
 
         // Assert
-        result.Should().BeFalse("laptop should be considered off when session is locked (AND logic requires both)");
+        result
+            .Should()
+            .BeFalse(
+                "laptop should be considered off when session is locked (AND logic requires both)"
+            );
     }
 
     [Fact]
@@ -92,7 +102,11 @@ public class LaptopTests : IDisposable
         var result = _laptop.IsOn();
 
         // Assert
-        result.Should().BeFalse("laptop should be considered off when switch is off (AND logic requires both)");
+        result
+            .Should()
+            .BeFalse(
+                "laptop should be considered off when switch is off (AND logic requires both)"
+            );
     }
 
     [Fact]
@@ -106,7 +120,9 @@ public class LaptopTests : IDisposable
         var result = _laptop.IsOn();
 
         // Assert
-        result.Should().BeFalse("laptop should be considered off when both switch and session are inactive");
+        result
+            .Should()
+            .BeFalse("laptop should be considered off when both switch and session are inactive");
     }
 
     #endregion
@@ -147,8 +163,16 @@ public class LaptopTests : IDisposable
 
         // Verify specific components
         _mockHaContext.ShouldHaveCalledSwitchTurnOn(_entities.VirtualSwitch.EntityId);
-        _mockHaContext.ShouldHaveCalledService("button", "press", _entities.WakeOnLanButtons[0].EntityId);
-        _mockHaContext.ShouldHaveCalledService("button", "press", _entities.WakeOnLanButtons[1].EntityId);
+        _mockHaContext.ShouldHaveCalledService(
+            "button",
+            "press",
+            _entities.WakeOnLanButtons[0].EntityId
+        );
+        _mockHaContext.ShouldHaveCalledService(
+            "button",
+            "press",
+            _entities.WakeOnLanButtons[1].EntityId
+        );
     }
 
     #endregion
@@ -244,7 +268,11 @@ public class LaptopTests : IDisposable
     public void VirtualSwitchTurnOn_Should_CallBatteryHandlerTurnedOn()
     {
         // Act - Simulate virtual switch turning on
-        var stateChange = StateChangeHelpers.CreateStateChange(_entities.VirtualSwitch, "off", "on");
+        var stateChange = StateChangeHelpers.CreateStateChange(
+            _entities.VirtualSwitch,
+            "off",
+            "on"
+        );
         _mockHaContext.StateChangeSubject.OnNext(stateChange);
 
         // Assert - Should call battery handler turned on
@@ -259,7 +287,11 @@ public class LaptopTests : IDisposable
     public void VirtualSwitchTurnOff_Should_CallBatteryHandlerTurnedOffAsync()
     {
         // Act - Simulate virtual switch turning off
-        var stateChange = StateChangeHelpers.CreateStateChange(_entities.VirtualSwitch, "on", "off");
+        var stateChange = StateChangeHelpers.CreateStateChange(
+            _entities.VirtualSwitch,
+            "on",
+            "off"
+        );
         _mockHaContext.StateChangeSubject.OnNext(stateChange);
 
         // Assert - Should call battery handler turned off async
@@ -278,7 +310,11 @@ public class LaptopTests : IDisposable
     public void VirtualSwitchTurnOn_Should_TriggerTurnOnSequence()
     {
         // Act - Simulate virtual switch turning on
-        var stateChange = StateChangeHelpers.CreateStateChange(_entities.VirtualSwitch, "off", "on");
+        var stateChange = StateChangeHelpers.CreateStateChange(
+            _entities.VirtualSwitch,
+            "off",
+            "on"
+        );
         _mockHaContext.StateChangeSubject.OnNext(stateChange);
 
         // Assert - Should trigger full turn on sequence
@@ -298,7 +334,11 @@ public class LaptopTests : IDisposable
         _mockHaContext.ClearServiceCalls();
 
         // Act - Simulate virtual switch turning off
-        var stateChange = StateChangeHelpers.CreateStateChange(_entities.VirtualSwitch, "on", "off");
+        var stateChange = StateChangeHelpers.CreateStateChange(
+            _entities.VirtualSwitch,
+            "on",
+            "off"
+        );
         _mockHaContext.StateChangeSubject.OnNext(stateChange);
 
         // Assert - Should trigger turn off sequence including lock button
@@ -399,7 +439,9 @@ public class LaptopTests : IDisposable
         _laptop
             .IsOn()
             .Should()
-            .BeFalse("laptop should be considered off when session unlocks but switch is off (AND logic)");
+            .BeFalse(
+                "laptop should be considered off when session unlocks but switch is off (AND logic)"
+            );
 
         // Verify that the observable stream is set up correctly by checking if any changes occurred
         results.Should().NotBeNull("state changes observable should be functioning");
@@ -480,12 +522,18 @@ public class LaptopTests : IDisposable
         // Case 2: Switch on, session locked -> false (AND logic requires both)
         _mockHaContext.SetEntityState(_entities.VirtualSwitch.EntityId, "on");
         _mockHaContext.SetEntityState(_entities.Session.EntityId, "locked");
-        _laptop.IsOn().Should().BeFalse("switch on but session locked should be false with AND logic");
+        _laptop
+            .IsOn()
+            .Should()
+            .BeFalse("switch on but session locked should be false with AND logic");
 
         // Case 3: Switch off, session unlocked -> false (AND logic requires both)
         _mockHaContext.SetEntityState(_entities.VirtualSwitch.EntityId, "off");
         _mockHaContext.SetEntityState(_entities.Session.EntityId, "unlocked");
-        _laptop.IsOn().Should().BeFalse("session unlocked but switch off should be false with AND logic");
+        _laptop
+            .IsOn()
+            .Should()
+            .BeFalse("session unlocked but switch off should be false with AND logic");
 
         // Case 4: Both on/unlocked -> true
         _mockHaContext.SetEntityState(_entities.VirtualSwitch.EntityId, "on");
@@ -501,7 +549,10 @@ public class LaptopTests : IDisposable
         // Case 1: Session unavailable, switch on -> true (unavailable is not locked)
         _mockHaContext.SetEntityState(_entities.VirtualSwitch.EntityId, "on");
         _mockHaContext.SetEntityState(_entities.Session.EntityId, "unavailable");
-        _laptop.IsOn().Should().BeTrue("unavailable session is not locked, so laptop can be on with switch on");
+        _laptop
+            .IsOn()
+            .Should()
+            .BeTrue("unavailable session is not locked, so laptop can be on with switch on");
 
         // Case 2: Session unavailable, switch off -> false
         _mockHaContext.SetEntityState(_entities.VirtualSwitch.EntityId, "off");
@@ -575,8 +626,12 @@ public class LaptopTests : IDisposable
         var showSubject = new Subject<Event>();
         var hideSubject = new Subject<Event>();
 
-        _mockEventHandler.Setup(x => x.WhenEventTriggered("show_laptop")).Returns(showSubject.AsObservable());
-        _mockEventHandler.Setup(x => x.WhenEventTriggered("hide_laptop")).Returns(hideSubject.AsObservable());
+        _mockEventHandler
+            .Setup(x => x.WhenEventTriggered("show_laptop"))
+            .Returns(showSubject.AsObservable());
+        _mockEventHandler
+            .Setup(x => x.WhenEventTriggered("hide_laptop"))
+            .Returns(hideSubject.AsObservable());
 
         var showResults = new List<Event>();
         var hideResults = new List<Event>();
@@ -627,13 +682,15 @@ public class LaptopTests : IDisposable
     /// </summary>
     private class TestLaptopEntities(IHaContext haContext) : ILaptopEntities
     {
-        public SwitchEntity VirtualSwitch { get; } = new SwitchEntity(haContext, "switch.laptop_virtual");
+        public SwitchEntity VirtualSwitch { get; } =
+            new SwitchEntity(haContext, "switch.laptop_virtual");
         public ButtonEntity[] WakeOnLanButtons { get; } =
             [
                 new ButtonEntity(haContext, "button.thinkpadt14_wake_on_lan"),
                 new ButtonEntity(haContext, "button.thinkpadt14_wake_on_wlan"),
             ];
-        public SensorEntity Session { get; } = new SensorEntity(haContext, "sensor.thinkpadt14_session");
+        public SensorEntity Session { get; } =
+            new SensorEntity(haContext, "sensor.thinkpadt14_session");
         public NumericSensorEntity BatteryLevel { get; } =
             new NumericSensorEntity(haContext, "sensor.thinkpadt14_battery_level");
         public ButtonEntity Lock { get; } = new ButtonEntity(haContext, "button.thinkpadt14_lock");

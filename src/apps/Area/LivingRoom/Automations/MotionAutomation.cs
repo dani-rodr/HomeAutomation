@@ -4,7 +4,14 @@ public class MotionAutomation(
     ILivingRoomMotionEntities entities,
     IDimmingLightController dimmingController,
     ILogger logger
-) : MotionAutomationBase(entities.MasterSwitch, entities.MotionSensor, entities.Light, logger, entities.SensorDelay)
+)
+    : MotionAutomationBase(
+        entities.MasterSwitch,
+        entities.MotionSensor,
+        entities.Light,
+        logger,
+        entities.SensorDelay
+    )
 {
     protected override int SensorWaitTime => 30;
     protected override int SensorActiveDelayValue => 45;
@@ -20,7 +27,10 @@ public class MotionAutomation(
 
     protected override IEnumerable<IDisposable> GetLightAutomations()
     {
-        yield return MotionSensor.StateChanges().IsOn().Subscribe(e => dimmingController.OnMotionDetected(Light));
+        yield return MotionSensor
+            .StateChanges()
+            .IsOn()
+            .Subscribe(e => dimmingController.OnMotionDetected(Light));
         yield return MotionSensor
             .StateChanges()
             .IsOff()
@@ -44,7 +54,9 @@ public class MotionAutomation(
         return MotionSensor
             .StateChanges()
             .IsOffForMinutes(2)
-            .Where(_ => entities.BedroomDoor.IsClosed() && entities.BedroomMotionSensors.IsOccupied())
+            .Where(_ =>
+                entities.BedroomDoor.IsClosed() && entities.BedroomMotionSensors.IsOccupied()
+            )
             .Subscribe(_ => MasterSwitch?.TurnOn());
     }
 
@@ -74,7 +86,8 @@ public class MotionAutomation(
             .Subscribe(_ => entities.PantryLights.TurnOff());
     }
 
-    private bool PantryUnoccupied() => entities.PantryMotionSensor.IsOn() && entities.PantryMotionSensors.IsOff();
+    private bool PantryUnoccupied() =>
+        entities.PantryMotionSensor.IsOn() && entities.PantryMotionSensors.IsOff();
 
     public override void Dispose()
     {

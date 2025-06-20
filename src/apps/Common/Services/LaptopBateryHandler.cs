@@ -12,7 +12,8 @@ public class LaptopBatteryHandler(IBatteryHandlerEntities entities) : IBatteryHa
 
     private CancellationTokenSource? _shutdownCts;
 
-    public IDisposable StartMonitoring() => _level.StateChanges().Subscribe(e => ApplyChargingLogic());
+    public IDisposable StartMonitoring() =>
+        _level.StateChanges().Subscribe(e => ApplyChargingLogic());
 
     public void HandleLaptopTurnedOn()
     {

@@ -3,10 +3,14 @@ namespace HomeAutomation.apps.Common.Containers;
 public class CommonEntities(Entities entities)
 {
     // Motion sensors used in multiple classes
-    public BinarySensorEntity BedroomMotionSensor { get; } = entities.BinarySensor.BedroomPresenceSensors;
-    public BinarySensorEntity LivingRoomMotionSensor { get; } = entities.BinarySensor.LivingRoomPresenceSensors;
-    public BinarySensorEntity KitchenMotionSensor { get; } = entities.BinarySensor.KitchenMotionSensors;
-    public BinarySensorEntity PantryMotionSensor { get; } = entities.BinarySensor.PantryMotionSensors;
+    public BinarySensorEntity BedroomMotionSensor { get; } =
+        entities.BinarySensor.BedroomPresenceSensors;
+    public BinarySensorEntity LivingRoomMotionSensor { get; } =
+        entities.BinarySensor.LivingRoomPresenceSensors;
+    public BinarySensorEntity KitchenMotionSensor { get; } =
+        entities.BinarySensor.KitchenMotionSensors;
+    public BinarySensorEntity PantryMotionSensor { get; } =
+        entities.BinarySensor.PantryMotionSensors;
     public BinarySensorEntity HouseMotionSensor { get; } = entities.BinarySensor.House;
 
     // Shared fan switches
@@ -25,7 +29,8 @@ public class CommonEntities(Entities entities)
     public SwitchEntity PantryMotionSwitch { get; } = entities.Switch.PantryMotionSensor;
 }
 
-public class BedroomMotionEntities(Entities entities, CommonEntities common) : IBedroomMotionEntities
+public class BedroomMotionEntities(Entities entities, CommonEntities common)
+    : IBedroomMotionEntities
 {
     public SwitchEntity MasterSwitch => common.BedroomMotionSwitch;
     public BinarySensorEntity MotionSensor => common.BedroomMotionSensor;
@@ -35,7 +40,8 @@ public class BedroomMotionEntities(Entities entities, CommonEntities common) : I
     public SwitchEntity LeftSideFanSwitch => common.BedroomFanSwitch;
 }
 
-public class LivingRoomMotionEntities(Entities entities, CommonEntities common) : ILivingRoomMotionEntities
+public class LivingRoomMotionEntities(Entities entities, CommonEntities common)
+    : ILivingRoomMotionEntities
 {
     public SwitchEntity MasterSwitch => common.LivingRoomMotionSwitch;
     public BinarySensorEntity MotionSensor => common.LivingRoomMotionSensor;
@@ -70,10 +76,12 @@ public class AirQualityEntities(Entities entities, CommonEntities common) : IAir
 {
     public SwitchEntity MasterSwitch => entities.Switch.CleanAir;
     public BinarySensorEntity MotionSensor => common.LivingRoomMotionSensor;
-    public SwitchEntity AirPurifierFan => entities.Switch.XiaomiSmartAirPurifier4CompactAirPurifierFanSwitch;
+    public SwitchEntity AirPurifierFan =>
+        entities.Switch.XiaomiSmartAirPurifier4CompactAirPurifierFanSwitch;
     public SwitchEntity SupportingFan => common.LivingRoomStandFan;
     public NumericSensorEntity Pm25Sensor => entities.Sensor.XiaomiSg753990712Cpa4Pm25DensityP34;
-    public SwitchEntity LedStatus => entities.Switch.XiaomiSmartAirPurifier4CompactAirPurifierLedStatus;
+    public SwitchEntity LedStatus =>
+        entities.Switch.XiaomiSmartAirPurifier4CompactAirPurifierLedStatus;
 }
 
 public class KitchenCookingEntities(Entities entities) : ICookingEntities
@@ -123,7 +131,8 @@ public class LaptopEntities(Entities entities) : ILaptopEntities
 
     public SensorEntity Session => entities.Sensor.Thinkpadt14Sessionstate;
 
-    public NumericSensorEntity BatteryLevel => entities.Sensor.Thinkpadt14BatteryChargeRemainingPercentage;
+    public NumericSensorEntity BatteryLevel =>
+        entities.Sensor.Thinkpadt14BatteryChargeRemainingPercentage;
     public ButtonEntity Lock => entities.Button.Thinkpadt14Lock;
 }
 
@@ -133,7 +142,8 @@ public class DeskLgDisplayEntities(Entities entities) : ILgDisplayEntities
     public LightEntity Display => entities.Light.LgDisplay;
 }
 
-public class LivingRoomFanEntities(Entities entities, CommonEntities common) : ILivingRoomFanEntities
+public class LivingRoomFanEntities(Entities entities, CommonEntities common)
+    : ILivingRoomFanEntities
 {
     public SwitchEntity MasterSwitch => entities.Switch.SalaFanAutomation;
     public BinarySensorEntity MotionSensor => entities.BinarySensor.Ld2410Esp321SmartPresence;
@@ -156,12 +166,14 @@ public class PantryMotionEntities(Entities entities, CommonEntities common) : IP
     public BinarySensorEntity MotionSensor => common.PantryMotionSensor;
     public LightEntity Light => common.PantryLights;
     public NumberEntity SensorDelay => entities.Number.ZEsp32C63StillTargetDelay;
-    public BinarySensorEntity MiScalePresenceSensor => entities.BinarySensor.Esp32PresenceBedroomMiScalePresence;
+    public BinarySensorEntity MiScalePresenceSensor =>
+        entities.BinarySensor.Esp32PresenceBedroomMiScalePresence;
     public LightEntity MirrorLight => entities.Light.ControllerRgbDf1c0d;
     public BinarySensorEntity BedroomDoor => common.BedroomDoor;
 }
 
-public class KitchenMotionEntities(Entities entities, CommonEntities common) : IKitchenMotionEntities
+public class KitchenMotionEntities(Entities entities, CommonEntities common)
+    : IKitchenMotionEntities
 {
     public SwitchEntity MasterSwitch => entities.Switch.KitchenMotionSensor;
     public BinarySensorEntity MotionSensor => common.KitchenMotionSensor;

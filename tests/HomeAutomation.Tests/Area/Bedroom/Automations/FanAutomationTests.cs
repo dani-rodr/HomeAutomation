@@ -249,10 +249,18 @@ public class FanAutomationTests : IDisposable
         _mockHaContext.ClearServiceCalls();
 
         // Act - Multiple motion events
-        _mockHaContext.StateChangeSubject.OnNext(StateChangeHelpers.MotionDetected(_entities.MotionSensor));
-        _mockHaContext.StateChangeSubject.OnNext(StateChangeHelpers.MotionCleared(_entities.MotionSensor));
-        _mockHaContext.StateChangeSubject.OnNext(StateChangeHelpers.MotionDetected(_entities.MotionSensor));
-        _mockHaContext.StateChangeSubject.OnNext(StateChangeHelpers.MotionCleared(_entities.MotionSensor));
+        _mockHaContext.StateChangeSubject.OnNext(
+            StateChangeHelpers.MotionDetected(_entities.MotionSensor)
+        );
+        _mockHaContext.StateChangeSubject.OnNext(
+            StateChangeHelpers.MotionCleared(_entities.MotionSensor)
+        );
+        _mockHaContext.StateChangeSubject.OnNext(
+            StateChangeHelpers.MotionDetected(_entities.MotionSensor)
+        );
+        _mockHaContext.StateChangeSubject.OnNext(
+            StateChangeHelpers.MotionCleared(_entities.MotionSensor)
+        );
 
         // Assert - Should have 2 turn on and 2 turn off calls
         _mockHaContext.ShouldHaveCalledSwitchExactly(_entities.Fan.EntityId, "turn_on", 2);
@@ -267,10 +275,18 @@ public class FanAutomationTests : IDisposable
         // Act & Assert - Should not throw
         var act = () =>
         {
-            _mockHaContext.StateChangeSubject.OnNext(StateChangeHelpers.MotionDetected(_entities.MotionSensor));
-            _mockHaContext.StateChangeSubject.OnNext(StateChangeHelpers.MotionCleared(_entities.MotionSensor));
-            _mockHaContext.StateChangeSubject.OnNext(StateChangeHelpers.SwitchTurnedOn(_entities.Fan));
-            _mockHaContext.StateChangeSubject.OnNext(StateChangeHelpers.SwitchTurnedOff(_entities.Fan));
+            _mockHaContext.StateChangeSubject.OnNext(
+                StateChangeHelpers.MotionDetected(_entities.MotionSensor)
+            );
+            _mockHaContext.StateChangeSubject.OnNext(
+                StateChangeHelpers.MotionCleared(_entities.MotionSensor)
+            );
+            _mockHaContext.StateChangeSubject.OnNext(
+                StateChangeHelpers.SwitchTurnedOn(_entities.Fan)
+            );
+            _mockHaContext.StateChangeSubject.OnNext(
+                StateChangeHelpers.SwitchTurnedOff(_entities.Fan)
+            );
         };
 
         act.Should().NotThrow();
@@ -288,10 +304,12 @@ public class FanAutomationTests : IDisposable
     /// </summary>
     private class TestEntities(IHaContext haContext) : IBedroomFanEntities
     {
-        public SwitchEntity MasterSwitch { get; } = new SwitchEntity(haContext, "switch.bedroom_motion_sensor");
+        public SwitchEntity MasterSwitch { get; } =
+            new SwitchEntity(haContext, "switch.bedroom_motion_sensor");
         public BinarySensorEntity MotionSensor { get; } =
             new BinarySensorEntity(haContext, "binary_sensor.bedroom_presence_sensors");
-        public IEnumerable<SwitchEntity> Fans { get; } = [new SwitchEntity(haContext, "switch.sonoff_100238104e1")];
+        public IEnumerable<SwitchEntity> Fans { get; } =
+            [new SwitchEntity(haContext, "switch.sonoff_100238104e1")];
 
         // Convenience property for single fan access (following base class pattern)
         public SwitchEntity Fan => Fans.First();

@@ -144,7 +144,9 @@ public class DimmingLightControllerTests : IDisposable
         var lightCalls = _mockHaContext.GetServiceCalls("light").ToList();
         var turnOnCalls = lightCalls.Where(call => call.Service == "turn_on").ToList();
 
-        turnOnCalls.Should().HaveCount(1, "Should enable dimming when sensor delay matches active delay value");
+        turnOnCalls
+            .Should()
+            .HaveCount(1, "Should enable dimming when sensor delay matches active delay value");
     }
 
     [Fact]
@@ -188,7 +190,10 @@ public class DimmingLightControllerTests : IDisposable
 
         turnOnCalls
             .Should()
-            .HaveCount(1, "Should treat null sensor state as 0 and enable dimming when active delay is 0");
+            .HaveCount(
+                1,
+                "Should treat null sensor state as 0 and enable dimming when active delay is 0"
+            );
     }
 
     [Fact]
@@ -215,13 +220,19 @@ public class DimmingLightControllerTests : IDisposable
     private static int GetBrightnessFromServiceCall(ServiceCall serviceCall)
     {
         // Handle LightTurnOnParameters object
-        if (serviceCall.Data is LightTurnOnParameters lightParams && lightParams.BrightnessPct.HasValue)
+        if (
+            serviceCall.Data is LightTurnOnParameters lightParams
+            && lightParams.BrightnessPct.HasValue
+        )
         {
             return (int)lightParams.BrightnessPct.Value;
         }
 
         // Handle JSON data (fallback)
-        if (serviceCall.Data is JsonElement dataElement && dataElement.ValueKind == JsonValueKind.Object)
+        if (
+            serviceCall.Data is JsonElement dataElement
+            && dataElement.ValueKind == JsonValueKind.Object
+        )
         {
             if (dataElement.TryGetProperty("brightness_pct", out var brightnessProperty))
             {
@@ -229,7 +240,9 @@ public class DimmingLightControllerTests : IDisposable
             }
         }
 
-        throw new InvalidOperationException($"Service call data does not contain brightness_pct: {serviceCall.Data}");
+        throw new InvalidOperationException(
+            $"Service call data does not contain brightness_pct: {serviceCall.Data}"
+        );
     }
 
     public void Dispose()

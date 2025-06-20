@@ -1,7 +1,13 @@
 namespace HomeAutomation.apps.Area.Pantry.Automations;
 
 public class MotionAutomation(IPantryMotionEntities entities, ILogger logger)
-    : MotionAutomationBase(entities.MasterSwitch, entities.MotionSensor, entities.Light, logger, entities.SensorDelay)
+    : MotionAutomationBase(
+        entities.MasterSwitch,
+        entities.MotionSensor,
+        entities.Light,
+        logger,
+        entities.SensorDelay
+    )
 {
     protected override int SensorWaitTime => 10;
 
@@ -20,6 +26,9 @@ public class MotionAutomation(IPantryMotionEntities entities, ILogger logger)
                 Light.TurnOff();
                 mirrorLight.TurnOff();
             });
-        yield return entities.MiScalePresenceSensor.StateChanges().IsOn().Subscribe(_ => mirrorLight.TurnOn());
+        yield return entities
+            .MiScalePresenceSensor.StateChanges()
+            .IsOn()
+            .Subscribe(_ => mirrorLight.TurnOn());
     }
 }
