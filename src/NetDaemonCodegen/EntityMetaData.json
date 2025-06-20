@@ -2096,11 +2096,6 @@
           "cSharpName": "AcPowerSavingMode"
         },
         {
-          "id": "input_boolean.daniel_pc",
-          "friendlyName": "Daniel PC",
-          "cSharpName": "DanielPc"
-        },
-        {
           "id": "input_boolean.netdaemon_home_automation_apps_area_bathroom_bathroom_app",
           "friendlyName": "netdaemon_home_automation_apps_area_bathroom_bathroom_app",
           "cSharpName": "NetdaemonHomeAutomationAppsAreaBathroomBathroomApp"
@@ -7934,6 +7929,11 @@
           "cSharpName": "RiceCookerSocket1"
         },
         {
+          "id": "switch.sala_fan_automation",
+          "friendlyName": "Sala Fan Automation",
+          "cSharpName": "SalaFanAutomation"
+        },
+        {
           "id": "switch.sala_fans",
           "friendlyName": "Sala Fans",
           "cSharpName": "SalaFans"
@@ -8666,7 +8666,7 @@
         {
           "jsonName": "skipped_version",
           "cSharpName": "SkippedVersion",
-          "clrType": null
+          "clrType": "System.String"
         },
         {
           "jsonName": "title",

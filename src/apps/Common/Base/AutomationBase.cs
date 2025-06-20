@@ -23,7 +23,7 @@ public abstract class AutomationBase(ILogger logger, SwitchEntity? masterSwitch 
                 persistentList.Count
             );
 
-            _persistentAutomations = new CompositeDisposable(persistentList);
+            _persistentAutomations = [.. persistentList];
 
             if (MasterSwitch is not null)
             {
@@ -67,7 +67,7 @@ public abstract class AutomationBase(ILogger logger, SwitchEntity? masterSwitch 
             toggleableList.Count,
             GetType().Name
         );
-        _toggleableAutomations = new CompositeDisposable(toggleableList);
+        _toggleableAutomations = [.. toggleableList];
     }
 
     private void DisableAutomations()
@@ -88,7 +88,7 @@ public abstract class AutomationBase(ILogger logger, SwitchEntity? masterSwitch 
             e.Old?.State,
             e.New?.State,
             MasterSwitch?.EntityId,
-            e.UserId() ?? "unknown"
+            e.Username() ?? "unknown"
         );
 
         if (MasterSwitch?.State != HaEntityStates.ON)

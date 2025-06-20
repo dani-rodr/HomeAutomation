@@ -135,8 +135,8 @@ public class DeskLgDisplayEntities(Entities entities) : ILgDisplayEntities
 
 public class LivingRoomFanEntities(Entities entities, CommonEntities common) : ILivingRoomFanEntities
 {
-    public SwitchEntity MasterSwitch => common.LivingRoomMotionSwitch;
-    public BinarySensorEntity MotionSensor => common.LivingRoomMotionSensor;
+    public SwitchEntity MasterSwitch => entities.Switch.SalaFanAutomation;
+    public BinarySensorEntity MotionSensor => entities.BinarySensor.Ld2410Esp321SmartPresence;
     public IEnumerable<SwitchEntity> Fans =>
         [entities.Switch.CeilingFan, common.LivingRoomStandFan, entities.Switch.Cozylife955f];
     public BinarySensorEntity BedroomMotionSensor => common.BedroomMotionSensor;
