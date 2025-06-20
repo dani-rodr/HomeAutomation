@@ -25,6 +25,7 @@ public class DisplayAutomationsTests : IDisposable
     private readonly Mock<ILogger<Desktop>> _mockDesktopLogger;
     private readonly Mock<ILogger<Laptop>> _mockLaptopLogger;
     private readonly Mock<ILaptopScheduler> _mockScheduler;
+    private readonly Mock<IBatteryHandler> _mockBatteryHandler;
     private readonly Mock<INotificationServices> _mockNotificationServices;
 
     private readonly TestDesktopEntities _desktopEntities;
@@ -51,6 +52,10 @@ public class DisplayAutomationsTests : IDisposable
         _mockDesktopLogger = new Mock<ILogger<Desktop>>();
         _mockLaptopLogger = new Mock<ILogger<Laptop>>();
         _mockScheduler = new Mock<ILaptopScheduler>();
+        _mockBatteryHandler = new Mock<IBatteryHandler>();
+        // Setup battery handler mocks to prevent unexpected service calls
+        _mockBatteryHandler.Setup(x => x.HandleLaptopTurnedOn());
+        _mockBatteryHandler.Setup(x => x.HandleLaptopTurnedOffAsync()).Returns(Task.CompletedTask);
         _mockNotificationServices = new Mock<INotificationServices>();
 
         // Create entity containers
@@ -98,6 +103,7 @@ public class DisplayAutomationsTests : IDisposable
         _laptop = new Laptop(
             _laptopEntities,
             _mockScheduler.Object,
+            _mockBatteryHandler.Object,
             _mockEventHandler.Object,
             _mockLaptopLogger.Object
         );
@@ -135,7 +141,6 @@ public class DisplayAutomationsTests : IDisposable
         // Laptop states - initially off
         _mockHaContext.SetEntityState(_laptopEntities.VirtualSwitch.EntityId, HaEntityStates.OFF);
         _mockHaContext.SetEntityState(_laptopEntities.Session.EntityId, HaEntityStates.LOCKED);
-        _mockHaContext.SetEntityState(_laptopEntities.PowerPlug.EntityId, HaEntityStates.OFF);
     }
 
     private Services CreateMockServices()
@@ -161,7 +166,6 @@ public class DisplayAutomationsTests : IDisposable
 
         // Assert - Should turn on laptop and show laptop on monitor
         _mockHaContext.ShouldHaveCalledSwitchTurnOn(_laptopEntities.VirtualSwitch.EntityId);
-        _mockHaContext.ShouldHaveCalledSwitchTurnOn(_laptopEntities.PowerPlug.EntityId);
         VerifyWakeOnLanButtonsPressed();
         VerifyMonitorShowsLaptop();
     }
@@ -459,9 +463,8 @@ public class DisplayAutomationsTests : IDisposable
             HaEntityStates.ON
         );
 
-        // Assert - Should turn on laptop (power plug and wake-on-lan)
+        // Assert - Should turn on laptop (virtual switch and wake-on-lan)
         _mockHaContext.ShouldHaveCalledSwitchTurnOn(_laptopEntities.VirtualSwitch.EntityId);
-        _mockHaContext.ShouldHaveCalledSwitchTurnOn(_laptopEntities.PowerPlug.EntityId);
         VerifyWakeOnLanButtonsPressed();
     }
 
@@ -651,7 +654,6 @@ public class DisplayAutomationsTests : IDisposable
                 new ButtonEntity(haContext, "button.laptop_wol_1"),
                 new ButtonEntity(haContext, "button.laptop_wol_2"),
             ];
-            PowerPlug = new SwitchEntity(haContext, "switch.laptop_power");
             Session = new SensorEntity(haContext, "sensor.laptop_session");
             BatteryLevel = new NumericSensorEntity(haContext, "sensor.laptop_battery");
             Lock = new ButtonEntity(haContext, "button.laptop_lock");
@@ -659,7 +661,6 @@ public class DisplayAutomationsTests : IDisposable
 
         public SwitchEntity VirtualSwitch { get; }
         public ButtonEntity[] WakeOnLanButtons { get; }
-        public SwitchEntity PowerPlug { get; }
         public SensorEntity Session { get; }
         public NumericSensorEntity BatteryLevel { get; }
         public ButtonEntity Lock { get; }

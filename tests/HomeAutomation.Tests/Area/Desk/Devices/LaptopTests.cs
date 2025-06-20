@@ -16,6 +16,7 @@ public class LaptopTests : IDisposable
     private readonly Mock<IEventHandler> _mockEventHandler;
     private readonly Mock<ILogger> _mockLogger;
     private readonly Mock<ILaptopScheduler> _mockScheduler;
+    private readonly Mock<IBatteryHandler> _mockBatteryHandler;
     private readonly TestLaptopEntities _entities;
     private readonly Laptop _laptop;
 
@@ -25,6 +26,10 @@ public class LaptopTests : IDisposable
         _mockEventHandler = new Mock<IEventHandler>();
         _mockLogger = new Mock<ILogger>();
         _mockScheduler = new Mock<ILaptopScheduler>();
+        _mockBatteryHandler = new Mock<IBatteryHandler>();
+        // Setup battery handler mocks to prevent unexpected service calls
+        _mockBatteryHandler.Setup(x => x.HandleLaptopTurnedOn());
+        _mockBatteryHandler.Setup(x => x.HandleLaptopTurnedOffAsync()).Returns(Task.CompletedTask);
         // Setup event handler mocks to return empty observables by default
         _mockEventHandler.Setup(x => x.WhenEventTriggered("show_laptop")).Returns(new Subject<Event>().AsObservable());
         _mockEventHandler.Setup(x => x.WhenEventTriggered("hide_laptop")).Returns(new Subject<Event>().AsObservable());
@@ -33,7 +38,13 @@ public class LaptopTests : IDisposable
         // Create test entities wrapper
         _entities = new TestLaptopEntities(_mockHaContext);
 
-        _laptop = new Laptop(_entities, _mockScheduler.Object, _mockEventHandler.Object, _mockLogger.Object);
+        _laptop = new Laptop(
+            _entities,
+            _mockScheduler.Object,
+            _mockBatteryHandler.Object,
+            _mockEventHandler.Object,
+            _mockLogger.Object
+        );
 
         // Clear any initialization service calls
         _mockHaContext.ClearServiceCalls();
@@ -102,14 +113,13 @@ public class LaptopTests : IDisposable
     #region Power-On Sequence Tests
 
     [Fact]
-    public void TurnOn_Should_TurnOnVirtualSwitchAndPowerPlug()
+    public void TurnOn_Should_TurnOnVirtualSwitchAndWakeOnLan()
     {
         // Act
         _laptop.TurnOn();
 
         // Assert
         _mockHaContext.ShouldHaveCalledSwitchTurnOn(_entities.VirtualSwitch.EntityId);
-        _mockHaContext.ShouldHaveCalledSwitchTurnOn(_entities.PowerPlug.EntityId);
     }
 
     [Fact]
@@ -131,12 +141,11 @@ public class LaptopTests : IDisposable
         // Act
         _laptop.TurnOn();
 
-        // Assert - Verify complete startup sequence (2 switches + 2 WOL buttons = 4 calls)
-        _mockHaContext.ShouldHaveServiceCallCount(4);
+        // Assert - Verify complete startup sequence (1 switch + 2 WOL buttons = 3 calls)
+        _mockHaContext.ShouldHaveServiceCallCount(3);
 
         // Verify specific components
         _mockHaContext.ShouldHaveCalledSwitchTurnOn(_entities.VirtualSwitch.EntityId);
-        _mockHaContext.ShouldHaveCalledSwitchTurnOn(_entities.PowerPlug.EntityId);
         _mockHaContext.ShouldHaveCalledService("button", "press", _entities.WakeOnLanButtons[0].EntityId);
         _mockHaContext.ShouldHaveCalledService("button", "press", _entities.WakeOnLanButtons[1].EntityId);
     }
@@ -200,6 +209,56 @@ public class LaptopTests : IDisposable
 
     #endregion
 
+    #region Battery Handler Integration Tests
+
+    [Fact]
+    public void TurnOn_Should_CallBatteryHandlerTurnedOn()
+    {
+        // Act
+        _laptop.TurnOn();
+
+        // Assert - Should call battery handler turned on
+        _mockBatteryHandler.Verify(x => x.HandleLaptopTurnedOn(), Times.Once,
+            "Should call battery handler when laptop turns on");
+    }
+
+    [Fact]
+    public void TurnOff_Should_CallBatteryHandlerTurnedOffAsync()
+    {
+        // Act
+        _laptop.TurnOff();
+
+        // Assert - Should call battery handler turned off async
+        _mockBatteryHandler.Verify(x => x.HandleLaptopTurnedOffAsync(), Times.Once,
+            "Should call battery handler async method when laptop turns off");
+    }
+
+    [Fact]
+    public void VirtualSwitchTurnOn_Should_CallBatteryHandlerTurnedOn()
+    {
+        // Act - Simulate virtual switch turning on
+        var stateChange = StateChangeHelpers.CreateStateChange(_entities.VirtualSwitch, "off", "on");
+        _mockHaContext.StateChangeSubject.OnNext(stateChange);
+
+        // Assert - Should call battery handler turned on
+        _mockBatteryHandler.Verify(x => x.HandleLaptopTurnedOn(), Times.Once,
+            "Should call battery handler when virtual switch turns on");
+    }
+
+    [Fact]
+    public void VirtualSwitchTurnOff_Should_CallBatteryHandlerTurnedOffAsync()
+    {
+        // Act - Simulate virtual switch turning off
+        var stateChange = StateChangeHelpers.CreateStateChange(_entities.VirtualSwitch, "on", "off");
+        _mockHaContext.StateChangeSubject.OnNext(stateChange);
+
+        // Assert - Should call battery handler turned off async
+        _mockBatteryHandler.Verify(x => x.HandleLaptopTurnedOffAsync(), Times.Once,
+            "Should call battery handler async method when virtual switch turns off");
+    }
+
+    #endregion
+
     #region Virtual Switch Automation Tests
 
     [Fact]
@@ -211,7 +270,6 @@ public class LaptopTests : IDisposable
 
         // Assert - Should trigger full turn on sequence
         _mockHaContext.ShouldHaveCalledSwitchTurnOn(_entities.VirtualSwitch.EntityId);
-        _mockHaContext.ShouldHaveCalledSwitchTurnOn(_entities.PowerPlug.EntityId);
 
         foreach (var button in _entities.WakeOnLanButtons)
         {
@@ -250,11 +308,11 @@ public class LaptopTests : IDisposable
         );
 
         // Assert - Should handle each change correctly
-        // First on: switch + power + 2 WOL buttons = 4 calls
+        // First on: switch + 2 WOL buttons = 3 calls
         // First off: switch only = 1 call (session not unlocked)
-        // Second on: switch + power + 2 WOL buttons = 4 calls
-        // Total: 9 calls
-        _mockHaContext.ShouldHaveServiceCallCount(9);
+        // Second on: switch + 2 WOL buttons = 3 calls
+        // Total: 7 calls
+        _mockHaContext.ShouldHaveServiceCallCount(7);
     }
 
     #endregion
@@ -436,8 +494,8 @@ public class LaptopTests : IDisposable
         _laptop.TurnOn();
 
         // Assert - Should handle all calls correctly
-        // First TurnOn: 4 calls, TurnOff: 1 call, Second TurnOn: 4 calls = 9 total
-        _mockHaContext.ShouldHaveServiceCallCount(9);
+        // First TurnOn: 3 calls, TurnOff: 1 call, Second TurnOn: 3 calls = 7 total
+        _mockHaContext.ShouldHaveServiceCallCount(7);
     }
 
     [Fact]
@@ -518,7 +576,6 @@ public class LaptopTests : IDisposable
         // Assert - Verify entity IDs are correct for laptop components
         _entities.VirtualSwitch.EntityId.Should().Be("switch.laptop_virtual");
         _entities.Session.EntityId.Should().Be("sensor.thinkpadt14_session");
-        _entities.PowerPlug.EntityId.Should().Be("switch.laptop_power_plug");
         _entities.Lock.EntityId.Should().Be("button.thinkpadt14_lock");
         _entities.BatteryLevel.EntityId.Should().Be("sensor.thinkpadt14_battery_level");
 
@@ -548,7 +605,6 @@ public class LaptopTests : IDisposable
                 new ButtonEntity(haContext, "button.thinkpadt14_wake_on_lan"),
                 new ButtonEntity(haContext, "button.thinkpadt14_wake_on_wlan"),
             ];
-        public SwitchEntity PowerPlug { get; } = new SwitchEntity(haContext, "switch.laptop_power_plug");
         public SensorEntity Session { get; } = new SensorEntity(haContext, "sensor.thinkpadt14_session");
         public NumericSensorEntity BatteryLevel { get; } =
             new NumericSensorEntity(haContext, "sensor.thinkpadt14_battery_level");
