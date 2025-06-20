@@ -37,9 +37,10 @@ public class Laptop : ComputerBase
 
         var sessionUnlocked = _entities
             .Session.StateChanges()
-            .Select(e => e.New?.State.IsUnlocked() ?? false)
+            .Where(e => e.New?.State != null && !e.New.State.IsUnavailable()) // Filter out unavailable states
+            .Select(e => e.New!.State.IsUnlocked())
             .Throttle(TimeSpan.FromSeconds(1)) // Avoid rapid flapping due to session state instability
-            .StartWith(_entities.Session.State.IsUnlocked());
+            .StartWith(_entities.Session.State?.IsUnlocked() ?? false);
 
         // Combine both streams to determine whether the laptop is considered online
         return Observable.CombineLatest(switchOn, sessionUnlocked, IsOnline).DistinctUntilChanged();

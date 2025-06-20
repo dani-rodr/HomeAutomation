@@ -34,8 +34,20 @@ public class DisplayAutomations(
         Action onTurnedOff
     )
     {
-        yield return device.StateChanges().Where(isOn => isOn).Subscribe(_ => onTurnedOn());
-        yield return device.StateChanges().Where(isOn => !isOn).Subscribe(_ => onTurnedOff());
+        yield return device
+            .StateChanges()
+            .DistinctUntilChanged()
+            .Subscribe(isOn =>
+            {
+                if (isOn)
+                {
+                    onTurnedOn();
+                }
+                else
+                {
+                    onTurnedOff();
+                }
+            });
         yield return device.OnShowRequested().Subscribe(_ => onTurnedOn());
         yield return device.OnHideRequested().Subscribe(_ => onTurnedOff());
     }
