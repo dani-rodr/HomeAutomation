@@ -83,6 +83,10 @@ public class DisplayAutomations(
             desktop.IsOn(),
             laptop.IsOn()
         );
+        if (!laptop.IsOn())
+        {
+            laptop.TurnOn();
+        }
         monitor.ShowLaptop();
     }
 

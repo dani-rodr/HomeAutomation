@@ -388,7 +388,10 @@ public class LaptopTests : IDisposable
 
         // Assert - The StateChanges observable combines switch and session state
         // With AND logic, session unlocked + switch off should still be false
-        _laptop.IsOn().Should().BeFalse("laptop should be considered off when session unlocks but switch is off (AND logic)");
+        _laptop
+            .IsOn()
+            .Should()
+            .BeFalse("laptop should be considered off when session unlocks but switch is off (AND logic)");
 
         // Verify that the observable stream is set up correctly by checking if any changes occurred
         results.Should().NotBeNull("state changes observable should be functioning");
@@ -413,7 +416,7 @@ public class LaptopTests : IDisposable
             StateChangeHelpers.CreateStateChange(_entities.Session, "locked", "unlocked")
         );
 
-        // Assert - With sessionLocked always false, combined result is always false  
+        // Assert - With sessionLocked always false, combined result is always false
         results.Should().BeEmpty("sessionLocked always returns false, so no emissions occur");
     }
 
