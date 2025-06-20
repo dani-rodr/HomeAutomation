@@ -35,15 +35,10 @@ public class Laptop : ComputerBase
             .Select(e => e.IsOn())
             .StartWith(_entities.VirtualSwitch.State.IsOn());
 
-        var sessionUnlocked = _entities
-            .Session.StateChanges()
-            .Where(e => e.New?.State != null && !e.New.State.IsUnavailable()) // Filter out unavailable states
-            .Select(e => e.New!.State.IsUnlocked())
-            .Throttle(TimeSpan.FromSeconds(1)) // Avoid rapid flapping due to session state instability
-            .StartWith(_entities.Session.State?.IsUnlocked() ?? false);
+        var sessionLocked = _entities.Session.StateChanges().IsLocked().Select(e => false);
 
         // Combine both streams to determine whether the laptop is considered online
-        return Observable.CombineLatest(switchOn, sessionUnlocked, IsOnline).DistinctUntilChanged();
+        return Observable.CombineLatest(switchOn, sessionLocked, IsOnline).DistinctUntilChanged();
     }
 
     public override void TurnOn()
@@ -67,7 +62,24 @@ public class Laptop : ComputerBase
         }
     }
 
-    private static bool IsOnline(bool switchState, bool sessionState) => switchState || sessionState;
+    private bool GetSessionState(StateChange e)
+    {
+        if (e.New is null)
+        {
+            return _entities.VirtualSwitch.State.IsOn();
+        }
+        if (e.New.State.IsUnlocked())
+        {
+            return true;
+        }
+        if (e.New.State.IsLocked())
+        {
+            return false;
+        }
+        return _entities.VirtualSwitch.State.IsOn();
+    }
+
+    private static bool IsOnline(bool switchState, bool sessionState) => switchState && sessionState;
 
     private IDisposable GetSwitchToggleAutomations() =>
         _entities

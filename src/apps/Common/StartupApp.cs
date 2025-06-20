@@ -19,5 +19,14 @@ public class StartupApp : AppBase<StartupApp>
                 NotificationId = "netdaemon_start",
             }
         );
+        _ = DismissNotificationLaterAsync(services);
+    }
+
+    private static async Task DismissNotificationLaterAsync(HomeAssistantGenerated.Services services)
+    {
+        await Task.Delay(TimeSpan.FromMinutes(2));
+        services.PersistentNotification.Dismiss(
+            new PersistentNotificationDismissParameters { NotificationId = "netdaemon_start" }
+        );
     }
 }
