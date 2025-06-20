@@ -489,15 +489,15 @@ public class DisplayAutomationsTests : IDisposable
     [Fact]
     public void Laptop_IsOn_Should_ReturnCorrectStateBasedOnSwitchAndSession()
     {
-        // Test case 1: Switch on, session locked - should be on (switch state takes precedence)
+        // Test case 1: Switch on, session locked - should be off (AND logic requires both)
         SimulateLaptopSwitchOn();
         SimulateLaptopSessionLocked();
-        _laptop.IsOn().Should().BeTrue("Laptop should be on when switch is on");
+        _laptop.IsOn().Should().BeFalse("Laptop should be off when session is locked (AND logic)");
 
-        // Test case 2: Switch off, session unlocked - should be on (session state indicates activity)
+        // Test case 2: Switch off, session unlocked - should be off (AND logic requires both)
         SimulateLaptopSwitchOff();
         SimulateLaptopSessionUnlocked();
-        _laptop.IsOn().Should().BeTrue("Laptop should be on when session is unlocked");
+        _laptop.IsOn().Should().BeFalse("Laptop should be off when switch is off (AND logic)");
 
         // Test case 3: Both switch off and session locked - should be off
         SimulateLaptopSwitchOff();

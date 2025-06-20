@@ -62,23 +62,6 @@ public class Laptop : ComputerBase
         }
     }
 
-    private bool GetSessionState(StateChange e)
-    {
-        if (e.New is null)
-        {
-            return _entities.VirtualSwitch.State.IsOn();
-        }
-        if (e.New.State.IsUnlocked())
-        {
-            return true;
-        }
-        if (e.New.State.IsLocked())
-        {
-            return false;
-        }
-        return _entities.VirtualSwitch.State.IsOn();
-    }
-
     private static bool IsOnline(bool switchState, bool sessionState) => switchState && sessionState;
 
     private IDisposable GetSwitchToggleAutomations() =>
