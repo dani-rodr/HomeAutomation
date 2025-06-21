@@ -46,25 +46,15 @@ public class FanAutomation(ILivingRoomFanEntities entities, ILogger logger)
             .Subscribe(_ => MasterSwitch?.TurnOn());
     }
 
-    private void ControlMasterSwitchOnFanChange(StateChange change)
+    private void ControlMasterSwitchOnFanChange(StateChange e)
     {
-        var fanState = Fan.IsOn();
-        var motionState = MotionSensor.IsOccupied();
-
-        Logger.LogDebug(
-            "FanChange detected: Fan.IsOn={Fan}, MotionSensor.IsOccupied={Motion}",
-            fanState,
-            motionState
-        );
-
-        if (fanState == motionState)
+        if (e.IsOn())
         {
-            Logger.LogDebug("Enabling automation via MasterSwitch (states match)");
             MasterSwitch?.TurnOn();
-            return;
         }
-
-        Logger.LogDebug("Disabling automation via MasterSwitch (states mismatch)");
-        MasterSwitch?.TurnOff();
+        else if (e.IsOff())
+        {
+            MasterSwitch?.TurnOff();
+        }
     }
 }
