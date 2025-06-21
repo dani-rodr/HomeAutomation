@@ -1,11 +1,13 @@
+using System.Linq;
+
 namespace HomeAutomation.apps.Area.LivingRoom.Automations;
 
 public class AirQualityAutomation(IAirQualityEntities entities, ILogger logger)
-    : FanAutomationBase(entities.MasterSwitch, entities.MotionSensor, logger, [.. entities.Fans])
+    : FanAutomationBase(entities, logger)
 {
     private readonly NumericSensorEntity _airQuality = entities.Pm25Sensor;
     private readonly SwitchEntity _ledStatus = entities.LedStatus;
-    private SwitchEntity _supportingFan => Fans[1];
+    private SwitchEntity _supportingFan => Fans.First();
     private bool _activateSupportingFan = false;
     private bool _isCleaningAir = false;
 

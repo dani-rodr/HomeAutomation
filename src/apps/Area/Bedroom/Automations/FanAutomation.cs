@@ -1,7 +1,7 @@
 namespace HomeAutomation.apps.Area.Bedroom.Automations;
 
 public class FanAutomation(IBedroomFanEntities entities, ILogger logger)
-    : FanAutomationBase(entities.MasterSwitch, entities.MotionSensor, logger, [.. entities.Fans])
+    : FanAutomationBase(entities, logger)
 {
     protected override IEnumerable<IDisposable> GetPersistentAutomations() =>
         [GetFanManualOperationAutomations()];

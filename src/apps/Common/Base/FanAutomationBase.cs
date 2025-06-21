@@ -2,16 +2,19 @@ using System.Linq;
 
 namespace HomeAutomation.apps.Common.Base;
 
-public abstract class FanAutomationBase(
-    SwitchEntity masterSwitch,
-    BinarySensorEntity motionSensor,
-    ILogger logger,
-    params SwitchEntity[] fans
-) : AutomationBase(logger, masterSwitch)
+public abstract class FanAutomationBase : AutomationBase
 {
-    protected readonly BinarySensorEntity MotionSensor = motionSensor;
-    protected readonly SwitchEntity[] Fans = fans;
-    protected readonly SwitchEntity Fan = fans.First();
+    protected readonly BinarySensorEntity MotionSensor;
+    protected readonly IEnumerable<SwitchEntity> Fans;
+    protected readonly SwitchEntity Fan;
+
+    protected FanAutomationBase(IFanAutomationEntities entities, ILogger logger)
+        : base(logger, entities.MasterSwitch)
+    {
+        MotionSensor = entities.MotionSensor;
+        Fans = entities.Fans;
+        Fan = Fans.First();
+    }
 
     protected override IEnumerable<IDisposable> GetPersistentAutomations()
     {
@@ -36,7 +39,7 @@ public abstract class FanAutomationBase(
         var fanIds = Fans.Select(f => f.EntityId).ToList();
         Logger.LogDebug(
             "Turning ON {FanCount} fans: [{FanIds}] - triggered by {EntityId} state change",
-            Fans.Length,
+            Fans.Count(),
             string.Join(", ", fanIds),
             evt.Entity?.EntityId ?? "unknown"
         );
@@ -54,7 +57,7 @@ public abstract class FanAutomationBase(
         var fanIds = Fans.Select(f => f.EntityId).ToList();
         Logger.LogDebug(
             "Turning OFF {FanCount} fans: [{FanIds}] - triggered by {EntityId} state change",
-            Fans.Length,
+            Fans.Count(),
             string.Join(", ", fanIds),
             evt?.Entity?.EntityId ?? "unknown"
         );

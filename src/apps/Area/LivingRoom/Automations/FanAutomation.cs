@@ -1,9 +1,11 @@
+using System.Linq;
+
 namespace HomeAutomation.apps.Area.LivingRoom.Automations;
 
 public class FanAutomation(ILivingRoomFanEntities entities, ILogger logger)
-    : FanAutomationBase(entities.MasterSwitch, entities.MotionSensor, logger, [.. entities.Fans])
+    : FanAutomationBase(entities, logger)
 {
-    private SwitchEntity ExhaustFan => Fans[2];
+    private SwitchEntity ExhaustFan => Fans.Last();
 
     protected override IEnumerable<IDisposable> GetToggleableAutomations() =>
         [.. GetSalaFanAutomations()];
