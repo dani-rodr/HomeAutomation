@@ -6,17 +6,16 @@ public interface IMotionBase
     BinarySensorEntity MotionSensor { get; }
 }
 
-public interface IMotionWithLight : IMotionBase
+public interface IMotionAutomationEntities : IMotionBase
 {
+    NumberEntity SensorDelay { get; }
     LightEntity Light { get; }
 }
 
-public interface IMotionWithLightAndDelay : IMotionWithLight
+public interface IFanAutomationEntities : IMotionBase
 {
-    NumberEntity SensorDelay { get; }
+    IEnumerable<SwitchEntity> Fans { get; }
 }
-
-public interface IMotionAutomationEntities : IMotionWithLightAndDelay;
 
 public interface IBedroomMotionEntities : IMotionAutomationEntities
 {
@@ -96,11 +95,6 @@ public interface ILgDisplayEntities
 public interface ITabletEntities : IMotionAutomationEntities
 {
     BinarySensorEntity TabletActive { get; }
-}
-
-public interface IFanAutomationEntities : IMotionBase
-{
-    IEnumerable<SwitchEntity> Fans { get; }
 }
 
 public interface IBedroomFanEntities : IFanAutomationEntities;
