@@ -57,7 +57,7 @@ public class AirQualityAutomationTests : IDisposable
         _mockHaContext.StateChangeSubject.OnNext(stateChange);
 
         // Assert - Main fan should turn off when air quality is excellent
-        _mockHaContext.ShouldHaveCalledSwitchTurnOff(_entities.AirPurifierFan.EntityId);
+        _mockHaContext.ShouldHaveCalledSwitchTurnOff(_entities.Fans.First().EntityId);
     }
 
     [Fact(Skip = "Temporarily disabled - air quality automation logic under review")]
@@ -83,8 +83,8 @@ public class AirQualityAutomationTests : IDisposable
         _mockHaContext.StateChangeSubject.OnNext(stateChange);
 
         // Assert - Main fan should turn on and supporting fan should turn off when transitioning from cleaning state
-        _mockHaContext.ShouldHaveCalledSwitchTurnOn(_entities.AirPurifierFan.EntityId);
-        _mockHaContext.ShouldHaveCalledSwitchTurnOff(_entities.SupportingFan.EntityId);
+        _mockHaContext.ShouldHaveCalledSwitchTurnOn(_entities.Fans.First().EntityId);
+        _mockHaContext.ShouldHaveCalledSwitchTurnOff(_entities.Fans.Last().EntityId);
     }
 
     [Fact(Skip = "Temporarily disabled - air quality automation logic under review")]
@@ -102,7 +102,7 @@ public class AirQualityAutomationTests : IDisposable
         _mockHaContext.StateChangeSubject.OnNext(stateChange);
 
         // Assert - Supporting fan should turn on for poor air quality
-        _mockHaContext.ShouldHaveCalledSwitchTurnOn(_entities.SupportingFan.EntityId);
+        _mockHaContext.ShouldHaveCalledSwitchTurnOn(_entities.Fans.Last().EntityId);
     }
 
     [Fact]
@@ -110,7 +110,7 @@ public class AirQualityAutomationTests : IDisposable
     {
         // Arrange - First manually operate supporting fan to set ShouldActivateFan to true
         var manualStateChange = StateChangeHelpers.CreateSwitchStateChange(
-            _entities.SupportingFan,
+            _entities.Fans.Last(),
             "off",
             "on",
             HaIdentity.DANIEL_RODRIGUEZ // Manual operation sets ShouldActivateFan to true
@@ -129,7 +129,7 @@ public class AirQualityAutomationTests : IDisposable
         _mockHaContext.StateChangeSubject.OnNext(stateChange);
 
         // Assert - Supporting fan should not be activated again when manually controlled
-        _mockHaContext.ShouldNeverHaveCalledSwitch(_entities.SupportingFan.EntityId);
+        _mockHaContext.ShouldNeverHaveCalledSwitch(_entities.Fans.Last().EntityId);
     }
 
     #endregion
@@ -140,7 +140,7 @@ public class AirQualityAutomationTests : IDisposable
     public void MainFan_StateChange_Should_SyncLedStatus()
     {
         // Act - Simulate main fan turning on
-        var fanOnStateChange = StateChangeHelpers.SwitchTurnedOn(_entities.AirPurifierFan);
+        var fanOnStateChange = StateChangeHelpers.SwitchTurnedOn(_entities.Fans.First());
         _mockHaContext.StateChangeSubject.OnNext(fanOnStateChange);
 
         // Assert - LED should turn on when fan turns on
@@ -150,7 +150,7 @@ public class AirQualityAutomationTests : IDisposable
         _mockHaContext.ClearServiceCalls();
 
         // Act - Simulate main fan turning off
-        var fanOffStateChange = StateChangeHelpers.SwitchTurnedOff(_entities.AirPurifierFan);
+        var fanOffStateChange = StateChangeHelpers.SwitchTurnedOff(_entities.Fans.First());
         _mockHaContext.StateChangeSubject.OnNext(fanOffStateChange);
 
         // Assert - LED should turn off when fan turns off
@@ -162,7 +162,7 @@ public class AirQualityAutomationTests : IDisposable
     {
         // Act - Simulate manual operation of supporting fan
         var manualStateChange = StateChangeHelpers.CreateSwitchStateChange(
-            _entities.SupportingFan,
+            _entities.Fans.Last(),
             "off",
             "on",
             HaIdentity.DANIEL_RODRIGUEZ // Manual operation
@@ -179,11 +179,7 @@ public class AirQualityAutomationTests : IDisposable
         _mockHaContext.StateChangeSubject.OnNext(poorAirStateChange);
 
         // Supporting fan should not be turned on again since it's manually controlled
-        _mockHaContext.ShouldHaveCalledSwitchExactly(
-            _entities.SupportingFan.EntityId,
-            "turn_on",
-            0
-        );
+        _mockHaContext.ShouldHaveCalledSwitchExactly(_entities.Fans.Last().EntityId, "turn_on", 0);
     }
 
     [Theory(Skip = "Temporarily disabled - air quality automation logic under review")]
@@ -207,13 +203,13 @@ public class AirQualityAutomationTests : IDisposable
         switch (qualityDescription)
         {
             case "excellent":
-                _mockHaContext.ShouldHaveCalledSwitchTurnOff(_entities.AirPurifierFan.EntityId);
+                _mockHaContext.ShouldHaveCalledSwitchTurnOff(_entities.Fans.First().EntityId);
                 break;
             case "moderate":
-                _mockHaContext.ShouldHaveCalledSwitchTurnOn(_entities.AirPurifierFan.EntityId);
+                _mockHaContext.ShouldHaveCalledSwitchTurnOn(_entities.Fans.First().EntityId);
                 break;
             case "poor":
-                _mockHaContext.ShouldHaveCalledSwitchTurnOn(_entities.SupportingFan.EntityId);
+                _mockHaContext.ShouldHaveCalledSwitchTurnOn(_entities.Fans.Last().EntityId);
                 break;
         }
     }
@@ -259,7 +255,7 @@ public class AirQualityAutomationTests : IDisposable
 
         // Act - Simulate manual turn on of air purifier fan
         var manualFanOnStateChange = StateChangeHelpers.CreateSwitchStateChange(
-            _entities.AirPurifierFan,
+            _entities.Fans.First(),
             "off",
             "on",
             HaIdentity.DANIEL_RODRIGUEZ
@@ -275,7 +271,7 @@ public class AirQualityAutomationTests : IDisposable
     {
         // Act - Simulate manual turn off of air purifier fan
         var manualFanOffStateChange = StateChangeHelpers.CreateSwitchStateChange(
-            _entities.AirPurifierFan,
+            _entities.Fans.First(),
             "on",
             "off",
             HaIdentity.DANIEL_RODRIGUEZ
@@ -291,7 +287,7 @@ public class AirQualityAutomationTests : IDisposable
     {
         // Act - Simulate automated turn on of air purifier fan
         var automatedFanStateChange = StateChangeHelpers.CreateSwitchStateChange(
-            _entities.AirPurifierFan,
+            _entities.Fans.First(),
             "off",
             "on",
             HaIdentity.SUPERVISOR // Automated operation
@@ -322,8 +318,8 @@ public class AirQualityAutomationTests : IDisposable
         _mockHaContext.StateChangeSubject.OnNext(poorAirStateChange);
 
         // Assert - No fan operations should occur when master switch is off
-        _mockHaContext.ShouldNeverHaveCalledSwitch(_entities.AirPurifierFan.EntityId);
-        _mockHaContext.ShouldNeverHaveCalledSwitch(_entities.SupportingFan.EntityId);
+        _mockHaContext.ShouldNeverHaveCalledSwitch(_entities.Fans.First().EntityId);
+        _mockHaContext.ShouldNeverHaveCalledSwitch(_entities.Fans.Last().EntityId);
     }
 
     #endregion
@@ -342,7 +338,7 @@ public class AirQualityAutomationTests : IDisposable
             "5.0"
         );
         _mockHaContext.StateChangeSubject.OnNext(excellentAir);
-        _mockHaContext.ShouldHaveCalledSwitchTurnOff(_entities.AirPurifierFan.EntityId);
+        _mockHaContext.ShouldHaveCalledSwitchTurnOff(_entities.Fans.First().EntityId);
         _mockHaContext.ClearServiceCalls();
 
         // 2. Poor air quality (>75) - should activate supporting fan
@@ -352,7 +348,7 @@ public class AirQualityAutomationTests : IDisposable
             "100.0"
         );
         _mockHaContext.StateChangeSubject.OnNext(poorAir);
-        _mockHaContext.ShouldHaveCalledSwitchTurnOn(_entities.SupportingFan.EntityId);
+        _mockHaContext.ShouldHaveCalledSwitchTurnOn(_entities.Fans.Last().EntityId);
         _mockHaContext.ClearServiceCalls();
 
         // 3. Moderate air quality (7-75) - should turn on main fan and off supporting fan
@@ -362,8 +358,8 @@ public class AirQualityAutomationTests : IDisposable
             "30.0"
         );
         _mockHaContext.StateChangeSubject.OnNext(moderateAir);
-        _mockHaContext.ShouldHaveCalledSwitchTurnOn(_entities.AirPurifierFan.EntityId);
-        _mockHaContext.ShouldHaveCalledSwitchTurnOff(_entities.SupportingFan.EntityId);
+        _mockHaContext.ShouldHaveCalledSwitchTurnOn(_entities.Fans.First().EntityId);
+        _mockHaContext.ShouldHaveCalledSwitchTurnOff(_entities.Fans.Last().EntityId);
         _mockHaContext.ClearServiceCalls();
 
         // 4. Back to excellent - should turn off main fan
@@ -373,7 +369,7 @@ public class AirQualityAutomationTests : IDisposable
             "4.0"
         );
         _mockHaContext.StateChangeSubject.OnNext(excellentAirAgain);
-        _mockHaContext.ShouldHaveCalledSwitchTurnOff(_entities.AirPurifierFan.EntityId);
+        _mockHaContext.ShouldHaveCalledSwitchTurnOff(_entities.Fans.First().EntityId);
     }
 
     [Fact(Skip = "Temporarily disabled - air quality automation logic under review")]
@@ -381,7 +377,7 @@ public class AirQualityAutomationTests : IDisposable
     {
         // Arrange - First manually operate supporting fan to set ShouldActivateFan to true
         var manualOnStateChange = StateChangeHelpers.CreateSwitchStateChange(
-            _entities.SupportingFan,
+            _entities.Fans.Last(),
             "off",
             "on",
             HaIdentity.DANIEL_RODRIGUEZ
@@ -389,7 +385,7 @@ public class AirQualityAutomationTests : IDisposable
         _mockHaContext.StateChangeSubject.OnNext(manualOnStateChange);
 
         // Act - Simulate supporting fan being off for 10 minutes (resets ShouldActivateFan)
-        var fanOffStateChange = StateChangeHelpers.SwitchTurnedOff(_entities.SupportingFan);
+        var fanOffStateChange = StateChangeHelpers.SwitchTurnedOff(_entities.Fans.Last());
         _mockHaContext.StateChangeSubject.OnNext(fanOffStateChange);
         _mockHaContext.ClearServiceCalls();
 
@@ -402,7 +398,7 @@ public class AirQualityAutomationTests : IDisposable
         _mockHaContext.StateChangeSubject.OnNext(poorAirStateChange);
 
         // Assert - Supporting fan should turn on again, indicating ShouldActivateFan was reset
-        _mockHaContext.ShouldHaveCalledSwitchTurnOn(_entities.SupportingFan.EntityId);
+        _mockHaContext.ShouldHaveCalledSwitchTurnOn(_entities.Fans.Last().EntityId);
     }
 
     #endregion
@@ -523,7 +519,7 @@ public class AirQualityAutomationTests : IDisposable
                 )
             );
             _mockHaContext.StateChangeSubject.OnNext(
-                StateChangeHelpers.SwitchTurnedOn(_entities.AirPurifierFan)
+                StateChangeHelpers.SwitchTurnedOn(_entities.Fans.First())
             );
         };
 
@@ -554,19 +550,19 @@ public class AirQualityAutomationTests : IDisposable
         {
             case "boundary_clean":
                 // At threshold (7.0), should not trigger excellent air quality response
-                _mockHaContext.ShouldNeverHaveCalledSwitch(_entities.AirPurifierFan.EntityId);
+                _mockHaContext.ShouldNeverHaveCalledSwitch(_entities.Fans.First().EntityId);
                 break;
             case "just_above_clean":
                 // Should trigger moderate air quality response
-                _mockHaContext.ShouldHaveCalledSwitchTurnOn(_entities.AirPurifierFan.EntityId);
+                _mockHaContext.ShouldHaveCalledSwitchTurnOn(_entities.Fans.First().EntityId);
                 break;
             case "boundary_dirty":
                 // At dirty threshold, should still be moderate
-                _mockHaContext.ShouldHaveCalledSwitchTurnOn(_entities.AirPurifierFan.EntityId);
+                _mockHaContext.ShouldHaveCalledSwitchTurnOn(_entities.Fans.First().EntityId);
                 break;
             case "just_above_dirty":
                 // Should trigger poor air quality response
-                _mockHaContext.ShouldHaveCalledSwitchTurnOn(_entities.SupportingFan.EntityId);
+                _mockHaContext.ShouldHaveCalledSwitchTurnOn(_entities.Fans.Last().EntityId);
                 break;
         }
     }
@@ -615,13 +611,17 @@ public class AirQualityAutomationTests : IDisposable
             new SwitchEntity(haContext, "switch.living_room_air_quality_master");
         public BinarySensorEntity MotionSensor { get; } =
             new BinarySensorEntity(haContext, "binary_sensor.living_room_presence_sensors");
-        public SwitchEntity AirPurifierFan { get; } =
-            new SwitchEntity(haContext, "switch.air_purifier");
-        public SwitchEntity SupportingFan { get; } =
-            new SwitchEntity(haContext, "switch.living_room_ceiling_fan");
         public NumericSensorEntity Pm25Sensor { get; } =
             new NumericSensorEntity(haContext, "sensor.air_quality_pm2_5");
         public SwitchEntity LedStatus { get; } =
             new SwitchEntity(haContext, "switch.air_purifier_led");
+
+        public SwitchEntity LivingRoomSwitch { get; } =
+            new SwitchEntity(haContext, "switch.sala_fan_automation");
+        public IEnumerable<SwitchEntity> Fans =>
+            [
+                new SwitchEntity(haContext, "switch.air_purifier"),
+                new SwitchEntity(haContext, "switch.living_room_ceiling_fan"),
+            ];
     }
 }

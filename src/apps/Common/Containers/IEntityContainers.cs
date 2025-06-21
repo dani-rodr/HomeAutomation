@@ -51,14 +51,6 @@ public interface IKitchenMotionEntities : IMotionAutomationEntities
     BinarySensorEntity PowerPlug { get; }
 }
 
-public interface IAirQualityEntities : IMotionBase
-{
-    SwitchEntity AirPurifierFan { get; }
-    SwitchEntity SupportingFan { get; }
-    NumericSensorEntity Pm25Sensor { get; }
-    SwitchEntity LedStatus { get; }
-}
-
 public interface ICookingEntities
 {
     NumericSensorEntity RiceCookerPower { get; }
@@ -117,6 +109,13 @@ public interface IBedroomFanEntities : IFanAutomationEntities;
 public interface ILivingRoomFanEntities : IFanAutomationEntities
 {
     BinarySensorEntity BedroomMotionSensor { get; }
+}
+
+public interface IAirQualityEntities : IFanAutomationEntities
+{
+    NumericSensorEntity Pm25Sensor { get; }
+    SwitchEntity LedStatus { get; }
+    SwitchEntity LivingRoomSwitch { get; }
 }
 
 public interface IDesktopEntities

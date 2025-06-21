@@ -27,6 +27,7 @@ public class CommonEntities(Entities entities)
     public SwitchEntity BedroomMotionSwitch { get; } = entities.Switch.BedroomMotionSensor;
     public SwitchEntity LivingRoomMotionSwitch { get; } = entities.Switch.SalaMotionSensor;
     public SwitchEntity PantryMotionSwitch { get; } = entities.Switch.PantryMotionSensor;
+    public SwitchEntity LivingRoomFanSwitch { get; } = entities.Switch.SalaFanAutomation;
 }
 
 public class BedroomMotionEntities(Entities entities, CommonEntities common)
@@ -76,12 +77,16 @@ public class AirQualityEntities(Entities entities, CommonEntities common) : IAir
 {
     public SwitchEntity MasterSwitch => entities.Switch.CleanAir;
     public BinarySensorEntity MotionSensor => common.LivingRoomMotionSensor;
-    public SwitchEntity AirPurifierFan =>
-        entities.Switch.XiaomiSmartAirPurifier4CompactAirPurifierFanSwitch;
-    public SwitchEntity SupportingFan => common.LivingRoomStandFan;
+    public IEnumerable<SwitchEntity> Fans =>
+        [
+            entities.Switch.XiaomiSmartAirPurifier4CompactAirPurifierFanSwitch,
+            common.LivingRoomStandFan,
+        ];
     public NumericSensorEntity Pm25Sensor => entities.Sensor.XiaomiSg753990712Cpa4Pm25DensityP34;
     public SwitchEntity LedStatus =>
         entities.Switch.XiaomiSmartAirPurifier4CompactAirPurifierLedStatus;
+
+    public SwitchEntity LivingRoomSwitch => common.LivingRoomFanSwitch;
 }
 
 public class KitchenCookingEntities(Entities entities) : ICookingEntities
@@ -145,7 +150,7 @@ public class DeskLgDisplayEntities(Entities entities) : ILgDisplayEntities
 public class LivingRoomFanEntities(Entities entities, CommonEntities common)
     : ILivingRoomFanEntities
 {
-    public SwitchEntity MasterSwitch => entities.Switch.SalaFanAutomation;
+    public SwitchEntity MasterSwitch => common.LivingRoomFanSwitch;
     public BinarySensorEntity MotionSensor => entities.BinarySensor.Ld2410Esp321SmartPresence;
     public IEnumerable<SwitchEntity> Fans =>
         [entities.Switch.CeilingFan, common.LivingRoomStandFan, entities.Switch.Cozylife955f];
