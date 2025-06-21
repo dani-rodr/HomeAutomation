@@ -5,16 +5,10 @@ public class FanAutomation(ILivingRoomFanEntities entities, ILogger logger)
 {
     private SwitchEntity ExhaustFan => Fans[2];
 
-    protected override IEnumerable<IDisposable> GetPersistentAutomations() =>
-        [Fan.StateChanges().IsManuallyOperated().Subscribe(ControlMasterSwitchOnFanChange)];
+    protected override IEnumerable<IDisposable> GetToggleableAutomations() =>
+        [.. GetSalaFanAutomations()];
 
-    protected override IEnumerable<IDisposable> GetToggleableAutomations()
-    {
-        Logger.LogInformation("Living Room Fan Automation initialized");
-        return [.. GetSalaFanAutomations()];
-    }
-
-    private void TurnOnSalaFans(StateChange e)
+    protected override void TurnOnFans(StateChange e)
     {
         Logger.LogDebug(
             "Motion detected on {MotionSensor}. Evaluating fan activation logic, BedroomMotion: {BedroomState}",
@@ -37,24 +31,7 @@ public class FanAutomation(ILivingRoomFanEntities entities, ILogger logger)
 
     private IEnumerable<IDisposable> GetSalaFanAutomations()
     {
-        yield return MotionSensor.StateChanges().IsOnForSeconds(3).Subscribe(TurnOnSalaFans);
+        yield return MotionSensor.StateChanges().IsOnForSeconds(3).Subscribe(TurnOnFans);
         yield return MotionSensor.StateChanges().IsOffForMinutes(1).Subscribe(TurnOffFans);
-        yield return MotionSensor
-            .StateChanges()
-            .IsOffForMinutes(15)
-            .Where(_ => MasterSwitch.IsOff() == true)
-            .Subscribe(_ => MasterSwitch?.TurnOn());
-    }
-
-    private void ControlMasterSwitchOnFanChange(StateChange e)
-    {
-        if (e.IsOn())
-        {
-            MasterSwitch?.TurnOn();
-        }
-        else if (e.IsOff())
-        {
-            MasterSwitch?.TurnOff();
-        }
     }
 }

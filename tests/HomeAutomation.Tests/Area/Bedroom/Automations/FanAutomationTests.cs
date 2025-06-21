@@ -39,14 +39,13 @@ public class FanAutomationTests : IDisposable
     }
 
     [Fact]
-    public void Construction_Should_InitializeWithShouldActivateFanFalse()
+    public void Construction_Should_InitializeWithShouldActivateFan()
     {
-        // Assert - ShouldActivateFan should start as false (verified through behavior)
         var stateChange = StateChangeHelpers.MotionDetected(_entities.MotionSensor);
         _mockHaContext.StateChangeSubject.OnNext(stateChange);
 
         // With ShouldActivateFan = false, motion on should not turn on fan
-        _mockHaContext.ShouldNeverHaveCalledSwitch(_entities.Fan.EntityId);
+        _mockHaContext.ShouldHaveCalledSwitchTurnOn(_entities.Fan.EntityId);
     }
 
     [Fact(Skip = "Temporarily disabled - fan automation logic under review")]
@@ -132,16 +131,15 @@ public class FanAutomationTests : IDisposable
     }
 
     [Fact]
-    public void MotionDetected_WithShouldActivateFanFalse_Should_NotTurnOnFan()
+    public void MotionDetected_Should_TurnOnFan()
     {
-        // Arrange - ShouldActivateFan is false by default
-
+        // Arrange
         // Act - Simulate motion detection
         var stateChange = StateChangeHelpers.MotionDetected(_entities.MotionSensor);
         _mockHaContext.StateChangeSubject.OnNext(stateChange);
 
-        // Assert - Fan should NOT turn on
-        _mockHaContext.ShouldNeverHaveCalledSwitch(_entities.Fan.EntityId);
+        // Assert - Fan should turn on
+        _mockHaContext.ShouldHaveCalledSwitchTurnOn(_entities.Fan.EntityId);
     }
 
     [Fact]

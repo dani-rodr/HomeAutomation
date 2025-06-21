@@ -6,88 +6,67 @@ public class AirQualityAutomation(IAirQualityEntities entities, ILogger logger)
     private readonly NumericSensorEntity _airQuality = entities.Pm25Sensor;
     private readonly SwitchEntity _ledStatus = entities.LedStatus;
     private SwitchEntity _supportingFan => Fans[1];
-    protected override bool ShouldActivateFan { get; set; } = false;
-    private bool IsCleaningAir { get; set; } = false;
+    private bool _activateSupportingFan = false;
+    private bool _isCleaningAir = false;
 
     private const int WAIT_TIME = 10;
     private const int CLEAN_AIR_THRESHOLD = 7;
     private const int DIRTY_AIR_THRESHOLD = 75;
 
-    protected override IEnumerable<IDisposable> GetPersistentAutomations()
-    {
-        yield return entities
-            .MotionSensor.StateChanges()
-            .IsOffForMinutes(15)
-            .Where(_ => entities.MasterSwitch.IsOff())
-            .Subscribe(_ => MasterSwitch?.TurnOn());
-        yield return Fan.StateChanges()
-            .IsManuallyOperated()
-            .Subscribe(e =>
-            {
-                if (e.IsOn())
-                {
-                    MasterSwitch?.TurnOn();
-                }
-                else if (e.IsOff())
-                {
-                    MasterSwitch?.TurnOff();
-                }
-            });
-    }
-
     protected override IEnumerable<IDisposable> GetToggleableAutomations()
     {
         yield return SubscribeToFanStateChanges();
-        yield return SubscribeToExcellentAirQuality();
-        yield return SubscribeToModerateAirQuality();
-        yield return SubscribeToPoorAirQuality();
+        yield return SubscribeToAirQuality();
         yield return SubscribeToManualFanOperation();
         yield return SubscribeToSupportingFanIdle();
     }
 
-    private IDisposable SubscribeToExcellentAirQuality() =>
+    private IDisposable SubscribeToAirQuality() =>
         _airQuality
             .StateChangesWithCurrent()
-            .WhenStateIsForSeconds(s => s?.State <= CLEAN_AIR_THRESHOLD, WAIT_TIME)
+            .WhenStateIsForSeconds(_ => true, WAIT_TIME)
             .Subscribe(e =>
             {
-                Fan.TurnOff();
-            });
+                var value = double.TryParse(e?.State(), out var parsed) ? parsed : 0;
 
-    private IDisposable SubscribeToModerateAirQuality() =>
-        _airQuality
-            .StateChangesWithCurrent()
-            .WhenStateIsForSeconds(
-                s => s?.State > CLEAN_AIR_THRESHOLD && s?.State <= DIRTY_AIR_THRESHOLD,
-                WAIT_TIME
-            )
-            .Subscribe(e =>
-            {
-                Fan.TurnOn();
-
-                if (IsCleaningAir && !ShouldActivateFan)
+                if (value > DIRTY_AIR_THRESHOLD)
                 {
-                    _supportingFan.TurnOff();
-                    IsCleaningAir = false;
-                    ShouldActivateFan = false;
-                    entities.LivingRoomSwitch.TurnOn();
+                    HandlePoorAirQuality();
+                }
+                else if (value > CLEAN_AIR_THRESHOLD)
+                {
+                    HandleModerateAirQuality();
+                }
+                else
+                {
+                    Fan.TurnOff();
                 }
             });
 
-    private IDisposable SubscribeToPoorAirQuality() =>
-        _airQuality
-            .StateChangesWithCurrent()
-            .WhenStateIsForSeconds(s => s?.State > DIRTY_AIR_THRESHOLD, WAIT_TIME)
-            .Subscribe(e =>
-            {
-                if (!ShouldActivateFan)
-                {
-                    _supportingFan.TurnOn();
-                    IsCleaningAir = true;
-                    ShouldActivateFan = false;
-                    entities.LivingRoomSwitch.TurnOff();
-                }
-            });
+    private void HandleModerateAirQuality()
+    {
+        Fan.TurnOn();
+
+        if (_isCleaningAir && !_activateSupportingFan)
+        {
+            _supportingFan.TurnOff();
+            _isCleaningAir = false;
+            _activateSupportingFan = false;
+            entities.LivingRoomSwitch.TurnOn();
+        }
+    }
+
+    private void HandlePoorAirQuality()
+    {
+        if (_activateSupportingFan)
+        {
+            return;
+        }
+        _supportingFan.TurnOn();
+        _isCleaningAir = true;
+        _activateSupportingFan = false;
+        entities.LivingRoomSwitch.TurnOff();
+    }
 
     private IDisposable SubscribeToManualFanOperation() =>
         _supportingFan
@@ -95,7 +74,7 @@ public class AirQualityAutomation(IAirQualityEntities entities, ILogger logger)
             .IsManuallyOperated()
             .Subscribe(e =>
             {
-                ShouldActivateFan = true;
+                _activateSupportingFan = true;
             });
 
     private IDisposable SubscribeToSupportingFanIdle() =>
@@ -104,7 +83,7 @@ public class AirQualityAutomation(IAirQualityEntities entities, ILogger logger)
             .IsOffForMinutes(10)
             .Subscribe(_ =>
             {
-                ShouldActivateFan = false;
+                _activateSupportingFan = false;
             });
 
     private IDisposable SubscribeToFanStateChanges() =>

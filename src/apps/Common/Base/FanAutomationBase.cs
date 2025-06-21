@@ -12,7 +12,24 @@ public abstract class FanAutomationBase(
     protected readonly BinarySensorEntity MotionSensor = motionSensor;
     protected readonly SwitchEntity[] Fans = fans;
     protected readonly SwitchEntity Fan = fans.First();
-    protected virtual bool ShouldActivateFan { get; set; }
+
+    protected override IEnumerable<IDisposable> GetPersistentAutomations()
+    {
+        yield return GetFanManualOperationAutomations();
+        yield return GetIdleOperationAutomations();
+    }
+
+    protected virtual void HandleMotionDetection(StateChange evt)
+    {
+        if (evt.IsOn())
+        {
+            TurnOnFans(evt);
+        }
+        else if (evt.IsOff())
+        {
+            TurnOffFans(evt);
+        }
+    }
 
     protected virtual void TurnOnFans(StateChange evt)
     {
@@ -32,14 +49,14 @@ public abstract class FanAutomationBase(
             });
     }
 
-    protected virtual void TurnOffFans(StateChange evt)
+    protected virtual void TurnOffFans(StateChange? evt = null)
     {
         var fanIds = Fans.Select(f => f.EntityId).ToList();
         Logger.LogDebug(
             "Turning OFF {FanCount} fans: [{FanIds}] - triggered by {EntityId} state change",
             Fans.Length,
             string.Join(", ", fanIds),
-            evt.Entity?.EntityId ?? "unknown"
+            evt?.Entity?.EntityId ?? "unknown"
         );
 
         Fans.ToList()
@@ -49,4 +66,26 @@ public abstract class FanAutomationBase(
                 fan.TurnOff();
             });
     }
+
+    protected IDisposable GetFanManualOperationAutomations() =>
+        Fan.StateChanges()
+            .IsManuallyOperated()
+            .Subscribe(e =>
+            {
+                if (e.IsOn())
+                {
+                    MasterSwitch?.TurnOn();
+                }
+                else if (e.IsOff())
+                {
+                    MasterSwitch?.TurnOff();
+                }
+            });
+
+    protected IDisposable GetIdleOperationAutomations() =>
+        MotionSensor
+            .StateChanges()
+            .IsOffForMinutes(15)
+            .Where(_ => MasterSwitch.IsOff())
+            .Subscribe(_ => MasterSwitch?.TurnOn());
 }

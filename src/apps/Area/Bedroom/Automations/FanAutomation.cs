@@ -3,27 +3,11 @@ namespace HomeAutomation.apps.Area.Bedroom.Automations;
 public class FanAutomation(IBedroomFanEntities entities, ILogger logger)
     : FanAutomationBase(entities.MasterSwitch, entities.MotionSensor, logger, [.. entities.Fans])
 {
-    protected override bool ShouldActivateFan { get; set; } = false;
+    protected override IEnumerable<IDisposable> GetPersistentAutomations() =>
+        [GetFanManualOperationAutomations()];
 
-    protected override IEnumerable<IDisposable> GetPersistentAutomations()
+    protected override IEnumerable<IDisposable> GetToggleableAutomations()
     {
-        yield return Fan.StateChanges()
-            .IsManuallyOperated()
-            .Subscribe(_ => ShouldActivateFan = Fan.State.IsOn());
         yield return MotionSensor.StateChanges().Subscribe(HandleMotionDetection);
-    }
-
-    protected override IEnumerable<IDisposable> GetToggleableAutomations() => [];
-
-    private void HandleMotionDetection(StateChange e)
-    {
-        if (e.IsOn() && ShouldActivateFan)
-        {
-            Fan.TurnOn();
-        }
-        else if (e.IsOff())
-        {
-            Fan.TurnOff();
-        }
     }
 }
