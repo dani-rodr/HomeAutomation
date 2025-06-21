@@ -4,14 +4,7 @@ public class MotionAutomation(
     IMotionAutomationEntities entities,
     ILgDisplay monitor,
     ILogger logger
-)
-    : MotionAutomationBase(
-        entities.MasterSwitch,
-        entities.MotionSensor,
-        entities.Light,
-        logger,
-        entities.SensorDelay
-    )
+) : MotionAutomationBase(entities, logger)
 {
     private const double LONG_SENSOR_DELAY = 60;
     private const double SHORT_SENSOR_DELAY = 20;

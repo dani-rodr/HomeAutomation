@@ -1,16 +1,11 @@
 namespace HomeAutomation.apps.Common.Base;
 
-public abstract class MotionAutomationBase(
-    SwitchEntity masterSwitch,
-    BinarySensorEntity motionSensor,
-    LightEntity light,
-    ILogger logger,
-    NumberEntity? sensorDelay = null
-) : AutomationBase(logger, masterSwitch)
+public abstract class MotionAutomationBase(IMotionAutomationEntities entities, ILogger logger)
+    : AutomationBase(logger, entities.MasterSwitch)
 {
-    protected readonly BinarySensorEntity MotionSensor = motionSensor;
-    protected readonly NumberEntity? SensorDelay = sensorDelay;
-    protected readonly LightEntity Light = light;
+    protected readonly BinarySensorEntity MotionSensor = entities.MotionSensor;
+    protected readonly NumberEntity? SensorDelay = entities.SensorDelay;
+    protected readonly LightEntity Light = entities.Light;
     protected virtual int SensorWaitTime => 15;
     protected virtual int SensorActiveDelayValue => 5;
     protected virtual int SensorInactiveDelayValue => 1;

@@ -3,13 +3,7 @@ using System.Linq;
 namespace HomeAutomation.apps.Area.Bedroom.Automations;
 
 public class MotionAutomation(IBedroomMotionEntities entities, ILogger logger)
-    : MotionAutomationBase(
-        entities.MasterSwitch,
-        entities.MotionSensor,
-        entities.Light,
-        logger,
-        entities.SensorDelay
-    )
+    : MotionAutomationBase(entities, logger)
 {
     private readonly SwitchEntity _rightSideEmptySwitch = entities.RightSideEmptySwitch;
     private readonly SwitchEntity _leftSideFanSwitch = entities.LeftSideFanSwitch;

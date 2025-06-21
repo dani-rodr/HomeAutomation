@@ -42,7 +42,7 @@ public class TabletAutomationTests : IDisposable
         _mockHaContext.StateChangeSubject.OnNext(stateChange);
 
         // Assert - Should turn on tablet screen (treated as light entity)
-        _mockHaContext.ShouldHaveCalledLightTurnOn(_entities.TabletScreen.EntityId);
+        _mockHaContext.ShouldHaveCalledLightTurnOn(_entities.Light.EntityId);
     }
 
     [Fact]
@@ -53,7 +53,7 @@ public class TabletAutomationTests : IDisposable
         _mockHaContext.StateChangeSubject.OnNext(stateChange);
 
         // Assert - Should turn off tablet screen
-        _mockHaContext.ShouldHaveCalledLightTurnOff(_entities.TabletScreen.EntityId);
+        _mockHaContext.ShouldHaveCalledLightTurnOff(_entities.Light.EntityId);
     }
 
     [Fact]
@@ -67,7 +67,7 @@ public class TabletAutomationTests : IDisposable
         _mockHaContext.SimulateStateChange(_entities.MasterSwitch.EntityId, "off", "on");
 
         // Assert - Should turn on tablet screen because motion sensor is already on
-        _mockHaContext.ShouldHaveCalledLightTurnOn(_entities.TabletScreen.EntityId);
+        _mockHaContext.ShouldHaveCalledLightTurnOn(_entities.Light.EntityId);
     }
 
     [Fact]
@@ -81,7 +81,7 @@ public class TabletAutomationTests : IDisposable
         _mockHaContext.SimulateStateChange(_entities.MasterSwitch.EntityId, "off", "on");
 
         // Assert - Should turn off tablet screen because motion sensor is off
-        _mockHaContext.ShouldHaveCalledLightTurnOff(_entities.TabletScreen.EntityId);
+        _mockHaContext.ShouldHaveCalledLightTurnOff(_entities.Light.EntityId);
     }
 
     [Fact]
@@ -95,7 +95,7 @@ public class TabletAutomationTests : IDisposable
         _mockHaContext.StateChangeSubject.OnNext(motionOnStateChange);
 
         // Assert - Should turn on tablet screen
-        _mockHaContext.ShouldHaveCalledLightTurnOn(_entities.TabletScreen.EntityId);
+        _mockHaContext.ShouldHaveCalledLightTurnOn(_entities.Light.EntityId);
         _mockHaContext.ClearServiceCalls();
 
         // Test case 2: Motion OFF -> Screen OFF
@@ -104,7 +104,7 @@ public class TabletAutomationTests : IDisposable
         _mockHaContext.StateChangeSubject.OnNext(motionOffStateChange);
 
         // Assert - Should turn off tablet screen
-        _mockHaContext.ShouldHaveCalledLightTurnOff(_entities.TabletScreen.EntityId);
+        _mockHaContext.ShouldHaveCalledLightTurnOff(_entities.Light.EntityId);
     }
 
     [Fact]
@@ -122,8 +122,8 @@ public class TabletAutomationTests : IDisposable
         );
 
         // Assert - Verify exact call counts for tablet screen
-        _mockHaContext.ShouldHaveCalledLightExactly(_entities.TabletScreen.EntityId, "turn_on", 2);
-        _mockHaContext.ShouldHaveCalledLightExactly(_entities.TabletScreen.EntityId, "turn_off", 1);
+        _mockHaContext.ShouldHaveCalledLightExactly(_entities.Light.EntityId, "turn_on", 2);
+        _mockHaContext.ShouldHaveCalledLightExactly(_entities.Light.EntityId, "turn_off", 1);
         _mockHaContext.ShouldHaveServiceCallCount(3); // on, off, on
     }
 
@@ -138,7 +138,7 @@ public class TabletAutomationTests : IDisposable
         _mockHaContext.StateChangeSubject.OnNext(stateChange);
 
         // Assert - Should immediately turn on tablet screen (no delay automation)
-        _mockHaContext.ShouldHaveCalledLightTurnOn(_entities.TabletScreen.EntityId);
+        _mockHaContext.ShouldHaveCalledLightTurnOn(_entities.Light.EntityId);
 
         // No sensor delay entity is involved since TabletAutomation returns empty from GetSensorDelayAutomations
         // This test verifies the simplified behavior compared to other motion automations
@@ -171,8 +171,8 @@ public class TabletAutomationTests : IDisposable
         );
 
         // Assert - Verify exact pattern for tablet screen control
-        _mockHaContext.ShouldHaveCalledLightExactly(_entities.TabletScreen.EntityId, "turn_on", 2);
-        _mockHaContext.ShouldHaveCalledLightExactly(_entities.TabletScreen.EntityId, "turn_off", 2);
+        _mockHaContext.ShouldHaveCalledLightExactly(_entities.Light.EntityId, "turn_on", 2);
+        _mockHaContext.ShouldHaveCalledLightExactly(_entities.Light.EntityId, "turn_off", 2);
         _mockHaContext.ShouldHaveServiceCallCount(4); // on, off, on, off
     }
 
@@ -183,11 +183,11 @@ public class TabletAutomationTests : IDisposable
 
         // Arrange - Set initial state
         _mockHaContext.SetEntityState(_entities.MotionSensor.EntityId, "off");
-        _mockHaContext.SetEntityState(_entities.TabletScreen.EntityId, "off");
+        _mockHaContext.SetEntityState(_entities.Light.EntityId, "off");
 
         // Verify initial states
         var initialMotionState = _mockHaContext.GetState(_entities.MotionSensor.EntityId);
-        var initialScreenState = _mockHaContext.GetState(_entities.TabletScreen.EntityId);
+        var initialScreenState = _mockHaContext.GetState(_entities.Light.EntityId);
         initialMotionState?.State.Should().Be("off");
         initialScreenState?.State.Should().Be("off");
 
@@ -236,7 +236,7 @@ public class TabletAutomationTests : IDisposable
                 StateChangeHelpers.MotionCleared(_entities.MotionSensor)
             );
             _mockHaContext.StateChangeSubject.OnNext(
-                StateChangeHelpers.CreateStateChange(_entities.TabletScreen, "off", "on")
+                StateChangeHelpers.CreateStateChange(_entities.Light, "off", "on")
             );
             _mockHaContext.SimulateStateChange(_entities.MasterSwitch.EntityId, "off", "on");
         };
@@ -271,7 +271,7 @@ public class TabletAutomationTests : IDisposable
         _mockHaContext.SimulateStateChange(_entities.MasterSwitch.EntityId, "off", "on");
 
         // Assert - Should sync tablet screen with current motion state
-        _mockHaContext.ShouldHaveCalledLightTurnOn(_entities.TabletScreen.EntityId);
+        _mockHaContext.ShouldHaveCalledLightTurnOn(_entities.Light.EntityId);
     }
 
     public void Dispose()
@@ -290,8 +290,11 @@ public class TabletAutomationTests : IDisposable
             new SwitchEntity(haContext, "switch.sala_motion_sensor");
         public BinarySensorEntity MotionSensor { get; } =
             new BinarySensorEntity(haContext, "binary_sensor.living_room_presence_sensors");
-        public LightEntity TabletScreen { get; } = new LightEntity(haContext, "light.mipad_screen");
+        public LightEntity Light { get; } = new LightEntity(haContext, "light.mipad_screen");
         public BinarySensorEntity TabletActive { get; } =
             new BinarySensorEntity(haContext, "binary_sensor.mipad");
+
+        public NumberEntity SensorDelay { get; } =
+            new NumberEntity(haContext, "Number.Ld2410Esp321StillTargetDelay");
     }
 }

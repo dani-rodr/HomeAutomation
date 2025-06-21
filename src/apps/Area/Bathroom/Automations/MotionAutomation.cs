@@ -4,14 +4,7 @@ public class MotionAutomation(
     IMotionAutomationEntities entities,
     IDimmingLightController dimmingController,
     ILogger logger
-)
-    : MotionAutomationBase(
-        entities.MasterSwitch,
-        entities.MotionSensor,
-        entities.Light,
-        logger,
-        entities.SensorDelay
-    )
+) : MotionAutomationBase(entities, logger)
 {
     public override void StartAutomation()
     {

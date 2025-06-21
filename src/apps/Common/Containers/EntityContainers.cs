@@ -28,6 +28,8 @@ public class CommonEntities(Entities entities)
     public SwitchEntity LivingRoomMotionSwitch { get; } = entities.Switch.SalaMotionSensor;
     public SwitchEntity PantryMotionSwitch { get; } = entities.Switch.PantryMotionSensor;
     public SwitchEntity LivingRoomFanSwitch { get; } = entities.Switch.SalaFanAutomation;
+
+    public NumberEntity LivingRoomSensorDelay => entities.Number.Ld2410Esp321StillTargetDelay;
 }
 
 public class BedroomMotionEntities(Entities entities, CommonEntities common)
@@ -47,7 +49,7 @@ public class LivingRoomMotionEntities(Entities entities, CommonEntities common)
     public SwitchEntity MasterSwitch => common.LivingRoomMotionSwitch;
     public BinarySensorEntity MotionSensor => common.LivingRoomMotionSensor;
     public LightEntity Light => entities.Light.SalaLightsGroup;
-    public NumberEntity SensorDelay => entities.Number.Ld2410Esp321StillTargetDelay;
+    public NumberEntity SensorDelay => common.LivingRoomSensorDelay;
     public BinarySensorEntity BedroomDoor => common.BedroomDoor;
     public BinarySensorEntity BedroomMotionSensors => common.BedroomMotionSensor;
     public MediaPlayerEntity TclTv => entities.MediaPlayer.Tcl65c755;
@@ -161,8 +163,9 @@ public class LivingRoomTabletEntities(Entities entities, CommonEntities common) 
 {
     public SwitchEntity MasterSwitch => common.LivingRoomMotionSwitch;
     public BinarySensorEntity MotionSensor => common.LivingRoomMotionSensor;
-    public LightEntity TabletScreen => entities.Light.MipadScreen;
+    public LightEntity Light => entities.Light.MipadScreen;
     public BinarySensorEntity TabletActive => entities.BinarySensor.Mipad;
+    public NumberEntity SensorDelay => common.LivingRoomSensorDelay;
 }
 
 public class PantryMotionEntities(Entities entities, CommonEntities common) : IPantryMotionEntities

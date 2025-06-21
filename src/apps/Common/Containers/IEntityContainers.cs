@@ -93,9 +93,8 @@ public interface ILgDisplayEntities
     LightEntity Display { get; }
 }
 
-public interface ITabletEntities : IMotionBase
+public interface ITabletEntities : IMotionAutomationEntities
 {
-    LightEntity TabletScreen { get; }
     BinarySensorEntity TabletActive { get; }
 }
 

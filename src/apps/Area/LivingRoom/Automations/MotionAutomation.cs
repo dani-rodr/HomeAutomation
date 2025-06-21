@@ -4,14 +4,7 @@ public class MotionAutomation(
     ILivingRoomMotionEntities entities,
     IDimmingLightController dimmingController,
     ILogger logger
-)
-    : MotionAutomationBase(
-        entities.MasterSwitch,
-        entities.MotionSensor,
-        entities.Light,
-        logger,
-        entities.SensorDelay
-    )
+) : MotionAutomationBase(entities, logger)
 {
     protected override int SensorWaitTime => 30;
     protected override int SensorActiveDelayValue => 45;
