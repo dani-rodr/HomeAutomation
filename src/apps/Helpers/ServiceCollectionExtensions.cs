@@ -11,9 +11,13 @@ public static class ServiceCollectionExtensions
             .AddScoped<IEventHandler, HaEventHandler>()
             .AddTransient<CommonEntities>()
             .AddTransientEntity<ILockingEntities, LockingEntities>()
-            .AddTransient<INotificationServices>(p => new NotificationServices(
+            .AddSingleton<INotificationServices>(p => new NotificationServices(
                 p.GetRequiredService<Services>(),
                 p.GetRequiredService<ILogger<NotificationServices>>()
+            ))
+            .AddSingleton<IWebhookServices>(p => new WebhookServices(
+                p.GetRequiredService<ITriggerManager>(),
+                p.GetRequiredService<ILogger<WebhookServices>>()
             ));
     }
 
