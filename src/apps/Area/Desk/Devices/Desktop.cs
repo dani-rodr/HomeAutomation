@@ -1,34 +1,28 @@
+using System.Reactive.Disposables;
+
 namespace HomeAutomation.apps.Area.Desk.Devices;
 
-public class Desktop : ComputerBase
+public class Desktop(
+    IDesktopEntities entities,
+    IEventHandler eventHandler,
+    INotificationServices notificationServices,
+    ILogger logger
+) : ComputerBase(eventHandler, logger)
 {
     protected override string ShowEvent { get; } = "show_pc";
     protected override string HideEvent { get; } = "hide_pc";
-    private readonly SwitchEntity power;
-    private const string MOONLIGHT_APP = "com.limelight";
 
-    public Desktop(
-        IDesktopEntities entities,
-        IEventHandler eventHandler,
-        INotificationServices notificationServices,
-        ILogger logger
-    )
-        : base(eventHandler, logger)
-    {
-        power = entities.Power;
-        Automations.Add(LaunchMoonlightApp(entities.RemotePcButton, notificationServices));
-    }
+    protected override CompositeDisposable Automations => [LaunchMoonlightApp()];
+    private readonly SwitchEntity power = entities.Power;
+    private const string MOONLIGHT_APP = "com.limelight";
 
     public override bool IsOn() => power.IsOn();
 
     public override IObservable<bool> StateChanges() => power.StateChanges().Select(s => s.IsOn());
 
-    private static IDisposable LaunchMoonlightApp(
-        InputButtonEntity button,
-        INotificationServices notificationServices
-    ) =>
-        button
-            .StateChanges()
+    private IDisposable LaunchMoonlightApp() =>
+        entities
+            .RemotePcButton.StateChanges()
             .IsValidButtonPress()
             .Subscribe(e =>
             {

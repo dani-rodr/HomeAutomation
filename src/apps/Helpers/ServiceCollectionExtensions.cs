@@ -1,4 +1,5 @@
 using HomeAutomation.apps.Area.Desk.Devices;
+using HomeAutomation.apps.Area.LivingRoom.Devices;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace HomeAutomation.apps.Helpers;
@@ -44,7 +45,7 @@ public static class ServiceCollectionExtensions
     {
         return services
             .AddTransientEntity<IDeskMotionEntities, DeskMotionEntities>()
-            .AddTransientEntity<ILgDisplayEntities, DeskLgDisplayEntities>()
+            .AddTransientEntity<ILgDisplayEntities, LgDisplayEntities>()
             .AddTransientEntity<IDesktopEntities, DeskDesktopEntities>()
             .AddTransientEntity<ILaptopEntities, LaptopEntities>()
             .AddTransientEntity<ILaptopSchedulerEntities, LaptopSchedulerEntities>()
@@ -79,7 +80,12 @@ public static class ServiceCollectionExtensions
             .AddTransientEntity<ILivingRoomMotionEntities, LivingRoomMotionEntities>()
             .AddTransientEntity<ILivingRoomFanEntities, LivingRoomFanEntities>()
             .AddTransientEntity<IAirQualityEntities, AirQualityEntities>()
-            .AddTransientEntity<ITabletEntities, LivingRoomTabletEntities>();
+            .AddTransientEntity<ITabletEntities, LivingRoomTabletEntities>()
+            .AddTransientEntity<ITclDisplayEntities, TclDisplayEntities>()
+            .AddTransient<ITclDisplay>(p => new TclDisplay(
+                p.GetRequiredService<ITclDisplayEntities>(),
+                p.GetRequiredService<ILogger<TclDisplay>>()
+            ));
     }
 
     private static IServiceCollection AddPantryEntities(this IServiceCollection services)

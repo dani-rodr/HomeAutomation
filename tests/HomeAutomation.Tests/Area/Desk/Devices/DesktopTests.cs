@@ -35,7 +35,7 @@ public class DesktopTests : IDisposable
             _mockNotificationServices.Object,
             _mockLogger.Object
         );
-
+        _desktop.StartAutomation();
         // Subscribe to state changes to track behavior
         _desktop.StateChanges().Subscribe(state => _stateChanges.Add(state));
 

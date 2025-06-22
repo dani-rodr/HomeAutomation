@@ -14,7 +14,7 @@ public abstract class MediaPlayerBase : AutomationDeviceBase, IMediaPlayer
     public string? AppId => Entity.Attributes?.AppId;
     public string? AppName => Entity.Attributes?.AppName;
     public string? MediaContentType => Entity.Attributes?.MediaContentType;
-
+    protected abstract Dictionary<string, string> ExtendedSources { get; }
     protected MediaPlayerEntity Entity { get; }
     protected ILogger Logger { get; }
     protected readonly Dictionary<string, string> Sources;
@@ -26,7 +26,7 @@ public abstract class MediaPlayerBase : AutomationDeviceBase, IMediaPlayer
         Entity = entity;
         Logger = logger;
         Sources = SourceList?.ToDictionary(s => s, s => s) ?? [];
-        ExtendSourceDictionary(Sources);
+        ExtendedSources.ToList().ForEach(pair => Sources.Add(pair.Key, pair.Value));
         Automations.Add(
             Entity
                 .StateChanges()
@@ -58,8 +58,6 @@ public abstract class MediaPlayerBase : AutomationDeviceBase, IMediaPlayer
     public bool IsOn() => Entity.State.IsOn();
 
     public bool IsOff() => Entity.State.IsOff();
-
-    protected abstract void ExtendSourceDictionary(Dictionary<string, string> sources);
 
     protected void ShowSource(string key)
     {

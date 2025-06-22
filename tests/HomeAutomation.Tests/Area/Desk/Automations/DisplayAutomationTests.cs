@@ -91,9 +91,7 @@ public class DisplayAutomationTests : IDisposable
             .Setup(x => x.WhenEventTriggered("hide_laptop"))
             .Returns(_hideLaptopSubject.Select(_ => new Event { EventType = "hide_laptop" }));
         // Return no schedules by default to isolate behavior
-        _mockScheduler
-            .Setup(s => s.GetSchedules(It.IsAny<Action>()))
-            .Returns(Array.Empty<IDisposable>());
+        _mockScheduler.Setup(s => s.GetSchedules(It.IsAny<Action>())).Returns([]);
 
         // Create device instances
         var mockServices = CreateMockServices();
@@ -104,6 +102,7 @@ public class DisplayAutomationTests : IDisposable
             _mockNotificationServices.Object,
             _mockDesktopLogger.Object
         );
+        _desktop.StartAutomation();
         _laptop = new Laptop(
             _laptopEntities,
             _mockScheduler.Object,
@@ -111,7 +110,7 @@ public class DisplayAutomationTests : IDisposable
             _mockEventHandler.Object,
             _mockLaptopLogger.Object
         );
-
+        _laptop.StartAutomation();
         // Create automation under test
         _automation = new DisplayAutomation(
             _monitor,

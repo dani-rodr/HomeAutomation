@@ -1,34 +1,30 @@
 using System.Linq;
+using System.Reactive.Disposables;
 
 namespace HomeAutomation.apps.Area.Desk.Devices;
 
-public class Laptop : ComputerBase
+public class Laptop(
+    ILaptopEntities entities,
+    ILaptopScheduler scheduler,
+    IBatteryHandler batteryHandler,
+    IEventHandler eventHandler,
+    ILogger logger
+) : ComputerBase(eventHandler, logger)
 {
     protected override string ShowEvent { get; } = "show_laptop";
     protected override string HideEvent { get; } = "hide_laptop";
-    private readonly ILaptopEntities _entities;
-    private readonly IBatteryHandler _batteryHandler;
 
-    public Laptop(
-        ILaptopEntities entities,
-        ILaptopScheduler scheduler,
-        IBatteryHandler batteryHandler,
-        IEventHandler eventHandler,
-        ILogger logger
-    )
-        : base(eventHandler, logger)
-    {
-        _entities = entities;
-        _batteryHandler = batteryHandler;
-        Automations.Add(GetSwitchToggleAutomations());
-        Automations.Add(_batteryHandler.StartMonitoring());
-        AddLogoffSchedules(scheduler);
-    }
+    protected override CompositeDisposable Automations =>
+        [
+            GetSwitchToggleAutomations(),
+            batteryHandler.StartMonitoring(),
+            .. GetLogoffAutomations(scheduler),
+        ];
 
     public override bool IsOn()
     {
-        var switchState = _entities.VirtualSwitch;
-        var sessionState = _entities.Session.State;
+        var switchState = entities.VirtualSwitch;
+        var sessionState = entities.Session.State;
 
         if (switchState.IsOff())
         {
@@ -44,12 +40,12 @@ public class Laptop : ComputerBase
 
     public override IObservable<bool> StateChanges()
     {
-        var switchStateChanges = _entities
+        var switchStateChanges = entities
             .VirtualSwitch.StateChanges()
             .Select(e => e.IsOn())
-            .StartWith(_entities.VirtualSwitch.State.IsOn());
+            .StartWith(entities.VirtualSwitch.State.IsOn());
 
-        var sessionLocked = _entities
+        var sessionLocked = entities
             .Session.StateChanges()
             .Where(e => e.Old?.State.IsUnlocked() == true && e.New?.State.IsLocked() == true)
             .Select(_ => false);
@@ -60,9 +56,9 @@ public class Laptop : ComputerBase
 
     public override void TurnOn()
     {
-        _entities.VirtualSwitch.TurnOn();
-        _batteryHandler.HandleLaptopTurnedOn();
-        foreach (var button in _entities.WakeOnLanButtons)
+        entities.VirtualSwitch.TurnOn();
+        batteryHandler.HandleLaptopTurnedOn();
+        foreach (var button in entities.WakeOnLanButtons)
         {
             button.Press();
         }
@@ -70,17 +66,17 @@ public class Laptop : ComputerBase
 
     public override void TurnOff()
     {
-        _ = _batteryHandler.HandleLaptopTurnedOffAsync();
-        _entities.VirtualSwitch.TurnOff();
+        _ = batteryHandler.HandleLaptopTurnedOffAsync();
+        entities.VirtualSwitch.TurnOff();
 
-        if (_entities.Session.State.IsUnlocked())
+        if (entities.Session.State.IsUnlocked())
         {
-            _entities.Lock.Press();
+            entities.Lock.Press();
         }
     }
 
     private IDisposable GetSwitchToggleAutomations() =>
-        _entities
+        entities
             .VirtualSwitch.StateChanges()
             .DistinctUntilChanged()
             .Subscribe(e =>
@@ -95,9 +91,8 @@ public class Laptop : ComputerBase
                 }
             });
 
-    private void AddLogoffSchedules(ILaptopScheduler scheduler)
-    {
-        var logoffSchedules = scheduler.GetSchedules(() =>
+    private IEnumerable<IDisposable> GetLogoffAutomations(ILaptopScheduler scheduler) =>
+        scheduler.GetSchedules(() =>
         {
             if (IsOn())
             {
@@ -109,9 +104,4 @@ public class Laptop : ComputerBase
                 Logger.LogDebug("Scheduled logoff triggered: Laptop is not on, skipping TurnOff.");
             }
         });
-        foreach (var schedule in logoffSchedules)
-        {
-            Automations.Add(schedule);
-        }
-    }
 }

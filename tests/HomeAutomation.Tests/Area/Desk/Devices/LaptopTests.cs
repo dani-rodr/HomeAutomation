@@ -50,7 +50,7 @@ public class LaptopTests : IDisposable
             _mockEventHandler.Object,
             _mockLogger.Object
         );
-
+        _laptop.StartAutomation();
         // Clear any initialization service calls
         _mockHaContext.ClearServiceCalls();
     }

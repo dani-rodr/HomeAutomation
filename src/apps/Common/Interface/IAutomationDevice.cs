@@ -1,3 +1,3 @@
 namespace HomeAutomation.apps.Common.Interface;
 
-public interface IAutomationDevice : IDisposable;
+public interface IAutomationDevice : IAutomation;

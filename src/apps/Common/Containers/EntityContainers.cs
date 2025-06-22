@@ -143,10 +143,15 @@ public class LaptopEntities(Entities entities) : ILaptopEntities
     public ButtonEntity Lock => entities.Button.Thinkpadt14Lock;
 }
 
-public class DeskLgDisplayEntities(Entities entities) : ILgDisplayEntities
+public class LgDisplayEntities(Entities entities) : ILgDisplayEntities
 {
     public MediaPlayerEntity MediaPlayer => entities.MediaPlayer.LgWebosSmartTv;
     public LightEntity Display => entities.Light.LgDisplay;
+}
+
+public class TclDisplayEntities(Entities entities) : ITclDisplayEntities
+{
+    public MediaPlayerEntity MediaPlayer => entities.MediaPlayer.Tcl65c755;
 }
 
 public class LivingRoomFanEntities(Entities entities, CommonEntities common)

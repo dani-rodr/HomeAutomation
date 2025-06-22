@@ -25,6 +25,8 @@ public class DeskApp(
             eventHandler,
             logger
         );
+        desktop.StartAutomation();
+        laptop.StartAutomation();
         yield return new MotionAutomation(deskMotionEntities, lgDisplay, logger);
         yield return new DisplayAutomation(lgDisplay, desktop, laptop, eventHandler, logger);
     }

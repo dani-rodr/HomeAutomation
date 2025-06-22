@@ -1,3 +1,4 @@
+using System.Reactive.Disposables;
 using System.Text.Json;
 
 namespace HomeAutomation.apps.Area.Desk.Devices;
@@ -9,26 +10,20 @@ public enum DisplaySource
     ScreenSaver,
 }
 
-public class LgDisplay : MediaPlayerBase, ILgDisplay
+public class LgDisplay(ILgDisplayEntities entities, IServices services, ILogger logger)
+    : MediaPlayerBase(entities.MediaPlayer, logger),
+        ILgDisplay
 {
     private const string MAC_ADDRESS = "D4:8D:26:B8:C4:AA";
-    private readonly WebostvServices _webosServices;
-    private readonly WakeOnLanServices _wolServices;
-    private readonly LightEntity _screen;
+    private readonly WebostvServices _webosServices = services.Webostv;
+    private readonly WakeOnLanServices _wolServices = services.WakeOnLan;
+    private readonly LightEntity _screen = entities.Display;
     private int _brightness = 90;
     public bool IsShowingPc => CurrentSource == Sources[DisplaySource.PC.ToString()];
     public bool IsShowingLaptop => CurrentSource == Sources[DisplaySource.Laptop.ToString()];
 
-    public LgDisplay(ILgDisplayEntities entities, IServices services, ILogger logger)
-        : base(entities.MediaPlayer, logger)
-    {
-        _webosServices = services.Webostv;
-        _wolServices = services.WakeOnLan;
-        _screen = entities.Display;
-        Automations.Add(AdjustBrightnessFromInput());
-        Automations.Add(ToggleScreenAutomation());
-        Automations.Add(SyncScreenSwitchWithMediaState());
-    }
+    protected override CompositeDisposable Automations =>
+        [AdjustBrightnessFromInput(), ToggleScreenAutomation(), SyncScreenSwitchWithMediaState()];
 
     private async Task SetBrightnessAsync(int value)
     {
@@ -68,12 +63,13 @@ public class LgDisplay : MediaPlayerBase, ILgDisplay
 
     public override void TurnOn() => _wolServices.SendMagicPacket(MAC_ADDRESS);
 
-    protected override void ExtendSourceDictionary(Dictionary<string, string> sources)
-    {
-        sources[DisplaySource.PC.ToString()] = "HDMI 1";
-        sources[DisplaySource.Laptop.ToString()] = "HDMI 3";
-        sources[DisplaySource.ScreenSaver.ToString()] = "Always Ready";
-    }
+    protected override Dictionary<string, string> ExtendedSources =>
+        new()
+        {
+            { DisplaySource.PC.ToString(), "HDMI 1" },
+            { DisplaySource.Laptop.ToString(), "HDMI 3" },
+            { DisplaySource.ScreenSaver.ToString(), "Always Ready" },
+        };
 
     private void SendCommand(string command, object? payload = null) =>
         _webosServices.Command(EntityId, command, payload);

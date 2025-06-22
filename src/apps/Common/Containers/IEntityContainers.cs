@@ -86,9 +86,15 @@ public interface ILaptopEntities
     ButtonEntity Lock { get; }
 }
 
-public interface ILgDisplayEntities
+public interface IDisplayEntities
 {
     MediaPlayerEntity MediaPlayer { get; }
+}
+
+public interface ITclDisplayEntities : IDisplayEntities;
+
+public interface ILgDisplayEntities : IDisplayEntities
+{
     LightEntity Display { get; }
 }
 
