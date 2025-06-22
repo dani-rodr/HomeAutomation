@@ -89,6 +89,14 @@ public class ClimateAutomation(IClimateEntities entities, IScheduler scheduler, 
             .Subscribe(_ => MasterSwitch?.TurnOn());
     }
 
+    protected override IEnumerable<IDisposable> GetToggleableAutomations() =>
+        [
+            .. GetScheduledAutomations(),
+            .. GetSensorBasedAutomations(),
+            .. GetHousePresenceAutomations(),
+            .. GetFanModeToggleAutomation(),
+        ];
+
     private void TurnOffMasterSwitchOnManualOperation(StateChange e)
     {
         var (oldTemp, newTemp) = e.GetAttributeChange<double?>("temperature");
@@ -134,14 +142,6 @@ public class ClimateAutomation(IClimateEntities entities, IScheduler scheduler, 
     {
         _cachedAcSettings = null;
     }
-
-    protected override IEnumerable<IDisposable> GetToggleableAutomations() =>
-        [
-            .. GetScheduledAutomations(),
-            .. GetSensorBasedAutomations(),
-            .. GetHousePresenceAutomations(),
-            .. GetFanModeToggleAutomation(),
-        ];
 
     private IEnumerable<IDisposable> GetScheduledAutomations()
     {
