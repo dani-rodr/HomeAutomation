@@ -7,11 +7,13 @@ public class LivingRoomApp(
     ILivingRoomFanEntities fanEntities,
     IAirQualityEntities airQualityEntities,
     ITabletEntities tabletEntities,
+    ITclDisplay tclDisplay,
     ILogger<LivingRoomApp> logger
 ) : AppBase<LivingRoomApp>()
 {
     protected override IEnumerable<IAutomation> CreateAutomations()
     {
+        tclDisplay.StartAutomation();
         yield return new FanAutomation(fanEntities, logger);
         yield return new AirQualityAutomation(airQualityEntities, logger);
         yield return new TabletAutomation(tabletEntities, logger);

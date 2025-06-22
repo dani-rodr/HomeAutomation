@@ -20,6 +20,7 @@ public class LgDisplayTests : IDisposable
     private readonly Mock<ILogger> _mockLogger;
     private readonly TestLgDisplayEntities _entities;
     private readonly LgDisplay _lgDisplay;
+    private static readonly string[] attributes = ["HDMI 1", "HDMI 2", "HDMI 3", "Always Ready"];
 
     public LgDisplayTests()
     {
@@ -30,15 +31,11 @@ public class LgDisplayTests : IDisposable
         // Set up initial attributes with source list for the media player
         _mockHaContext.SetEntityAttributes(
             _entities.MediaPlayer.EntityId,
-            new
-            {
-                source_list = new[] { "HDMI 1", "HDMI 2", "HDMI 3", "Always Ready" },
-                source = "HDMI 1",
-            }
+            new { source_list = attributes, source = "HDMI 1" }
         );
 
         _lgDisplay = new LgDisplay(_entities, new Services(_mockHaContext), _mockLogger.Object);
-
+        _lgDisplay.StartAutomation();
         // Set initial state
         _mockHaContext.SetEntityState(_entities.MediaPlayer.EntityId, "on");
         _mockHaContext.ClearServiceCalls();

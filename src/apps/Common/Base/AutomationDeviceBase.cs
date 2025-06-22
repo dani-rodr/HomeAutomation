@@ -12,7 +12,7 @@ public abstract class AutomationDeviceBase : IAutomationDevice
         GC.SuppressFinalize(this);
     }
 
-    public void StartAutomation()
+    public virtual void StartAutomation()
     {
         _ = Automations; // This is the load the values in this container
     }

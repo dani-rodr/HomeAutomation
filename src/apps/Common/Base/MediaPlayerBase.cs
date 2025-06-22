@@ -1,8 +1,11 @@
 using System.Linq;
+using System.Reactive.Disposables;
 
 namespace HomeAutomation.apps.Common.Base;
 
-public abstract class MediaPlayerBase : AutomationDeviceBase, IMediaPlayer
+public abstract class MediaPlayerBase(MediaPlayerEntity entity, ILogger logger)
+    : AutomationDeviceBase,
+        IMediaPlayer
 {
     public string EntityId => Entity.EntityId;
     public double? VolumeLevel => Entity.Attributes?.VolumeLevel;
@@ -15,32 +18,17 @@ public abstract class MediaPlayerBase : AutomationDeviceBase, IMediaPlayer
     public string? AppName => Entity.Attributes?.AppName;
     public string? MediaContentType => Entity.Attributes?.MediaContentType;
     protected abstract Dictionary<string, string> ExtendedSources { get; }
-    protected MediaPlayerEntity Entity { get; }
-    protected ILogger Logger { get; }
-    protected readonly Dictionary<string, string> Sources;
-
+    protected MediaPlayerEntity Entity { get; } = entity;
+    protected ILogger Logger { get; } = logger;
+    protected Dictionary<string, string> Sources { get; private set; } = [];
+    protected override CompositeDisposable Automations => [ShowQueuedSource()];
     private string _queuedSourceKey = string.Empty;
 
-    public MediaPlayerBase(MediaPlayerEntity entity, ILogger logger)
+    public override void StartAutomation()
     {
-        Entity = entity;
-        Logger = logger;
+        base.StartAutomation();
         Sources = SourceList?.ToDictionary(s => s, s => s) ?? [];
         ExtendedSources.ToList().ForEach(pair => Sources.Add(pair.Key, pair.Value));
-        Automations.Add(
-            Entity
-                .StateChanges()
-                .IsOn()
-                .Subscribe(_ =>
-                {
-                    if (string.IsNullOrEmpty(_queuedSourceKey))
-                    {
-                        return;
-                    }
-                    ShowSource(_queuedSourceKey);
-                    _queuedSourceKey = string.Empty;
-                })
-        );
     }
 
     public void SetVolume(double volumeLevel) => Entity.VolumeSet(volumeLevel);
@@ -86,4 +74,20 @@ public abstract class MediaPlayerBase : AutomationDeviceBase, IMediaPlayer
             .StateAllChangesWithCurrent()
             .Where(e => e.Old?.Attributes?.Source != e.New?.Attributes?.Source)
             .Select(e => e.New?.Attributes?.Source);
+
+    private IDisposable ShowQueuedSource()
+    {
+        return Entity
+            .StateChanges()
+            .IsOn()
+            .Subscribe(_ =>
+            {
+                if (string.IsNullOrEmpty(_queuedSourceKey))
+                {
+                    return;
+                }
+                ShowSource(_queuedSourceKey);
+                _queuedSourceKey = string.Empty;
+            });
+    }
 }

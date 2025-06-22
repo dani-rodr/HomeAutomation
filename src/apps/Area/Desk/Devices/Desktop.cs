@@ -11,7 +11,6 @@ public class Desktop(
 {
     protected override string ShowEvent { get; } = "show_pc";
     protected override string HideEvent { get; } = "hide_pc";
-
     protected override CompositeDisposable Automations => [LaunchMoonlightApp()];
     private readonly SwitchEntity power = entities.Power;
     private const string MOONLIGHT_APP = "com.limelight";

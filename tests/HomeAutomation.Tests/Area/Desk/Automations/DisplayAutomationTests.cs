@@ -96,6 +96,7 @@ public class DisplayAutomationTests : IDisposable
         // Create device instances
         var mockServices = CreateMockServices();
         _monitor = new LgDisplay(_lgDisplayEntities, mockServices, _mockMonitorLogger.Object);
+        _monitor.StartAutomation();
         _desktop = new Desktop(
             _desktopEntities,
             _mockEventHandler.Object,
