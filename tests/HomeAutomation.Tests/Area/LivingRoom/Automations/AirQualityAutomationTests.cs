@@ -1,6 +1,5 @@
 using HomeAutomation.apps.Area.LivingRoom.Automations;
 using HomeAutomation.apps.Common.Containers;
-using HomeAutomation.apps.Helpers;
 
 namespace HomeAutomation.Tests.Area.LivingRoom.Automations;
 
@@ -41,6 +40,34 @@ public class AirQualityAutomationTests : IDisposable
     }
 
     #region Air Quality Threshold Tests
+    [Fact]
+    public void RunInitialActions_Should_TurnOffFan_WhenAirQualityIsExcellent()
+    {
+        // Arrange: Set initial air quality to excellent
+        _mockHaContext.SetEntityState(_entities.Pm25Sensor.EntityId, "5.0");
+
+        // Act: Recreate automation and enable it to trigger RunInitialActions
+        var automation = new AirQualityAutomation(_entities, _mockLogger.Object);
+        automation.StartAutomation();
+        _mockHaContext.SimulateStateChange(_entities.MasterSwitch.EntityId, "off", "on");
+
+        // Assert: Fan should be turned off without waiting for state changes
+        _mockHaContext.ShouldHaveCalledSwitchTurnOff(_entities.Fans.First().EntityId);
+    }
+
+    [Fact]
+    public void RunInitialActions_Should_TurnOnSupportingFan_WhenAirQualityIsPoor()
+    {
+        // Arrange: Set poor air quality before automation starts
+        _mockHaContext.SetEntityState(_entities.Pm25Sensor.EntityId, "100.0");
+        // Act: Recreate automation and start it
+        var automation = new AirQualityAutomation(_entities, _mockLogger.Object);
+        automation.StartAutomation();
+        _mockHaContext.SimulateStateChange(_entities.MasterSwitch.EntityId, "off", "on");
+
+        // Assert: Supporting fan should turn on immediately due to poor air quality
+        _mockHaContext.ShouldHaveCalledSwitchTurnOn(_entities.Fans.Last().EntityId);
+    }
 
     [Fact(Skip = "Temporarily disabled - air quality automation logic under review")]
     public void ExcellentAirQuality_Should_TurnOffMainFan()

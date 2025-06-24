@@ -7,7 +7,7 @@ public class AirQualityAutomation(IAirQualityEntities entities, ILogger logger)
 {
     private readonly NumericSensorEntity _airQuality = entities.Pm25Sensor;
     private readonly SwitchEntity _ledStatus = entities.LedStatus;
-    private SwitchEntity _supportingFan => Fans.First();
+    private SwitchEntity _supportingFan => Fans.Last();
     private bool _activateSupportingFan = false;
     private bool _isCleaningAir = false;
 
@@ -23,26 +23,49 @@ public class AirQualityAutomation(IAirQualityEntities entities, ILogger logger)
         yield return SubscribeToSupportingFanIdle();
     }
 
+    protected override void RunInitialActions()
+    {
+        Logger.LogDebug("Running initial air quality check");
+        HandleAirQuality(_airQuality.State ?? 0);
+    }
+
+    private void HandleAirQuality(double airQuality)
+    {
+        if (airQuality > DIRTY_AIR_THRESHOLD)
+        {
+            Logger.LogInformation(
+                "Air quality is POOR ({Value}) – starting cleaning mode",
+                airQuality
+            );
+            HandlePoorAirQuality();
+            return;
+        }
+
+        if (airQuality > CLEAN_AIR_THRESHOLD)
+        {
+            Logger.LogInformation(
+                "Air quality is MODERATE ({Value}) – turning on main fan",
+                airQuality
+            );
+            HandleModerateAirQuality();
+            return;
+        }
+
+        Logger.LogInformation(
+            "Air quality is EXCELLENT ({Value}) – turning off main fan",
+            airQuality
+        );
+        Fan.TurnOff();
+    }
+
     private IDisposable SubscribeToAirQuality() =>
         _airQuality
-            .StateChangesWithCurrent()
-            .WhenStateIsForSeconds(_ => true, WAIT_TIME)
+            .StateChanges()
             .Subscribe(e =>
             {
                 var value = double.TryParse(e?.State(), out var parsed) ? parsed : 0;
-
-                if (value > DIRTY_AIR_THRESHOLD)
-                {
-                    HandlePoorAirQuality();
-                }
-                else if (value > CLEAN_AIR_THRESHOLD)
-                {
-                    HandleModerateAirQuality();
-                }
-                else
-                {
-                    Fan.TurnOff();
-                }
+                Logger.LogDebug("Air quality state changed → {ParsedValue}", value);
+                HandleAirQuality(value);
             });
 
     private void HandleModerateAirQuality()
@@ -51,6 +74,9 @@ public class AirQualityAutomation(IAirQualityEntities entities, ILogger logger)
 
         if (_isCleaningAir && !_activateSupportingFan)
         {
+            Logger.LogInformation(
+                "Exiting cleaning mode – turning off supporting fan and re-enabling living room switch"
+            );
             _supportingFan.TurnOff();
             _isCleaningAir = false;
             _activateSupportingFan = false;
@@ -62,8 +88,13 @@ public class AirQualityAutomation(IAirQualityEntities entities, ILogger logger)
     {
         if (_activateSupportingFan)
         {
+            Logger.LogDebug("Supporting fan manually activated – skipping automatic override");
             return;
         }
+
+        Logger.LogInformation(
+            "Entering cleaning mode – turning on supporting fan and disabling living room switch"
+        );
         _supportingFan.TurnOn();
         _isCleaningAir = true;
         _activateSupportingFan = false;
@@ -77,15 +108,17 @@ public class AirQualityAutomation(IAirQualityEntities entities, ILogger logger)
             .Subscribe(e =>
             {
                 _activateSupportingFan = true;
+                Logger.LogInformation("Manual fan operation detected – override flag enabled");
             });
 
     private IDisposable SubscribeToSupportingFanIdle() =>
         _supportingFan
-            .StateChangesWithCurrent()
+            .StateChanges()
             .IsOffForMinutes(10)
             .Subscribe(_ =>
             {
                 _activateSupportingFan = false;
+                Logger.LogInformation("Supporting fan idle for 10 minutes – override flag cleared");
             });
 
     private IDisposable SubscribeToFanStateChanges() =>
@@ -95,10 +128,12 @@ public class AirQualityAutomation(IAirQualityEntities entities, ILogger logger)
                 if (Fan.IsOn())
                 {
                     _ledStatus.TurnOn();
+                    Logger.LogDebug("Main fan turned ON – LED status ON");
                 }
                 else
                 {
                     _ledStatus.TurnOff();
+                    Logger.LogDebug("Main fan turned OFF – LED status OFF");
                 }
             });
 }

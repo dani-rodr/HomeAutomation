@@ -10,6 +10,9 @@ public abstract class AutomationBase(ILogger logger, SwitchEntity? masterSwitch 
     protected ILogger Logger { get; } = logger;
     protected abstract IEnumerable<IDisposable> GetToggleableAutomations();
     protected abstract IEnumerable<IDisposable> GetPersistentAutomations();
+
+    protected virtual void RunInitialActions() { }
+
     private CompositeDisposable? _toggleableAutomations;
     private CompositeDisposable? _persistentAutomations;
 
@@ -35,7 +38,7 @@ public abstract class AutomationBase(ILogger logger, SwitchEntity? masterSwitch 
                 );
                 _persistentAutomations.Add(
                     MasterSwitch
-                        .StateAllChangesWithCurrent()
+                        .StateChangesWithCurrent()
                         .SubscribeSafe(
                             ToggleAutomation,
                             onError: ex =>
@@ -76,6 +79,7 @@ public abstract class AutomationBase(ILogger logger, SwitchEntity? masterSwitch 
             GetType().Name
         );
         _toggleableAutomations = [.. toggleableList];
+        RunInitialActions();
     }
 
     private void DisableAutomations()
