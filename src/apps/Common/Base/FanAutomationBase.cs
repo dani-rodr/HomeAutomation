@@ -70,7 +70,7 @@ public abstract class FanAutomationBase : AutomationBase
             });
     }
 
-    protected IDisposable GetFanManualOperationAutomations() =>
+    protected virtual IDisposable GetFanManualOperationAutomations() =>
         Fan.StateChanges()
             .IsManuallyOperated()
             .Subscribe(e =>
@@ -85,7 +85,7 @@ public abstract class FanAutomationBase : AutomationBase
                 }
             });
 
-    protected IDisposable GetIdleOperationAutomations() =>
+    protected virtual IDisposable GetIdleOperationAutomations() =>
         MotionSensor
             .StateChanges()
             .IsOffForMinutes(15)

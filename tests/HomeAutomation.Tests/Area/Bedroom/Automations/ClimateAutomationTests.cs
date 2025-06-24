@@ -65,7 +65,7 @@ public class ClimateAutomationTests : IDisposable
         // Setup sensors in default states
         _mockHaContext.SetEntityState(_entities.MotionSensor.EntityId, "off");
         _mockHaContext.SetEntityState(_entities.Door.EntityId, "off"); // closed
-        _mockHaContext.SetEntityState(_entities.FanSwitch.EntityId, "off");
+        _mockHaContext.SetEntityState(_entities.FanAutomation.EntityId, "off");
         _mockHaContext.SetEntityState(_entities.PowerSavingMode.EntityId, "off");
         _mockHaContext.SetEntityState(_entities.HouseMotionSensor.EntityId, "on"); // house occupied
         _mockHaContext.SetEntityState(_entities.Weather.EntityId, "sunny");
@@ -260,7 +260,7 @@ public class ClimateAutomationTests : IDisposable
         _mockHaContext.StateChangeSubject.OnNext(stateChange);
 
         // Assert - Should turn on fan switch
-        _mockHaContext.ShouldHaveCalledSwitchTurnOn(_entities.FanSwitch.EntityId);
+        _mockHaContext.ShouldHaveCalledSwitchTurnOn(_entities.FanAutomation.EntityId);
     }
 
     [Fact]
@@ -284,7 +284,7 @@ public class ClimateAutomationTests : IDisposable
         _mockHaContext.StateChangeSubject.OnNext(stateChange);
 
         // Assert - Should not turn on fan switch
-        _mockHaContext.ShouldNeverHaveCalledSwitch(_entities.FanSwitch.EntityId);
+        _mockHaContext.ShouldNeverHaveCalledSwitch(_entities.FanAutomation.EntityId);
     }
 
     #endregion
@@ -810,7 +810,8 @@ public class ClimateAutomationTests : IDisposable
             new ClimateEntity(haContext, "climate.bedroom_ac");
         public BinarySensorEntity Door { get; } =
             new BinarySensorEntity(haContext, "binary_sensor.bedroom_door");
-        public SwitchEntity FanSwitch { get; } = new SwitchEntity(haContext, "switch.bedroom_fan");
+        public SwitchEntity FanAutomation { get; } =
+            new SwitchEntity(haContext, "switch.bedroom_fan");
         public InputBooleanEntity PowerSavingMode { get; } =
             new InputBooleanEntity(haContext, "input_boolean.power_saving_mode");
         public BinarySensorEntity HouseMotionSensor { get; } =

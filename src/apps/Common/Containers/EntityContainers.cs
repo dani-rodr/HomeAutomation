@@ -106,7 +106,7 @@ public class BedroomClimateEntities(Entities entities, CommonEntities common) : 
     public ClimateEntity AirConditioner => entities.Climate.Ac;
     public BinarySensorEntity MotionSensor => common.BedroomMotionSensor;
     public BinarySensorEntity Door => common.BedroomDoor;
-    public SwitchEntity FanSwitch => common.BedroomFanSwitch;
+    public SwitchEntity FanAutomation => entities.Switch.BedroomFanAutomation;
     public InputBooleanEntity PowerSavingMode => entities.InputBoolean.AcPowerSavingMode;
     public SensorEntity SunRising => entities.Sensor.SunNextRising;
     public SensorEntity SunSetting => entities.Sensor.SunNextSetting;

@@ -14,11 +14,6 @@
           "cSharpName": "BathroomLights2"
         },
         {
-          "id": "light.bathroom_lights_3",
-          "friendlyName": "Bathroom Lights",
-          "cSharpName": "BathroomLights3"
-        },
-        {
           "id": "light.bed_lights",
           "friendlyName": "Bed Lights",
           "cSharpName": "BedLights"
@@ -27,11 +22,6 @@
           "id": "light.bed_lights_1",
           "friendlyName": "Bed Lights ",
           "cSharpName": "BedLights1"
-        },
-        {
-          "id": "light.bed_lights_2",
-          "friendlyName": "Bed Lights ",
-          "cSharpName": "BedLights2"
         },
         {
           "id": "light.controller_rgb_df1c0d",
@@ -59,11 +49,6 @@
           "cSharpName": "PantryLights"
         },
         {
-          "id": "light.pantry_lights_2",
-          "friendlyName": "Pantry Lights",
-          "cSharpName": "PantryLights2"
-        },
-        {
           "id": "light.pantry_lights_3",
           "friendlyName": "Pantry Lights",
           "cSharpName": "PantryLights3"
@@ -74,24 +59,9 @@
           "cSharpName": "RgbLightStrip"
         },
         {
-          "id": "light.rgb_light_strip_2",
-          "friendlyName": "RGB Light Strip",
-          "cSharpName": "RgbLightStrip2"
-        },
-        {
           "id": "light.rgb_light_strip_3",
           "friendlyName": "RGB Light Strip",
           "cSharpName": "RgbLightStrip3"
-        },
-        {
-          "id": "light.sala_lights",
-          "friendlyName": "Sala Lights",
-          "cSharpName": "SalaLights"
-        },
-        {
-          "id": "light.sala_lights_2",
-          "friendlyName": "Sala Lights 2",
-          "cSharpName": "SalaLights2"
         },
         {
           "id": "light.sala_lights_2_2",
@@ -551,6 +521,16 @@
           "jsonName": "browserID",
           "cSharpName": "BrowserID",
           "clrType": "System.String"
+        },
+        {
+          "jsonName": "video_interaction_required",
+          "cSharpName": "VideoInteractionRequired",
+          "clrType": "System.Boolean"
+        },
+        {
+          "jsonName": "audio_interaction_required",
+          "cSharpName": "AudioInteractionRequired",
+          "clrType": "System.Boolean"
         }
       ]
     },
@@ -630,11 +610,6 @@
           "cSharpName": "BathroomLightsCloudConnection"
         },
         {
-          "id": "binary_sensor.bathroom_lights_overheat",
-          "friendlyName": "Bathroom Lights Overheat",
-          "cSharpName": "BathroomLightsOverheat"
-        },
-        {
           "id": "binary_sensor.bathroom_lights_overheated",
           "friendlyName": "Bathroom Lights Overheated",
           "cSharpName": "BathroomLightsOverheated"
@@ -650,11 +625,6 @@
           "cSharpName": "BedLightsCloudConnection"
         },
         {
-          "id": "binary_sensor.bed_lights_overheat",
-          "friendlyName": "Bed Lights  Overheat",
-          "cSharpName": "BedLightsOverheat"
-        },
-        {
           "id": "binary_sensor.bed_lights_overheated",
           "friendlyName": "Bed Lights  Overheated",
           "cSharpName": "BedLightsOverheated"
@@ -668,11 +638,6 @@
           "id": "binary_sensor.ceiling_fan_cloud_connection",
           "friendlyName": "Ceiling Fan Cloud connection",
           "cSharpName": "CeilingFanCloudConnection"
-        },
-        {
-          "id": "binary_sensor.ceiling_fan_overheat",
-          "friendlyName": "Ceiling Fan Overheat",
-          "cSharpName": "CeilingFanOverheat"
         },
         {
           "id": "binary_sensor.ceiling_fan_overheated",
@@ -748,11 +713,6 @@
           "id": "binary_sensor.flytrap_cloud_connection",
           "friendlyName": "Flytrap Cloud connection",
           "cSharpName": "FlytrapCloudConnection"
-        },
-        {
-          "id": "binary_sensor.flytrap_overheat",
-          "friendlyName": "Flytrap Overheat",
-          "cSharpName": "FlytrapOverheat"
         },
         {
           "id": "binary_sensor.flytrap_overheated",
@@ -875,11 +835,6 @@
           "cSharpName": "PantryLightsCloudConnection"
         },
         {
-          "id": "binary_sensor.pantry_lights_overheat",
-          "friendlyName": "Pantry Lights Overheat",
-          "cSharpName": "PantryLightsOverheat"
-        },
-        {
           "id": "binary_sensor.pantry_lights_overheated",
           "friendlyName": "Pantry Lights Overheated",
           "cSharpName": "PantryLightsOverheated"
@@ -935,11 +890,6 @@
           "cSharpName": "RgbLightStripCloudConnection"
         },
         {
-          "id": "binary_sensor.rgb_light_strip_overheat",
-          "friendlyName": "RGB Light Strip Overheat",
-          "cSharpName": "RgbLightStripOverheat"
-        },
-        {
           "id": "binary_sensor.rgb_light_strip_overheated",
           "friendlyName": "RGB Light Strip Overheated",
           "cSharpName": "RgbLightStripOverheated"
@@ -955,11 +905,6 @@
           "cSharpName": "SalaLights2CloudConnection"
         },
         {
-          "id": "binary_sensor.sala_lights_2_overheat",
-          "friendlyName": "Sala Lights 2 Overheat",
-          "cSharpName": "SalaLights2Overheat"
-        },
-        {
           "id": "binary_sensor.sala_lights_2_overheated",
           "friendlyName": "Sala Lights 2 Overheated",
           "cSharpName": "SalaLights2Overheated"
@@ -968,11 +913,6 @@
           "id": "binary_sensor.sala_lights_cloud_connection",
           "friendlyName": "Sala Lights Cloud connection",
           "cSharpName": "SalaLightsCloudConnection"
-        },
-        {
-          "id": "binary_sensor.sala_lights_overheat",
-          "friendlyName": "Sala Lights Overheat",
-          "cSharpName": "SalaLightsOverheat"
         },
         {
           "id": "binary_sensor.sala_lights_overheated",
@@ -1220,11 +1160,6 @@
           "id": "button.bathroom_lights_restart",
           "friendlyName": "Bathroom Lights Restart",
           "cSharpName": "BathroomLightsRestart"
-        },
-        {
-          "id": "button.bed_lights_restart",
-          "friendlyName": "Bed Lights  Restart",
-          "cSharpName": "BedLightsRestart"
         },
         {
           "id": "button.careli_sg_593061393_maf05a_cancel_cooking_a_2_2",
@@ -2037,11 +1972,6 @@
           "id": "fan.bedroom_stand_fan",
           "friendlyName": "Bedroom Stand Fan",
           "cSharpName": "BedroomStandFan"
-        },
-        {
-          "id": "fan.ceiling_fan",
-          "friendlyName": "Ceiling Fan",
-          "cSharpName": "CeilingFan"
         },
         {
           "id": "fan.sala_stand_fan",
@@ -5067,6 +4997,16 @@
           "jsonName": "RotatedDegrees",
           "cSharpName": "RotatedDegrees",
           "clrType": "System.Double"
+        },
+        {
+          "jsonName": "in_vehicle",
+          "cSharpName": "InVehicle",
+          "clrType": "System.Double"
+        },
+        {
+          "jsonName": "on_bicycle",
+          "cSharpName": "OnBicycle",
+          "clrType": "System.Double"
         }
       ]
     },
@@ -5105,19 +5045,9 @@
           "cSharpName": "BaseusTagDistance"
         },
         {
-          "id": "sensor.bathroom_lights_signal_level_2",
-          "friendlyName": "Bathroom Lights Signal Level",
-          "cSharpName": "BathroomLightsSignalLevel2"
-        },
-        {
           "id": "sensor.battery_rechargable",
           "friendlyName": "Battery (Rechargable)",
           "cSharpName": "BatteryRechargable"
-        },
-        {
-          "id": "sensor.bed_lights_signal_level_2",
-          "friendlyName": "Bed Lights  Signal Level",
-          "cSharpName": "BedLightsSignalLevel2"
         },
         {
           "id": "sensor.careli_sg_593061393_maf05a_appoint_time_left_p_3_8",
@@ -5485,11 +5415,6 @@
           "cSharpName": "EstimatedMonthlyEnergyReading"
         },
         {
-          "id": "sensor.flytrap_signal_level",
-          "friendlyName": "Flytrap Signal Level",
-          "cSharpName": "FlytrapSignalLevel"
-        },
-        {
           "id": "sensor.front_door_battery",
           "friendlyName": "Front Door Battery",
           "cSharpName": "FrontDoorBattery"
@@ -5795,11 +5720,6 @@
           "cSharpName": "MipadBrowserWidth"
         },
         {
-          "id": "sensor.pantry_lights_signal_level",
-          "friendlyName": "Pantry Lights Signal Level",
-          "cSharpName": "PantryLightsSignalLevel"
-        },
-        {
           "id": "sensor.poco_f4_gt_active_notification_count",
           "friendlyName": "POCO F4 GT Active notification count",
           "cSharpName": "PocoF4GtActiveNotificationCount"
@@ -5840,11 +5760,6 @@
           "cSharpName": "PocoF4GtSleepSegment"
         },
         {
-          "id": "sensor.rgb_light_strip_signal_level_2",
-          "friendlyName": "RGB Light Strip Signal Level",
-          "cSharpName": "RgbLightStripSignalLevel2"
-        },
-        {
           "id": "sensor.rice_cooker_current",
           "friendlyName": "Rice Cooker Current",
           "cSharpName": "RiceCookerCurrent"
@@ -5858,16 +5773,6 @@
           "id": "sensor.rice_cooker_voltage",
           "friendlyName": "Rice Cooker Voltage",
           "cSharpName": "RiceCookerVoltage"
-        },
-        {
-          "id": "sensor.sala_lights_2_signal_level",
-          "friendlyName": "Sala Lights 2 Signal Level",
-          "cSharpName": "SalaLights2SignalLevel"
-        },
-        {
-          "id": "sensor.sala_lights_signal_level",
-          "friendlyName": "Sala Lights Signal Level",
-          "cSharpName": "SalaLightsSignalLevel"
         },
         {
           "id": "sensor.smart_plug_1_sonoff_s31_power",
@@ -7654,6 +7559,11 @@
           "cSharpName": "BedLightsAutoUpdateEnabled"
         },
         {
+          "id": "switch.bedroom_fan_automation",
+          "friendlyName": "Bedroom Fan Automation",
+          "cSharpName": "BedroomFanAutomation"
+        },
+        {
           "id": "switch.bedroom_motion_sensor",
           "friendlyName": "Bedroom Motion Sensor",
           "cSharpName": "BedroomMotionSensor"
@@ -7662,11 +7572,6 @@
           "id": "switch.ceiling_fan",
           "friendlyName": "Ceiling Fan",
           "cSharpName": "CeilingFan"
-        },
-        {
-          "id": "switch.ceiling_fan_2",
-          "friendlyName": "Ceiling Fan",
-          "cSharpName": "CeilingFan2"
         },
         {
           "id": "switch.ceiling_fan_auto_off_enabled",
@@ -7772,11 +7677,6 @@
           "id": "switch.flytrap",
           "friendlyName": "Flytrap",
           "cSharpName": "Flytrap"
-        },
-        {
-          "id": "switch.flytrap_2",
-          "friendlyName": "Flytrap",
-          "cSharpName": "Flytrap2"
         },
         {
           "id": "switch.flytrap_auto_off_enabled",
@@ -8352,16 +8252,6 @@
           "cSharpName": "AttributeAsSensorUpdate"
         },
         {
-          "id": "update.bathroom_lights_firmware",
-          "friendlyName": "Bathroom Lights Firmware",
-          "cSharpName": "BathroomLightsFirmware"
-        },
-        {
-          "id": "update.bed_lights_firmware",
-          "friendlyName": "Bed Lights  Firmware",
-          "cSharpName": "BedLightsFirmware"
-        },
-        {
           "id": "update.bedroom_presence_firmware",
           "friendlyName": "Bedroom Presence Firmware",
           "cSharpName": "BedroomPresenceFirmware"
@@ -8382,11 +8272,6 @@
           "cSharpName": "CardModUpdate"
         },
         {
-          "id": "update.ceiling_fan_firmware",
-          "friendlyName": "Ceiling Fan Firmware",
-          "cSharpName": "CeilingFanFirmware"
-        },
-        {
           "id": "update.chrony_update",
           "friendlyName": "chrony Update",
           "cSharpName": "ChronyUpdate"
@@ -8400,11 +8285,6 @@
           "id": "update.filebrowser_update",
           "friendlyName": "Filebrowser Update",
           "cSharpName": "FilebrowserUpdate"
-        },
-        {
-          "id": "update.flytrap_firmware",
-          "friendlyName": "Flytrap Firmware",
-          "cSharpName": "FlytrapFirmware"
         },
         {
           "id": "update.govee_to_mqtt_bridge_update",
@@ -8502,11 +8382,6 @@
           "cSharpName": "OpenwakewordUpdate"
         },
         {
-          "id": "update.pantry_lights_firmware",
-          "friendlyName": "Pantry Lights Firmware",
-          "cSharpName": "PantryLightsFirmware"
-        },
-        {
           "id": "update.passive_ble_monitor_integration_update",
           "friendlyName": "Passive BLE monitor integration update",
           "cSharpName": "PassiveBleMonitorIntegrationUpdate"
@@ -8515,21 +8390,6 @@
           "id": "update.qbittorrent_update",
           "friendlyName": "qBittorrent Update",
           "cSharpName": "QbittorrentUpdate"
-        },
-        {
-          "id": "update.rgb_light_strip_firmware",
-          "friendlyName": "RGB Light Strip Firmware",
-          "cSharpName": "RgbLightStripFirmware"
-        },
-        {
-          "id": "update.sala_lights_2_firmware",
-          "friendlyName": "Sala Lights 2 Firmware",
-          "cSharpName": "SalaLights2Firmware"
-        },
-        {
-          "id": "update.sala_lights_firmware",
-          "friendlyName": "Sala Lights Firmware",
-          "cSharpName": "SalaLightsFirmware"
         },
         {
           "id": "update.samba_share_update",
@@ -8585,11 +8445,6 @@
           "id": "update.tailscale_update",
           "friendlyName": "Tailscale Update",
           "cSharpName": "TailscaleUpdate"
-        },
-        {
-          "id": "update.tapo_controller_update",
-          "friendlyName": "Tapo Controller update",
-          "cSharpName": "TapoControllerUpdate"
         },
         {
           "id": "update.terminal_ssh_update",

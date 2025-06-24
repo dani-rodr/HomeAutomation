@@ -10,7 +10,7 @@ public class ClimateAutomation(IClimateEntities entities, IScheduler scheduler, 
     private readonly ClimateEntity _ac = entities.AirConditioner;
     private readonly BinarySensorEntity _motionSensor = entities.MotionSensor;
     private readonly BinarySensorEntity _doorSensor = entities.Door;
-    private readonly SwitchEntity _fanSwitch = entities.FanSwitch;
+    private readonly SwitchEntity _fanAutomation = entities.FanAutomation;
     private readonly InputBooleanEntity _isPowerSavingMode = entities.PowerSavingMode;
     private Dictionary<TimeBlock, AcScheduleSetting>? _cachedAcSettings;
 
@@ -375,10 +375,12 @@ public class ClimateAutomation(IClimateEntities entities, IScheduler scheduler, 
     private void ConditionallyActivateFan(bool activateFan, int targetTemp)
     {
         var isHot = _ac.Attributes?.CurrentTemperature >= targetTemp;
-        if (activateFan && _motionSensor.IsOccupied() && isHot)
+        if (activateFan && isHot)
         {
-            _fanSwitch.TurnOn();
+            _fanAutomation.TurnOn();
+            return;
         }
+        _fanAutomation.TurnOff();
     }
 }
 
