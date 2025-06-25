@@ -94,14 +94,38 @@ public class Laptop(
     private IEnumerable<IDisposable> GetLogoffAutomations(ILaptopScheduler scheduler) =>
         scheduler.GetSchedules(() =>
         {
-            if (IsOn())
+            if (!IsOn())
             {
-                Logger.LogDebug("Scheduled logoff triggered: Laptop is on, executing TurnOff.");
+                Logger.LogDebug("Scheduled logoff triggered: Laptop is not on, skipping TurnOff.");
+                return;
+            }
+
+            if (entities.MotionSensor.State.IsOff())
+            {
+                Logger.LogDebug(
+                    "Scheduled logoff: Motion sensor is already off, proceeding to TurnOff."
+                );
                 TurnOff();
             }
             else
             {
-                Logger.LogDebug("Scheduled logoff triggered: Laptop is not on, skipping TurnOff.");
+                Logger.LogDebug(
+                    "Scheduled logoff: Motion sensor is on, waiting for it to turn off."
+                );
+
+                IDisposable? motionSubscription = null;
+                motionSubscription = entities
+                    .MotionSensor.StateChanges()
+                    .Where(e => e.New?.State.IsOff() == true)
+                    .Take(1)
+                    .Subscribe(_ =>
+                    {
+                        Logger.LogDebug(
+                            "Motion sensor turned off after schedule, proceeding to TurnOff."
+                        );
+                        TurnOff();
+                        motionSubscription?.Dispose(); // optional since `Take(1)` disposes automatically
+                    });
             }
         });
 }

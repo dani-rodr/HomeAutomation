@@ -84,6 +84,7 @@ public interface ILaptopEntities
     SensorEntity Session { get; }
     NumericSensorEntity BatteryLevel { get; }
     ButtonEntity Lock { get; }
+    BinarySensorEntity MotionSensor { get; }
 }
 
 public interface IDisplayEntities

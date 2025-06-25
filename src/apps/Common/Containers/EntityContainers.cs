@@ -11,6 +11,7 @@ public class CommonEntities(Entities entities)
         entities.BinarySensor.KitchenMotionSensors;
     public BinarySensorEntity PantryMotionSensor { get; } =
         entities.BinarySensor.PantryMotionSensors;
+    public BinarySensorEntity DeskMotionSensor { get; } = entities.BinarySensor.DeskSmartPresence;
     public BinarySensorEntity HouseMotionSensor { get; } = entities.BinarySensor.House;
 
     // Shared fan switches
@@ -67,10 +68,10 @@ public class BathroomMotionEntities(Entities entities) : IBathroomMotionEntities
     public NumberEntity SensorDelay => entities.Number.ZEsp32C62StillTargetDelay;
 }
 
-public class DeskMotionEntities(Entities entities) : IDeskMotionEntities
+public class DeskMotionEntities(Entities entities, CommonEntities common) : IDeskMotionEntities
 {
     public SwitchEntity MasterSwitch => entities.Switch.LgTvMotionSensor;
-    public BinarySensorEntity MotionSensor => entities.BinarySensor.DeskSmartPresence;
+    public BinarySensorEntity MotionSensor => common.DeskMotionSensor;
     public LightEntity Light => entities.Light.LgDisplay;
     public NumberEntity SensorDelay => entities.Number.ZEsp32C61StillTargetDelay2;
 }
@@ -129,7 +130,7 @@ public class BedroomFanEntities(CommonEntities common) : IBedroomFanEntities
     public IEnumerable<SwitchEntity> Fans => [common.BedroomFanSwitch];
 }
 
-public class LaptopEntities(Entities entities) : ILaptopEntities
+public class LaptopEntities(Entities entities, CommonEntities common) : ILaptopEntities
 {
     public SwitchEntity VirtualSwitch => entities.Switch.Laptop;
 
@@ -141,6 +142,8 @@ public class LaptopEntities(Entities entities) : ILaptopEntities
     public NumericSensorEntity BatteryLevel =>
         entities.Sensor.Thinkpadt14BatteryChargeRemainingPercentage;
     public ButtonEntity Lock => entities.Button.Thinkpadt14Lock;
+
+    public BinarySensorEntity MotionSensor => common.DeskMotionSensor;
 }
 
 public class LgDisplayEntities(Entities entities) : ILgDisplayEntities

@@ -667,26 +667,22 @@ public class DisplayAutomationTests : IDisposable
             new InputButtonEntity(haContext, "input_button.remote_pc");
     }
 
-    private class TestLaptopEntities : ILaptopEntities
+    private class TestLaptopEntities(IHaContext haContext) : ILaptopEntities
     {
-        public TestLaptopEntities(IHaContext haContext)
-        {
-            VirtualSwitch = new SwitchEntity(haContext, "switch.laptop_virtual");
-            WakeOnLanButtons =
+        public SwitchEntity VirtualSwitch { get; } =
+            new SwitchEntity(haContext, "switch.laptop_virtual");
+        public ButtonEntity[] WakeOnLanButtons { get; } =
             [
                 new ButtonEntity(haContext, "button.laptop_wol_1"),
                 new ButtonEntity(haContext, "button.laptop_wol_2"),
             ];
-            Session = new SensorEntity(haContext, "sensor.laptop_session");
-            BatteryLevel = new NumericSensorEntity(haContext, "sensor.laptop_battery");
-            Lock = new ButtonEntity(haContext, "button.laptop_lock");
-        }
+        public SensorEntity Session { get; } = new SensorEntity(haContext, "sensor.laptop_session");
+        public NumericSensorEntity BatteryLevel { get; } =
+            new NumericSensorEntity(haContext, "sensor.laptop_battery");
+        public ButtonEntity Lock { get; } = new ButtonEntity(haContext, "button.laptop_lock");
 
-        public SwitchEntity VirtualSwitch { get; }
-        public ButtonEntity[] WakeOnLanButtons { get; }
-        public SensorEntity Session { get; }
-        public NumericSensorEntity BatteryLevel { get; }
-        public ButtonEntity Lock { get; }
+        public BinarySensorEntity MotionSensor { get; } =
+            new BinarySensorEntity(haContext, "binary_sensor.desk_smart_presence");
     }
 
     private class TestLgDisplayEntities(IHaContext haContext) : ILgDisplayEntities

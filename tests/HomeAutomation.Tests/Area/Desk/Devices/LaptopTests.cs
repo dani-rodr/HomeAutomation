@@ -651,6 +651,185 @@ public class LaptopTests : IDisposable
 
     #endregion
 
+    #region Scheduled logoff events test
+    [Fact]
+    public void ScheduledLogoff_Should_SkipTurnOff_WhenLaptopIsNotOn()
+    {
+        // Arrange
+        var scheduledActions = new List<Action>();
+        _mockScheduler
+            .Setup(s => s.GetSchedules(It.IsAny<Action>()))
+            .Callback<Action>(a => scheduledActions.Add(a))
+            .Returns([]);
+
+        var laptop = new Laptop(
+            _entities,
+            _mockScheduler.Object,
+            _mockBatteryHandler.Object,
+            _mockEventHandler.Object,
+            _mockLogger.Object
+        );
+        laptop.StartAutomation();
+
+        // Laptop is off
+        _mockHaContext.SetEntityState(_entities.VirtualSwitch.EntityId, "off");
+        _mockHaContext.SetEntityState(_entities.Session.EntityId, "locked");
+
+        // Act
+        scheduledActions.Should().ContainSingle();
+        scheduledActions[0]();
+
+        // Assert: No TurnOff-related service call
+        _mockHaContext.ServiceCalls.Should().BeEmpty("Laptop is off; logoff should do nothing");
+    }
+
+    [Fact]
+    public void ScheduledLogoff_Should_ImmediatelyTurnOff_WhenMotionSensorIsAlreadyOff()
+    {
+        // Arrange
+        var scheduledActions = new List<Action>();
+        _mockScheduler
+            .Setup(s => s.GetSchedules(It.IsAny<Action>()))
+            .Callback<Action>(a => scheduledActions.Add(a))
+            .Returns([]);
+
+        var laptop = new Laptop(
+            _entities,
+            _mockScheduler.Object,
+            _mockBatteryHandler.Object,
+            _mockEventHandler.Object,
+            _mockLogger.Object
+        );
+        laptop.StartAutomation();
+
+        // Laptop is on, motion is already off
+        _mockHaContext.SetEntityState(_entities.VirtualSwitch.EntityId, "on");
+        _mockHaContext.SetEntityState(_entities.Session.EntityId, "unlocked");
+        _mockHaContext.SetEntityState(_entities.MotionSensor.EntityId, "off");
+
+        // Act
+        scheduledActions.Should().ContainSingle();
+        scheduledActions[0]();
+
+        // Assert: TurnOff should run immediately
+        _mockBatteryHandler.Verify(x => x.HandleLaptopTurnedOffAsync(), Times.Once);
+        _mockHaContext
+            .ServiceCalls.Should()
+            .ContainSingle(c =>
+                c.Domain == "button"
+                && c.Service == "press"
+                && c.Target != null
+                && c.Target.EntityIds != null
+                && c.Target.EntityIds.Contains(_entities.Lock.EntityId)
+            );
+    }
+
+    [Fact]
+    public void ScheduledLogoff_Should_WaitForMotionSensorToBeOff_BeforeCallingTurnOff()
+    {
+        // Arrange: capture scheduled actions via the scheduler mock
+        var scheduledActions = new List<Action>();
+        _mockScheduler
+            .Setup(s => s.GetSchedules(It.IsAny<Action>()))
+            .Callback<Action>(a => scheduledActions.Add(a))
+            .Returns([]);
+
+        var laptop = new Laptop(
+            _entities,
+            _mockScheduler.Object,
+            _mockBatteryHandler.Object,
+            _mockEventHandler.Object,
+            _mockLogger.Object
+        );
+        laptop.StartAutomation();
+
+        // Set initial states: switch and session are on, motion is on
+        _mockHaContext.SetEntityState(_entities.VirtualSwitch.EntityId, "on");
+        _mockHaContext.SetEntityState(_entities.Session.EntityId, "unlocked");
+        _mockHaContext.SetEntityState(_entities.MotionSensor.EntityId, "on");
+
+        // Act: simulate scheduled logoff trigger
+        scheduledActions.Should().ContainSingle("logoff schedule should be registered");
+        scheduledActions[0]();
+
+        // Assert: no service calls yet because motion is still on
+        _mockHaContext
+            .ServiceCalls.Should()
+            .BeEmpty("TurnOff should wait for motion sensor to be off");
+
+        // Simulate motion sensor turning off
+        _mockHaContext.SimulateStateChange(
+            _entities.MotionSensor.EntityId,
+            oldState: "on",
+            newState: "off"
+        );
+
+        // Assert: after motion turns off, TurnOff should be called (e.g. lock pressed)
+        _mockHaContext
+            .ServiceCalls.Should()
+            .ContainSingle(c =>
+                c.Domain == "button"
+                && c.Service == "press"
+                && c.Target != null
+                && c.Target.EntityIds != null
+                && c.Target.EntityIds.Contains(_entities.Lock.EntityId)
+            );
+    }
+
+    [Fact]
+    public void ScheduledLogoff_Should_NotTurnOff_WhenMotionRemainsOn()
+    {
+        // Arrange
+        var scheduledActions = new List<Action>();
+        _mockScheduler
+            .Setup(s => s.GetSchedules(It.IsAny<Action>()))
+            .Callback<Action>(a => scheduledActions.Add(a))
+            .Returns([]);
+
+        var laptop = new Laptop(
+            _entities,
+            _mockScheduler.Object,
+            _mockBatteryHandler.Object,
+            _mockEventHandler.Object,
+            _mockLogger.Object
+        );
+        laptop.StartAutomation();
+
+        // Laptop is on and motion sensor is still ON
+        _mockHaContext.SetEntityState(_entities.VirtualSwitch.EntityId, "on");
+        _mockHaContext.SetEntityState(_entities.Session.EntityId, "unlocked");
+        _mockHaContext.SetEntityState(_entities.MotionSensor.EntityId, "on");
+
+        // Act: simulate scheduled logoff
+        scheduledActions.Should().ContainSingle();
+        scheduledActions[0]();
+
+        // Assert: no immediate service call
+        _mockBatteryHandler.Verify(x => x.HandleLaptopTurnedOffAsync(), Times.Never);
+        _mockHaContext
+            .ServiceCalls.Should()
+            .BeEmpty("Motion is still on, so TurnOff should not have been called");
+
+        // Simulate motion sensor turning off
+        _mockHaContext.SimulateStateChange(
+            _entities.MotionSensor.EntityId,
+            oldState: "on",
+            newState: "off"
+        );
+
+        // Assert: after motion turns off, TurnOff should be called (e.g. lock pressed)
+        _mockHaContext
+            .ServiceCalls.Should()
+            .ContainSingle(c =>
+                c.Domain == "button"
+                && c.Service == "press"
+                && c.Target != null
+                && c.Target.EntityIds != null
+                && c.Target.EntityIds.Contains(_entities.Lock.EntityId)
+            );
+    }
+    #endregion
+
     #region Entity Configuration Tests
 
     [Fact]
@@ -694,5 +873,8 @@ public class LaptopTests : IDisposable
         public NumericSensorEntity BatteryLevel { get; } =
             new NumericSensorEntity(haContext, "sensor.thinkpadt14_battery_level");
         public ButtonEntity Lock { get; } = new ButtonEntity(haContext, "button.thinkpadt14_lock");
+
+        public BinarySensorEntity MotionSensor { get; } =
+            new(haContext, "binary_sensor.desk_smart_presence");
     }
 }
