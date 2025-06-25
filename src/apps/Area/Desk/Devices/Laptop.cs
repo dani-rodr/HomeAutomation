@@ -91,30 +91,29 @@ public class Laptop(
                 }
             });
 
-    private IEnumerable<IDisposable> GetLogoffAutomations(ILaptopScheduler scheduler) =>
-        scheduler.GetSchedules(() =>
-        {
-            if (!IsOn())
-            {
-                Logger.LogDebug("Scheduled logoff triggered: Laptop is not on, skipping TurnOff.");
-                return;
-            }
+    private List<IDisposable> GetLogoffAutomations(ILaptopScheduler scheduler)
+    {
+        var disposables = new List<IDisposable>();
 
-            if (entities.MotionSensor.State.IsOff())
+        disposables.AddRange(
+            scheduler.GetSchedules(() =>
             {
-                Logger.LogDebug(
-                    "Scheduled logoff: Motion sensor is already off, proceeding to TurnOff."
-                );
-                TurnOff();
-            }
-            else
-            {
-                Logger.LogDebug(
-                    "Scheduled logoff: Motion sensor is on, waiting for it to turn off."
-                );
+                if (!IsOn())
+                {
+                    Logger.LogDebug("Laptop is not on, skipping TurnOff.");
+                    return;
+                }
 
-                IDisposable? motionSubscription = null;
-                motionSubscription = entities
+                if (entities.MotionSensor.State.IsOff())
+                {
+                    Logger.LogDebug("Motion sensor is already off, proceeding to TurnOff.");
+                    TurnOff();
+                    return;
+                }
+
+                Logger.LogDebug("Motion sensor is on, waiting for it to turn off.");
+
+                var motionSubscription = entities
                     .MotionSensor.StateChanges()
                     .Where(e => e.New?.State.IsOff() == true)
                     .Take(1)
@@ -124,8 +123,11 @@ public class Laptop(
                             "Motion sensor turned off after schedule, proceeding to TurnOff."
                         );
                         TurnOff();
-                        motionSubscription?.Dispose(); // optional since `Take(1)` disposes automatically
                     });
-            }
-        });
+                disposables.Add(motionSubscription);
+            })
+        );
+
+        return disposables;
+    }
 }
