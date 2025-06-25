@@ -125,7 +125,7 @@ public class DeskDesktopEntities(Entities entities) : IDesktopEntities
 
 public class BedroomFanEntities(CommonEntities common) : IBedroomFanEntities
 {
-    public SwitchEntity MasterSwitch => common.BedroomMotionSwitch;
+    public SwitchEntity MasterSwitch => common.BedroomFanSwitch;
     public BinarySensorEntity MotionSensor => common.BedroomMotionSensor;
     public IEnumerable<SwitchEntity> Fans => [common.BedroomFanSwitch];
 }
