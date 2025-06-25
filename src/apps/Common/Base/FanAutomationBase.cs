@@ -19,6 +19,7 @@ public abstract class FanAutomationBase : AutomationBase
     protected override IEnumerable<IDisposable> GetPersistentAutomations()
     {
         yield return GetFanManualOperationAutomations();
+        yield return GetMasterSwitchAutomations();
         yield return GetIdleOperationAutomations();
     }
 
@@ -91,4 +92,18 @@ public abstract class FanAutomationBase : AutomationBase
             .IsOffForMinutes(15)
             .Where(_ => MasterSwitch.IsOff())
             .Subscribe(_ => MasterSwitch?.TurnOn());
+
+    private IDisposable GetMasterSwitchAutomations() =>
+        MasterSwitch!
+            .StateChanges()
+            .IsOn()
+            .Subscribe(e =>
+            {
+                if (MotionSensor.IsOn())
+                {
+                    Fan.TurnOn();
+                    return;
+                }
+                Fan.TurnOff();
+            });
 }
