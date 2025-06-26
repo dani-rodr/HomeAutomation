@@ -29,6 +29,21 @@ public abstract class MediaPlayerBase(MediaPlayerEntity entity, ILogger logger)
         base.StartAutomation();
         Sources = SourceList?.ToDictionary(s => s, s => s) ?? [];
         ExtendedSources.ToList().ForEach(pair => Sources.Add(pair.Key, pair.Value));
+        Automations.Add(
+            Entity
+                .StateChanges()
+                .IsOn()
+                .Subscribe(_ =>
+                {
+                    if (string.IsNullOrEmpty(_queuedSourceKey))
+                    {
+                        Logger.LogInformation("MediaPlayer turned on, but no queued source.");
+                        return;
+                    }
+                    ShowSource(_queuedSourceKey);
+                    _queuedSourceKey = string.Empty;
+                })
+        );
     }
 
     public void SetVolume(double volumeLevel) => Entity.VolumeSet(volumeLevel);
@@ -57,16 +72,24 @@ public abstract class MediaPlayerBase(MediaPlayerEntity entity, ILogger logger)
 
         if (IsOff())
         {
+            Logger.LogInformation("MediaPlayer is off. Queuing source '{Key}'.", key);
             TurnOn();
             _queuedSourceKey = key;
             return;
         }
 
-        _queuedSourceKey = "";
+        _queuedSourceKey = string.Empty;
         if (source != CurrentSource)
         {
+            Logger.LogInformation("Switching source to '{Source}' (key: '{Key}').", source, key);
             Entity.SelectSource(source);
+            return;
         }
+        Logger.LogInformation(
+            "Source '{Source}' (key: '{Key}') is already active. No change.",
+            source,
+            key
+        );
     }
 
     public IObservable<string?> OnSourceChange() =>
