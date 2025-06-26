@@ -80,7 +80,7 @@ public class AirQualityAutomation(IAirQualityEntities entities, ILogger logger)
             _supportingFan.TurnOff();
             _isCleaningAir = false;
             _activateSupportingFan = false;
-            entities.LivingRoomSwitch.TurnOn();
+            entities.LivingRoomFanAutomation.TurnOn();
         }
     }
 
@@ -98,7 +98,7 @@ public class AirQualityAutomation(IAirQualityEntities entities, ILogger logger)
         _supportingFan.TurnOn();
         _isCleaningAir = true;
         _activateSupportingFan = false;
-        entities.LivingRoomSwitch.TurnOff();
+        entities.LivingRoomFanAutomation.TurnOff();
     }
 
     private IDisposable SubscribeToManualFanOperation() =>

@@ -92,7 +92,7 @@ public interface IDisplayEntities
     MediaPlayerEntity MediaPlayer { get; }
 }
 
-public interface ITclDisplayEntities : IDisplayEntities;
+public interface ITclDisplayEntities : IDisplayEntities, IMotionAutomationEntities;
 
 public interface ILgDisplayEntities : IDisplayEntities
 {
@@ -115,7 +115,7 @@ public interface IAirQualityEntities : IFanAutomationEntities
 {
     NumericSensorEntity Pm25Sensor { get; }
     SwitchEntity LedStatus { get; }
-    SwitchEntity LivingRoomSwitch { get; }
+    SwitchEntity LivingRoomFanAutomation { get; }
 }
 
 public interface IDesktopEntities

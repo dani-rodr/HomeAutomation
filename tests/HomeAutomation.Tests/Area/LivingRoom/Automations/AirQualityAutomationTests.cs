@@ -643,7 +643,7 @@ public class AirQualityAutomationTests : IDisposable
         public SwitchEntity LedStatus { get; } =
             new SwitchEntity(haContext, "switch.air_purifier_led");
 
-        public SwitchEntity LivingRoomSwitch { get; } =
+        public SwitchEntity LivingRoomFanAutomation { get; } =
             new SwitchEntity(haContext, "switch.sala_fan_automation");
         public IEnumerable<SwitchEntity> Fans =>
             [

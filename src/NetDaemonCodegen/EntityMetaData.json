@@ -7440,6 +7440,96 @@
           "jsonName": "com.grabtaxi.passenger_1641264680_post_time",
           "cSharpName": "Com_grabtaxi_passenger1641264680PostTime",
           "clrType": "System.Double"
+        },
+        {
+          "jsonName": "android.appInfo_com.android.providers.downloads_0",
+          "cSharpName": "Android_appInfoCom_android_providers_downloads0",
+          "clrType": "System.String"
+        },
+        {
+          "jsonName": "android.appInfo_com.android.providers.downloads_2147483647",
+          "cSharpName": "Android_appInfoCom_android_providers_downloads2147483647",
+          "clrType": "System.String"
+        },
+        {
+          "jsonName": "android.reduced.images_com.android.providers.downloads_0",
+          "cSharpName": "Android_reduced_imagesCom_android_providers_downloads0",
+          "clrType": "System.Boolean"
+        },
+        {
+          "jsonName": "android.reduced.images_com.android.providers.downloads_2147483647",
+          "cSharpName": "Android_reduced_imagesCom_android_providers_downloads2147483647",
+          "clrType": "System.Boolean"
+        },
+        {
+          "jsonName": "android.text_com.android.providers.downloads_0",
+          "cSharpName": "Android_textCom_android_providers_downloads0",
+          "clrType": "System.String"
+        },
+        {
+          "jsonName": "android.title_com.android.providers.downloads_0",
+          "cSharpName": "Android_titleCom_android_providers_downloads0",
+          "clrType": "System.String"
+        },
+        {
+          "jsonName": "com.android.providers.downloads_0_category",
+          "cSharpName": "Com_android_providers_downloads0Category",
+          "clrType": "System.String"
+        },
+        {
+          "jsonName": "com.android.providers.downloads_0_channel_id",
+          "cSharpName": "Com_android_providers_downloads0ChannelId",
+          "clrType": "System.String"
+        },
+        {
+          "jsonName": "com.android.providers.downloads_0_group_id",
+          "cSharpName": "Com_android_providers_downloads0GroupId",
+          "clrType": "System.String"
+        },
+        {
+          "jsonName": "com.android.providers.downloads_0_is_clearable",
+          "cSharpName": "Com_android_providers_downloads0IsClearable",
+          "clrType": "System.Boolean"
+        },
+        {
+          "jsonName": "com.android.providers.downloads_0_is_ongoing",
+          "cSharpName": "Com_android_providers_downloads0IsOngoing",
+          "clrType": "System.Boolean"
+        },
+        {
+          "jsonName": "com.android.providers.downloads_0_post_time",
+          "cSharpName": "Com_android_providers_downloads0PostTime",
+          "clrType": "System.Double"
+        },
+        {
+          "jsonName": "com.android.providers.downloads_2147483647_category",
+          "cSharpName": "Com_android_providers_downloads2147483647Category",
+          "clrType": "System.String"
+        },
+        {
+          "jsonName": "com.android.providers.downloads_2147483647_channel_id",
+          "cSharpName": "Com_android_providers_downloads2147483647ChannelId",
+          "clrType": "System.String"
+        },
+        {
+          "jsonName": "com.android.providers.downloads_2147483647_group_id",
+          "cSharpName": "Com_android_providers_downloads2147483647GroupId",
+          "clrType": "System.String"
+        },
+        {
+          "jsonName": "com.android.providers.downloads_2147483647_is_clearable",
+          "cSharpName": "Com_android_providers_downloads2147483647IsClearable",
+          "clrType": "System.Boolean"
+        },
+        {
+          "jsonName": "com.android.providers.downloads_2147483647_is_ongoing",
+          "cSharpName": "Com_android_providers_downloads2147483647IsOngoing",
+          "clrType": "System.Boolean"
+        },
+        {
+          "jsonName": "com.android.providers.downloads_2147483647_post_time",
+          "cSharpName": "Com_android_providers_downloads2147483647PostTime",
+          "clrType": "System.Double"
         }
       ]
     },
@@ -7952,6 +8042,11 @@
           "id": "switch.tp_link_integration",
           "friendlyName": "TP Link Integration",
           "cSharpName": "TpLinkIntegration"
+        },
+        {
+          "id": "switch.tv_automation",
+          "friendlyName": "TV Automation",
+          "cSharpName": "TvAutomation"
         },
         {
           "id": "switch.tv_backlight_3_lite_gradient_toggle",

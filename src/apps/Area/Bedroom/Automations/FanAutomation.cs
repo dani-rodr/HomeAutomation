@@ -18,6 +18,7 @@ public class FanAutomation(IBedroomFanEntities entities, ILogger logger)
     private IDisposable GetMasterSwitchOffAutomation() =>
         MasterSwitch!
             .StateChanges()
+            .IsAutomated()
             .IsOff()
             .Subscribe(_ =>
             {

@@ -18,8 +18,8 @@ public abstract class MediaPlayerBase(MediaPlayerEntity entity, ILogger logger)
     public string? AppName => Entity.Attributes?.AppName;
     public string? MediaContentType => Entity.Attributes?.MediaContentType;
     protected abstract Dictionary<string, string> ExtendedSources { get; }
-    protected MediaPlayerEntity Entity { get; } = entity;
-    protected ILogger Logger { get; } = logger;
+    protected MediaPlayerEntity Entity => entity;
+    protected ILogger Logger => logger;
     protected Dictionary<string, string> Sources { get; private set; } = [];
     protected override CompositeDisposable Automations => [ShowQueuedSource()];
     private string _queuedSourceKey = string.Empty;
