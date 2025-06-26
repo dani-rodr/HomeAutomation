@@ -87,6 +87,14 @@ public class ClimateAutomation(IClimateEntities entities, IScheduler scheduler, 
             .IsOffForHours(1)
             .Where(_ => MasterSwitch.IsOff())
             .Subscribe(_ => MasterSwitch?.TurnOn());
+        yield return _doorSensor
+            .StateChanges()
+            .IsClosed()
+            .Subscribe(e =>
+            {
+                ApplyTimeBasedAcSetting(e);
+                MasterSwitch?.TurnOn();
+            });
     }
 
     protected override IEnumerable<IDisposable> GetToggleableAutomations() =>
@@ -164,7 +172,6 @@ public class ClimateAutomation(IClimateEntities entities, IScheduler scheduler, 
 
     private IEnumerable<IDisposable> GetSensorBasedAutomations()
     {
-        yield return _doorSensor.StateChanges().IsClosed().Subscribe(ApplyTimeBasedAcSetting);
         yield return _doorSensor
             .StateChanges()
             .IsOnForMinutes(5)
