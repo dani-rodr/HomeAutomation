@@ -11,9 +11,9 @@ public class MotionAutomation(IPantryMotionEntities entities, ILogger logger)
     protected override IEnumerable<IDisposable> GetLightAutomations()
     {
         var mirrorLight = entities.MirrorLight;
-        yield return MotionSensor.StateChanges().IsOn().Subscribe(_ => Light.TurnOn());
+        yield return MotionSensor.StateChangesWithCurrent().IsOn().Subscribe(_ => Light.TurnOn());
         yield return MotionSensor
-            .StateChanges()
+            .StateChangesWithCurrent()
             .IsOff()
             .Subscribe(_ =>
             {

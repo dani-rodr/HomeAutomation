@@ -11,8 +11,8 @@ public class MotionAutomation(IKitchenMotionEntities entities, ILogger logger)
 
     protected override IEnumerable<IDisposable> GetLightAutomations() =>
         [
-            MotionSensor.StateChanges().IsOnForSeconds(5).Subscribe(_ => Light.TurnOn()),
-            MotionSensor.StateChanges().IsOff().Subscribe(_ => Light.TurnOff()),
+            MotionSensor.StateChangesWithCurrent().IsOnForSeconds(5).Subscribe(_ => Light.TurnOn()),
+            MotionSensor.StateChangesWithCurrent().IsOff().Subscribe(_ => Light.TurnOff()),
         ];
 
     protected override IEnumerable<IDisposable> GetAdditionalSwitchableAutomations() =>

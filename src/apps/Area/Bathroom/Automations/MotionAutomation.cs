@@ -16,11 +16,11 @@ public class MotionAutomation(
     protected override IEnumerable<IDisposable> GetLightAutomations()
     {
         yield return MotionSensor
-            .StateChanges()
+            .StateChangesWithCurrent()
             .IsOn()
             .Subscribe(e => dimmingController.OnMotionDetected(Light));
         yield return MotionSensor
-            .StateChanges()
+            .StateChangesWithCurrent()
             .IsOff()
             .Subscribe(async _ => await dimmingController.OnMotionStoppedAsync(Light));
     }
