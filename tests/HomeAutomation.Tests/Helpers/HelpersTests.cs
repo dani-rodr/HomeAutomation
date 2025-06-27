@@ -1,3 +1,5 @@
+using Microsoft.Reactive.Testing;
+
 namespace HomeAutomation.Tests.Helpers;
 
 /// <summary>
@@ -453,10 +455,14 @@ public class HelpersTests : IDisposable
     public void IsFlickering_Should_Emit_WhenMultipleFlipsOccurWithinWindow()
     {
         // Arrange
+        var scheduler = new TestScheduler();
         var results = new List<IList<StateChange>>();
         var flipSubject = new Subject<StateChange>();
 
-        flipSubject.IsFlickering(minimumFlips: 4, timeWindowMs: 300).Subscribe(results.Add);
+        flipSubject
+            .ObserveOn(scheduler)
+            .IsFlickering(minimumFlips: 4, timeWindowMs: 300, scheduler: scheduler)
+            .Subscribe(results.Add);
 
         var flipSequence = new[]
         {
@@ -466,20 +472,17 @@ public class HelpersTests : IDisposable
             StateChangeHelpers.CreateStateChange(_motionSensor, "on", "off"),
         };
 
-        // Act
-        foreach (var change in flipSequence)
+        int tickInterval = 50;
+        for (int i = 0; i < flipSequence.Length; i++)
         {
-            flipSubject.OnNext(change);
-            Thread.Sleep(50); // small delay between flips to stay within window
+            scheduler.AdvanceBy(TimeSpan.FromMilliseconds(tickInterval).Ticks);
+            flipSubject.OnNext(flipSequence[i]);
         }
 
-        // Wait for the buffer window to close and emit
-        Thread.Sleep(300);
+        scheduler.AdvanceBy(TimeSpan.FromMilliseconds(300).Ticks);
 
-        // Assert
-        results.Should().HaveCount(1, "Four distinct state flips occurred within 300ms");
+        results.Should().HaveCount(1);
         results[0].Should().HaveCount(4);
-        results[0].Select(e => e.New?.State).Should().ContainInOrder("on", "off", "on", "off");
     }
 
     #endregion

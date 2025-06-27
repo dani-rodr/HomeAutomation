@@ -557,12 +557,13 @@ public static class StateChangeObservableExtensions
     public static IObservable<IList<StateChange>> IsFlickering(
         this IObservable<StateChange> source,
         int minimumFlips = 4,
-        int timeWindowMs = 10000
+        int timeWindowMs = 10000,
+        IScheduler? scheduler = null
     ) =>
         source
             .Where(e => e.New?.State != null)
             .DistinctUntilChanged(e => e.New?.State)
-            .Buffer(TimeSpan.FromMilliseconds(timeWindowMs))
+            .Buffer(TimeSpan.FromMilliseconds(timeWindowMs), scheduler ?? Scheduler.Default)
             .Where(events => events.Count >= minimumFlips);
 
     /// <summary>
