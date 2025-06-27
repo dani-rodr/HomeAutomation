@@ -14,12 +14,15 @@ public class Laptop(
     protected override string ShowEvent { get; } = "show_laptop";
     protected override string HideEvent { get; } = "hide_laptop";
 
-    protected override CompositeDisposable Automations =>
-        [
-            GetSwitchToggleAutomations(),
-            batteryHandler.StartMonitoring(),
-            .. GetLogoffAutomations(scheduler),
-        ];
+    protected override IEnumerable<IDisposable> GetAutomations()
+    {
+        yield return GetSwitchToggleAutomations();
+        yield return batteryHandler.StartMonitoring();
+        foreach (var automation in GetLogoffAutomations(scheduler))
+        {
+            yield return automation;
+        }
+    }
 
     public override bool IsOn()
     {

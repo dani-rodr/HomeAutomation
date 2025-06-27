@@ -1,11 +1,6 @@
-using System.Reactive.Subjects;
 using System.Text.Json;
-using HomeAssistantGenerated;
 using HomeAutomation.apps.Area.Desk.Devices;
-using HomeAutomation.apps.Common.Base;
 using HomeAutomation.apps.Common.Containers;
-using HomeAutomation.apps.Common.Interface;
-using HomeAutomation.apps.Helpers;
 
 namespace HomeAutomation.Tests.Area.Desk.Devices;
 
@@ -224,6 +219,40 @@ public class LgDisplayTests : IDisposable
         result
             .Should()
             .BeFalse("IsShowingLaptop should return false when current source is not HDMI 3");
+    }
+
+    [Fact]
+    public void ShowPC_WhenDisplayOff_ShouldQueueSource_ThenSelectOnPowerOn()
+    {
+        // Arrange: Turn off the media player
+        _mockHaContext.SetEntityState(_entities.MediaPlayer.EntityId, "off");
+
+        // Act: Attempt to show PC (should queue the source instead of selecting it)
+        _lgDisplay.ShowPC();
+
+        // Assert: No media_player.select_source should be called yet
+        _mockHaContext
+            .ServiceCalls.Where(call => call.Service == "select_source")
+            .Should()
+            .BeEmpty("source should be queued, not applied while display is off");
+
+        // Act: Turn the display on (this should trigger queued source selection)
+        _mockHaContext.SetEntityState(_entities.MediaPlayer.EntityId, "on");
+
+        // Assert: Now the queued source should be selected
+        var selectSourceCall = _mockHaContext.ServiceCalls.FirstOrDefault(call =>
+            call.Service == "select_source"
+        );
+
+        selectSourceCall.Should().NotBeNull("queued source should be selected on power-on");
+
+        var selectedSource = selectSourceCall!
+            .Data?.GetType()
+            .GetProperty("source")
+            ?.GetValue(selectSourceCall.Data)
+            ?.ToString();
+
+        selectedSource.Should().Be("HDMI 1", "PC should map to HDMI 1");
     }
 
     #endregion

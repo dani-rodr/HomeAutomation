@@ -7,6 +7,4 @@ public class TclDisplay(ITclDisplayEntities entities, ILogger logger)
         ITclDisplay
 {
     protected override Dictionary<string, string> ExtendedSources => [];
-
-    protected override CompositeDisposable Automations => [];
 }

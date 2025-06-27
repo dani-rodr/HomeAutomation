@@ -21,7 +21,6 @@ public abstract class MediaPlayerBase(MediaPlayerEntity entity, ILogger logger)
     protected MediaPlayerEntity Entity => entity;
     protected ILogger Logger => logger;
     protected Dictionary<string, string> Sources { get; private set; } = [];
-    protected override CompositeDisposable Automations => [ShowQueuedSource()];
     private string _queuedSourceKey = string.Empty;
 
     public override void StartAutomation()
@@ -29,22 +28,9 @@ public abstract class MediaPlayerBase(MediaPlayerEntity entity, ILogger logger)
         base.StartAutomation();
         Sources = SourceList?.ToDictionary(s => s, s => s) ?? [];
         ExtendedSources.ToList().ForEach(pair => Sources.Add(pair.Key, pair.Value));
-        Automations.Add(
-            Entity
-                .StateChanges()
-                .IsOn()
-                .Subscribe(_ =>
-                {
-                    if (string.IsNullOrEmpty(_queuedSourceKey))
-                    {
-                        Logger.LogInformation("MediaPlayer turned on, but no queued source.");
-                        return;
-                    }
-                    ShowSource(_queuedSourceKey);
-                    _queuedSourceKey = string.Empty;
-                })
-        );
     }
+
+    protected override IEnumerable<IDisposable> GetAutomations() => [ShowQueuedSource()];
 
     public void SetVolume(double volumeLevel) => Entity.VolumeSet(volumeLevel);
 

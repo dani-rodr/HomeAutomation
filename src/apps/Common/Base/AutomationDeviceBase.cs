@@ -4,16 +4,18 @@ namespace HomeAutomation.apps.Common.Base;
 
 public abstract class AutomationDeviceBase : IAutomationDevice
 {
-    protected abstract CompositeDisposable Automations { get; }
+    protected abstract IEnumerable<IDisposable> GetAutomations();
+    private CompositeDisposable? _automations;
 
     public virtual void Dispose()
     {
-        Automations.Dispose();
+        _automations?.Dispose();
+        _automations = null;
         GC.SuppressFinalize(this);
     }
 
     public virtual void StartAutomation()
     {
-        _ = Automations; // This is the load the values in this container
+        _automations = [.. GetAutomations()];
     }
 }

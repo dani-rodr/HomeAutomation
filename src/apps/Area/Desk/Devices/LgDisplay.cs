@@ -22,8 +22,16 @@ public class LgDisplay(ILgDisplayEntities entities, IServices services, ILogger 
     public bool IsShowingPc => CurrentSource == Sources[DisplaySource.PC.ToString()];
     public bool IsShowingLaptop => CurrentSource == Sources[DisplaySource.Laptop.ToString()];
 
-    protected override CompositeDisposable Automations =>
-        [AdjustBrightnessFromInput(), ToggleScreenAutomation(), SyncScreenSwitchWithMediaState()];
+    protected override IEnumerable<IDisposable> GetAutomations()
+    {
+        foreach (var automation in base.GetAutomations())
+        {
+            yield return automation;
+        }
+        yield return AdjustBrightnessFromInput();
+        yield return ToggleScreenAutomation();
+        yield return SyncScreenSwitchWithMediaState();
+    }
 
     private async Task SetBrightnessAsync(int value)
     {
