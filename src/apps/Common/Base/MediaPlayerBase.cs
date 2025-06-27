@@ -93,8 +93,13 @@ public abstract class MediaPlayerBase(MediaPlayerEntity entity, ILogger logger)
             {
                 if (string.IsNullOrEmpty(_queuedSourceKey))
                 {
+                    Logger.LogDebug("MediaPlayer turned on, but no queued source to apply.");
                     return;
                 }
+                Logger.LogInformation(
+                    "MediaPlayer turned on. Applying queued source '{QueuedSource}'.",
+                    _queuedSourceKey
+                );
                 ShowSource(_queuedSourceKey);
                 _queuedSourceKey = string.Empty;
             });

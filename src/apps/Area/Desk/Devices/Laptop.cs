@@ -17,6 +17,7 @@ public class Laptop(
     protected override IEnumerable<IDisposable> GetAutomations()
     {
         yield return GetSwitchToggleAutomations();
+        yield return GetSessionLockSwitchAutomation();
         yield return batteryHandler.StartMonitoring();
         foreach (var automation in GetLogoffAutomations(scheduler))
         {
@@ -133,4 +134,14 @@ public class Laptop(
 
         return disposables;
     }
+
+    private IDisposable GetSessionLockSwitchAutomation() =>
+        entities
+            .Session.StateChanges()
+            .Where(e => e.Old?.State.IsUnlocked() == true && e.New?.State.IsLocked() == true)
+            .Subscribe(_ =>
+            {
+                Logger.LogInformation("Session locked. Automatically turning off laptop virtual switch.");
+                entities.VirtualSwitch.TurnOff();
+            });
 }
