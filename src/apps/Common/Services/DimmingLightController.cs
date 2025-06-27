@@ -1,6 +1,9 @@
+using System.Reactive.Disposables;
+using System.Reactive.Threading.Tasks;
+
 namespace HomeAutomation.apps.Common.Services;
 
-public class DimmingLightController(NumberEntity sensorDelay, ILogger logger)
+public class DimmingLightController(NumberEntity sensorDelay, IScheduler scheduler, ILogger logger)
     : IDimmingLightController
 {
     private CancellationTokenSource? _lightTurnOffCancellationToken;
@@ -63,7 +66,10 @@ public class DimmingLightController(NumberEntity sensorDelay, ILogger logger)
                 _dimDelaySeconds
             );
 
-            await Task.Delay(TimeSpan.FromSeconds(_dimDelaySeconds), token);
+            await Observable
+                .Timer(TimeSpan.FromSeconds(_dimDelaySeconds), scheduler)
+                .TakeUntil(token.AsObservable())
+                .ToTask(token);
             if (!token.IsCancellationRequested)
             {
                 logger.LogDebug(
@@ -129,5 +135,23 @@ public class DimmingLightController(NumberEntity sensorDelay, ILogger logger)
     {
         CancelPendingTurnOff();
         GC.SuppressFinalize(this);
+    }
+}
+
+public static class CancellationTokenExtensions
+{
+    public static IObservable<long> AsObservable(this CancellationToken token)
+    {
+        return Observable.Create<long>(observer =>
+        {
+            if (token.IsCancellationRequested)
+            {
+                observer.OnCompleted();
+                return Disposable.Empty;
+            }
+
+            var registration = token.Register(() => observer.OnCompleted());
+            return registration;
+        });
     }
 }

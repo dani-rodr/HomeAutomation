@@ -2,7 +2,7 @@ using System.Linq;
 
 namespace HomeAutomation.apps.Area.Bedroom.Automations;
 
-public class MotionAutomation(IBedroomMotionEntities entities, ILogger logger)
+public class MotionAutomation(IBedroomMotionEntities entities, IScheduler scheduler, ILogger logger)
     : MotionAutomationBase(entities, logger)
 {
     private readonly SwitchEntity _rightSideEmptySwitch = entities.RightSideEmptySwitch;
@@ -33,7 +33,7 @@ public class MotionAutomation(IBedroomMotionEntities entities, ILogger logger)
     {
         yield return _leftSideFanSwitch
             .StateChanges()
-            .OnDoubleClick(timeout: 2)
+            .OnDoubleClick(timeout: 2, scheduler)
             .Subscribe(e =>
             {
                 ToggleLightsViaSwitch(e.First());

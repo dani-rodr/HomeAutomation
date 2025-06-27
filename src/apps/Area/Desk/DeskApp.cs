@@ -12,12 +12,19 @@ public class DeskApp(
     IBatteryHandler laptopBatteryHandler,
     IDeskMotionEntities deskMotionEntities,
     ILgDisplay lgDisplay,
+    IScheduler scheduler,
     ILogger<DeskApp> logger
 ) : AppBase<DeskApp>()
 {
     protected override IEnumerable<IAutomation> CreateAutomations()
     {
-        Desktop desktop = new(desktopEntities, eventHandler, notificationServices, logger);
+        Desktop desktop = new(
+            desktopEntities,
+            eventHandler,
+            notificationServices,
+            scheduler,
+            logger
+        );
         Laptop laptop = new(
             laptopEntities,
             laptopScheduler,

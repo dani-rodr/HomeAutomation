@@ -547,7 +547,7 @@ public static class StateChangeObservableExtensions
     /// </summary>
     /// <param name="source">The source observable of state changes.</param>
     /// <param name="minimumFlips">The minimum number of state changes required to be considered flickering (default: 4).</param>
-    /// <param name="window">The time window in seconds to observe for flickering behavior (default: 10).</param>
+    /// <param name="timeWindowMs">The time window in seconds to observe for flickering behavior (default: 10).</param>
     /// <returns>An observable that emits a list of state changes when flickering is detected.</returns>
     /// <remarks>
     /// Flickering detection is useful for identifying malfunctioning sensors, unstable network connections,
@@ -557,12 +557,12 @@ public static class StateChangeObservableExtensions
     public static IObservable<IList<StateChange>> IsFlickering(
         this IObservable<StateChange> source,
         int minimumFlips = 4,
-        int window = 10
+        int timeWindowMs = 10000
     ) =>
         source
             .Where(e => e.New?.State != null)
             .DistinctUntilChanged(e => e.New?.State)
-            .Buffer(TimeSpan.FromSeconds(window))
+            .Buffer(TimeSpan.FromMilliseconds(timeWindowMs))
             .Where(events => events.Count >= minimumFlips);
 
     /// <summary>

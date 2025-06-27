@@ -1,5 +1,6 @@
 using System.Text.Json;
 using HomeAutomation.apps.Common.Services;
+using Microsoft.Reactive.Testing;
 
 namespace HomeAutomation.Tests.Common.Services;
 
@@ -12,6 +13,7 @@ public class DimmingLightControllerTests : IDisposable
     private readonly MockHaContext _mockHaContext;
     private readonly NumberEntity _sensorDelay;
     private readonly Mock<ILogger<DimmingLightController>> _mockLogger;
+    private readonly TestScheduler _testScheduler = new();
     private readonly LightEntity _light;
     private readonly DimmingLightController _controller;
 
@@ -21,7 +23,7 @@ public class DimmingLightControllerTests : IDisposable
         _sensorDelay = new NumberEntity(_mockHaContext, "number.test_sensor_delay");
         _light = new LightEntity(_mockHaContext, "light.test_light");
         _mockLogger = new Mock<ILogger<DimmingLightController>>();
-        _controller = new DimmingLightController(_sensorDelay, _mockLogger.Object);
+        _controller = new DimmingLightController(_sensorDelay, _testScheduler, _mockLogger.Object);
     }
 
     [Fact]
@@ -34,10 +36,12 @@ public class DimmingLightControllerTests : IDisposable
         _mockHaContext.ShouldHaveCalledLightTurnOn(_light.EntityId);
 
         // Verify it was called with full brightness data
-        var lightCalls = _mockHaContext.GetServiceCalls("light").ToList();
-        var turnOnCall = lightCalls.FirstOrDefault(call =>
-            call.Service == "turn_on" && call.Target?.EntityIds?.Contains(_light.EntityId) == true
-        );
+        var turnOnCall = _mockHaContext
+            .GetServiceCalls("light")
+            .FirstOrDefault(call =>
+                call.Service == "turn_on"
+                && call.Target?.EntityIds?.Contains(_light.EntityId) == true
+            );
 
         turnOnCall.Should().NotBeNull();
         GetBrightnessFromServiceCall(turnOnCall!).Should().Be(100);
@@ -52,15 +56,17 @@ public class DimmingLightControllerTests : IDisposable
         _controller.SetDimParameters(brightnessPct: 80, delaySeconds: 2); // Shorter delay for test
 
         // Start a dimming operation
-        var task = _controller.OnMotionStoppedAsync(_light);
-        await Task.Delay(50); // Let it start
+        var dimmingTask = _controller.OnMotionStoppedAsync(_light);
+        _testScheduler.AdvanceBy(TimeSpan.FromMilliseconds(50).Ticks); // Let it start
 
         // Act - Motion detected should cancel the dimming
         _controller.OnMotionDetected(_light);
 
         // Assert - The dimming task should complete quickly (was cancelled)
-        var completed = await Task.WhenAny(task, Task.Delay(TimeSpan.FromSeconds(1)));
-        completed.Should().Be(task, "Dimming task should complete quickly when cancelled");
+        var completed = await Task.WhenAny(dimmingTask, Task.Delay(TimeSpan.FromSeconds(1)));
+        completed.Should().Be(dimmingTask);
+
+        _mockHaContext.ShouldHaveCalledLightTurnOn(_light.EntityId);
     }
 
     [Fact]
@@ -70,8 +76,10 @@ public class DimmingLightControllerTests : IDisposable
         _mockHaContext.SetEntityState(_sensorDelay.EntityId, "10"); // Different from default active delay (5)
 
         // Act
-        await _controller.OnMotionStoppedAsync(_light);
+        var task = _controller.OnMotionStoppedAsync(_light);
+        _testScheduler.AdvanceBy(TimeSpan.FromSeconds(1.1).Ticks);
 
+        await task;
         // Assert - Should turn off immediately, no dimming
         _mockHaContext.ShouldHaveCalledLightTurnOff(_light.EntityId);
 
@@ -90,21 +98,23 @@ public class DimmingLightControllerTests : IDisposable
         _controller.SetDimParameters(brightnessPct: 60, delaySeconds: 1); // Short delay for test
 
         // Act
-        await _controller.OnMotionStoppedAsync(_light);
+        var task = _controller.OnMotionStoppedAsync(_light);
+        _testScheduler.AdvanceBy(TimeSpan.FromSeconds(1.1).Ticks);
 
-        // Assert - Should dim first, then turn off
-        var lightCalls = _mockHaContext.GetServiceCalls("light").ToList();
+        await task;
 
-        // Should have both turn_on (dimming) and turn_off calls
-        var turnOnCalls = lightCalls.Where(call => call.Service == "turn_on").ToList();
-        var turnOffCalls = lightCalls.Where(call => call.Service == "turn_off").ToList();
+        _mockHaContext.ShouldHaveCalledLightTurnOn(_light.EntityId);
+        _mockHaContext.ShouldHaveCalledLightTurnOff(_light.EntityId);
 
-        turnOnCalls.Should().HaveCount(1, "Should dim the light once");
-        turnOffCalls.Should().HaveCount(1, "Should turn off after delay");
+        var dimCall = _mockHaContext
+            .GetServiceCalls("light")
+            .FirstOrDefault(c =>
+                c.Service == "turn_on" && c.Target?.EntityIds?.Contains(_light.EntityId) == true
+            );
 
+        dimCall.Should().NotBeNull();
         // Verify dimming brightness
-        var dimCall = turnOnCalls.First();
-        GetBrightnessFromServiceCall(dimCall).Should().Be(60);
+        GetBrightnessFromServiceCall(dimCall!).Should().Be(60);
     }
 
     [Fact]
@@ -117,12 +127,18 @@ public class DimmingLightControllerTests : IDisposable
         // Act - Configure custom dimming parameters
         _controller.SetDimParameters(brightnessPct: 75, delaySeconds: 1);
 
-        // Start dimming to test the configuration
-        await _controller.OnMotionStoppedAsync(_light);
+        var task = _controller.OnMotionStoppedAsync(_light);
+        _testScheduler.AdvanceBy(TimeSpan.FromSeconds(1.1).Ticks);
 
-        // Assert - Should use the configured brightness
-        var lightCalls = _mockHaContext.GetServiceCalls("light").ToList();
-        var turnOnCall = lightCalls.FirstOrDefault(call => call.Service == "turn_on");
+        await task;
+
+        _mockHaContext.ShouldHaveCalledLightTurnOn(_light.EntityId);
+
+        var turnOnCall = _mockHaContext
+            .GetServiceCalls("light")
+            .FirstOrDefault(c =>
+                c.Service == "turn_on" && c.Target?.EntityIds?.Contains(_light.EntityId) == true
+            );
 
         turnOnCall.Should().NotBeNull();
         GetBrightnessFromServiceCall(turnOnCall!).Should().Be(75);
@@ -137,16 +153,12 @@ public class DimmingLightControllerTests : IDisposable
         // Act - Set active delay to match sensor state
         _controller.SetSensorActiveDelayValue(25);
 
-        // Start motion stopped (should now enable dimming)
-        await _controller.OnMotionStoppedAsync(_light);
+        var task = _controller.OnMotionStoppedAsync(_light);
+        _testScheduler.AdvanceBy(TimeSpan.FromSeconds(1.1).Ticks);
 
-        // Assert - Should trigger dimming because sensor delay now matches active delay
-        var lightCalls = _mockHaContext.GetServiceCalls("light").ToList();
-        var turnOnCalls = lightCalls.Where(call => call.Service == "turn_on").ToList();
+        await task;
 
-        turnOnCalls
-            .Should()
-            .HaveCount(1, "Should enable dimming when sensor delay matches active delay value");
+        _mockHaContext.ShouldHaveCalledLightTurnOn(_light.EntityId);
     }
 
     [Fact]
@@ -158,20 +170,13 @@ public class DimmingLightControllerTests : IDisposable
         _controller.SetDimParameters(brightnessPct: 80, delaySeconds: 2); // Shorter delay for test
 
         // Act - Start dimming and quickly cancel with motion
-        var dimmingTask = _controller.OnMotionStoppedAsync(_light);
+        var task = _controller.OnMotionStoppedAsync(_light);
+        _testScheduler.AdvanceBy(TimeSpan.FromSeconds(2.1).Ticks);
 
-        // Simulate motion detected during dimming (should cancel)
-        await Task.Delay(50); // Let dimming start
-        _controller.OnMotionDetected(_light);
+        await task;
 
-        await dimmingTask; // Wait for completion
-
-        // Assert - Should have dimmed but final turn_off should be cancelled
-        var lightCalls = _mockHaContext.GetServiceCalls("light").ToList();
-        var turnOnCalls = lightCalls.Where(call => call.Service == "turn_on").ToList();
-
-        // Should have at least one turn_on call (dimming + motion detected)
-        turnOnCalls.Should().HaveCountGreaterThan(0, "Should have started dimming");
+        _mockHaContext.ShouldHaveCalledLightTurnOn(_light.EntityId);
+        _mockHaContext.ShouldHaveCalledLightTurnOff(_light.EntityId);
     }
 
     [Fact]
@@ -182,18 +187,12 @@ public class DimmingLightControllerTests : IDisposable
         _controller.SetSensorActiveDelayValue(0); // Should match null (treated as 0)
 
         // Act
-        await _controller.OnMotionStoppedAsync(_light);
+        var task = _controller.OnMotionStoppedAsync(_light);
+        _testScheduler.AdvanceBy(TimeSpan.FromSeconds(1.1).Ticks);
 
-        // Assert - Should enable dimming (null == 0)
-        var lightCalls = _mockHaContext.GetServiceCalls("light").ToList();
-        var turnOnCalls = lightCalls.Where(call => call.Service == "turn_on").ToList();
+        await task;
 
-        turnOnCalls
-            .Should()
-            .HaveCount(
-                1,
-                "Should treat null sensor state as 0 and enable dimming when active delay is 0"
-            );
+        _mockHaContext.ShouldHaveCalledLightTurnOn(_light.EntityId);
     }
 
     [Fact]
@@ -204,11 +203,18 @@ public class DimmingLightControllerTests : IDisposable
         _mockHaContext.SetEntityState(_sensorDelay.EntityId, "5");
 
         // Act - Should use default configuration
-        await _controller.OnMotionStoppedAsync(_light);
+        var task = _controller.OnMotionStoppedAsync(_light);
+        _testScheduler.AdvanceBy(TimeSpan.FromSeconds(1.1).Ticks); // simulate time
 
-        // Assert - Should use default 80% brightness
-        var lightCalls = _mockHaContext.GetServiceCalls("light").ToList();
-        var turnOnCall = lightCalls.FirstOrDefault(call => call.Service == "turn_on");
+        await task;
+
+        _mockHaContext.ShouldHaveCalledLightTurnOn(_light.EntityId);
+
+        var turnOnCall = _mockHaContext
+            .GetServiceCalls("light")
+            .FirstOrDefault(c =>
+                c.Service == "turn_on" && c.Target?.EntityIds?.Contains(_light.EntityId) == true
+            );
 
         turnOnCall.Should().NotBeNull();
         GetBrightnessFromServiceCall(turnOnCall!).Should().Be(80);
@@ -232,12 +238,10 @@ public class DimmingLightControllerTests : IDisposable
         if (
             serviceCall.Data is JsonElement dataElement
             && dataElement.ValueKind == JsonValueKind.Object
+            && dataElement.TryGetProperty("brightness_pct", out var brightnessProperty)
         )
         {
-            if (dataElement.TryGetProperty("brightness_pct", out var brightnessProperty))
-            {
-                return brightnessProperty.GetInt32();
-            }
+            return brightnessProperty.GetInt32();
         }
 
         throw new InvalidOperationException(

@@ -1,5 +1,6 @@
 using HomeAutomation.apps.Area.Bedroom.Automations;
 using HomeAutomation.apps.Common.Containers;
+using Microsoft.Reactive.Testing;
 
 namespace HomeAutomation.Tests.Area.Bedroom.Automations;
 
@@ -12,6 +13,7 @@ public class MotionAutomationTests : IDisposable
 {
     private readonly MockHaContext _mockHaContext;
     private readonly Mock<ILogger<MotionAutomation>> _mockLogger;
+    private readonly TestScheduler _testScheduler = new();
     private readonly TestEntities _entities;
     private readonly MotionAutomation _automation;
 
@@ -23,7 +25,7 @@ public class MotionAutomationTests : IDisposable
         // Create test entities wrapper
         _entities = new TestEntities(_mockHaContext);
 
-        _automation = new MotionAutomation(_entities, _mockLogger.Object);
+        _automation = new MotionAutomation(_entities, _testScheduler, _mockLogger.Object);
 
         // Start the automation to set up subscriptions
         _automation.StartAutomation();
@@ -227,7 +229,7 @@ public class MotionAutomationTests : IDisposable
         _mockHaContext.StateChangeSubject.OnNext(firstClick);
 
         // Wait longer than the 2-second timeout
-        Thread.Sleep(2500);
+        _testScheduler.AdvanceBy(TimeSpan.FromSeconds(3).Ticks);
 
         var secondClick = StateChangeHelpers.CreateSwitchStateChange(
             _entities.LeftSideFanSwitch,

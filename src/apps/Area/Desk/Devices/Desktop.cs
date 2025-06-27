@@ -4,6 +4,7 @@ public class Desktop(
     IDesktopEntities entities,
     IEventHandler eventHandler,
     INotificationServices notificationServices,
+    IScheduler scheduler,
     ILogger logger
 ) : ComputerBase(eventHandler, logger)
 {
@@ -14,7 +15,23 @@ public class Desktop(
 
     public override bool IsOn() => power.IsOn();
 
-    public override IObservable<bool> StateChanges() => power.StateChanges().Select(s => s.IsOn());
+    public override IObservable<bool> StateChanges() =>
+        power
+            .StateChanges()
+            .Select(s => s.IsOn())
+            .DistinctUntilChanged()
+            .Select(isOn =>
+            {
+                if (!isOn)
+                {
+                    return Observable.Return(false).Delay(TimeSpan.FromSeconds(1), scheduler);
+                }
+                else
+                {
+                    return Observable.Return(true);
+                }
+            })
+            .Switch();
 
     protected override IEnumerable<IDisposable> GetAutomations() => [LaunchMoonlightApp()];
 

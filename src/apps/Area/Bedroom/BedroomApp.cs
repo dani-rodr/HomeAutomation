@@ -12,7 +12,7 @@ public class BedroomApp(
 {
     protected override IEnumerable<IAutomation> CreateAutomations()
     {
-        yield return new MotionAutomation(motionEntities, logger);
+        yield return new MotionAutomation(motionEntities, scheduler, logger);
         yield return new FanAutomation(fanEntities, logger);
         yield return new ClimateAutomation(climateEntities, scheduler, logger);
     }

@@ -292,12 +292,14 @@ public static class SwitchEntityExtensions
         IList<StateChange<SwitchEntity, EntityState<SwitchAttributes>>>
     > OnDoubleClick(
         this IObservable<StateChange<SwitchEntity, EntityState<SwitchAttributes>>> source,
-        int timeout
+        int timeout,
+        IScheduler? scheduler = null
     )
     {
         const int maxBufferSize = 2;
+
         return source
-            .Timestamp() // adds timestamp to each state change
+            .Timestamp(scheduler ?? Scheduler.Default) // inject scheduler here
             .Buffer(maxBufferSize, 1) // sliding window of 2 consecutive changes
             .Where(pair =>
                 pair.Count == maxBufferSize
