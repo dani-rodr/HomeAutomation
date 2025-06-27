@@ -155,8 +155,8 @@ public class MotionAutomationTests : IDisposable
         );
         _mockHaContext.StateChangeSubject.OnNext(stateChange);
 
-        // Wait a moment to ensure no double-click is detected
-        Thread.Sleep(100);
+        // Wait a moment to ensure no double-click is detected\
+        _testScheduler.AdvanceBy(TimeSpan.FromMilliseconds(100).Ticks);
 
         // Assert - Should not perform any actions (single click doesn't trigger double-click logic)
         _mockHaContext.ShouldHaveNoServiceCalls();
@@ -419,7 +419,7 @@ public class MotionAutomationTests : IDisposable
                 userId: null
             );
             _mockHaContext.StateChangeSubject.OnNext(stateChange);
-            Thread.Sleep(50); // Brief delay between presses
+            _testScheduler.AdvanceBy(TimeSpan.FromMilliseconds(50).Ticks); // Brief delay between presses
         }
 
         // Assert - Should handle each press independently

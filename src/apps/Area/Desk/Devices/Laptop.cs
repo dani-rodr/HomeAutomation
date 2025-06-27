@@ -1,5 +1,4 @@
 using System.Linq;
-using System.Reactive.Disposables;
 
 namespace HomeAutomation.apps.Area.Desk.Devices;
 

@@ -1,5 +1,6 @@
 using HomeAutomation.apps.Common.Containers;
 using HomeAutomation.apps.Common.Services;
+using Microsoft.Reactive.Testing;
 
 namespace HomeAutomation.Tests.Common.Services;
 
@@ -13,6 +14,7 @@ public class LaptopBatteryHandlerTests : IDisposable
     private readonly MockHaContext _mockHaContext;
     private readonly Mock<ILogger<LaptopBatteryHandler>> _mockLogger;
     private readonly TestBatteryHandlerEntities _entities;
+    private readonly TestScheduler _testScheduler = new();
     private readonly LaptopBatteryHandler _batteryHandler;
 
     public LaptopBatteryHandlerTests()
@@ -20,7 +22,7 @@ public class LaptopBatteryHandlerTests : IDisposable
         _mockHaContext = new MockHaContext();
         _mockLogger = new Mock<ILogger<LaptopBatteryHandler>>();
         _entities = new TestBatteryHandlerEntities(_mockHaContext);
-        _batteryHandler = new LaptopBatteryHandler(_entities);
+        _batteryHandler = new LaptopBatteryHandler(_entities, _testScheduler);
     }
 
     #region Constructor & Initialization Tests
@@ -173,57 +175,46 @@ public class LaptopBatteryHandlerTests : IDisposable
     }
 
     [Fact]
-    public async Task HandleLaptopTurnedOffAsync_LowBattery_Should_ChargeForOneHour()
+    public void HandleLaptopTurnedOffAsync_LowBattery_Should_ChargeForOneHour()
     {
-        // Arrange - Low battery level (≤50%)
-        _mockHaContext.SetEntityState(_entities.Level.EntityId, "30");
+        // Arrange
+        _mockHaContext.SetEntityState(_entities.Level.EntityId, "30"); // Low battery (≤50%)
 
-        // Act - Start async operation but don't wait for completion
-        var turnOffTask = _batteryHandler.HandleLaptopTurnedOffAsync();
+        var task = _batteryHandler.HandleLaptopTurnedOffAsync();
 
-        // Give the task time to start and turn on power
-        await Task.Delay(100);
-
-        // Assert - Should turn on power initially
+        // Initially should have turned on the power
         _mockHaContext.ShouldHaveCalledSwitchTurnOn(_entities.Power.EntityId);
 
-        // Cancel the operation to prevent actual 1-hour wait
-        _batteryHandler.Dispose();
+        // Advance scheduler by 1 hour
+        _testScheduler.AdvanceBy(TimeSpan.FromHours(1).Ticks);
 
-        try
-        {
-            await turnOffTask;
-        }
-        catch (ObjectDisposedException)
-        {
-            // Expected when disposing during operation
-        }
+        // Act & Assert
+        task.IsCompleted.Should().BeTrue("operation should complete after 1 hour");
     }
 
     [Fact]
     public async Task HandleLaptopTurnedOffAsync_Cancelled_Should_StopCharging()
     {
-        // Arrange - Low battery to trigger charging sequence
+        // Arrange – battery low enough to trigger charging
         _mockHaContext.SetEntityState(_entities.Level.EntityId, "25");
 
-        // Act - Start turn off operation
+        // Act – start async charging operation
         var turnOffTask = _batteryHandler.HandleLaptopTurnedOffAsync();
 
-        // Let it start charging
-        await Task.Delay(100);
-
-        // Simulate laptop turning back on (should cancel the turn off operation)
-        _batteryHandler.HandleLaptopTurnedOn();
-
-        // Wait for cancellation to complete
-        await Task.Delay(100);
-
-        // Assert - Should have turned on power initially, then handled cancellation
+        // Assert power was turned on
         _mockHaContext.ShouldHaveCalledSwitchTurnOn(_entities.Power.EntityId);
 
-        // The task should complete without turning off power after 1 hour
-        var completed = turnOffTask.IsCompleted || turnOffTask.IsCanceled;
-        completed.Should().BeTrue("Operation should be cancelled when laptop turns back on");
+        // Simulate laptop turning back on (cancels charging)
+        _batteryHandler.HandleLaptopTurnedOn();
+
+        // Advance scheduler to allow cancellation to process
+        _testScheduler.AdvanceBy(TimeSpan.FromSeconds(1).Ticks);
+
+        // Await task completion and ensure no exceptions are thrown
+        await turnOffTask;
+
+        // Assert – task completed after cancellation
+        turnOffTask.IsCompleted.Should().BeTrue("Charging task should complete when cancelled");
     }
 
     [Fact]
@@ -232,18 +223,19 @@ public class LaptopBatteryHandlerTests : IDisposable
         // Arrange
         _mockHaContext.SetEntityState(_entities.Level.EntityId, "40");
 
-        // Act - Start first operation
+        // Act – Start first operation
         var firstTask = _batteryHandler.HandleLaptopTurnedOffAsync();
-        await Task.Delay(50);
+        _testScheduler.AdvanceBy(TimeSpan.FromMilliseconds(10).Ticks); // Let it start
 
-        // Start second operation (should cancel first)
+        // Start second operation (should cancel the first one)
         var secondTask = _batteryHandler.HandleLaptopTurnedOffAsync();
-        await Task.Delay(50);
+        _testScheduler.AdvanceBy(TimeSpan.FromMilliseconds(10).Ticks); // Let second start
 
-        // Cancel both for cleanup
+        // Cleanup: cancel both
         _batteryHandler.Dispose();
+        _testScheduler.AdvanceBy(TimeSpan.FromMilliseconds(10).Ticks); // Allow cancel to propagate
 
-        // Assert - Both operations should handle cancellation gracefully
+        // Assert – Both tasks should complete without error
         try
         {
             await firstTask;
@@ -254,12 +246,12 @@ public class LaptopBatteryHandlerTests : IDisposable
             // Expected during disposal
         }
 
-        // Should have attempted to turn on power for both operations
+        // Assert – Power was turned on at least once
         _mockHaContext
             .GetServiceCalls("switch")
             .Count(call => call.Service == "turn_on")
             .Should()
-            .BeGreaterThanOrEqualTo(1);
+            .BeGreaterThanOrEqualTo(1, "power should be turned on during at least one operation");
     }
 
     #endregion
@@ -350,27 +342,32 @@ public class LaptopBatteryHandlerTests : IDisposable
     [Fact]
     public async Task Dispose_DuringAsyncOperation_Should_CancelOperation()
     {
-        // Arrange - Low battery to trigger async charging
+        // Arrange – Trigger low battery charging logic
         _mockHaContext.SetEntityState(_entities.Level.EntityId, "25");
 
-        // Act - Start async operation
+        // Act – Start the async operation
         var task = _batteryHandler.HandleLaptopTurnedOffAsync();
-        await Task.Delay(50); // Let it start
 
-        // Dispose during operation
+        // Simulate time for the task to start
+        _testScheduler.AdvanceBy(TimeSpan.FromMilliseconds(10).Ticks);
+
+        // Dispose during the operation
         _batteryHandler.Dispose();
 
-        // Assert - Task should complete without throwing
+        // Advance time to allow cancellation to propagate
+        _testScheduler.AdvanceBy(TimeSpan.FromMilliseconds(10).Ticks);
+
+        // Assert – The task should complete without hanging
         try
         {
             await task;
         }
         catch (ObjectDisposedException)
         {
-            // Expected behavior
+            // Expected when disposing during operation
         }
 
-        Assert.True(task.IsCompleted, "Async operation should complete after disposal");
+        task.IsCompleted.Should().BeTrue("Async operation should complete after disposal");
     }
 
     #endregion

@@ -1,6 +1,9 @@
+using System.Reactive.Threading.Tasks;
+
 namespace HomeAutomation.apps.Common.Services;
 
-public class LaptopBatteryHandler(IBatteryHandlerEntities entities) : IBatteryHandler
+public class LaptopBatteryHandler(IBatteryHandlerEntities entities, IScheduler scheduler)
+    : IBatteryHandler
 {
     private const int HIGH_BATTERY = 80;
     private const int MEDIUM_BATTERY = 50;
@@ -35,7 +38,11 @@ public class LaptopBatteryHandler(IBatteryHandlerEntities entities) : IBatteryHa
         _power.TurnOn();
         try
         {
-            await Task.Delay(TimeSpan.FromHours(1), _shutdownCts.Token);
+            var token = _shutdownCts.Token;
+            await Observable
+                .Timer(TimeSpan.FromHours(1), scheduler)
+                .TakeUntil(token.AsObservable())
+                .ToTask(token);
         }
         catch (TaskCanceledException)
         {

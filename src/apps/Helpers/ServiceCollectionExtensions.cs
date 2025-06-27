@@ -50,7 +50,10 @@ public static class ServiceCollectionExtensions
             .AddTransientEntity<ILaptopEntities, LaptopEntities>()
             .AddTransientEntity<ILaptopSchedulerEntities, LaptopSchedulerEntities>()
             .AddTransientEntity<IBatteryHandlerEntities, LaptopBatteryHandlerEntities>()
-            .AddTransientEntity<IBatteryHandler, LaptopBatteryHandler>()
+            .AddTransient<IBatteryHandler>(p => new LaptopBatteryHandler(
+                p.GetRequiredService<IBatteryHandlerEntities>(),
+                p.GetRequiredService<IScheduler>()
+            ))
             .AddTransient<ILaptopScheduler>(p => new LaptopScheduler(
                 p.GetRequiredService<ILaptopSchedulerEntities>(),
                 p.GetRequiredService<IScheduler>()
