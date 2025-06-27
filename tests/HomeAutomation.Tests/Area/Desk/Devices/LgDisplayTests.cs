@@ -53,7 +53,7 @@ public class LgDisplayTests : IDisposable
         var serviceCall = _mockHaContext.ServiceCalls.Last();
         serviceCall
             .Data?.GetType()
-            .GetProperty("source")
+            .GetProperty("Source")
             ?.GetValue(serviceCall.Data)
             ?.ToString()
             .Should()
@@ -95,7 +95,7 @@ public class LgDisplayTests : IDisposable
         var serviceCall = _mockHaContext.ServiceCalls.Last();
         serviceCall
             .Data?.GetType()
-            .GetProperty("source")
+            .GetProperty("Source")
             ?.GetValue(serviceCall.Data)
             ?.ToString()
             .Should()
@@ -125,7 +125,7 @@ public class LgDisplayTests : IDisposable
         var serviceCall = _mockHaContext.ServiceCalls.Last();
         serviceCall
             .Data?.GetType()
-            .GetProperty("source")
+            .GetProperty("Source")
             ?.GetValue(serviceCall.Data)
             ?.ToString()
             .Should()
@@ -142,7 +142,7 @@ public class LgDisplayTests : IDisposable
         var serviceCall = _mockHaContext.ServiceCalls.Last();
         serviceCall
             .Data?.GetType()
-            .GetProperty("source")
+            .GetProperty("Source")
             ?.GetValue(serviceCall.Data)
             ?.ToString()
             .Should()
@@ -237,7 +237,7 @@ public class LgDisplayTests : IDisposable
             .BeEmpty("source should be queued, not applied while display is off");
 
         // Act: Turn the display on (this should trigger queued source selection)
-        _mockHaContext.SetEntityState(_entities.MediaPlayer.EntityId, "on");
+        _mockHaContext.SimulateStateChange(_entities.MediaPlayer.EntityId, "off", "on");
 
         // Assert: Now the queued source should be selected
         var selectSourceCall = _mockHaContext.ServiceCalls.FirstOrDefault(call =>
@@ -248,7 +248,7 @@ public class LgDisplayTests : IDisposable
 
         var selectedSource = selectSourceCall!
             .Data?.GetType()
-            .GetProperty("source")
+            .GetProperty("Source")
             ?.GetValue(selectSourceCall.Data)
             ?.ToString();
 
