@@ -138,6 +138,7 @@ public class BedroomClimateEntities(Entities entities, CommonEntities common) : 
     public BinarySensorEntity HouseMotionSensor => common.MotionSensors.House;
     public ButtonEntity AcFanModeToggle => entities.Button.AcFanModeToggle;
     public WeatherEntity Weather => entities.Weather.Home;
+    public SwitchEntity Fan => common.Fans.Bedroom;
 }
 
 public class DeskDesktopEntities(Entities entities) : IDesktopEntities

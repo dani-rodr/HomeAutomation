@@ -811,7 +811,7 @@ public class ClimateAutomationTests : IDisposable
         public BinarySensorEntity Door { get; } =
             new BinarySensorEntity(haContext, "binary_sensor.bedroom_door");
         public SwitchEntity FanAutomation { get; } =
-            new SwitchEntity(haContext, "switch.bedroom_fan");
+            new SwitchEntity(haContext, "switch.bedroom_fan_automation");
         public InputBooleanEntity PowerSavingMode { get; } =
             new InputBooleanEntity(haContext, "input_boolean.power_saving_mode");
         public BinarySensorEntity HouseMotionSensor { get; } =
@@ -823,5 +823,7 @@ public class ClimateAutomationTests : IDisposable
         public SensorEntity SunMidnight { get; } =
             new SensorEntity(haContext, "sensor.sun_midnight");
         public WeatherEntity Weather { get; } = new WeatherEntity(haContext, "weather.home");
+
+        public SwitchEntity Fan { get; } = new SwitchEntity(haContext, "switch.bedroom_fan");
     }
 }

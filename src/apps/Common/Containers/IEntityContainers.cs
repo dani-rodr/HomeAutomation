@@ -75,6 +75,7 @@ public interface IClimateEntities : IWeatherSensor, IMotionBase
     InputBooleanEntity PowerSavingMode { get; }
     BinarySensorEntity HouseMotionSensor { get; }
     ButtonEntity AcFanModeToggle { get; }
+    SwitchEntity Fan { get; }
 }
 
 public interface ILaptopEntities

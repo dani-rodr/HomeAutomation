@@ -11,6 +11,7 @@ public class ClimateAutomation(IClimateEntities entities, IScheduler scheduler, 
     private readonly BinarySensorEntity _motionSensor = entities.MotionSensor;
     private readonly BinarySensorEntity _doorSensor = entities.Door;
     private readonly SwitchEntity _fanAutomation = entities.FanAutomation;
+    private readonly SwitchEntity _fan = entities.Fan;
     private readonly InputBooleanEntity _isPowerSavingMode = entities.PowerSavingMode;
     private Dictionary<TimeBlock, AcScheduleSetting>? _cachedAcSettings;
 
@@ -338,7 +339,7 @@ public class ClimateAutomation(IClimateEntities entities, IScheduler scheduler, 
         bool isDoorOpen = _doorSensor.IsOpen();
         bool isPowerSaving = _isPowerSavingMode.IsOn();
         var weather = entities.Weather;
-        bool isColdWeather = !weather.IsSunny();
+        bool isColdWeather = weather != null && !weather.IsSunny();
 
         Logger.LogDebug(
             "Temperature decision inputs: Occupied={Occupied}, DoorOpen={DoorOpen}, PowerSaving={PowerSaving}, Weather={WeatherCondition}, IsCold={IsColdWeather}",
@@ -382,11 +383,17 @@ public class ClimateAutomation(IClimateEntities entities, IScheduler scheduler, 
     private void ConditionallyActivateFan(bool activateFan, int targetTemp)
     {
         var isHot = _ac.Attributes?.CurrentTemperature >= targetTemp;
-        if (activateFan && isHot)
+        if (activateFan)
         {
+            if (isHot)
+            {
+                _fan.TurnOn();
+            }
             _fanAutomation.TurnOn();
             return;
         }
+
+        _fan.TurnOff();
         _fanAutomation.TurnOff();
     }
 }
