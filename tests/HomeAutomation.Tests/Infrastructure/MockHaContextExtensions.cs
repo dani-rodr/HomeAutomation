@@ -447,6 +447,7 @@ public static class MockHaContextExtensions
         {
             double? actualTemp = null;
 
+            // Handle both dictionary format and ClimateSetTemperatureParameters
             if (
                 setTempCall?.Data is IDictionary<string, object> dict
                 && dict.TryGetValue("temperature", out var tempVal)
@@ -454,6 +455,15 @@ public static class MockHaContextExtensions
             )
             {
                 actualTemp = d;
+            }
+            else if (setTempCall?.Data?.GetType().Name == "ClimateSetTemperatureParameters")
+            {
+                // Use reflection to get Temperature property from ClimateSetTemperatureParameters
+                var tempProp = setTempCall.Data.GetType().GetProperty("Temperature");
+                if (tempProp?.GetValue(setTempCall.Data) is double temp)
+                {
+                    actualTemp = temp;
+                }
             }
 
             actualTemp
@@ -489,6 +499,7 @@ public static class MockHaContextExtensions
         {
             string? actualMode = null;
 
+            // Handle both dictionary format and ClimateSetHvacModeParameters
             if (
                 setModeCall?.Data is IDictionary<string, object> dict
                 && dict.TryGetValue("hvac_mode", out var modeVal)
@@ -496,6 +507,15 @@ public static class MockHaContextExtensions
             )
             {
                 actualMode = s;
+            }
+            else if (setModeCall?.Data?.GetType().Name == "ClimateSetHvacModeParameters")
+            {
+                // Use reflection to get HvacMode property from ClimateSetHvacModeParameters
+                var modeProp = setModeCall.Data.GetType().GetProperty("HvacMode");
+                if (modeProp?.GetValue(setModeCall.Data) is string mode)
+                {
+                    actualMode = mode;
+                }
             }
 
             actualMode

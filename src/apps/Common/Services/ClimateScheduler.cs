@@ -49,23 +49,25 @@ public class ClimateScheduler : IClimateScheduler
         [NotNullWhen(true)] out AcScheduleSetting? setting
     )
     {
-        if (_cachedAcSettings != null)
-        {
-            return _cachedAcSettings.TryGetValue(timeBlock, out setting);
-        }
-
-        setting = null;
-        return false;
+        // Lazily initialize cache if needed
+        var settings = GetCurrentAcScheduleSettings();
+        return settings.TryGetValue(timeBlock, out setting);
     }
 
     public TimeBlock? FindCurrentTimeBlock()
     {
-        var currentHour = DateTime.Now.Hour;
+        var currentHour = _scheduler.Now.Hour;
         _logger.LogDebug("Finding time block for current hour: {CurrentHour}", currentHour);
 
         foreach (var kv in GetCurrentAcScheduleSettings())
         {
-            if (TimeRange.IsCurrentTimeInBetween(kv.Value.HourStart, kv.Value.HourEnd))
+            if (
+                TimeRange.IsTimeInBetween(
+                    _scheduler.Now.TimeOfDay,
+                    kv.Value.HourStart,
+                    kv.Value.HourEnd
+                )
+            )
             {
                 _logger.LogDebug(
                     "Found matching time block: {TimeBlock} (range: {StartHour}-{EndHour})",

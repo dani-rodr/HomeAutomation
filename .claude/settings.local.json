@@ -24,7 +24,8 @@
       "Bash(pwsh:*)",
       "Bash(dotnet.exe tool list:*)",
       "Bash(dotnet.exe tool run reportgenerator:*)",
-      "Bash(sed:*)"
+      "Bash(sed:*)",
+      "Bash(dotnet.exe script:*)"
     ],
     "deny": []
   }

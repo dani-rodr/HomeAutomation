@@ -1374,12 +1374,12 @@ public class HelpersTests : IDisposable
     [InlineData(9, 17, 8, 30, false)] // 8:30 AM not between 9 AM and 5 PM
     [InlineData(9, 17, 18, 0, false)] // 6:00 PM not between 9 AM and 5 PM
     [InlineData(9, 17, 9, 0, true)] // 9:00 AM (boundary)
-    [InlineData(9, 17, 17, 0, true)] // 5:00 PM (boundary)
+    [InlineData(9, 17, 17, 0, false)] // 5:00 PM (exclusive end boundary)
     [InlineData(22, 6, 23, 30, true)] // 11:30 PM between 10 PM and 6 AM (overnight)
     [InlineData(22, 6, 3, 0, true)] // 3:00 AM between 10 PM and 6 AM (overnight)
     [InlineData(22, 6, 12, 0, false)] // 12:00 PM not between 10 PM and 6 AM (overnight)
-    [InlineData(22, 6, 22, 0, true)] // 10:00 PM (boundary, overnight)
-    [InlineData(22, 6, 6, 0, true)] // 6:00 AM (boundary, overnight)
+    [InlineData(22, 6, 22, 0, true)] // 10:00 PM (inclusive start boundary, overnight)
+    [InlineData(22, 6, 6, 0, false)] // 6:00 AM (exclusive end boundary, overnight)
     public void TimeRange_IsTimeInBetween_Should_HandleTimeRangesCorrectly(
         int start,
         int end,

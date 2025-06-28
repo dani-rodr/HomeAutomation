@@ -36,16 +36,14 @@ public static class TimeRange
     /// <param name="end">The end hour (0-23).</param>
     /// <returns>True if the time is within the range, otherwise false.</returns>
     /// <remarks>
-    /// For same-day ranges (start ≤ end): time must be between start and end inclusive.
-    /// For overnight ranges (start > end): time must be after start OR before end.
+    /// For same-day ranges (start ≤ end): time must be between start (inclusive) and end (exclusive).
+    /// For overnight ranges (start > end): time must be after start (inclusive) OR before end (exclusive).
     /// </remarks>
     public static bool IsTimeInBetween(TimeSpan now, int start, int end)
     {
         var startTime = TimeSpan.FromHours(start);
         var endTime = TimeSpan.FromHours(end);
-        return start <= end
-            ? now >= startTime && now <= endTime
-            : now >= startTime || now <= endTime;
+        return start <= end ? now >= startTime && now < endTime : now >= startTime || now < endTime;
     }
 }
 
