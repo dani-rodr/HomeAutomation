@@ -6,16 +6,20 @@ namespace HomeAutomation.apps.Common.Services;
 
 public class ClimateScheduler : IClimateScheduler
 {
-    private readonly IClimateWeatherEntities _entities;
+    private readonly IClimateSchedulerEntities _entities;
     private readonly IScheduler _scheduler;
     private readonly ILogger _logger;
 
-    public ClimateScheduler(IClimateWeatherEntities entities, IScheduler scheduler, ILogger logger)
+    public ClimateScheduler(
+        IClimateSchedulerEntities entities,
+        IScheduler scheduler,
+        ILogger logger
+    )
     {
         _entities = entities;
         _scheduler = scheduler;
         _logger = logger;
-        AcScheduleSetting.Initialize(entities.Weather, logger);
+        AcScheduleSetting.Initialize(entities.Weather, entities.PowerSavingMode, logger);
 
         LogCurrentAcScheduleSettings();
     }
@@ -157,66 +161,5 @@ public class ClimateScheduler : IClimateScheduler
                 setting.HourEnd
             );
         }
-    }
-}
-
-public enum TimeBlock
-{
-    Sunrise,
-    Sunset,
-    Midnight,
-}
-
-public class AcScheduleSetting(
-    int NormalTemp,
-    int PowerSavingTemp,
-    int CoolTemp,
-    int PassiveTemp,
-    string Mode,
-    bool ActivateFan,
-    int HourStart,
-    int HourEnd
-)
-{
-    public int NormalTemp { get; } = NormalTemp;
-    public int PowerSavingTemp { get; } = PowerSavingTemp;
-    public int CoolTemp { get; } = CoolTemp;
-    public int PassiveTemp { get; } = PassiveTemp;
-    public string Mode { get; } = Mode;
-    public bool ActivateFan { get; } = ActivateFan;
-    public int HourStart { get; } = HourStart;
-    public int HourEnd { get; } = HourEnd;
-    private static WeatherEntity? _weather;
-    private static ILogger? _logger;
-
-    public static void Initialize(WeatherEntity weather, ILogger logger)
-    {
-        _weather = weather;
-        _logger = logger;
-    }
-
-    public bool IsValidHourRange() => HourStart is >= 0 and <= 23 && HourEnd is >= 0 and <= 23;
-
-    public int GetTemperature(bool isOccupied, bool isDoorOpen, bool isPowerSaving)
-    {
-        bool isCold = _weather != null && !_weather.IsSunny();
-        var temp = (isOccupied, isDoorOpen, isPowerSaving, isCold) switch
-        {
-            (_, _, true, _) => PowerSavingTemp,
-            (true, false, _, _) => CoolTemp,
-            (_, true, _, true) => NormalTemp,
-            (true, true, _, false) => NormalTemp,
-            (false, true, _, false) => PassiveTemp,
-            (false, false, _, _) => PassiveTemp,
-        };
-
-        _logger?.LogDebug(
-            "Temperature decision: Selected temperature {Temperature}°C based on pattern: (occupied:{Occupied}, doorOpen:{DoorOpen}, powerSaving:{PowerSaving})",
-            temp,
-            isOccupied,
-            isDoorOpen,
-            isPowerSaving
-        );
-        return temp;
     }
 }

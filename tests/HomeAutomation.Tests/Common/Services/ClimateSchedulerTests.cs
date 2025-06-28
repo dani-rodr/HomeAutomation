@@ -337,13 +337,15 @@ public class ClimateSchedulerTests : IDisposable
         _mockHaContext?.Dispose();
     }
 
-    private class TestWeatherEntities(IHaContext haContext) : IClimateWeatherEntities
+    private class TestWeatherEntities(IHaContext haContext) : IClimateSchedulerEntities
     {
         public SensorEntity SunRising { get; } = new SensorEntity(haContext, "sensor.sun_rising");
         public SensorEntity SunSetting { get; } = new SensorEntity(haContext, "sensor.sun_setting");
         public SensorEntity SunMidnight { get; } =
             new SensorEntity(haContext, "sensor.sun_midnight");
         public WeatherEntity Weather { get; } = new WeatherEntity(haContext, "weather.home");
+        public InputBooleanEntity PowerSavingMode { get; } =
+            new InputBooleanEntity(haContext, "input_boolean.power_saving_mode");
     }
 
     private class TestScheduler : IScheduler

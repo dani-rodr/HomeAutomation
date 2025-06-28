@@ -39,9 +39,9 @@ public static class ServiceCollectionExtensions
             .AddTransientEntity<IBedroomMotionEntities, BedroomMotionEntities>()
             .AddTransientEntity<IBedroomFanEntities, BedroomFanEntities>()
             .AddTransientEntity<IClimateEntities, BedroomClimateEntities>()
-            .AddTransientEntity<IClimateWeatherEntities, ClimateWeatherEntities>()
+            .AddTransientEntity<IClimateSchedulerEntities, ClimateSchedulerEntities>()
             .AddTransient<IClimateScheduler>(p => new ClimateScheduler(
-                p.GetRequiredService<IClimateWeatherEntities>(),
+                p.GetRequiredService<IClimateSchedulerEntities>(),
                 p.GetRequiredService<IScheduler>(),
                 p.GetRequiredService<ILogger<ClimateScheduler>>()
             ));

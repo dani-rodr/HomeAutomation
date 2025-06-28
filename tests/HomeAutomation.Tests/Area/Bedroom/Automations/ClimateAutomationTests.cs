@@ -61,7 +61,6 @@ public class ClimateAutomationTests : IDisposable
         _mockHaContext.SetEntityState(_entities.MotionSensor.EntityId, "off");
         _mockHaContext.SetEntityState(_entities.Door.EntityId, "off");
         _mockHaContext.SetEntityState(_entities.FanAutomation.EntityId, "off");
-        _mockHaContext.SetEntityState(_entities.PowerSavingMode.EntityId, "off");
         _mockHaContext.SetEntityState(_entities.HouseMotionSensor.EntityId, "on");
         _mockHaContext.SetEntityState(_entities.MasterSwitch.EntityId, "on");
     }
@@ -122,7 +121,6 @@ public class ClimateAutomationTests : IDisposable
     {
         _mockHaContext.SetEntityState(_entities.MotionSensor.EntityId, "on");
         _mockHaContext.SetEntityState(_entities.Door.EntityId, "off");
-        _mockHaContext.SetEntityState(_entities.PowerSavingMode.EntityId, "off");
 
         var motionEvent = StateChangeHelpers.MotionDetected(_entities.MotionSensor);
         _mockHaContext.StateChangeSubject.OnNext(motionEvent);
@@ -138,31 +136,10 @@ public class ClimateAutomationTests : IDisposable
     }
 
     [Fact]
-    public void GetTemperature_PowerSavingMode_Should_AlwaysReturnPowerSavingTemp()
-    {
-        _mockHaContext.SetEntityState(_entities.PowerSavingMode.EntityId, "on");
-        _mockHaContext.SetEntityState(_entities.MotionSensor.EntityId, "on");
-        _mockHaContext.SetEntityState(_entities.Door.EntityId, "off");
-
-        var motionEvent = StateChangeHelpers.MotionDetected(_entities.MotionSensor);
-        _mockHaContext.StateChangeSubject.OnNext(motionEvent);
-
-        _mockHaContext.ShouldHaveCalledClimateSetTemperature(
-            _entities.AirConditioner.EntityId,
-            27.0
-        );
-        _mockHaContext.ShouldHaveCalledClimateSetHvacMode(
-            _entities.AirConditioner.EntityId,
-            "cool"
-        );
-    }
-
-    [Fact]
     public void GetTemperature_OccupiedOpenDoorHotWeather_Should_ReturnNormalTemp()
     {
         _mockHaContext.SetEntityState(_entities.MotionSensor.EntityId, "on");
         _mockHaContext.SetEntityState(_entities.Door.EntityId, "on");
-        _mockHaContext.SetEntityState(_entities.PowerSavingMode.EntityId, "off");
 
         var motionEvent = StateChangeHelpers.MotionDetected(_entities.MotionSensor);
         _mockHaContext.StateChangeSubject.OnNext(motionEvent);
@@ -507,38 +484,6 @@ public class ClimateAutomationTests : IDisposable
     #region Complex Scenario Tests
 
     [Fact]
-    public void ComplexScenario_PowerSavingActivated_Should_OverrideAllTemperatureLogic()
-    {
-        // Arrange - Start with normal occupied/closed door conditions
-        _mockHaContext.SetEntityState(_entities.MotionSensor.EntityId, "on");
-        _mockHaContext.SetEntityState(_entities.Door.EntityId, "off");
-
-        // Act - Enable power saving mode (should override everything)
-        _mockHaContext.SetEntityState(_entities.PowerSavingMode.EntityId, "on");
-
-        var stateChange = StateChangeHelpers.CreateInputBooleanStateChange(
-            _entities.PowerSavingMode,
-            "off",
-            "on"
-        );
-        _mockHaContext.StateChangeSubject.OnNext(stateChange);
-
-        // Note: Need to trigger AC setting application separately since power saving change doesn't directly trigger it
-        var motionChange = StateChangeHelpers.MotionDetected(_entities.MotionSensor);
-        _mockHaContext.StateChangeSubject.OnNext(motionChange);
-
-        // Assert - Should use power saving temperature (27°C for Sunset period) regardless of other conditions
-        _mockHaContext.ShouldHaveCalledClimateSetTemperature(
-            _entities.AirConditioner.EntityId,
-            27.0
-        );
-        _mockHaContext.ShouldHaveCalledClimateSetHvacMode(
-            _entities.AirConditioner.EntityId,
-            "cool"
-        );
-    }
-
-    [Fact]
     public void MockScheduler_Temperature_OccupiedClosedDoor_Should_UseCoolTemp()
     {
         // Test that GetTemperature returns CoolTemp for occupied + closed door scenario
@@ -673,35 +618,10 @@ public class ClimateAutomationTests : IDisposable
     #region Comprehensive Theory Tests for Temperature Selection
 
     [Theory]
+    [InlineData(true, false, TimeBlock.Sunset, 23, "cool", "Occupied + closed door = CoolTemp")]
+    [InlineData(false, true, TimeBlock.Sunset, 27, "cool", "Unoccupied + open door = PassiveTemp")]
+    [InlineData(true, true, TimeBlock.Sunset, 25, "cool", "Occupied + open door = NormalTemp")]
     [InlineData(
-        true,
-        false,
-        false,
-        TimeBlock.Sunset,
-        23,
-        "cool",
-        "Occupied + closed door = CoolTemp"
-    )]
-    [InlineData(
-        false,
-        true,
-        false,
-        TimeBlock.Sunset,
-        27,
-        "cool",
-        "Unoccupied + open door = PassiveTemp"
-    )]
-    [InlineData(
-        true,
-        true,
-        false,
-        TimeBlock.Sunset,
-        25,
-        "cool",
-        "Occupied + open door = NormalTemp"
-    )]
-    [InlineData(
-        false,
         false,
         false,
         TimeBlock.Sunset,
@@ -709,46 +629,9 @@ public class ClimateAutomationTests : IDisposable
         "cool",
         "Unoccupied + closed door = PassiveTemp"
     )]
-    [InlineData(
-        true,
-        false,
-        true,
-        TimeBlock.Sunset,
-        27,
-        "cool",
-        "PowerSaving overrides all - occupied + closed"
-    )]
-    [InlineData(
-        false,
-        true,
-        true,
-        TimeBlock.Sunset,
-        27,
-        "cool",
-        "PowerSaving overrides all - unoccupied + open"
-    )]
-    [InlineData(
-        true,
-        true,
-        true,
-        TimeBlock.Sunset,
-        27,
-        "cool",
-        "PowerSaving overrides all - occupied + open"
-    )]
-    [InlineData(
-        false,
-        false,
-        true,
-        TimeBlock.Sunset,
-        27,
-        "cool",
-        "PowerSaving overrides all - unoccupied + closed"
-    )]
     public void ClimateAutomation_TemperatureSelection_Should_Follow_Logic(
         bool occupied,
         bool doorOpen,
-        bool powerSaving,
         TimeBlock timeBlock,
         int expectedTemp,
         string expectedMode,
@@ -771,10 +654,6 @@ public class ClimateAutomationTests : IDisposable
         // Setup entity states based on test parameters
         _mockHaContext.SetEntityState(_entities.MotionSensor.EntityId, occupied ? "on" : "off");
         _mockHaContext.SetEntityState(_entities.Door.EntityId, doorOpen ? "on" : "off");
-        _mockHaContext.SetEntityState(
-            _entities.PowerSavingMode.EntityId,
-            powerSaving ? "on" : "off"
-        );
         _mockHaContext.SetEntityState(_entities.AirConditioner.EntityId, "cool");
 
         // Clear any previous service calls
@@ -852,7 +731,6 @@ public class ClimateAutomationTests : IDisposable
         // Setup for occupied + closed door scenario (should use CoolTemp)
         _mockHaContext.SetEntityState(_entities.MotionSensor.EntityId, "on");
         _mockHaContext.SetEntityState(_entities.Door.EntityId, "off");
-        _mockHaContext.SetEntityState(_entities.PowerSavingMode.EntityId, "off");
         _mockHaContext.SetEntityState(_entities.AirConditioner.EntityId, mode);
 
         // Clear any previous service calls
@@ -953,13 +831,10 @@ public class ClimateAutomationTests : IDisposable
             new BinarySensorEntity(haContext, "binary_sensor.bedroom_door");
         public SwitchEntity FanAutomation { get; } =
             new SwitchEntity(haContext, "switch.bedroom_fan_automation");
-        public InputBooleanEntity PowerSavingMode { get; } =
-            new InputBooleanEntity(haContext, "input_boolean.power_saving_mode");
         public BinarySensorEntity HouseMotionSensor { get; } =
             new BinarySensorEntity(haContext, "binary_sensor.house_motion_sensors");
         public ButtonEntity AcFanModeToggle { get; } =
             new ButtonEntity(haContext, "button.bedroom_ac_fan_mode_toggle");
-
         public SwitchEntity Fan { get; } = new SwitchEntity(haContext, "switch.bedroom_fan");
     }
 }

@@ -11,7 +11,6 @@ public class ClimateAutomation(
     private readonly ClimateEntity _ac = entities.AirConditioner;
     private readonly BinarySensorEntity _motionSensor = entities.MotionSensor;
     private readonly BinarySensorEntity _doorSensor = entities.Door;
-    private readonly InputBooleanEntity _isPowerSavingMode = entities.PowerSavingMode;
 
     protected override IEnumerable<IDisposable> GetPersistentAutomations()
     {
@@ -170,11 +169,7 @@ public class ClimateAutomation(
             return;
         }
 
-        int targetTemp = setting.GetTemperature(
-            _motionSensor.IsOccupied(),
-            _doorSensor.IsOpen(),
-            _isPowerSavingMode.IsOn()
-        );
+        int targetTemp = setting.GetTemperature(_motionSensor.IsOccupied(), _doorSensor.IsOpen());
         var currentTemp = _ac.Attributes?.Temperature;
         var currentMode = _ac.State;
 

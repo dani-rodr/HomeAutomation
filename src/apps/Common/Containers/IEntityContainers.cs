@@ -59,12 +59,13 @@ public interface ICookingEntities
     NumericSensorEntity InductionPower { get; }
 }
 
-public interface IClimateWeatherEntities
+public interface IClimateSchedulerEntities
 {
     SensorEntity SunRising { get; }
     SensorEntity SunSetting { get; }
     SensorEntity SunMidnight { get; }
     WeatherEntity Weather { get; }
+    InputBooleanEntity PowerSavingMode { get; }
 }
 
 public interface IClimateEntities : IMotionBase
@@ -72,7 +73,6 @@ public interface IClimateEntities : IMotionBase
     ClimateEntity AirConditioner { get; }
     BinarySensorEntity Door { get; }
     SwitchEntity FanAutomation { get; }
-    InputBooleanEntity PowerSavingMode { get; }
     BinarySensorEntity HouseMotionSensor { get; }
     ButtonEntity AcFanModeToggle { get; }
     SwitchEntity Fan { get; }
