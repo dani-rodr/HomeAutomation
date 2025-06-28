@@ -25,16 +25,14 @@ public class DisplayAutomation(
         if (monitor.IsShowingPc && laptop.IsOn())
         {
             ShowLaptopDisplay();
+            return;
         }
-        else if (!desktop.IsOn())
-        {
-            laptop.TurnOn();
-            ShowLaptopDisplay();
-        }
-        else
+        if (monitor.IsShowingLaptop && desktop.IsOn())
         {
             ShowPcDisplay();
+            return;
         }
+        ShowLaptopDisplay();
     }
 
     private static IEnumerable<IDisposable> ObserveComputer(
