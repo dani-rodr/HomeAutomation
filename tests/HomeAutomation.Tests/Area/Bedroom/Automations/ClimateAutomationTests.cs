@@ -1,6 +1,6 @@
 using HomeAutomation.apps.Area.Bedroom.Automations;
 using HomeAutomation.apps.Common.Containers;
-using NetDaemon.Extensions.Scheduler;
+using HomeAutomation.apps.Common.Services;
 
 namespace HomeAutomation.Tests.Area.Bedroom.Automations;
 
@@ -20,37 +20,36 @@ public class ClimateAutomationTests : IDisposable
 {
     private readonly MockHaContext _mockHaContext;
     private readonly Mock<ILogger<ClimateAutomation>> _mockLogger;
-    private readonly Mock<IScheduler> _mockScheduler;
     private readonly TestEntities _entities;
+    private readonly TestWeatherEntities _weatherEntities;
     private readonly ClimateAutomation _automation;
+    private readonly ClimateScheduler _scheduler;
 
     public ClimateAutomationTests()
     {
         _mockHaContext = new MockHaContext();
         _mockLogger = new Mock<ILogger<ClimateAutomation>>();
-        _mockScheduler = new Mock<IScheduler>();
 
-        // Create test entities wrapper
         _entities = new TestEntities(_mockHaContext);
+        _weatherEntities = new TestWeatherEntities(_mockHaContext);
 
-        // Setup default entity states
         SetupDefaultEntityStates();
 
-        _automation = new ClimateAutomation(_entities, _mockScheduler.Object, _mockLogger.Object);
+        _scheduler = new ClimateScheduler(
+            _weatherEntities,
+            new TestScheduler(),
+            _mockLogger.Object
+        );
+        _automation = new ClimateAutomation(_entities, _scheduler, _mockLogger.Object);
 
-        // Start the automation to set up subscriptions
         _automation.StartAutomation();
 
-        // Simulate master switch being ON to enable automation logic
         _mockHaContext.SimulateStateChange(_entities.MasterSwitch.EntityId, "off", "on");
-
-        // Clear any initialization service calls
         _mockHaContext.ClearServiceCalls();
     }
 
     private void SetupDefaultEntityStates()
     {
-        // Setup AC in a basic operational state
         _mockHaContext.SetEntityState(_entities.AirConditioner.EntityId, "cool");
         _mockHaContext.SetEntityAttributes(
             _entities.AirConditioner.EntityId,
@@ -62,98 +61,75 @@ public class ClimateAutomationTests : IDisposable
             }
         );
 
-        // Setup sensors in default states
         _mockHaContext.SetEntityState(_entities.MotionSensor.EntityId, "off");
-        _mockHaContext.SetEntityState(_entities.Door.EntityId, "off"); // closed
+        _mockHaContext.SetEntityState(_entities.Door.EntityId, "off");
         _mockHaContext.SetEntityState(_entities.FanAutomation.EntityId, "off");
         _mockHaContext.SetEntityState(_entities.PowerSavingMode.EntityId, "off");
-        _mockHaContext.SetEntityState(_entities.HouseMotionSensor.EntityId, "on"); // house occupied
-        _mockHaContext.SetEntityState(_entities.Weather.EntityId, "sunny");
+        _mockHaContext.SetEntityState(_entities.HouseMotionSensor.EntityId, "on");
+        _mockHaContext.SetEntityState(_weatherEntities.Weather.EntityId, "sunny");
         _mockHaContext.SetEntityState(_entities.MasterSwitch.EntityId, "on");
 
-        // Setup sun sensors with default times (sunrise: 6, sunset: 18, midnight: 0)
-        _mockHaContext.SetEntityState(_entities.SunRising.EntityId, "2024-01-01T06:00:00");
-        _mockHaContext.SetEntityState(_entities.SunSetting.EntityId, "2024-01-01T18:00:00");
-        _mockHaContext.SetEntityState(_entities.SunMidnight.EntityId, "2024-01-01T00:00:00");
+        _mockHaContext.SetEntityState(_weatherEntities.SunRising.EntityId, "2024-01-01T06:00:00");
+        _mockHaContext.SetEntityState(_weatherEntities.SunSetting.EntityId, "2024-01-01T18:00:00");
+        _mockHaContext.SetEntityState(_weatherEntities.SunMidnight.EntityId, "2024-01-01T00:00:00");
     }
-
-    #region Temperature Logic Tests
 
     [Fact]
     public void GetTemperature_OccupiedClosedDoor_Should_ReturnCoolTemp()
     {
-        // Arrange - Room occupied, door closed, normal weather, no power saving
         _mockHaContext.SetEntityState(_entities.MotionSensor.EntityId, "on");
-        _mockHaContext.SetEntityState(_entities.Door.EntityId, "off"); // closed
+        _mockHaContext.SetEntityState(_entities.Door.EntityId, "off");
         _mockHaContext.SetEntityState(_entities.PowerSavingMode.EntityId, "off");
-        _mockHaContext.SetEntityState(_entities.Weather.EntityId, "sunny");
+        _mockHaContext.SetEntityState(_weatherEntities.Weather.EntityId, "sunny");
 
-        // Act - Trigger AC setting application (simulate sunset time block)
-        SimulateCurrentTime(18, 30); // During sunset period
-        var stateChange = StateChangeHelpers.MotionDetected(_entities.MotionSensor);
-        _mockHaContext.StateChangeSubject.OnNext(stateChange);
+        var motionEvent = StateChangeHelpers.MotionDetected(_entities.MotionSensor);
+        _mockHaContext.StateChangeSubject.OnNext(motionEvent);
 
-        // Assert - Should apply cool temperature (23°C during sunset)
-        _mockHaContext.ShouldHaveCalledClimateSetTemperature(_entities.AirConditioner.EntityId);
-
-        // Verify cool mode is applied
-        _mockHaContext.ShouldHaveCalledClimateSetHvacMode(_entities.AirConditioner.EntityId);
+        _mockHaContext.ShouldHaveCalledClimateSetTemperature(
+            _entities.AirConditioner.EntityId,
+            23.0
+        );
+        _mockHaContext.ShouldHaveCalledClimateSetHvacMode(
+            _entities.AirConditioner.EntityId,
+            "cool"
+        );
     }
 
     [Fact]
     public void GetTemperature_PowerSavingMode_Should_AlwaysReturnPowerSavingTemp()
     {
-        // Arrange - Power saving mode enabled (should override all other conditions)
         _mockHaContext.SetEntityState(_entities.PowerSavingMode.EntityId, "on");
         _mockHaContext.SetEntityState(_entities.MotionSensor.EntityId, "on");
-        _mockHaContext.SetEntityState(_entities.Door.EntityId, "off"); // closed
+        _mockHaContext.SetEntityState(_entities.Door.EntityId, "off");
 
-        // Act - Trigger AC setting application
-        SimulateCurrentTime(18, 30); // During sunset period
-        var stateChange = StateChangeHelpers.MotionDetected(_entities.MotionSensor);
-        _mockHaContext.StateChangeSubject.OnNext(stateChange);
+        var motionEvent = StateChangeHelpers.MotionDetected(_entities.MotionSensor);
+        _mockHaContext.StateChangeSubject.OnNext(motionEvent);
 
-        // Assert - Should apply power saving temperature (27°C during sunset)
-        _mockHaContext.ShouldHaveCalledClimateSetTemperature(_entities.AirConditioner.EntityId);
-        _mockHaContext.ShouldHaveCalledClimateSetHvacMode(_entities.AirConditioner.EntityId);
-    }
-
-    [Fact(Skip = "Temporarily disabled - bedroom automation logic under review")]
-    public void GetTemperature_UnoccupiedOpenDoorColdWeather_Should_ReturnNormalTemp()
-    {
-        // Arrange - Unoccupied, door open, cold weather
-        _mockHaContext.SetEntityState(_entities.MotionSensor.EntityId, "off");
-        _mockHaContext.SetEntityState(_entities.Door.EntityId, "on"); // open
-        _mockHaContext.SetEntityState(_entities.Weather.EntityId, "cloudy"); // cold weather
-        _mockHaContext.SetEntityState(_entities.PowerSavingMode.EntityId, "off");
-
-        // Act - Trigger AC setting application by door opening longer than 5 minutes
-        SimulateCurrentTime(18, 30); // During sunset period
-        var stateChange = StateChangeHelpers.CreateStateChange(_entities.Door, "off", "on");
-
-        // Mock the time-based filter by simulating door open for 5+ minutes
-        _mockHaContext.StateChangeSubject.OnNext(stateChange);
-
-        // Assert - Should apply normal temperature (25°C during sunset)
-        _mockHaContext.ShouldHaveCalledClimateSetTemperature(_entities.AirConditioner.EntityId);
+        _mockHaContext.ShouldHaveCalledClimateSetTemperature(
+            _entities.AirConditioner.EntityId,
+            27.0
+        );
+        _mockHaContext.ShouldHaveCalledClimateSetHvacMode(
+            _entities.AirConditioner.EntityId,
+            "cool"
+        );
     }
 
     [Fact]
     public void GetTemperature_OccupiedOpenDoorHotWeather_Should_ReturnNormalTemp()
     {
-        // Arrange - Occupied, door open, hot weather (sunny)
         _mockHaContext.SetEntityState(_entities.MotionSensor.EntityId, "on");
-        _mockHaContext.SetEntityState(_entities.Door.EntityId, "on"); // open
-        _mockHaContext.SetEntityState(_entities.Weather.EntityId, "sunny"); // hot weather
+        _mockHaContext.SetEntityState(_entities.Door.EntityId, "on");
+        _mockHaContext.SetEntityState(_weatherEntities.Weather.EntityId, "sunny");
         _mockHaContext.SetEntityState(_entities.PowerSavingMode.EntityId, "off");
 
-        // Act - Trigger AC setting application
-        SimulateCurrentTime(18, 30); // During sunset period
-        var stateChange = StateChangeHelpers.MotionDetected(_entities.MotionSensor);
-        _mockHaContext.StateChangeSubject.OnNext(stateChange);
+        var motionEvent = StateChangeHelpers.MotionDetected(_entities.MotionSensor);
+        _mockHaContext.StateChangeSubject.OnNext(motionEvent);
 
-        // Assert - Should apply normal temperature (25°C during sunset)
-        _mockHaContext.ShouldHaveCalledClimateSetTemperature(_entities.AirConditioner.EntityId);
+        _mockHaContext.ShouldHaveCalledClimateSetTemperature(
+            _entities.AirConditioner.EntityId,
+            25.0
+        );
     }
 
     [Fact(Skip = "Temporarily disabled - needs investigation")]
@@ -162,7 +138,7 @@ public class ClimateAutomationTests : IDisposable
         // Arrange - Unoccupied, door open, hot weather
         _mockHaContext.SetEntityState(_entities.MotionSensor.EntityId, "off");
         _mockHaContext.SetEntityState(_entities.Door.EntityId, "on"); // open
-        _mockHaContext.SetEntityState(_entities.Weather.EntityId, "sunny"); // hot weather
+        _mockHaContext.SetEntityState(_weatherEntities.Weather.EntityId, "sunny"); // hot weather
         _mockHaContext.SetEntityState(_entities.PowerSavingMode.EntityId, "off");
 
         // Act - Trigger AC setting application
@@ -190,8 +166,6 @@ public class ClimateAutomationTests : IDisposable
         // Assert - Should apply passive temperature (27°C during sunset)
         _mockHaContext.ShouldHaveCalledClimateSetTemperature(_entities.AirConditioner.EntityId);
     }
-
-    #endregion
 
     #region Time-Based Scheduling Tests
 
@@ -597,7 +571,7 @@ public class ClimateAutomationTests : IDisposable
         // Arrange - Start with normal occupied/closed door conditions
         _mockHaContext.SetEntityState(_entities.MotionSensor.EntityId, "on");
         _mockHaContext.SetEntityState(_entities.Door.EntityId, "off");
-        _mockHaContext.SetEntityState(_entities.Weather.EntityId, "sunny");
+        _mockHaContext.SetEntityState(_weatherEntities.Weather.EntityId, "sunny");
 
         // Act - Enable power saving mode (should override everything)
         _mockHaContext.SetEntityState(_entities.PowerSavingMode.EntityId, "on");
@@ -625,10 +599,10 @@ public class ClimateAutomationTests : IDisposable
         // Arrange - Start with sunny weather
         _mockHaContext.SetEntityState(_entities.MotionSensor.EntityId, "off"); // unoccupied
         _mockHaContext.SetEntityState(_entities.Door.EntityId, "on"); // open
-        _mockHaContext.SetEntityState(_entities.Weather.EntityId, "sunny");
+        _mockHaContext.SetEntityState(_weatherEntities.Weather.EntityId, "sunny");
 
         // Act - Change weather to cloudy (cold)
-        _mockHaContext.SetEntityState(_entities.Weather.EntityId, "cloudy");
+        _mockHaContext.SetEntityState(_weatherEntities.Weather.EntityId, "cloudy");
 
         SimulateCurrentTime(18, 30); // Sunset period
         var stateChange = StateChangeHelpers.DoorOpened(_entities.Door);
@@ -818,12 +792,56 @@ public class ClimateAutomationTests : IDisposable
             new BinarySensorEntity(haContext, "binary_sensor.house_motion_sensors");
         public ButtonEntity AcFanModeToggle { get; } =
             new ButtonEntity(haContext, "button.bedroom_ac_fan_mode_toggle");
+
+        public SwitchEntity Fan { get; } = new SwitchEntity(haContext, "switch.bedroom_fan");
+    }
+
+    private class TestWeatherEntities(IHaContext haContext) : IClimateWeatherEntities
+    {
         public SensorEntity SunRising { get; } = new SensorEntity(haContext, "sensor.sun_rising");
         public SensorEntity SunSetting { get; } = new SensorEntity(haContext, "sensor.sun_setting");
         public SensorEntity SunMidnight { get; } =
             new SensorEntity(haContext, "sensor.sun_midnight");
         public WeatherEntity Weather { get; } = new WeatherEntity(haContext, "weather.home");
+    }
 
-        public SwitchEntity Fan { get; } = new SwitchEntity(haContext, "switch.bedroom_fan");
+    private class TestScheduler : IScheduler
+    {
+        public DateTimeOffset Now => DateTimeOffset.Now;
+
+        public IDisposable Schedule<TState>(
+            TState state,
+            Func<IScheduler, TState, IDisposable> action
+        )
+        {
+            // Immediately invoke the action and return a dummy disposable
+            return action(this, state);
+        }
+
+        public IDisposable Schedule<TState>(
+            TState state,
+            TimeSpan dueTime,
+            Func<IScheduler, TState, IDisposable> action
+        )
+        {
+            // Ignore delay and immediately invoke the action
+            return action(this, state);
+        }
+
+        public IDisposable Schedule<TState>(
+            TState state,
+            DateTimeOffset dueTime,
+            Func<IScheduler, TState, IDisposable> action
+        )
+        {
+            // Ignore due time and immediately invoke the action
+            return action(this, state);
+        }
+
+        public IDisposable ScheduleCron(string cronExpression, Action action)
+        {
+            // Just return a mock disposable for testing
+            return Mock.Of<IDisposable>();
+        }
     }
 }

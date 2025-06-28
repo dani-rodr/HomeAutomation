@@ -1,65 +1,19 @@
 using System.Linq;
-using NetDaemon.Extensions.Scheduler;
 
 namespace HomeAutomation.apps.Area.Bedroom.Automations;
 
-public class ClimateAutomation(IClimateEntities entities, IScheduler scheduler, ILogger logger)
-    : AutomationBase(logger, entities.MasterSwitch)
+public class ClimateAutomation(
+    IClimateEntities entities,
+    IClimateScheduler scheduler,
+    ILogger logger
+) : AutomationBase(logger, entities.MasterSwitch)
 {
-    private readonly IScheduler _scheduler = scheduler;
     private readonly ClimateEntity _ac = entities.AirConditioner;
     private readonly BinarySensorEntity _motionSensor = entities.MotionSensor;
     private readonly BinarySensorEntity _doorSensor = entities.Door;
     private readonly SwitchEntity _fanAutomation = entities.FanAutomation;
     private readonly SwitchEntity _fan = entities.Fan;
     private readonly InputBooleanEntity _isPowerSavingMode = entities.PowerSavingMode;
-    private Dictionary<TimeBlock, AcScheduleSetting>? _cachedAcSettings;
-
-    private Dictionary<TimeBlock, AcScheduleSetting> GetCurrentAcScheduleSettings()
-    {
-        if (_cachedAcSettings != null)
-        {
-            return _cachedAcSettings;
-        }
-
-        _cachedAcSettings = new()
-        {
-            [TimeBlock.Sunrise] = new(
-                NormalTemp: 27,
-                PowerSavingTemp: 27,
-                CoolTemp: 24,
-                PassiveTemp: 27,
-                Mode: HaEntityStates.DRY,
-                ActivateFan: true,
-                HourStart: entities.SunRising.LocalHour(),
-                HourEnd: entities.SunSetting.LocalHour()
-            ),
-
-            [TimeBlock.Sunset] = new(
-                NormalTemp: 25,
-                PowerSavingTemp: 27,
-                CoolTemp: 23,
-                PassiveTemp: 27,
-                Mode: HaEntityStates.COOL,
-                ActivateFan: false,
-                HourStart: entities.SunSetting.LocalHour(),
-                HourEnd: entities.SunMidnight.LocalHour()
-            ),
-
-            [TimeBlock.Midnight] = new(
-                NormalTemp: 24,
-                PowerSavingTemp: 25,
-                CoolTemp: 22,
-                PassiveTemp: 25,
-                Mode: HaEntityStates.COOL,
-                ActivateFan: false,
-                HourStart: entities.SunMidnight.LocalHour(),
-                HourEnd: entities.SunRising.LocalHour()
-            ),
-        };
-
-        return _cachedAcSettings;
-    }
 
     public override void StartAutomation()
     {
@@ -67,19 +21,12 @@ public class ClimateAutomation(IClimateEntities entities, IScheduler scheduler, 
         Logger.LogDebug(
             "AC schedule settings initialized based on current sun sensor values. HourStart and HourEnd may vary daily depending on sunrise, sunset, and midnight times."
         );
-        LogCurrentAcScheduleSettings();
+        scheduler.LogCurrentAcScheduleSettings();
     }
 
     protected override IEnumerable<IDisposable> GetPersistentAutomations()
     {
-        yield return _scheduler.ScheduleCron(
-            "0 0 * * *",
-            () =>
-            {
-                Logger.LogDebug("Midnight AC schedule refresh triggered");
-                InvalidateAcSettingsCache();
-            }
-        );
+        yield return scheduler.GetResetSchedule();
         yield return _ac.StateAllChanges()
             .IsManuallyOperated()
             .Subscribe(TurnOffMasterSwitchOnManualOperation);
@@ -100,7 +47,10 @@ public class ClimateAutomation(IClimateEntities entities, IScheduler scheduler, 
 
     protected override IEnumerable<IDisposable> GetToggleableAutomations() =>
         [
-            .. GetScheduledAutomations(),
+            .. scheduler.GetSchedules(() =>
+            {
+                ApplyScheduledAcSettings(scheduler.FindCurrentTimeBlock());
+            }),
             .. GetSensorBasedAutomations(),
             .. GetHousePresenceAutomations(),
             .. GetFanModeToggleAutomation(),
@@ -121,53 +71,6 @@ public class ClimateAutomation(IClimateEntities entities, IScheduler scheduler, 
                 newTemp?.ToString() ?? "N/A",
                 e.UserId() ?? "unknown"
             );
-        }
-    }
-
-    private void LogCurrentAcScheduleSettings()
-    {
-        foreach (var kvp in GetCurrentAcScheduleSettings())
-        {
-            var setting = kvp.Value;
-            Logger.LogDebug(
-                "TimeBlock {TimeBlock}: NormalTemp={NormalTemp},"
-                    + " PowerSavingTemp={PowerSavingTemp}, CoolTemp={CoolTemp},"
-                    + " PassiveTemp={PassiveTemp}, Mode={Mode}, ActivateFan={ActivateFan},"
-                    + " HourStart={HourStart}, HourEnd={HourEnd}",
-                kvp.Key,
-                setting.NormalTemp,
-                setting.PowerSavingTemp,
-                setting.CoolTemp,
-                setting.PassiveTemp,
-                setting.Mode,
-                setting.ActivateFan,
-                setting.HourStart,
-                setting.HourEnd
-            );
-        }
-    }
-
-    private void InvalidateAcSettingsCache()
-    {
-        _cachedAcSettings = null;
-    }
-
-    private IEnumerable<IDisposable> GetScheduledAutomations()
-    {
-        foreach (var (timeBlock, setting) in GetCurrentAcScheduleSettings())
-        {
-            var hour = setting.HourStart;
-            if (hour < 0 || hour > 23)
-            {
-                Logger.LogWarning(
-                    "Invalid HourStart {HourStart} for TimeBlock {TimeBlock}. Skipping schedule.",
-                    hour,
-                    timeBlock
-                );
-                continue;
-            }
-            string cron = $"0 {hour} * * *";
-            yield return _scheduler.ScheduleCron(cron, () => ApplyScheduledAcSettings(timeBlock));
         }
     }
 
@@ -192,7 +95,7 @@ public class ClimateAutomation(IClimateEntities entities, IScheduler scheduler, 
             e.New?.State
         );
 
-        ApplyScheduledAcSettings(FindTimeBlock());
+        ApplyScheduledAcSettings(scheduler.FindCurrentTimeBlock());
     }
 
     private IEnumerable<IDisposable> GetHousePresenceAutomations()
@@ -249,29 +152,6 @@ public class ClimateAutomation(IClimateEntities entities, IScheduler scheduler, 
             });
     }
 
-    private TimeBlock? FindTimeBlock()
-    {
-        var currentHour = DateTime.Now.Hour;
-        Logger.LogDebug("Finding time block for current hour: {CurrentHour}", currentHour);
-
-        foreach (var kv in GetCurrentAcScheduleSettings())
-        {
-            if (TimeRange.IsCurrentTimeInBetween(kv.Value.HourStart, kv.Value.HourEnd))
-            {
-                Logger.LogDebug(
-                    "Found matching time block: {TimeBlock} (range: {StartHour}-{EndHour})",
-                    kv.Key,
-                    kv.Value.HourStart,
-                    kv.Value.HourEnd
-                );
-                return kv.Key;
-            }
-        }
-
-        Logger.LogDebug("No time block found for current hour {CurrentHour}", currentHour);
-        return null;
-    }
-
     private void ApplyScheduledAcSettings(TimeBlock? timeBlock)
     {
         Logger.LogDebug(
@@ -286,7 +166,7 @@ public class ClimateAutomation(IClimateEntities entities, IScheduler scheduler, 
             return;
         }
 
-        if (!GetCurrentAcScheduleSettings().TryGetValue(timeBlock.Value, out var setting))
+        if (!scheduler.TryGetSetting(timeBlock.Value, out var setting))
         {
             Logger.LogDebug(
                 "Skipping AC settings: No settings found for time block {TimeBlock}",
@@ -338,36 +218,15 @@ public class ClimateAutomation(IClimateEntities entities, IScheduler scheduler, 
         bool isOccupied = _motionSensor.IsOccupied();
         bool isDoorOpen = _doorSensor.IsOpen();
         bool isPowerSaving = _isPowerSavingMode.IsOn();
-        var weather = entities.Weather;
-        bool isColdWeather = weather != null && !weather.IsSunny();
+
+        var selectedTemp = setting.GetTemperature(isOccupied, isDoorOpen, isPowerSaving);
 
         Logger.LogDebug(
-            "Temperature decision inputs: Occupied={Occupied}, DoorOpen={DoorOpen}, PowerSaving={PowerSaving}, Weather={WeatherCondition}, IsCold={IsColdWeather}",
-            isOccupied,
-            isDoorOpen,
-            isPowerSaving,
-            weather?.State,
-            isColdWeather
-        );
-
-        var (selectedTemp, tempType) = (isOccupied, isDoorOpen, isPowerSaving, isColdWeather) switch
-        {
-            (_, _, true, _) => (setting.PowerSavingTemp, "PowerSaving"),
-            (true, false, _, _) => (setting.CoolTemp, "Cool"),
-            (_, true, _, true) => (setting.NormalTemp, "Normal"),
-            (true, true, _, false) => (setting.NormalTemp, "Normal"),
-            (false, true, _, false) => (setting.PassiveTemp, "Passive"),
-            (false, false, _, _) => (setting.PassiveTemp, "Passive"),
-        };
-
-        Logger.LogDebug(
-            "Temperature decision: Selected {TempType} temperature {Temperature}°C based on pattern: (occupied:{Occupied}, doorOpen:{DoorOpen}, powerSaving:{PowerSaving}, coldWeather:{ColdWeather})",
-            tempType,
+            "Temperature decision: Selected temperature {Temperature}°C based on pattern: (occupied:{Occupied}, doorOpen:{DoorOpen}, powerSaving:{PowerSaving})",
             selectedTemp,
             isOccupied,
             isDoorOpen,
-            isPowerSaving,
-            isColdWeather
+            isPowerSaving
         );
 
         return selectedTemp;
@@ -397,21 +256,3 @@ public class ClimateAutomation(IClimateEntities entities, IScheduler scheduler, 
         _fanAutomation.TurnOff();
     }
 }
-
-internal enum TimeBlock
-{
-    Sunrise,
-    Sunset,
-    Midnight,
-}
-
-internal record AcScheduleSetting(
-    int NormalTemp,
-    int PowerSavingTemp,
-    int CoolTemp,
-    int PassiveTemp,
-    string Mode,
-    bool ActivateFan,
-    int HourStart,
-    int HourEnd
-);

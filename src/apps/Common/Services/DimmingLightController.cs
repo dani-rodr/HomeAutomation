@@ -1,4 +1,3 @@
-using System.Reactive.Disposables;
 using System.Reactive.Threading.Tasks;
 
 namespace HomeAutomation.apps.Common.Services;

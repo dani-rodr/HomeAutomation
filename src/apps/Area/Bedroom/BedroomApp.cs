@@ -7,6 +7,7 @@ public class BedroomApp(
     IBedroomMotionEntities motionEntities,
     IBedroomFanEntities fanEntities,
     IClimateEntities climateEntities,
+    IClimateScheduler climateScheduler,
     IScheduler scheduler
 ) : AppBase<BedroomApp>()
 {
@@ -14,6 +15,6 @@ public class BedroomApp(
     {
         yield return new MotionAutomation(motionEntities, scheduler, logger);
         yield return new FanAutomation(fanEntities, logger);
-        yield return new ClimateAutomation(climateEntities, scheduler, logger);
+        yield return new ClimateAutomation(climateEntities, climateScheduler, logger);
     }
 }

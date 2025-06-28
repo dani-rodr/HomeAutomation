@@ -132,13 +132,17 @@ public class BedroomClimateEntities(Entities entities, CommonEntities common) : 
     public BinarySensorEntity Door => common.ContactSensors.Bedroom;
     public SwitchEntity FanAutomation => entities.Switch.BedroomFanAutomation;
     public InputBooleanEntity PowerSavingMode => entities.InputBoolean.AcPowerSavingMode;
+    public BinarySensorEntity HouseMotionSensor => common.MotionSensors.House;
+    public ButtonEntity AcFanModeToggle => entities.Button.AcFanModeToggle;
+    public SwitchEntity Fan => common.Fans.Bedroom;
+}
+
+public class ClimateWeatherEntities(Entities entities) : IClimateWeatherEntities
+{
     public SensorEntity SunRising => entities.Sensor.SunNextRising;
     public SensorEntity SunSetting => entities.Sensor.SunNextSetting;
     public SensorEntity SunMidnight => entities.Sensor.SunNextMidnight;
-    public BinarySensorEntity HouseMotionSensor => common.MotionSensors.House;
-    public ButtonEntity AcFanModeToggle => entities.Button.AcFanModeToggle;
     public WeatherEntity Weather => entities.Weather.Home;
-    public SwitchEntity Fan => common.Fans.Bedroom;
 }
 
 public class DeskDesktopEntities(Entities entities) : IDesktopEntities

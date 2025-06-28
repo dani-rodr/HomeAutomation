@@ -430,7 +430,8 @@ public static class MockHaContextExtensions
     /// </summary>
     public static void ShouldHaveCalledClimateSetTemperature(
         this MockHaContext mock,
-        string entityId
+        string entityId,
+        double? expectedTemperature = null
     )
     {
         var climateCalls = mock.GetServiceCalls("climate").ToList();
@@ -440,15 +441,38 @@ public static class MockHaContextExtensions
 
         setTempCall
             .Should()
-            .NotBeNull(
-                $"Expected climate.set_temperature to be called for entity '{entityId}' but it was not found"
-            );
+            .NotBeNull($"Expected climate.set_temperature to be called for entity '{entityId}'");
+
+        if (expectedTemperature.HasValue)
+        {
+            double? actualTemp = null;
+
+            if (
+                setTempCall?.Data is IDictionary<string, object> dict
+                && dict.TryGetValue("temperature", out var tempVal)
+                && tempVal is double d
+            )
+            {
+                actualTemp = d;
+            }
+
+            actualTemp
+                .Should()
+                .Be(
+                    expectedTemperature.Value,
+                    $"Expected temperature to be set to {expectedTemperature.Value}°C for entity '{entityId}', but got {(actualTemp.HasValue ? $"{actualTemp.Value}°C" : "null")}"
+                );
+        }
     }
 
     /// <summary>
     /// Verify that a climate entity's SetHvacMode() method was called
     /// </summary>
-    public static void ShouldHaveCalledClimateSetHvacMode(this MockHaContext mock, string entityId)
+    public static void ShouldHaveCalledClimateSetHvacMode(
+        this MockHaContext mock,
+        string entityId,
+        string? expectedMode = null
+    )
     {
         var climateCalls = mock.GetServiceCalls("climate").ToList();
         var setModeCall = climateCalls.FirstOrDefault(call =>
@@ -460,6 +484,27 @@ public static class MockHaContextExtensions
             .NotBeNull(
                 $"Expected climate.set_hvac_mode to be called for entity '{entityId}' but it was not found"
             );
+
+        if (expectedMode != null)
+        {
+            string? actualMode = null;
+
+            if (
+                setModeCall?.Data is IDictionary<string, object> dict
+                && dict.TryGetValue("hvac_mode", out var modeVal)
+                && modeVal is string s
+            )
+            {
+                actualMode = s;
+            }
+
+            actualMode
+                .Should()
+                .Be(
+                    expectedMode,
+                    $"Expected HVAC mode to be set to '{expectedMode}' for entity '{entityId}', but got '{actualMode}'"
+                );
+        }
     }
 
     /// <summary>

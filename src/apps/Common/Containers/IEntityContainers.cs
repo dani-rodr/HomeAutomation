@@ -59,7 +59,7 @@ public interface ICookingEntities
     NumericSensorEntity InductionPower { get; }
 }
 
-public interface IWeatherSensor
+public interface IClimateWeatherEntities
 {
     SensorEntity SunRising { get; }
     SensorEntity SunSetting { get; }
@@ -67,7 +67,7 @@ public interface IWeatherSensor
     WeatherEntity Weather { get; }
 }
 
-public interface IClimateEntities : IWeatherSensor, IMotionBase
+public interface IClimateEntities : IMotionBase
 {
     ClimateEntity AirConditioner { get; }
     BinarySensorEntity Door { get; }
