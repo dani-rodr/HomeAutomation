@@ -11,18 +11,7 @@ public class ClimateAutomation(
     private readonly ClimateEntity _ac = entities.AirConditioner;
     private readonly BinarySensorEntity _motionSensor = entities.MotionSensor;
     private readonly BinarySensorEntity _doorSensor = entities.Door;
-    private readonly SwitchEntity _fanAutomation = entities.FanAutomation;
-    private readonly SwitchEntity _fan = entities.Fan;
     private readonly InputBooleanEntity _isPowerSavingMode = entities.PowerSavingMode;
-
-    public override void StartAutomation()
-    {
-        base.StartAutomation();
-        Logger.LogDebug(
-            "AC schedule settings initialized based on current sun sensor values. HourStart and HourEnd may vary daily depending on sunrise, sunset, and midnight times."
-        );
-        scheduler.LogCurrentAcScheduleSettings();
-    }
 
     protected override IEnumerable<IDisposable> GetPersistentAutomations()
     {
@@ -69,7 +58,7 @@ public class ClimateAutomation(
                 e.New?.State,
                 oldTemp?.ToString() ?? "N/A",
                 newTemp?.ToString() ?? "N/A",
-                e.UserId() ?? "unknown"
+                e.Username() ?? "unknown"
             );
         }
     }
@@ -181,14 +170,15 @@ public class ClimateAutomation(
             return;
         }
 
-        int targetTemp = GetTemperature(setting);
+        int targetTemp = setting.GetTemperature(
+            _motionSensor.IsOccupied(),
+            _doorSensor.IsOpen(),
+            _isPowerSavingMode.IsOn()
+        );
         var currentTemp = _ac.Attributes?.Temperature;
         var currentMode = _ac.State;
 
-        if (
-            currentTemp == targetTemp
-            && string.Equals(currentMode, setting.Mode, StringComparison.OrdinalIgnoreCase)
-        )
+        if (currentTemp == targetTemp && _ac.State.Is(currentMode))
         {
             Logger.LogDebug(
                 "Skipping AC settings: Already configured correctly - Temp: {CurrentTemp}°C = {TargetTemp}°C, Mode: {CurrentMode} = {TargetMode}",
@@ -213,25 +203,6 @@ public class ClimateAutomation(
         ConditionallyActivateFan(setting.ActivateFan, targetTemp);
     }
 
-    private int GetTemperature(AcScheduleSetting setting)
-    {
-        bool isOccupied = _motionSensor.IsOccupied();
-        bool isDoorOpen = _doorSensor.IsOpen();
-        bool isPowerSaving = _isPowerSavingMode.IsOn();
-
-        var selectedTemp = setting.GetTemperature(isOccupied, isDoorOpen, isPowerSaving);
-
-        Logger.LogDebug(
-            "Temperature decision: Selected temperature {Temperature}°C based on pattern: (occupied:{Occupied}, doorOpen:{DoorOpen}, powerSaving:{PowerSaving})",
-            selectedTemp,
-            isOccupied,
-            isDoorOpen,
-            isPowerSaving
-        );
-
-        return selectedTemp;
-    }
-
     private void SetAcTemperatureAndMode(int temperature, string hvacMode)
     {
         _ac.SetTemperature(temperature);
@@ -246,13 +217,13 @@ public class ClimateAutomation(
         {
             if (isHot)
             {
-                _fan.TurnOn();
+                entities.Fan.TurnOn();
             }
-            _fanAutomation.TurnOn();
+            entities.FanAutomation.TurnOn();
             return;
         }
 
-        _fan.TurnOff();
-        _fanAutomation.TurnOff();
+        entities.Fan.TurnOff();
+        entities.FanAutomation.TurnOff();
     }
 }

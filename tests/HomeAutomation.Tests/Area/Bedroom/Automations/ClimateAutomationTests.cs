@@ -502,26 +502,6 @@ public class ClimateAutomationTests : IDisposable
             .NotBeNull("Automation should initialize correctly with scheduler");
     }
 
-    [Fact]
-    public void StartAutomation_Should_LogScheduleSettings()
-    {
-        // Verify automation started and schedule settings were logged
-        _mockLogger.Verify(
-            x =>
-                x.Log(
-                    LogLevel.Debug,
-                    It.IsAny<EventId>(),
-                    It.Is<It.IsAnyType>(
-                        (v, t) => v.ToString()!.Contains("AC schedule settings initialized")
-                    ),
-                    It.IsAny<Exception>(),
-                    It.IsAny<Func<It.IsAnyType, Exception?, string>>()
-                ),
-            Times.AtLeastOnce,
-            "Should log AC schedule initialization"
-        );
-    }
-
     #endregion
 
     #region Complex Scenario Tests

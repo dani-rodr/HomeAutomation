@@ -176,59 +176,20 @@ public static class StateExtensions
     /// <returns>True if the state is "closed" (off), otherwise false.</returns>
     public static bool IsClosed(this string? state) => state.IsOff();
 
-    /// <summary>
-    /// Determines if the state string represents a "locked" state.
-    /// </summary>
-    /// <param name="state">The state string to check.</param>
-    /// <returns>True if the state is "locked", otherwise false.</returns>
-    public static bool IsLocked(this string? state) =>
-        string.Equals(state, HaEntityStates.LOCKED, StringComparison.OrdinalIgnoreCase);
+    public static bool Is(this string? actual, string? toCheck) =>
+        string.Equals(actual, toCheck, StringComparison.OrdinalIgnoreCase);
 
-    /// <summary>
-    /// Determines if the state string represents an "unlocked" state.
-    /// </summary>
-    /// <param name="state">The state string to check.</param>
-    /// <returns>True if the state is "unlocked", otherwise false.</returns>
-    public static bool IsUnlocked(this string? state) =>
-        string.Equals(state, HaEntityStates.UNLOCKED, StringComparison.OrdinalIgnoreCase);
+    public static bool IsLocked(this string? state) => state.Is(HaEntityStates.LOCKED);
 
-    /// <summary>
-    /// Determines if the state string represents an "on" state.
-    /// </summary>
-    /// <param name="state">The state string to check.</param>
-    /// <returns>True if the state is "on", otherwise false.</returns>
-    public static bool IsOn(this string? state) =>
-        string.Equals(state, HaEntityStates.ON, StringComparison.OrdinalIgnoreCase);
+    public static bool IsUnlocked(this string? state) => state.Is(HaEntityStates.UNLOCKED);
 
-    /// <summary>
-    /// Determines if the state string represents an "off" state.
-    /// </summary>
-    /// <param name="state">The state string to check.</param>
-    /// <returns>True if the state is "off", otherwise false.</returns>
-    public static bool IsOff(this string? state) =>
-        string.Equals(state, HaEntityStates.OFF, StringComparison.OrdinalIgnoreCase);
+    public static bool IsOn(this string? state) => state.Is(HaEntityStates.ON);
 
-    /// <summary>
-    /// Determines if the state string represents a "connected" state.
-    /// </summary>
-    /// <param name="state">The state string to check.</param>
-    /// <returns>True if the state is "connected", otherwise false.</returns>
-    public static bool IsConnected(this string? state) =>
-        string.Equals(state, HaEntityStates.CONNECTED, StringComparison.OrdinalIgnoreCase);
+    public static bool IsOff(this string? state) => state.Is(HaEntityStates.OFF);
 
-    /// <summary>
-    /// Determines if the state string represents a "disconnected" state.
-    /// </summary>
-    /// <param name="state">The state string to check.</param>
-    /// <returns>True if the state is "disconnected", otherwise false.</returns>
-    public static bool IsDisconnected(this string? state) =>
-        string.Equals(state, HaEntityStates.DISCONNECTED, StringComparison.OrdinalIgnoreCase);
+    public static bool IsConnected(this string? state) => state.Is(HaEntityStates.CONNECTED);
 
-    /// <summary>
-    /// Determines if the state string represents an "unavailable" state.
-    /// </summary>
-    /// <param name="state">The state string to check.</param>
-    /// <returns>True if the state is "unavailable", otherwise false.</returns>
-    public static bool IsUnavailable(this string? state) =>
-        string.Equals(state, HaEntityStates.UNAVAILABLE, StringComparison.OrdinalIgnoreCase);
+    public static bool IsDisconnected(this string? state) => state.Is(HaEntityStates.DISCONNECTED);
+
+    public static bool IsUnavailable(this string? state) => state.Is(HaEntityStates.UNAVAILABLE);
 }

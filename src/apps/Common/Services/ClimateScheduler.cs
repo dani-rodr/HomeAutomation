@@ -1,4 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using NetDaemon.Extensions.Scheduler;
 
 namespace HomeAutomation.apps.Common.Services;
@@ -14,7 +15,9 @@ public class ClimateScheduler : IClimateScheduler
         _entities = entities;
         _scheduler = scheduler;
         _logger = logger;
-        AcScheduleSetting.SetWeatherSensor(entities.Weather);
+        AcScheduleSetting.Initialize(entities.Weather, logger);
+
+        LogCurrentAcScheduleSettings();
     }
 
     public IEnumerable<IDisposable> GetSchedules(Action action)
@@ -49,21 +52,20 @@ public class ClimateScheduler : IClimateScheduler
         [NotNullWhen(true)] out AcScheduleSetting? setting
     )
     {
-        // Lazily initialize cache if needed
         var settings = GetCurrentAcScheduleSettings();
         return settings.TryGetValue(timeBlock, out setting);
     }
 
     public TimeBlock? FindCurrentTimeBlock()
     {
-        var currentHour = _scheduler.Now.Hour;
-        _logger.LogDebug("Finding time block for current hour: {CurrentHour}", currentHour);
+        var currentTime = _scheduler.Now.LocalDateTime;
+        _logger.LogDebug("Finding time block for current hour: {CurrentHour}", currentTime.Hour);
 
-        foreach (var kv in GetCurrentAcScheduleSettings())
+        foreach (var kv in GetCurrentAcScheduleSettings().OrderBy(kv => kv.Value.HourStart))
         {
             if (
                 TimeRange.IsTimeInBetween(
-                    _scheduler.Now.TimeOfDay,
+                    currentTime.TimeOfDay,
                     kv.Value.HourStart,
                     kv.Value.HourEnd
                 )
@@ -79,7 +81,7 @@ public class ClimateScheduler : IClimateScheduler
             }
         }
 
-        _logger.LogDebug("No time block found for current hour {CurrentHour}", currentHour);
+        _logger.LogDebug("No time block found for current hour {CurrentHour}", currentTime.Hour);
         return null;
     }
 
@@ -131,8 +133,11 @@ public class ClimateScheduler : IClimateScheduler
         return _cachedAcSettings;
     }
 
-    public void LogCurrentAcScheduleSettings()
+    private void LogCurrentAcScheduleSettings()
     {
+        _logger.LogDebug(
+            "AC schedule settings initialized based on current sun sensor values. HourStart and HourEnd may vary daily depending on sunrise, sunset, and midnight times."
+        );
         foreach (var kvp in GetCurrentAcScheduleSettings())
         {
             var setting = kvp.Value;
@@ -182,15 +187,20 @@ public class AcScheduleSetting(
     public int HourStart { get; } = HourStart;
     public int HourEnd { get; } = HourEnd;
     private static WeatherEntity? _weather;
+    private static ILogger? _logger;
 
-    public static void SetWeatherSensor(WeatherEntity weather) => _weather = weather;
+    public static void Initialize(WeatherEntity weather, ILogger logger)
+    {
+        _weather = weather;
+        _logger = logger;
+    }
 
     public bool IsValidHourRange() => HourStart is >= 0 and <= 23 && HourEnd is >= 0 and <= 23;
 
-    public int GetTemperature(bool occupied, bool doorOpen, bool powerSaving)
+    public int GetTemperature(bool isOccupied, bool isDoorOpen, bool isPowerSaving)
     {
         bool isCold = _weather != null && !_weather.IsSunny();
-        return (occupied, doorOpen, powerSaving, isCold) switch
+        var temp = (isOccupied, isDoorOpen, isPowerSaving, isCold) switch
         {
             (_, _, true, _) => PowerSavingTemp,
             (true, false, _, _) => CoolTemp,
@@ -199,5 +209,14 @@ public class AcScheduleSetting(
             (false, true, _, false) => PassiveTemp,
             (false, false, _, _) => PassiveTemp,
         };
+
+        _logger?.LogDebug(
+            "Temperature decision: Selected temperature {Temperature}°C based on pattern: (occupied:{Occupied}, doorOpen:{DoorOpen}, powerSaving:{PowerSaving})",
+            temp,
+            isOccupied,
+            isDoorOpen,
+            isPowerSaving
+        );
+        return temp;
     }
 }

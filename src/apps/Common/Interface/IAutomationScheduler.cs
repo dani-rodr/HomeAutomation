@@ -13,6 +13,5 @@ public interface IClimateScheduler : IAutomationScheduler
 {
     IDisposable GetResetSchedule();
     TimeBlock? FindCurrentTimeBlock();
-    void LogCurrentAcScheduleSettings();
     bool TryGetSetting(TimeBlock timeBlock, [NotNullWhen(true)] out AcScheduleSetting? setting);
 }
