@@ -1,4 +1,3 @@
-using System.Reactive.Disposables;
 using System.Text.Json;
 
 namespace HomeAutomation.apps.Area.Desk.Devices;
@@ -160,14 +159,16 @@ public class LgDisplay(ILgDisplayEntities entities, IServices services, ILogger 
             .StateChangesWithCurrent()
             .Subscribe(e =>
             {
+                if (e.IsUnavailable())
+                {
+                    return;
+                }
                 if (e.IsOn())
                 {
                     _screen.TurnOn();
+                    return;
                 }
-                else if (e.IsOff())
-                {
-                    _screen.TurnOff();
-                }
+                _screen.TurnOff();
             });
 
     private IDisposable AdjustBrightnessFromInput()
