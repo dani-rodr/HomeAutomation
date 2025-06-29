@@ -9,20 +9,20 @@ namespace HomeAutomation.Tests.Common.Services;
 /// charging logic, async operations, cancellation scenarios, and resource disposal.
 /// Tests battery level thresholds, force charging, and laptop power state coordination.
 /// </summary>
-public class LaptopBatteryHandlerTests : IDisposable
+public class LaptopChargingHandlerTests : IDisposable
 {
     private readonly MockHaContext _mockHaContext;
-    private readonly Mock<ILogger<LaptopBatteryHandler>> _mockLogger;
+    private readonly Mock<ILogger<LaptopChargingHandler>> _mockLogger;
     private readonly TestBatteryHandlerEntities _entities;
     private readonly TestScheduler _testScheduler = new();
-    private readonly LaptopBatteryHandler _batteryHandler;
+    private readonly LaptopChargingHandler _batteryHandler;
 
-    public LaptopBatteryHandlerTests()
+    public LaptopChargingHandlerTests()
     {
         _mockHaContext = new MockHaContext();
-        _mockLogger = new Mock<ILogger<LaptopBatteryHandler>>();
+        _mockLogger = new Mock<ILogger<LaptopChargingHandler>>();
         _entities = new TestBatteryHandlerEntities(_mockHaContext);
-        _batteryHandler = new LaptopBatteryHandler(_entities, _testScheduler);
+        _batteryHandler = new LaptopChargingHandler(_entities, _testScheduler);
     }
 
     #region Constructor & Initialization Tests
@@ -434,7 +434,7 @@ public class LaptopBatteryHandlerTests : IDisposable
     /// <summary>
     /// Test implementation of IBatteryHandlerEntities for unit testing
     /// </summary>
-    private class TestBatteryHandlerEntities(IHaContext haContext) : IBatteryHandlerEntities
+    private class TestBatteryHandlerEntities(IHaContext haContext) : IChargingHandlerEntities
     {
         public NumericSensorEntity Level { get; } = new(haContext, "sensor.laptop_battery_level");
         public SwitchEntity Power { get; } = new(haContext, "switch.laptop_power");

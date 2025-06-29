@@ -138,7 +138,7 @@ public interface ILaptopSchedulerEntities
     InputBooleanEntity ProjectNationWeek { get; }
 }
 
-public interface IBatteryHandlerEntities
+public interface IChargingHandlerEntities
 {
     NumericSensorEntity Level { get; }
     SwitchEntity Power { get; }

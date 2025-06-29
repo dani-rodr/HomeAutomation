@@ -16,7 +16,7 @@ public class LaptopTests : IDisposable
     private readonly Mock<IEventHandler> _mockEventHandler;
     private readonly Mock<ILogger> _mockLogger;
     private readonly Mock<ILaptopScheduler> _mockScheduler;
-    private readonly Mock<IBatteryHandler> _mockBatteryHandler;
+    private readonly Mock<ILaptopChargingHandler> _mockBatteryHandler;
     private readonly TestLaptopEntities _entities;
     private readonly Laptop _laptop;
 
@@ -26,7 +26,7 @@ public class LaptopTests : IDisposable
         _mockEventHandler = new Mock<IEventHandler>();
         _mockLogger = new Mock<ILogger>();
         _mockScheduler = new Mock<ILaptopScheduler>();
-        _mockBatteryHandler = new Mock<IBatteryHandler>();
+        _mockBatteryHandler = new Mock<ILaptopChargingHandler>();
         // Setup battery handler mocks to prevent unexpected service calls
         _mockBatteryHandler.Setup(x => x.HandleLaptopTurnedOn());
         _mockBatteryHandler.Setup(x => x.HandleLaptopTurnedOffAsync()).Returns(Task.CompletedTask);

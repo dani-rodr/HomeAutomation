@@ -25,7 +25,7 @@ public class DisplayAutomationTests : IDisposable
     private readonly Mock<ILogger<Desktop>> _mockDesktopLogger;
     private readonly Mock<ILogger<Laptop>> _mockLaptopLogger;
     private readonly Mock<ILaptopScheduler> _mockScheduler;
-    private readonly Mock<IBatteryHandler> _mockBatteryHandler;
+    private readonly Mock<ILaptopChargingHandler> _mockBatteryHandler;
     private readonly Mock<INotificationServices> _mockNotificationServices;
     private readonly TestScheduler _testScheduler = new();
 
@@ -53,7 +53,7 @@ public class DisplayAutomationTests : IDisposable
         _mockDesktopLogger = new Mock<ILogger<Desktop>>();
         _mockLaptopLogger = new Mock<ILogger<Laptop>>();
         _mockScheduler = new Mock<ILaptopScheduler>();
-        _mockBatteryHandler = new Mock<IBatteryHandler>();
+        _mockBatteryHandler = new Mock<ILaptopChargingHandler>();
         // Setup battery handler mocks to prevent unexpected service calls
         _mockBatteryHandler.Setup(x => x.HandleLaptopTurnedOn());
         _mockBatteryHandler.Setup(x => x.HandleLaptopTurnedOffAsync()).Returns(Task.CompletedTask);

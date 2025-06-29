@@ -254,7 +254,7 @@ public class LaptopSchedulerEntities(Entities entities) : ILaptopSchedulerEntiti
     public InputBooleanEntity ProjectNationWeek => entities.InputBoolean.ProjectNationWeek;
 }
 
-public class LaptopBatteryHandlerEntities(Entities entities) : IBatteryHandlerEntities
+public class LaptopChargingHandlerEntities(Entities entities) : IChargingHandlerEntities
 {
     public NumericSensorEntity Level => entities.Sensor.Thinkpadt14BatteryChargeRemainingPercentage;
 

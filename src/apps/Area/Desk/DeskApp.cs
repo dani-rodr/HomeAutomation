@@ -9,7 +9,7 @@ public class DeskApp(
     IDesktopEntities desktopEntities,
     ILaptopEntities laptopEntities,
     ILaptopScheduler laptopScheduler,
-    IBatteryHandler laptopBatteryHandler,
+    ILaptopChargingHandler laptopBatteryHandler,
     IDeskMotionEntities deskMotionEntities,
     ILgDisplay lgDisplay,
     IScheduler scheduler,

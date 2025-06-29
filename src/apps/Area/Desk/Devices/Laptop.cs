@@ -5,7 +5,7 @@ namespace HomeAutomation.apps.Area.Desk.Devices;
 public class Laptop(
     ILaptopEntities entities,
     ILaptopScheduler scheduler,
-    IBatteryHandler batteryHandler,
+    ILaptopChargingHandler batteryHandler,
     IEventHandler eventHandler,
     ILogger logger
 ) : ComputerBase(eventHandler, logger)
