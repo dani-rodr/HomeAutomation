@@ -10,6 +10,12 @@ public class LaptopChargingHandler(IChargingHandlerEntities entities, IScheduler
 
     private CancellationTokenSource? _shutdownCts;
 
+    public override IDisposable StartMonitoring()
+    {
+        Power.TurnOff();
+        return base.StartMonitoring();
+    }
+
     public void HandleLaptopTurnedOn()
     {
         CleanShutdownCts();

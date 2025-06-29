@@ -1,5 +1,3 @@
-using System.Reactive.Disposables;
-
 namespace HomeAutomation.apps.Common.Base;
 
 public abstract class ComputerBase(IEventHandler eventHandler, ILogger logger)

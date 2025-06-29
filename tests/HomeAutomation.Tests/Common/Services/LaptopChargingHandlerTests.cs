@@ -150,8 +150,8 @@ public class LaptopChargingHandlerTests : IDisposable
         var stateChange = StateChangeHelpers.CreateStateChange(_entities.Level, "60", "50");
         _mockHaContext.StateChangeSubject.OnNext(stateChange);
 
-        // Assert - No power state changes should occur
-        _mockHaContext.ShouldHaveServiceCallCount(0);
+        // Assert - Power should turn off by default
+        _mockHaContext.ShouldHaveCalledSwitchTurnOff(_entities.Power.EntityId);
 
         subscription.Dispose();
     }

@@ -9,7 +9,7 @@ public class ChargingHandler(IChargingHandlerEntities entities) : IChargingHandl
     public double BatteryLevel => Level?.State ?? _lastBatteryPct;
     private double _lastBatteryPct;
 
-    public IDisposable StartMonitoring() =>
+    public virtual IDisposable StartMonitoring() =>
         Level.StateChanges().Subscribe(e => ApplyChargingLogic());
 
     protected void ApplyChargingLogic(bool forceCharge = false)

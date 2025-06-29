@@ -65,7 +65,7 @@ public class ClimateScheduler : IClimateScheduler
         var currentTime = _scheduler.Now.LocalDateTime;
         _logger.LogDebug("Finding time block for current hour: {CurrentHour}", currentTime.Hour);
 
-        foreach (var kv in GetCurrentAcScheduleSettings().OrderBy(kv => kv.Value.HourStart))
+        foreach (var kv in GetCurrentAcScheduleSettings())
         {
             if (
                 TimeRange.IsTimeInBetween(

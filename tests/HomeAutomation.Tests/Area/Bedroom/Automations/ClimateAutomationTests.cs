@@ -100,19 +100,25 @@ public class ClimateAutomationTests : IDisposable
         out AcScheduleSetting? setting
     );
 
-    private void SetupSchedulerMock(TimeBlock timeBlock, AcScheduleSetting setting)
+    private void SetupSchedulerMock(TimeBlock timeBlock, AcScheduleSetting expectedSetting)
     {
+        _mockScheduler.Reset(); // Optional, but ensures clean state
         _mockScheduler.Setup(x => x.FindCurrentTimeBlock()).Returns(timeBlock);
+
+        // Set the setting directly in out param
         _mockScheduler
-            .Setup(x => x.TryGetSetting(timeBlock, out It.Ref<AcScheduleSetting?>.IsAny))
-            .Returns(
-                new TryGetSettingCallback(
-                    (TimeBlock tb, out AcScheduleSetting? s) =>
-                    {
-                        s = setting;
-                        return tb == timeBlock;
-                    }
+            .Setup(x =>
+                x.TryGetSetting(
+                    It.Is<TimeBlock>(tb => tb == timeBlock),
+                    out It.Ref<AcScheduleSetting?>.IsAny
                 )
+            )
+            .Returns(
+                (TimeBlock _, out AcScheduleSetting? s) =>
+                {
+                    s = expectedSetting;
+                    return true;
+                }
             );
     }
 
@@ -650,6 +656,7 @@ public class ClimateAutomationTests : IDisposable
             HourEnd: 0
         );
         SetupSchedulerMock(timeBlock, testSetting);
+        _mockHaContext.ClearServiceCalls(); // clear before state change
 
         // Setup entity states based on test parameters
         _mockHaContext.SetEntityState(_entities.MotionSensor.EntityId, occupied ? "on" : "off");
@@ -727,6 +734,7 @@ public class ClimateAutomationTests : IDisposable
             HourEnd: 0
         );
         SetupSchedulerMock(timeBlock, testSetting);
+        _mockHaContext.ClearServiceCalls(); // clear before state change
 
         // Setup for occupied + closed door scenario (should use CoolTemp)
         _mockHaContext.SetEntityState(_entities.MotionSensor.EntityId, "on");
