@@ -211,11 +211,26 @@ public class ClimateAutomationTests : IDisposable
     #region Sensor-Based Automation Tests
 
     [Fact]
-    public void DoorClosed_Should_TriggerAcSettingApplication()
+    public void DoorClosed_Should_TurnOnMasterSwitch()
     {
+        _mockHaContext.ClearServiceCalls();
         // Act - Simulate door closing
+        _mockHaContext.SetEntityState(_entities.MasterSwitch.EntityId, "off");
         var stateChange = StateChangeHelpers.DoorClosed(_entities.Door);
         _mockHaContext.StateChangeSubject.OnNext(stateChange);
+
+        _mockHaContext.ShouldHaveCalledSwitchTurnOn(_entities.MasterSwitch.EntityId);
+    }
+
+    [Fact]
+    public void MasterSwitch_Should_TriggerAcSettingApplication()
+    {
+        _mockHaContext.ClearServiceCalls();
+        _mockHaContext.SimulateStateChange(_entities.MasterSwitch.EntityId, "on", "off");
+
+        _mockHaContext.ShouldHaveNoServiceCalls();
+
+        _mockHaContext.SimulateStateChange(_entities.MasterSwitch.EntityId, "off", "on");
 
         // Assert - Should apply time-based AC settings
         _mockHaContext.ShouldHaveCalledClimateSetTemperature(_entities.AirConditioner.EntityId);

@@ -48,6 +48,7 @@ public class ClimateScheduler : IClimateScheduler
             () =>
             {
                 _cachedAcSettings = null;
+                LogCurrentAcScheduleSettings();
             }
         );
 
