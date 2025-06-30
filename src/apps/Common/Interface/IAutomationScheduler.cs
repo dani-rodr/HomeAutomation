@@ -13,5 +13,6 @@ public interface IClimateScheduler : IAutomationScheduler
 {
     IDisposable GetResetSchedule();
     TimeBlock? FindCurrentTimeBlock();
-    bool TryGetSetting(TimeBlock timeBlock, [NotNullWhen(true)] out AcScheduleSetting? setting);
+    bool TryGetSetting(TimeBlock timeBlock, [NotNullWhen(true)] out AcSettings? setting);
+    int CalculateTemperature(AcSettings settings, bool isOccupied, bool isDoorOpen);
 }

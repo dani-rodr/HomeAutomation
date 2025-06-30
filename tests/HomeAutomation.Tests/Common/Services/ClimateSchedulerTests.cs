@@ -1,4 +1,5 @@
 using HomeAutomation.apps.Common.Containers;
+using HomeAutomation.apps.Common.Interface;
 using HomeAutomation.apps.Common.Services;
 
 namespace HomeAutomation.Tests.Common.Services;
@@ -11,6 +12,7 @@ public class ClimateSchedulerTests : IDisposable
 {
     private readonly MockHaContext _mockHaContext;
     private readonly Mock<ILogger<ClimateScheduler>> _mockLogger;
+    private readonly Mock<IAcTemperatureCalculator> _mockCalculator;
     private readonly TestWeatherEntities _weatherEntities;
     private readonly TestScheduler _testScheduler;
     private readonly ClimateScheduler _scheduler;
@@ -19,6 +21,7 @@ public class ClimateSchedulerTests : IDisposable
     {
         _mockHaContext = new MockHaContext();
         _mockLogger = new Mock<ILogger<ClimateScheduler>>();
+        _mockCalculator = new Mock<IAcTemperatureCalculator>();
         _weatherEntities = new TestWeatherEntities(_mockHaContext);
         _testScheduler = new TestScheduler();
 
@@ -26,7 +29,12 @@ public class ClimateSchedulerTests : IDisposable
         // because the constructor calls GetCurrentAcScheduleSettings() which reads sensor states
         SetupDefaultSunSensorStates();
 
-        _scheduler = new ClimateScheduler(_weatherEntities, _testScheduler, _mockLogger.Object);
+        _scheduler = new ClimateScheduler(
+            _weatherEntities,
+            _testScheduler,
+            _mockCalculator.Object,
+            _mockLogger.Object
+        );
     }
 
     private void SetupDefaultSunSensorStates()
@@ -200,7 +208,12 @@ public class ClimateSchedulerTests : IDisposable
     {
         // Arrange
         var testScheduler = new TestSchedulerWithTime(hour);
-        var scheduler = new ClimateScheduler(_weatherEntities, testScheduler, _mockLogger.Object);
+        var scheduler = new ClimateScheduler(
+            _weatherEntities,
+            testScheduler,
+            _mockCalculator.Object,
+            _mockLogger.Object
+        );
 
         var now = testScheduler.Now;
         var local = now.LocalDateTime;
@@ -223,6 +236,7 @@ public class ClimateSchedulerTests : IDisposable
         var scheduler6 = new ClimateScheduler(
             _weatherEntities,
             new TestSchedulerWithTime(6),
+            _mockCalculator.Object,
             _mockLogger.Object
         );
         scheduler6
@@ -234,6 +248,7 @@ public class ClimateSchedulerTests : IDisposable
         var scheduler18 = new ClimateScheduler(
             _weatherEntities,
             new TestSchedulerWithTime(18),
+            _mockCalculator.Object,
             _mockLogger.Object
         );
         scheduler18
@@ -245,6 +260,7 @@ public class ClimateSchedulerTests : IDisposable
         var scheduler0 = new ClimateScheduler(
             _weatherEntities,
             new TestSchedulerWithTime(0),
+            _mockCalculator.Object,
             _mockLogger.Object
         );
         scheduler0
@@ -298,7 +314,12 @@ public class ClimateSchedulerTests : IDisposable
         _mockHaContext.SetEntityState(_weatherEntities.SunMidnight.EntityId, "invalid");
 
         // Act - Try to create schedules
-        var scheduler = new ClimateScheduler(_weatherEntities, _testScheduler, _mockLogger.Object);
+        var scheduler = new ClimateScheduler(
+            _weatherEntities,
+            _testScheduler,
+            _mockCalculator.Object,
+            _mockLogger.Object
+        );
         var schedules = scheduler.GetSchedules(() => { }).ToList();
 
         // Assert - Should handle gracefully

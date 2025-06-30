@@ -163,7 +163,11 @@ public class ClimateAutomation(
             return;
         }
 
-        int targetTemp = setting.GetTemperature(_motionSensor.IsOccupied(), _doorSensor.IsOpen());
+        int targetTemp = scheduler.CalculateTemperature(
+            setting,
+            _motionSensor.IsOccupied(),
+            _doorSensor.IsOpen()
+        );
         var currentTemp = _ac.Attributes?.Temperature;
         var currentMode = _ac.State;
 

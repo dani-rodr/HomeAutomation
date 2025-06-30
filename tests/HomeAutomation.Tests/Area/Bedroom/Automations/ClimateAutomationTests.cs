@@ -68,7 +68,7 @@ public class ClimateAutomationTests : IDisposable
     private void SetupDefaultSchedulerMock()
     {
         // Setup default Sunset time block for existing tests
-        var defaultSetting = new AcScheduleSetting(
+        var defaultSetting = new AcSettings(
             NormalTemp: 25,
             PowerSavingTemp: 27,
             CoolTemp: 23,
@@ -81,26 +81,41 @@ public class ClimateAutomationTests : IDisposable
 
         _mockScheduler.Setup(x => x.FindCurrentTimeBlock()).Returns(TimeBlock.Sunset);
         _mockScheduler
-            .Setup(x => x.TryGetSetting(TimeBlock.Sunset, out It.Ref<AcScheduleSetting?>.IsAny))
+            .Setup(x => x.TryGetSetting(TimeBlock.Sunset, out It.Ref<AcSettings?>.IsAny))
             .Returns(
                 new TryGetSettingCallback(
-                    (TimeBlock timeBlock, out AcScheduleSetting? setting) =>
+                    (TimeBlock timeBlock, out AcSettings? setting) =>
                     {
                         setting = defaultSetting;
                         return true;
                     }
                 )
             );
+
+        // Setup the new CalculateTemperature method
+        _mockScheduler
+            .Setup(x =>
+                x.CalculateTemperature(It.IsAny<AcSettings>(), It.IsAny<bool>(), It.IsAny<bool>())
+            )
+            .Returns<AcSettings, bool, bool>(
+                (settings, occupied, doorOpen) =>
+                {
+                    // Simulate the temperature calculation logic for tests
+                    return (occupied, doorOpen) switch
+                    {
+                        (true, false) => settings.CoolTemp, // occupied + closed = cool
+                        (true, true) => settings.NormalTemp, // occupied + open = normal
+                        (false, _) => settings.PassiveTemp, // unoccupied = passive
+                    };
+                }
+            );
         _mockScheduler.Setup(x => x.GetSchedules(It.IsAny<Action>())).Returns([]);
         _mockScheduler.Setup(x => x.GetResetSchedule()).Returns(Mock.Of<IDisposable>());
     }
 
-    private delegate bool TryGetSettingCallback(
-        TimeBlock timeBlock,
-        out AcScheduleSetting? setting
-    );
+    private delegate bool TryGetSettingCallback(TimeBlock timeBlock, out AcSettings? setting);
 
-    private void SetupSchedulerMock(TimeBlock timeBlock, AcScheduleSetting expectedSetting)
+    private void SetupSchedulerMock(TimeBlock timeBlock, AcSettings expectedSetting)
     {
         _mockScheduler.Reset(); // Optional, but ensures clean state
         _mockScheduler.Setup(x => x.FindCurrentTimeBlock()).Returns(timeBlock);
@@ -110,14 +125,36 @@ public class ClimateAutomationTests : IDisposable
             .Setup(x =>
                 x.TryGetSetting(
                     It.Is<TimeBlock>(tb => tb == timeBlock),
-                    out It.Ref<AcScheduleSetting?>.IsAny
+                    out It.Ref<AcSettings?>.IsAny
                 )
             )
             .Returns(
-                (TimeBlock _, out AcScheduleSetting? s) =>
+                (TimeBlock _, out AcSettings? s) =>
                 {
                     s = expectedSetting;
                     return true;
+                }
+            );
+
+        // Setup CalculateTemperature method for this specific setting
+        _mockScheduler
+            .Setup(x =>
+                x.CalculateTemperature(
+                    It.Is<AcSettings>(s => s == expectedSetting),
+                    It.IsAny<bool>(),
+                    It.IsAny<bool>()
+                )
+            )
+            .Returns<AcSettings, bool, bool>(
+                (settings, occupied, doorOpen) =>
+                {
+                    // Simulate the temperature calculation logic
+                    return (occupied, doorOpen) switch
+                    {
+                        (true, false) => settings.CoolTemp, // occupied + closed = cool
+                        (true, true) => settings.NormalTemp, // occupied + open = normal
+                        (false, _) => settings.PassiveTemp, // unoccupied = passive
+                    };
                 }
             );
     }
@@ -660,7 +697,7 @@ public class ClimateAutomationTests : IDisposable
     )
     {
         // Arrange - Setup custom scheduler mock for this test
-        var testSetting = new AcScheduleSetting(
+        var testSetting = new AcSettings(
             NormalTemp: 25,
             PowerSavingTemp: 27,
             CoolTemp: 23,
@@ -738,7 +775,7 @@ public class ClimateAutomationTests : IDisposable
     )
     {
         // Arrange - Setup scheduler mock with specific time block settings
-        var testSetting = new AcScheduleSetting(
+        var testSetting = new AcSettings(
             NormalTemp: 25, // Fixed for test simplicity
             PowerSavingTemp: powerSavingTemp,
             CoolTemp: coolTemp,
@@ -783,7 +820,7 @@ public class ClimateAutomationTests : IDisposable
     )
     {
         // Arrange - Setup scheduler mock with specific fan activation setting
-        var testSetting = new AcScheduleSetting(
+        var testSetting = new AcSettings(
             NormalTemp: 25,
             PowerSavingTemp: 27,
             CoolTemp: 23,

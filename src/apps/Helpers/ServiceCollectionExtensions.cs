@@ -40,9 +40,14 @@ public static class ServiceCollectionExtensions
             .AddTransientEntity<IBedroomFanEntities, BedroomFanEntities>()
             .AddTransientEntity<IClimateEntities, BedroomClimateEntities>()
             .AddTransientEntity<IClimateSchedulerEntities, ClimateSchedulerEntities>()
+            .AddTransient<IAcTemperatureCalculator>(p => new AcTemperatureCalculator(
+                p.GetRequiredService<IClimateSchedulerEntities>(),
+                p.GetRequiredService<ILogger<AcTemperatureCalculator>>()
+            ))
             .AddTransient<IClimateScheduler>(p => new ClimateScheduler(
                 p.GetRequiredService<IClimateSchedulerEntities>(),
                 p.GetRequiredService<IScheduler>(),
+                p.GetRequiredService<IAcTemperatureCalculator>(),
                 p.GetRequiredService<ILogger<ClimateScheduler>>()
             ));
     }

@@ -1,5 +1,4 @@
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using NetDaemon.Extensions.Scheduler;
 
 namespace HomeAutomation.apps.Common.Services;
@@ -8,18 +7,20 @@ public class ClimateScheduler : IClimateScheduler
 {
     private readonly IClimateSchedulerEntities _entities;
     private readonly IScheduler _scheduler;
+    private readonly IAcTemperatureCalculator _temperatureCalculator;
     private readonly ILogger _logger;
 
     public ClimateScheduler(
         IClimateSchedulerEntities entities,
         IScheduler scheduler,
+        IAcTemperatureCalculator temperatureCalculator,
         ILogger logger
     )
     {
         _entities = entities;
         _scheduler = scheduler;
+        _temperatureCalculator = temperatureCalculator;
         _logger = logger;
-        AcScheduleSetting.Initialize(entities.Weather, entities.PowerSavingMode, logger);
 
         LogCurrentAcScheduleSettings();
     }
@@ -52,14 +53,14 @@ public class ClimateScheduler : IClimateScheduler
             }
         );
 
-    public bool TryGetSetting(
-        TimeBlock timeBlock,
-        [NotNullWhen(true)] out AcScheduleSetting? setting
-    )
+    public bool TryGetSetting(TimeBlock timeBlock, [NotNullWhen(true)] out AcSettings? setting)
     {
         var settings = GetCurrentAcScheduleSettings();
         return settings.TryGetValue(timeBlock, out setting);
     }
+
+    public int CalculateTemperature(AcSettings settings, bool isOccupied, bool isDoorOpen) =>
+        _temperatureCalculator.CalculateTemperature(settings, isOccupied, isDoorOpen);
 
     public TimeBlock? FindCurrentTimeBlock()
     {
@@ -90,9 +91,9 @@ public class ClimateScheduler : IClimateScheduler
         return null;
     }
 
-    private Dictionary<TimeBlock, AcScheduleSetting>? _cachedAcSettings;
+    private Dictionary<TimeBlock, AcSettings>? _cachedAcSettings;
 
-    private Dictionary<TimeBlock, AcScheduleSetting> GetCurrentAcScheduleSettings()
+    private Dictionary<TimeBlock, AcSettings> GetCurrentAcScheduleSettings()
     {
         if (_cachedAcSettings != null)
         {
