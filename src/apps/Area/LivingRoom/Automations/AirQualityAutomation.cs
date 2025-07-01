@@ -33,28 +33,16 @@ public class AirQualityAutomation(IAirQualityEntities entities, ILogger logger)
     {
         if (airQuality > DIRTY_AIR_THRESHOLD)
         {
-            Logger.LogInformation(
-                "Air quality is POOR ({Value}) – starting cleaning mode",
-                airQuality
-            );
             HandlePoorAirQuality();
             return;
         }
 
         if (airQuality > CLEAN_AIR_THRESHOLD)
         {
-            Logger.LogInformation(
-                "Air quality is MODERATE ({Value}) – turning on main fan",
-                airQuality
-            );
             HandleModerateAirQuality();
             return;
         }
 
-        Logger.LogInformation(
-            "Air quality is EXCELLENT ({Value}) – turning off main fan",
-            airQuality
-        );
         Fan.TurnOff();
     }
 
