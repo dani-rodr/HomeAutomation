@@ -23,7 +23,18 @@ public class ClimateAutomation(
             .IsOffForHours(1)
             .Where(_ => MasterSwitch.IsOff())
             .Subscribe(_ => MasterSwitch?.TurnOn());
-        yield return _doorSensor.StateChanges().IsClosed().Subscribe(_ => MasterSwitch?.TurnOn());
+        yield return _doorSensor
+            .StateChanges()
+            .IsClosed()
+            .Subscribe(e =>
+            {
+                if (MasterSwitch.IsOff())
+                {
+                    MasterSwitch?.TurnOn();
+                    return;
+                }
+                ApplyTimeBasedAcSetting(e);
+            });
         yield return MasterSwitch!.StateChanges().IsOn().Subscribe(ApplyTimeBasedAcSetting);
     }
 
