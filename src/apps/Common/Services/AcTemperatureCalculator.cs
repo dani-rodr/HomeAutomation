@@ -17,16 +17,27 @@ public class AcTemperatureCalculator(
         bool isColdWeather = !_weather.IsSunny();
         bool powerSaving = _isPowerSavingMode.IsOn();
 
-        var temp = (isOccupied, isDoorOpen, powerSaving, isColdWeather) switch
+        int temp;
+        if (powerSaving)
         {
-            (_, _, true, _) => settings.PowerSavingTemp,
-            (true, false, _, _) => settings.CoolTemp,
-            (_, true, _, true) => settings.NormalTemp,
-            (true, true, _, false) => settings.NormalTemp,
-            (false, true, _, false) => settings.PassiveTemp,
-            (false, false, _, _) => settings.PassiveTemp,
-        };
-
+            temp = settings.PowerSavingTemp;
+        }
+        else if (isOccupied && !isDoorOpen)
+        {
+            temp = settings.CoolTemp;
+        }
+        else if (isDoorOpen && isColdWeather)
+        {
+            temp = settings.NormalTemp;
+        }
+        else if (isOccupied && isDoorOpen)
+        {
+            temp = settings.NormalTemp;
+        }
+        else
+        {
+            temp = settings.PassiveTemp;
+        }
         _logger.LogDebug(
             "Temperature calculation: {Temperature}°C for conditions (occupied:{Occupied}, doorOpen:{DoorOpen}, powerSaving:{PowerSaving}, coldWeather:{ColdWeather})",
             temp,

@@ -103,7 +103,7 @@ public class ClimateScheduler : IClimateScheduler
         _cachedAcSettings = new()
         {
             [TimeBlock.Sunrise] = new(
-                NormalTemp: 27,
+                NormalTemp: 25,
                 PowerSavingTemp: 27,
                 CoolTemp: 24,
                 PassiveTemp: 27,
