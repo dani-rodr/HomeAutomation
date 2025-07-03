@@ -1,10 +1,10 @@
 namespace HomeAutomation.apps.Area.LivingRoom.Automations;
 
-public class MotionAutomation(
-    ILivingRoomMotionEntities entities,
+public class LightAutomation(
+    ILivingRoomLightEntities entities,
     IDimmingLightController dimmingController,
-    ILogger<MotionAutomation> logger
-) : MotionAutomationBase(entities, logger)
+    ILogger<LightAutomation> logger
+) : LightAutomationBase(entities, logger)
 {
     protected override int SensorWaitTime => 30;
     protected override int SensorActiveDelayValue => 45;

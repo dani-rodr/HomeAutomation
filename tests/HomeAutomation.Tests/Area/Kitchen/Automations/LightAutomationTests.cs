@@ -11,22 +11,22 @@ namespace HomeAutomation.Tests.Area.Kitchen.Automations;
 /// NOTE: Kitchen automation uses IsOnForSeconds(5) which creates a 5-second delay before turning on light.
 /// This is different from other automations that turn on lights immediately.
 /// </summary>
-public class MotionAutomationTests : IDisposable
+public class LightAutomationTests : IDisposable
 {
     private readonly MockHaContext _mockHaContext;
-    private readonly Mock<ILogger<MotionAutomation>> _mockLogger;
+    private readonly Mock<ILogger<LightAutomation>> _mockLogger;
     private readonly TestEntities _entities;
-    private readonly MotionAutomation _automation;
+    private readonly LightAutomation _automation;
 
-    public MotionAutomationTests()
+    public LightAutomationTests()
     {
         _mockHaContext = new MockHaContext();
-        _mockLogger = new Mock<ILogger<MotionAutomation>>();
+        _mockLogger = new Mock<ILogger<LightAutomation>>();
 
         // Create test entities wrapper with Kitchen-specific entities
         _entities = new TestEntities(_mockHaContext);
 
-        _automation = new MotionAutomation(_entities, _mockLogger.Object);
+        _automation = new LightAutomation(_entities, _mockLogger.Object);
 
         // Start the automation to set up subscriptions
         _automation.StartAutomation();
@@ -436,7 +436,7 @@ public class MotionAutomationTests : IDisposable
     /// Test wrapper that implements IKitchenMotionEntities interface
     /// Creates entities with appropriate entity IDs for Kitchen area
     /// </summary>
-    private class TestEntities(IHaContext haContext) : IKitchenMotionEntities
+    private class TestEntities(IHaContext haContext) : IKitchenLightEntities
     {
         public SwitchEntity MasterSwitch { get; } =
             new SwitchEntity(haContext, "switch.kitchen_motion_sensor");

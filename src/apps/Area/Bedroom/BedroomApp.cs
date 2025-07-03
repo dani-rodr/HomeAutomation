@@ -4,7 +4,7 @@ namespace HomeAutomation.apps.Area.Bedroom;
 
 public class BedroomApp(
     ILoggerFactory loggerFactory,
-    IBedroomMotionEntities motionEntities,
+    IBedroomLightEntities motionEntities,
     IBedroomFanEntities fanEntities,
     IClimateEntities climateEntities,
     IClimateScheduler climateScheduler,
@@ -13,10 +13,10 @@ public class BedroomApp(
 {
     protected override IEnumerable<IAutomation> CreateAutomations()
     {
-        yield return new MotionAutomation(
+        yield return new LightAutomation(
             motionEntities,
             scheduler,
-            loggerFactory.CreateLogger<MotionAutomation>()
+            loggerFactory.CreateLogger<LightAutomation>()
         );
         yield return new FanAutomation(fanEntities, loggerFactory.CreateLogger<FanAutomation>());
         yield return new ClimateAutomation(

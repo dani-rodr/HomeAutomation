@@ -36,7 +36,7 @@ public static class ServiceCollectionExtensions
     private static IServiceCollection AddBedroomEntities(this IServiceCollection services)
     {
         return services
-            .AddTransientEntity<IBedroomMotionEntities, BedroomMotionEntities>()
+            .AddTransientEntity<IBedroomLightEntities, BedroomLightEntities>()
             .AddTransientEntity<IBedroomFanEntities, BedroomFanEntities>()
             .AddTransientEntity<IClimateEntities, BedroomClimateEntities>()
             .AddTransientEntity<IClimateSchedulerEntities, ClimateSchedulerEntities>()
@@ -55,7 +55,7 @@ public static class ServiceCollectionExtensions
     private static IServiceCollection AddDeskEntities(this IServiceCollection services)
     {
         return services
-            .AddTransientEntity<IDeskMotionEntities, DeskMotionEntities>()
+            .AddTransientEntity<IDeskLightEntities, DeskLightEntities>()
             .AddTransientEntity<ILgDisplayEntities, LgDisplayEntities>()
             .AddTransientEntity<IDesktopEntities, DeskDesktopEntities>()
             .AddTransientEntity<ILaptopEntities, LaptopEntities>()
@@ -81,20 +81,20 @@ public static class ServiceCollectionExtensions
 
     private static IServiceCollection AddBathroomEntities(this IServiceCollection services)
     {
-        return services.AddTransientEntity<IBathroomMotionEntities, BathroomMotionEntities>();
+        return services.AddTransientEntity<IBathroomLightEntities, BathroomLightEntities>();
     }
 
     private static IServiceCollection AddKitchenEntities(this IServiceCollection services)
     {
         return services
-            .AddTransientEntity<IKitchenMotionEntities, KitchenMotionEntities>()
+            .AddTransientEntity<IKitchenLightEntities, KitchenLightEntities>()
             .AddTransientEntity<ICookingEntities, KitchenCookingEntities>();
     }
 
     private static IServiceCollection AddLivingRoomEntities(this IServiceCollection services)
     {
         return services
-            .AddTransientEntity<ILivingRoomMotionEntities, LivingRoomMotionEntities>()
+            .AddTransientEntity<ILivingRoomLightEntities, LivingRoomLightEntities>()
             .AddTransientEntity<ILivingRoomFanEntities, LivingRoomFanEntities>()
             .AddTransientEntity<IAirQualityEntities, AirQualityEntities>()
             .AddTransientEntity<ITabletEntities, LivingRoomTabletEntities>()
@@ -107,7 +107,7 @@ public static class ServiceCollectionExtensions
 
     private static IServiceCollection AddPantryEntities(this IServiceCollection services)
     {
-        return services.AddTransientEntity<IPantryMotionEntities, PantryMotionEntities>();
+        return services.AddTransientEntity<IPantryLightEntities, PantryLightEntities>();
     }
 
     private static IServiceCollection AddTransientEntity<TInterface, TImplementation>(

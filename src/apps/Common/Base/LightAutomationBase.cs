@@ -1,6 +1,6 @@
 namespace HomeAutomation.apps.Common.Base;
 
-public abstract class MotionAutomationBase(IMotionAutomationEntities entities, ILogger logger)
+public abstract class LightAutomationBase(ILightAutomationEntities entities, ILogger logger)
     : AutomationBase(logger, entities.MasterSwitch)
 {
     protected readonly BinarySensorEntity MotionSensor = entities.MotionSensor;

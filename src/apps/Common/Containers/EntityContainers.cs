@@ -56,8 +56,7 @@ public class CommonEntities(Entities entities)
     }
 }
 
-public class BedroomMotionEntities(Entities entities, CommonEntities common)
-    : IBedroomMotionEntities
+public class BedroomLightEntities(Entities entities, CommonEntities common) : IBedroomLightEntities
 {
     public SwitchEntity MasterSwitch => common.MotionAutomations.Bedroom;
     public BinarySensorEntity MotionSensor => common.MotionSensors.Bedroom;
@@ -67,8 +66,8 @@ public class BedroomMotionEntities(Entities entities, CommonEntities common)
     public SwitchEntity LeftSideFanSwitch => common.Fans.Bedroom;
 }
 
-public class LivingRoomMotionEntities(Entities entities, CommonEntities common)
-    : ILivingRoomMotionEntities
+public class LivingRoomLightEntities(Entities entities, CommonEntities common)
+    : ILivingRoomLightEntities
 {
     public SwitchEntity MasterSwitch => common.MotionAutomations.LivingRoom;
     public BinarySensorEntity MotionSensor => common.MotionSensors.LivingRoom;
@@ -83,7 +82,7 @@ public class LivingRoomMotionEntities(Entities entities, CommonEntities common)
     public BinarySensorEntity PantryMotionSensors => common.MotionSensors.Pantry;
 }
 
-public class BathroomMotionEntities(Entities entities) : IBathroomMotionEntities
+public class BathroomLightEntities(Entities entities) : IBathroomLightEntities
 {
     public SwitchEntity MasterSwitch => entities.Switch.BathroomMotionSensor;
     public BinarySensorEntity MotionSensor => entities.BinarySensor.BathroomPresenceSensors;
@@ -91,7 +90,7 @@ public class BathroomMotionEntities(Entities entities) : IBathroomMotionEntities
     public NumberEntity SensorDelay => entities.Number.ZEsp32C62StillTargetDelay;
 }
 
-public class DeskMotionEntities(Entities entities, CommonEntities common) : IDeskMotionEntities
+public class DeskLightEntities(Entities entities, CommonEntities common) : IDeskLightEntities
 {
     public SwitchEntity MasterSwitch => entities.Switch.LgTvMotionSensor;
     public BinarySensorEntity MotionSensor => common.MotionSensors.Desk;
@@ -212,7 +211,7 @@ public class LivingRoomTabletEntities(Entities entities, CommonEntities common) 
     public NumberEntity SensorDelay => common.DelaySensors.LivingRoom;
 }
 
-public class PantryMotionEntities(Entities entities, CommonEntities common) : IPantryMotionEntities
+public class PantryLightEntities(Entities entities, CommonEntities common) : IPantryLightEntities
 {
     public SwitchEntity MasterSwitch => common.MotionAutomations.Pantry;
     public BinarySensorEntity MotionSensor => common.MotionSensors.Pantry;
@@ -224,8 +223,7 @@ public class PantryMotionEntities(Entities entities, CommonEntities common) : IP
     public BinarySensorEntity BedroomDoor => common.ContactSensors.Bedroom;
 }
 
-public class KitchenMotionEntities(Entities entities, CommonEntities common)
-    : IKitchenMotionEntities
+public class KitchenLightEntities(Entities entities, CommonEntities common) : IKitchenLightEntities
 {
     public SwitchEntity MasterSwitch => entities.Switch.KitchenMotionSensor;
     public BinarySensorEntity MotionSensor => common.MotionSensors.Kitchen;

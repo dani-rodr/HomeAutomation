@@ -3,16 +3,16 @@ using HomeAutomation.apps.Area.Kitchen.Automations;
 namespace HomeAutomation.apps.Area.Kitchen;
 
 public class KitchenApp(
-    IKitchenMotionEntities motionEntities,
+    IKitchenLightEntities motionEntities,
     ICookingEntities cookingEntities,
     ILoggerFactory loggerFactory
 ) : AppBase<KitchenApp>()
 {
     protected override IEnumerable<IAutomation> CreateAutomations()
     {
-        yield return new MotionAutomation(
+        yield return new LightAutomation(
             motionEntities,
-            loggerFactory.CreateLogger<MotionAutomation>()
+            loggerFactory.CreateLogger<LightAutomation>()
         );
         yield return new CookingAutomation(
             cookingEntities,

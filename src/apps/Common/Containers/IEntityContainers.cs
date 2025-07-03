@@ -6,7 +6,7 @@ public interface IMotionBase
     BinarySensorEntity MotionSensor { get; }
 }
 
-public interface IMotionAutomationEntities : IMotionBase
+public interface ILightAutomationEntities : IMotionBase
 {
     NumberEntity SensorDelay { get; }
     LightEntity Light { get; }
@@ -17,13 +17,13 @@ public interface IFanAutomationEntities : IMotionBase
     IEnumerable<SwitchEntity> Fans { get; }
 }
 
-public interface IBedroomMotionEntities : IMotionAutomationEntities
+public interface IBedroomLightEntities : ILightAutomationEntities
 {
     SwitchEntity RightSideEmptySwitch { get; }
     SwitchEntity LeftSideFanSwitch { get; }
 }
 
-public interface ILivingRoomMotionEntities : IMotionAutomationEntities
+public interface ILivingRoomLightEntities : ILightAutomationEntities
 {
     BinarySensorEntity BedroomDoor { get; }
     BinarySensorEntity BedroomMotionSensors { get; }
@@ -34,18 +34,18 @@ public interface ILivingRoomMotionEntities : IMotionAutomationEntities
     BinarySensorEntity PantryMotionSensors { get; }
 }
 
-public interface IPantryMotionEntities : IMotionAutomationEntities
+public interface IPantryLightEntities : ILightAutomationEntities
 {
     BinarySensorEntity MiScalePresenceSensor { get; }
     LightEntity MirrorLight { get; }
     BinarySensorEntity BedroomDoor { get; }
 }
 
-public interface IBathroomMotionEntities : IMotionAutomationEntities;
+public interface IBathroomLightEntities : ILightAutomationEntities;
 
-public interface IDeskMotionEntities : IMotionAutomationEntities;
+public interface IDeskLightEntities : ILightAutomationEntities;
 
-public interface IKitchenMotionEntities : IMotionAutomationEntities
+public interface IKitchenLightEntities : ILightAutomationEntities
 {
     BinarySensorEntity PowerPlug { get; }
 }
@@ -93,14 +93,14 @@ public interface IDisplayEntities
     MediaPlayerEntity MediaPlayer { get; }
 }
 
-public interface ITclDisplayEntities : IDisplayEntities, IMotionAutomationEntities;
+public interface ITclDisplayEntities : IDisplayEntities, ILightAutomationEntities;
 
 public interface ILgDisplayEntities : IDisplayEntities
 {
     LightEntity Display { get; }
 }
 
-public interface ITabletEntities : IMotionAutomationEntities
+public interface ITabletEntities : ILightAutomationEntities
 {
     BinarySensorEntity TabletActive { get; }
 }

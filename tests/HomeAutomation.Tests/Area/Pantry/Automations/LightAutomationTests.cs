@@ -7,22 +7,22 @@ namespace HomeAutomation.Tests.Area.Pantry.Automations;
 /// Comprehensive behavioral tests for Pantry MotionAutomation using clean assertion syntax
 /// Verifies actual automation behavior with enhanced readability
 /// </summary>
-public class MotionAutomationTests : IDisposable
+public class LightAutomationTests : IDisposable
 {
     private readonly MockHaContext _mockHaContext;
-    private readonly Mock<ILogger<MotionAutomation>> _mockLogger;
+    private readonly Mock<ILogger<LightAutomation>> _mockLogger;
     private readonly TestEntities _entities;
-    private readonly MotionAutomation _automation;
+    private readonly LightAutomation _automation;
 
-    public MotionAutomationTests()
+    public LightAutomationTests()
     {
         _mockHaContext = new MockHaContext();
-        _mockLogger = new Mock<ILogger<MotionAutomation>>();
+        _mockLogger = new Mock<ILogger<LightAutomation>>();
 
         // Create test entities wrapper - much simpler!
         _entities = new TestEntities(_mockHaContext);
 
-        _automation = new MotionAutomation(_entities, _mockLogger.Object);
+        _automation = new LightAutomation(_entities, _mockLogger.Object);
 
         // Start the automation to set up subscriptions
         _automation.StartAutomation();
@@ -219,7 +219,7 @@ public class MotionAutomationTests : IDisposable
     /// Test wrapper that implements IPantryMotionEntities interface
     /// Creates entities internally with the appropriate entity IDs
     /// </summary>
-    private class TestEntities(IHaContext haContext) : IPantryMotionEntities
+    private class TestEntities(IHaContext haContext) : IPantryLightEntities
     {
         public SwitchEntity MasterSwitch { get; } =
             new SwitchEntity(haContext, "switch.pantry_motion_sensor");

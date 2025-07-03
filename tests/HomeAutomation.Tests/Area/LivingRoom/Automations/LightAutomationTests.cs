@@ -9,24 +9,24 @@ namespace HomeAutomation.Tests.Area.LivingRoom.Automations;
 /// Tests the most complex motion automation with cross-area dependencies and dimming controller integration
 /// Covers TV state integration, kitchen sensor coordination, pantry light management, and bedroom door relationships
 /// </summary>
-public class MotionAutomationTests : IDisposable
+public class LightAutomationTests : IDisposable
 {
     private readonly MockHaContext _mockHaContext;
-    private readonly Mock<ILogger<MotionAutomation>> _mockLogger;
+    private readonly Mock<ILogger<LightAutomation>> _mockLogger;
     private readonly Mock<IDimmingLightController> _mockDimmingController;
     private readonly TestEntities _entities;
-    private readonly MotionAutomation _automation;
+    private readonly LightAutomation _automation;
 
-    public MotionAutomationTests()
+    public LightAutomationTests()
     {
         _mockHaContext = new MockHaContext();
-        _mockLogger = new Mock<ILogger<MotionAutomation>>();
+        _mockLogger = new Mock<ILogger<LightAutomation>>();
         _mockDimmingController = new Mock<IDimmingLightController>();
 
         // Create test entities wrapper with all complex cross-area dependencies
         _entities = new TestEntities(_mockHaContext);
 
-        _automation = new MotionAutomation(
+        _automation = new LightAutomation(
             _entities,
             _mockDimmingController.Object,
             _mockLogger.Object
@@ -581,7 +581,7 @@ public class MotionAutomationTests : IDisposable
     /// Creates entities internally with the appropriate entity IDs for LivingRoom
     /// Includes all complex cross-area dependencies
     /// </summary>
-    private class TestEntities(IHaContext haContext) : ILivingRoomMotionEntities
+    private class TestEntities(IHaContext haContext) : ILivingRoomLightEntities
     {
         // Base motion automation entities
         public SwitchEntity MasterSwitch { get; } =

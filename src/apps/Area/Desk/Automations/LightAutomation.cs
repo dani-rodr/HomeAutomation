@@ -1,10 +1,10 @@
 namespace HomeAutomation.apps.Area.Desk.Automations;
 
-public class MotionAutomation(
-    IMotionAutomationEntities entities,
+public class LightAutomation(
+    ILightAutomationEntities entities,
     ILgDisplay monitor,
-    ILogger<MotionAutomation> logger
-) : MotionAutomationBase(entities, logger)
+    ILogger<LightAutomation> logger
+) : LightAutomationBase(entities, logger)
 {
     private const double LONG_SENSOR_DELAY = 60;
     private const double SHORT_SENSOR_DELAY = 20;

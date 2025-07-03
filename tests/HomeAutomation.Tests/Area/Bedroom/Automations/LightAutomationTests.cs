@@ -9,23 +9,23 @@ namespace HomeAutomation.Tests.Area.Bedroom.Automations;
 /// Tests complex functionality including double-click detection, physical switch operations,
 /// and master switch disabling behavior with enhanced readability
 /// </summary>
-public class MotionAutomationTests : IDisposable
+public class LightAutomationTests : IDisposable
 {
     private readonly MockHaContext _mockHaContext;
-    private readonly Mock<ILogger<MotionAutomation>> _mockLogger;
+    private readonly Mock<ILogger<LightAutomation>> _mockLogger;
     private readonly TestScheduler _testScheduler = new();
     private readonly TestEntities _entities;
-    private readonly MotionAutomation _automation;
+    private readonly LightAutomation _automation;
 
-    public MotionAutomationTests()
+    public LightAutomationTests()
     {
         _mockHaContext = new MockHaContext();
-        _mockLogger = new Mock<ILogger<MotionAutomation>>();
+        _mockLogger = new Mock<ILogger<LightAutomation>>();
 
         // Create test entities wrapper
         _entities = new TestEntities(_mockHaContext);
 
-        _automation = new MotionAutomation(_entities, _testScheduler, _mockLogger.Object);
+        _automation = new LightAutomation(_entities, _testScheduler, _mockLogger.Object);
 
         // Start the automation to set up subscriptions
         _automation.StartAutomation();
@@ -559,7 +559,7 @@ public class MotionAutomationTests : IDisposable
     /// Test wrapper that implements IBedroomMotionEntities interface
     /// Creates entities internally with the appropriate entity IDs for Bedroom
     /// </summary>
-    private class TestEntities(IHaContext haContext) : IBedroomMotionEntities
+    private class TestEntities(IHaContext haContext) : IBedroomLightEntities
     {
         public SwitchEntity MasterSwitch { get; } =
             new SwitchEntity(haContext, "switch.bedroom_motion_sensor");

@@ -10,7 +10,7 @@ public class DeskApp(
     ILaptopEntities laptopEntities,
     ILaptopScheduler laptopScheduler,
     ILaptopChargingHandler laptopBatteryHandler,
-    IDeskMotionEntities deskMotionEntities,
+    IDeskLightEntities deskMotionEntities,
     ILgDisplay lgDisplay,
     IScheduler scheduler,
     ILoggerFactory loggerFactory
@@ -35,10 +35,10 @@ public class DeskApp(
         desktop.StartAutomation();
         laptop.StartAutomation();
         lgDisplay.StartAutomation();
-        yield return new MotionAutomation(
+        yield return new LightAutomation(
             deskMotionEntities,
             lgDisplay,
-            loggerFactory.CreateLogger<MotionAutomation>()
+            loggerFactory.CreateLogger<LightAutomation>()
         );
         yield return new DisplayAutomation(
             lgDisplay,

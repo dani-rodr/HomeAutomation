@@ -3,7 +3,7 @@ using HomeAutomation.apps.Area.LivingRoom.Automations;
 namespace HomeAutomation.apps.Area.LivingRoom;
 
 public class LivingRoomApp(
-    ILivingRoomMotionEntities motionEntities,
+    ILivingRoomLightEntities motionEntities,
     ILivingRoomFanEntities fanEntities,
     IAirQualityEntities airQualityEntities,
     ITabletEntities tabletEntities,
@@ -24,14 +24,14 @@ public class LivingRoomApp(
             tabletEntities,
             loggerFactory.CreateLogger<TabletAutomation>()
         );
-        yield return new MotionAutomation(
+        yield return new LightAutomation(
             motionEntities,
             new DimmingLightController(
                 motionEntities.SensorDelay,
                 scheduler,
                 loggerFactory.CreateLogger<DimmingLightController>()
             ),
-            loggerFactory.CreateLogger<MotionAutomation>()
+            loggerFactory.CreateLogger<LightAutomation>()
         );
     }
 }

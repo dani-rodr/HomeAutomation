@@ -2,14 +2,14 @@ using HomeAutomation.apps.Area.Pantry.Automations;
 
 namespace HomeAutomation.apps.Area.Pantry;
 
-public class PantryApp(IPantryMotionEntities motionEntities, ILoggerFactory loggerFactory)
+public class PantryApp(IPantryLightEntities motionEntities, ILoggerFactory loggerFactory)
     : AppBase<PantryApp>()
 {
     protected override IEnumerable<IAutomation> CreateAutomations()
     {
-        yield return new MotionAutomation(
+        yield return new LightAutomation(
             motionEntities,
-            loggerFactory.CreateLogger<MotionAutomation>()
+            loggerFactory.CreateLogger<LightAutomation>()
         );
     }
 }

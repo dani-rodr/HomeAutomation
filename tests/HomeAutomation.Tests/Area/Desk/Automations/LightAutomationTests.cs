@@ -9,24 +9,24 @@ namespace HomeAutomation.Tests.Area.Desk.Automations;
 /// Tests desk-specific motion automation with presence detection and light/display control
 /// Tests only automation behavior with mocked dimming controller for proper separation of concerns
 /// </summary>
-public class MotionAutomationTests : IDisposable
+public class LightAutomationTests : IDisposable
 {
     private readonly MockHaContext _mockHaContext;
-    private readonly Mock<ILogger<MotionAutomation>> _mockLogger;
+    private readonly Mock<ILogger<LightAutomation>> _mockLogger;
     private readonly Mock<ILgDisplay> _mockLgDisplay;
     private readonly TestEntities _entities;
-    private readonly MotionAutomation _automation;
+    private readonly LightAutomation _automation;
 
-    public MotionAutomationTests()
+    public LightAutomationTests()
     {
         _mockHaContext = new MockHaContext();
-        _mockLogger = new Mock<ILogger<MotionAutomation>>();
+        _mockLogger = new Mock<ILogger<LightAutomation>>();
         _mockLgDisplay = new Mock<ILgDisplay>();
 
         // Create test entities wrapper for desk-specific entities
         _entities = new TestEntities(_mockHaContext);
 
-        _automation = new MotionAutomation(_entities, _mockLgDisplay.Object, _mockLogger.Object);
+        _automation = new LightAutomation(_entities, _mockLgDisplay.Object, _mockLogger.Object);
 
         // Start the automation to set up subscriptions
         _automation.StartAutomation();
@@ -49,7 +49,7 @@ public class MotionAutomationTests : IDisposable
     /// Creates entities internally with the appropriate entity IDs for Desk area
     /// Uses desk-specific entity IDs based on Home Assistant configuration
     /// </summary>
-    private class TestEntities(IHaContext haContext) : IDeskMotionEntities
+    private class TestEntities(IHaContext haContext) : IDeskLightEntities
     {
         public SwitchEntity MasterSwitch { get; } =
             new SwitchEntity(haContext, "switch.motion_sensors");
