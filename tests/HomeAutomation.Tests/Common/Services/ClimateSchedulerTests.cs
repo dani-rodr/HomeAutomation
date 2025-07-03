@@ -59,7 +59,7 @@ public class ClimateSchedulerTests : IDisposable
         setting.Should().NotBeNull();
         setting!.Mode.Should().Be("dry", "Sunrise period uses dry mode");
         setting.ActivateFan.Should().BeTrue("Sunrise period can activate fan");
-        setting.NormalTemp.Should().Be(27, "Sunrise NormalTemp should be 27°C");
+        setting.NormalTemp.Should().Be(25, "Sunrise NormalTemp should be 25°C");
         setting.PowerSavingTemp.Should().Be(27, "Sunrise PowerSavingTemp should be 27°C");
         setting.CoolTemp.Should().Be(24, "Sunrise CoolTemp should be 24°C");
         setting.PassiveTemp.Should().Be(27, "Sunrise PassiveTemp should be 27°C");
