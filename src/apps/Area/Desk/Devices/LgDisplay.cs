@@ -180,7 +180,10 @@ public class LgDisplay(ILgDisplayEntities entities, IServices services, ILogger<
                     _lightDisplay.TurnOn();
                     return;
                 }
-                _lightDisplay.TurnOff();
+                if (e.IsOff())
+                {
+                    _lightDisplay.TurnOff();
+                }
             });
 
     private IDisposable AdjustBrightnessFromInput()
