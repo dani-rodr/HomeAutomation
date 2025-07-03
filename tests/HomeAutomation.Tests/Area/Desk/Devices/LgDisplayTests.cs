@@ -552,20 +552,28 @@ public class LgDisplayTests : IDisposable
 
         // Assert - Should invoke SetBrightnessAsync with correct value
         var calls = _mockHaContext.ServiceCalls;
-        var firstCall = calls.FirstOrDefault();
+
+        calls.Count.Should().Be(3);
+
+        var firstCall = calls[0];
         firstCall.Should().NotBeNull();
-        firstCall!.Domain.Should().Be("webostv"); // or whatever domain your SetBrightnessAsync uses
+        firstCall!.Domain.Should().Be("webostv");
         firstCall.Service.Should().Be("command");
 
-        var lastCall = calls.LastOrDefault();
+        var nextCall = calls[1];
+        nextCall.Should().NotBeNull();
+        nextCall!.Domain.Should().Be("webostv");
+        nextCall.Service.Should().Be("button");
+
+        var lastCall = calls[2];
         lastCall.Should().NotBeNull();
-        lastCall!.Domain.Should().Be("webostv"); // or whatever domain your SetBrightnessAsync uses
-        lastCall.Service.Should().Be("button");
+        lastCall!.Domain.Should().Be("light");
+        lastCall.Service.Should().Be("turn_on");
 
         var brightnessDataJson = JsonSerializer.Serialize(firstCall.Data);
         brightnessDataJson.Should().Contain($"{newBrightnessPct}");
 
-        var buttonDataJson = JsonSerializer.Serialize(lastCall.Data);
+        var buttonDataJson = JsonSerializer.Serialize(nextCall.Data);
         buttonDataJson.Should().Contain(buttonEnterPressed);
     }
 

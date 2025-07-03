@@ -7,4 +7,7 @@ public interface ILgDisplay : IMediaPlayer, IAutomationDevice
     void ShowScreenSaver();
     bool IsShowingPc { get; }
     bool IsShowingLaptop { get; }
+    Task SetBrightnessAsync(int value);
+    Task SetBrightnessHighAsync();
+    Task SetBrightnessLowAsync();
 }

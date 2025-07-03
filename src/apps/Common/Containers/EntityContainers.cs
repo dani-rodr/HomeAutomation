@@ -47,6 +47,7 @@ public class CommonEntities(Entities entities)
 
     public class LightGroup(Entities entities)
     {
+        public LightEntity LivingRoom => entities.Light.SalaLightsGroup;
         public LightEntity Pantry => entities.Light.PantryLights;
     }
 
@@ -96,6 +97,7 @@ public class DeskLightEntities(Entities entities, CommonEntities common) : IDesk
     public BinarySensorEntity MotionSensor => common.MotionSensors.Desk;
     public LightEntity Light => entities.Light.LgDisplay;
     public NumberEntity SensorDelay => entities.Number.ZEsp32C61StillTargetDelay2;
+    public LightEntity SalaLights => common.Lights.LivingRoom;
 }
 
 public class AirQualityEntities(Entities entities, CommonEntities common) : IAirQualityEntities

@@ -14,10 +14,12 @@ public class LgDisplay(ILgDisplayEntities entities, IServices services, ILogger<
         ILgDisplay
 {
     private const string MAC_ADDRESS = "D4:8D:26:B8:C4:AA";
+    private const int HIGH_BRIGHTNESS = 90;
+    private const int LOW_BRIGTNESS = 40;
     private readonly WebostvServices _webosServices = services.Webostv;
     private readonly WakeOnLanServices _wolServices = services.WakeOnLan;
-    private readonly LightEntity _screen = entities.Display;
-    private int _brightness = 90;
+    private readonly LightEntity _lightDisplay = entities.Display;
+    private int _brightness = HIGH_BRIGHTNESS;
     public bool IsShowingPc => CurrentSource == Sources[DisplaySource.PC.ToString()];
     public bool IsShowingLaptop => CurrentSource == Sources[DisplaySource.Laptop.ToString()];
 
@@ -30,9 +32,14 @@ public class LgDisplay(ILgDisplayEntities entities, IServices services, ILogger<
         yield return AdjustBrightnessFromInput();
         yield return ToggleScreenAutomation();
         yield return SyncScreenSwitchWithMediaState();
+        yield return InitializeBrightness();
     }
 
-    private async Task SetBrightnessAsync(int value)
+    public async Task SetBrightnessHighAsync() => await SetBrightnessAsync(HIGH_BRIGHTNESS);
+
+    public async Task SetBrightnessLowAsync() => await SetBrightnessAsync(LOW_BRIGTNESS);
+
+    public async Task SetBrightnessAsync(int value)
     {
         if (value == _brightness)
         {
@@ -51,8 +58,7 @@ public class LgDisplay(ILgDisplayEntities entities, IServices services, ILogger<
         {
             Logger.LogError(ex, "Failed to set brightness on LG display.");
         }
-
-        _brightness = value;
+        UpdateLightValues(value);
     }
 
     public IObservable<
@@ -80,6 +86,12 @@ public class LgDisplay(ILgDisplayEntities entities, IServices services, ILogger<
 
     private void SendCommand(string command, object? payload = null) =>
         _webosServices.Command(EntityId, command, payload);
+
+    private void UpdateLightValues(int value)
+    {
+        _lightDisplay.TurnOn(brightnessPct: value);
+        _brightness = value;
+    }
 
     private Task<JsonElement?> SendCommandAsync(string command, object? payload = null) =>
         _webosServices.CommandAsync(
@@ -143,7 +155,7 @@ public class LgDisplay(ILgDisplayEntities entities, IServices services, ILogger<
             if (on && msg.Contains("errorCode': '-102'") && msg.Contains("must be 'screen off'"))
             {
                 Logger.LogDebug("Screen is already on. Ignoring redundant turnOnScreen command.");
-                _screen.TurnOn();
+                _lightDisplay.TurnOn();
                 return;
             }
 
@@ -152,7 +164,7 @@ public class LgDisplay(ILgDisplayEntities entities, IServices services, ILogger<
     }
 
     private IDisposable ToggleScreenAutomation() =>
-        _screen.StateChanges().SubscribeAsync(async e => await SetScreenPowerAsync(e.IsOn()));
+        _lightDisplay.StateChanges().SubscribeAsync(async e => await SetScreenPowerAsync(e.IsOn()));
 
     private IDisposable SyncScreenSwitchWithMediaState() =>
         Entity
@@ -165,23 +177,35 @@ public class LgDisplay(ILgDisplayEntities entities, IServices services, ILogger<
                 }
                 if (e.IsOn())
                 {
-                    _screen.TurnOn();
+                    _lightDisplay.TurnOn();
                     return;
                 }
-                _screen.TurnOff();
+                _lightDisplay.TurnOff();
             });
 
     private IDisposable AdjustBrightnessFromInput()
     {
-        return _screen
+        return _lightDisplay
             .StateAllChanges()
             .SubscribeAsync(async e =>
             {
                 if (e.IsOn() && e?.New?.Attributes?.Brightness is double brightness)
                 {
                     var brightnessPercent = (int)(brightness / 255.0 * 100);
-                    await SetBrightnessAsync(brightnessPercent);
+                    if (brightnessPercent != _brightness)
+                    {
+                        await SetBrightnessAsync(brightnessPercent);
+                    }
                 }
             });
     }
+
+    private IDisposable InitializeBrightness() =>
+        Entity
+            .StateChanges()
+            .IsOn()
+            .Subscribe(async e =>
+            {
+                await SetBrightnessAsync(HIGH_BRIGHTNESS);
+            });
 }

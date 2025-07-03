@@ -43,7 +43,10 @@ public interface IPantryLightEntities : ILightAutomationEntities
 
 public interface IBathroomLightEntities : ILightAutomationEntities;
 
-public interface IDeskLightEntities : ILightAutomationEntities;
+public interface IDeskLightEntities : ILightAutomationEntities
+{
+    LightEntity SalaLights { get; }
+}
 
 public interface IKitchenLightEntities : ILightAutomationEntities
 {

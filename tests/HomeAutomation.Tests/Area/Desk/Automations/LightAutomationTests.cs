@@ -55,8 +55,10 @@ public class LightAutomationTests : IDisposable
             new SwitchEntity(haContext, "switch.motion_sensors");
         public BinarySensorEntity MotionSensor { get; } =
             new BinarySensorEntity(haContext, "binary_sensor.desk_smart_presence");
-        public LightEntity Light { get; } = new LightEntity(haContext, "light.rgb_light_strip");
+        public LightEntity Light { get; } = new LightEntity(haContext, "light.lg_display");
         public NumberEntity SensorDelay { get; } =
             new NumberEntity(haContext, "number.z_esp32_c6_1_still_target_delay_2");
+
+        public LightEntity SalaLights { get; } = new LightEntity(haContext, "light.sala_lights");
     }
 }

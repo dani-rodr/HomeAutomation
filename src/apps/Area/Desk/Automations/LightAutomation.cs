@@ -1,7 +1,7 @@
 namespace HomeAutomation.apps.Area.Desk.Automations;
 
 public class LightAutomation(
-    ILightAutomationEntities entities,
+    IDeskLightEntities entities,
     ILgDisplay monitor,
     ILogger<LightAutomation> logger
 ) : LightAutomationBase(entities, logger)
@@ -10,7 +10,7 @@ public class LightAutomation(
     private const double SHORT_SENSOR_DELAY = 20;
 
     protected override IEnumerable<IDisposable> GetLightAutomations() =>
-        [MotionSensor.StateChanges().Subscribe(HandleMotionSensor)];
+        [GetLightMotionAutomation(), GetSalaLightsAutomation()];
 
     protected override IEnumerable<IDisposable> GetPersistentAutomations() => [];
 
@@ -25,16 +25,41 @@ public class LightAutomation(
             });
     }
 
-    private void HandleMotionSensor(StateChange e)
-    {
-        return;
-        if (e.IsOn())
-        {
-            Light.TurnOn();
-        }
-        else if (e.IsOff())
-        {
-            Light.TurnOff();
-        }
-    }
+    private IDisposable GetLightMotionAutomation() =>
+        MotionSensor
+            .StateChanges()
+            .Subscribe(e =>
+            {
+                if (e.Entity.State.IsUnavailable())
+                {
+                    return;
+                }
+                if (e.IsOn())
+                {
+                    Light.TurnOn();
+                }
+                else if (e.IsOff())
+                {
+                    Light.TurnOff();
+                }
+            });
+
+    private IDisposable GetSalaLightsAutomation() =>
+        entities
+            .SalaLights.StateChanges()
+            .Subscribe(async e =>
+            {
+                if (e.Entity.State.IsUnavailable())
+                {
+                    return;
+                }
+                if (e.IsOn())
+                {
+                    await monitor.SetBrightnessHighAsync();
+                }
+                else if (e.IsOff())
+                {
+                    await monitor.SetBrightnessLowAsync();
+                }
+            });
 }
