@@ -1,4 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
+using System.Text.Json;
 using HomeAutomation.apps.Area.Bedroom.Automations;
 using HomeAutomation.apps.Common.Containers;
 using HomeAutomation.apps.Common.Interface;
@@ -669,6 +670,216 @@ public class ClimateAutomationTests : IDisposable
         // Act & Assert - Should not throw
         var act = () => Task.WaitAll(tasks.ToArray());
         act.Should().NotThrow("Concurrent state changes should be handled safely");
+    }
+
+    #endregion
+
+    #region Temperature-Based Fan Tests
+
+    [Fact]
+    public async Task TemperatureBasedFanActivation_HotRoomWithActivateFan_Should_TurnOnFan()
+    {
+        // Arrange - Setup scheduler with ActivateFan=true and target temp 23°C
+        var testSetting = new AcSettings(
+            NormalTemp: 25,
+            PowerSavingTemp: 27,
+            CoolTemp: 23,
+            PassiveTemp: 27,
+            Mode: "cool",
+            ActivateFan: true, // Fan automation should be enabled
+            HourStart: 18,
+            HourEnd: 0
+        );
+        SetupSchedulerMock(TimeBlock.Sunset, testSetting);
+
+        // Setup room conditions: occupied + closed door (uses CoolTemp = 23°C)
+        _mockHaContext.SetEntityState(_entities.MotionSensor.EntityId, "on");
+        _mockHaContext.SetEntityState(_entities.Door.EntityId, "off");
+        _mockHaContext.SetEntityState(_entities.AirConditioner.EntityId, "cool");
+
+        // Set initial state with temperature below target
+        _mockHaContext.SetEntityAttributes(
+            _entities.AirConditioner.EntityId,
+            new
+            {
+                temperature = 23.0,
+                current_temperature = 22.0, // Below target initially
+                fan_mode = "auto",
+            }
+        );
+
+        _mockHaContext.ClearServiceCalls();
+
+        // Act - Create a proper state change with different current_temperature values
+        // This simulates the AC reporting a temperature change that crosses the threshold
+        var oldAttributes = new
+        {
+            temperature = 23.0,
+            current_temperature = 22.0, // Below target
+            fan_mode = "auto",
+        };
+
+        var newAttributes = new
+        {
+            temperature = 23.0,
+            current_temperature = 24.0, // Above target - should trigger fan!
+            fan_mode = "auto",
+        };
+
+        // Create state change with different current_temperature attributes
+        var oldEntityState = new EntityState
+        {
+            EntityId = _entities.AirConditioner.EntityId,
+            State = "cool",
+            AttributesJson = JsonSerializer.SerializeToElement(oldAttributes),
+        };
+
+        var newEntityState = new EntityState
+        {
+            EntityId = _entities.AirConditioner.EntityId,
+            State = "cool",
+            AttributesJson = JsonSerializer.SerializeToElement(newAttributes),
+        };
+
+        var stateChange = new StateChange(_entities.AirConditioner, oldEntityState, newEntityState);
+
+        // Update the entity attributes in mock context to match the new state
+        _mockHaContext.SetEntityAttributes(_entities.AirConditioner.EntityId, newAttributes);
+
+        // Trigger the state change
+        _mockHaContext.StateChangeSubject.OnNext(stateChange);
+
+        // Wait a bit to ensure reactive operations complete
+        await Task.Delay(200);
+
+        // Let's first verify ANY automation is working by testing motion detection
+        _mockHaContext.ClearServiceCalls();
+        var motionEvent = StateChangeHelpers.MotionDetected(_entities.MotionSensor);
+        _mockHaContext.StateChangeSubject.OnNext(motionEvent);
+
+        await Task.Delay(100);
+
+        // Check if motion automation worked (should trigger AC settings)
+        var acCalls = _mockHaContext.GetServiceCalls("climate").ToList();
+        Console.WriteLine($"Motion triggered {acCalls.Count} climate service calls");
+
+        // Now clear and test the temperature logic
+        _mockHaContext.ClearServiceCalls();
+
+        // Assert - Fan should be turned on due to temperature crossing threshold
+        _mockHaContext.ShouldHaveCalledSwitchTurnOn(_entities.Fan.EntityId);
+    }
+
+    [Fact]
+    public void TemperatureBasedFanActivation_CoolRoomWithActivateFan_Should_NotTurnOnFan()
+    {
+        // Arrange - Setup scheduler with ActivateFan=true but room stays cool
+        var testSetting = new AcSettings(
+            NormalTemp: 25,
+            PowerSavingTemp: 27,
+            CoolTemp: 23,
+            PassiveTemp: 27,
+            Mode: "cool",
+            ActivateFan: true,
+            HourStart: 18,
+            HourEnd: 0
+        );
+        SetupSchedulerMock(TimeBlock.Sunset, testSetting);
+
+        // Setup room conditions
+        _mockHaContext.SetEntityState(_entities.MotionSensor.EntityId, "on");
+        _mockHaContext.SetEntityState(_entities.Door.EntityId, "off");
+        _mockHaContext.SetEntityState(_entities.AirConditioner.EntityId, "cool");
+
+        // Temperature stays below target (not hot)
+        _mockHaContext.SetEntityAttributes(
+            _entities.AirConditioner.EntityId,
+            new
+            {
+                temperature = 23.0,
+                current_temperature = 22.0, // Below target
+                fan_mode = "auto",
+            }
+        );
+
+        _mockHaContext.ClearServiceCalls();
+
+        // Act - Simulate small temperature change but still below target
+        _mockHaContext.SetEntityAttributes(
+            _entities.AirConditioner.EntityId,
+            new
+            {
+                temperature = 23.0,
+                current_temperature = 22.5, // Still below target
+                fan_mode = "auto",
+            }
+        );
+
+        // Trigger temperature change event (state stays same, attributes change)
+        _mockHaContext.SimulateStateChange(
+            _entities.AirConditioner.EntityId,
+            "cool",
+            "cool",
+            new
+            {
+                temperature = 23.0,
+                current_temperature = 22.5, // Still below target
+                fan_mode = "auto",
+            }
+        );
+
+        // Assert - Fan should NOT be turned on (temperature still below target)
+        _mockHaContext.ShouldNeverHaveCalledSwitch(_entities.Fan.EntityId);
+    }
+
+    [Fact]
+    public void TemperatureBasedFanActivation_HotRoomButActivateFanFalse_Should_NotTurnOnFan()
+    {
+        // Arrange - Setup scheduler with ActivateFan=false
+        var testSetting = new AcSettings(
+            NormalTemp: 25,
+            PowerSavingTemp: 27,
+            CoolTemp: 23,
+            PassiveTemp: 27,
+            Mode: "cool",
+            ActivateFan: false, // Fan automation disabled
+            HourStart: 18,
+            HourEnd: 0
+        );
+        SetupSchedulerMock(TimeBlock.Sunset, testSetting);
+
+        // Setup hot room conditions
+        _mockHaContext.SetEntityState(_entities.MotionSensor.EntityId, "on");
+        _mockHaContext.SetEntityState(_entities.Door.EntityId, "off");
+        _mockHaContext.SetEntityState(_entities.AirConditioner.EntityId, "cool");
+
+        _mockHaContext.SetEntityAttributes(
+            _entities.AirConditioner.EntityId,
+            new
+            {
+                temperature = 23.0,
+                current_temperature = 25.0, // Well above target - hot!
+                fan_mode = "auto",
+            }
+        );
+
+        _mockHaContext.ClearServiceCalls();
+
+        // Act - Simulate temperature change in hot room
+        _mockHaContext.SimulateStateChange(
+            _entities.AirConditioner.EntityId,
+            "cool",
+            "cool",
+            new
+            {
+                temperature = 23.0,
+                current_temperature = 25.0, // Well above target - hot!
+                fan_mode = "auto",
+            }
+        );
+
+        // Assert - Fan should NOT be turned on (ActivateFan=false)
+        _mockHaContext.ShouldNeverHaveCalledSwitch(_entities.Fan.EntityId);
     }
 
     #endregion
