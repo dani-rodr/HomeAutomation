@@ -14,7 +14,7 @@ public class ClimateScheduler : IClimateScheduler
         IClimateSchedulerEntities entities,
         IScheduler scheduler,
         IAcTemperatureCalculator temperatureCalculator,
-        ILogger logger
+        ILogger<ClimateScheduler> logger
     )
     {
         _entities = entities;

@@ -3,7 +3,7 @@ namespace HomeAutomation.apps.Area.Desk.Automations;
 public class MotionAutomation(
     IMotionAutomationEntities entities,
     ILgDisplay monitor,
-    ILogger logger
+    ILogger<MotionAutomation> logger
 ) : MotionAutomationBase(entities, logger)
 {
     private const double LONG_SENSOR_DELAY = 60;

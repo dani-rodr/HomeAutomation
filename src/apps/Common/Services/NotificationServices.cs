@@ -1,6 +1,7 @@
 namespace HomeAutomation.apps.Common.Services;
 
-public class NotificationServices(IServices services, ILogger logger) : INotificationServices
+public class NotificationServices(IServices services, ILogger<NotificationServices> logger)
+    : INotificationServices
 {
     private readonly NotifyServices _notifyServices = services.Notify;
 

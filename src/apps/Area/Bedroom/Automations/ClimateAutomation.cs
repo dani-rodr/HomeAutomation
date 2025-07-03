@@ -5,7 +5,7 @@ namespace HomeAutomation.apps.Area.Bedroom.Automations;
 public class ClimateAutomation(
     IClimateEntities entities,
     IClimateScheduler scheduler,
-    ILogger logger
+    ILogger<ClimateAutomation> logger
 ) : AutomationBase(logger, entities.MasterSwitch)
 {
     private readonly ClimateEntity _ac = entities.AirConditioner;

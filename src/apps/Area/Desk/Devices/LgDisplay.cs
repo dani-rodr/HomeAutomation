@@ -9,7 +9,7 @@ public enum DisplaySource
     ScreenSaver,
 }
 
-public class LgDisplay(ILgDisplayEntities entities, IServices services, ILogger logger)
+public class LgDisplay(ILgDisplayEntities entities, IServices services, ILogger<LgDisplay> logger)
     : MediaPlayerBase(entities.MediaPlayer, logger),
         ILgDisplay
 {

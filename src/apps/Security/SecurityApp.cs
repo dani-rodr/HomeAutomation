@@ -6,11 +6,16 @@ public class SecurityApp(
     ILockingEntities lockEntities,
     INotificationServices notificationServices,
     IEventHandler eventHandler,
-    ILogger<SecurityApp> logger
+    ILoggerFactory loggerFactory
 ) : AppBase<SecurityApp>
 {
     protected override IEnumerable<IAutomation> CreateAutomations()
     {
-        yield return new LockAutomation(lockEntities, notificationServices, eventHandler, logger);
+        yield return new LockAutomation(
+            lockEntities,
+            notificationServices,
+            eventHandler,
+            loggerFactory.CreateLogger<LockAutomation>()
+        );
     }
 }

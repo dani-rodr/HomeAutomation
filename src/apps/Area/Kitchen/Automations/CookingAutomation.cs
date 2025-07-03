@@ -1,6 +1,7 @@
 namespace HomeAutomation.apps.Area.Kitchen.Automations;
 
-public class CookingAutomation(ICookingEntities entities, ILogger logger) : AutomationBase(logger)
+public class CookingAutomation(ICookingEntities entities, ILogger<CookingAutomation> logger)
+    : AutomationBase(logger)
 {
     private readonly ButtonEntity _inductionTurnOff = entities.InductionTurnOff;
     private readonly NumericSensorEntity _inductionPower = entities.InductionPower;

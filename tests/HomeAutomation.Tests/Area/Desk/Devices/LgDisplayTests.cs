@@ -12,7 +12,7 @@ namespace HomeAutomation.Tests.Area.Desk.Devices;
 public class LgDisplayTests : IDisposable
 {
     private readonly MockHaContext _mockHaContext;
-    private readonly Mock<ILogger> _mockLogger;
+    private readonly Mock<ILogger<LgDisplay>> _mockLogger;
     private readonly TestLgDisplayEntities _entities;
     private readonly LgDisplay _lgDisplay;
     private static readonly string[] attributes = ["HDMI 1", "HDMI 2", "HDMI 3", "Always Ready"];
@@ -20,7 +20,7 @@ public class LgDisplayTests : IDisposable
     public LgDisplayTests()
     {
         _mockHaContext = new MockHaContext();
-        _mockLogger = new Mock<ILogger>();
+        _mockLogger = new Mock<ILogger<LgDisplay>>();
         _entities = new TestLgDisplayEntities(_mockHaContext);
 
         // Set up initial attributes with source list for the media player

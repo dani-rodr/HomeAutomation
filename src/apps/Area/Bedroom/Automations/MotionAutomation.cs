@@ -2,8 +2,11 @@ using System.Linq;
 
 namespace HomeAutomation.apps.Area.Bedroom.Automations;
 
-public class MotionAutomation(IBedroomMotionEntities entities, IScheduler scheduler, ILogger logger)
-    : MotionAutomationBase(entities, logger)
+public class MotionAutomation(
+    IBedroomMotionEntities entities,
+    IScheduler scheduler,
+    ILogger<MotionAutomation> logger
+) : MotionAutomationBase(entities, logger)
 {
     private readonly SwitchEntity _rightSideEmptySwitch = entities.RightSideEmptySwitch;
     private readonly SwitchEntity _leftSideFanSwitch = entities.LeftSideFanSwitch;
