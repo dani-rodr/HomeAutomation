@@ -1,6 +1,6 @@
 namespace HomeAutomation.apps.Area.Pantry.Automations;
 
-public class MotionAutomation(IPantryMotionEntities entities, ILogger logger)
+public class MotionAutomation(IPantryMotionEntities entities, ILogger<MotionAutomation> logger)
     : MotionAutomationBase(entities, logger)
 {
     protected override int SensorWaitTime => 10;

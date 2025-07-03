@@ -13,7 +13,7 @@ public class DeskApp(
     IDeskMotionEntities deskMotionEntities,
     ILgDisplay lgDisplay,
     IScheduler scheduler,
-    ILogger<DeskApp> logger
+    ILoggerFactory loggerFactory
 ) : AppBase<DeskApp>()
 {
     protected override IEnumerable<IAutomation> CreateAutomations()
@@ -23,19 +23,29 @@ public class DeskApp(
             eventHandler,
             notificationServices,
             scheduler,
-            logger
+            loggerFactory.CreateLogger<Desktop>()
         );
         Laptop laptop = new(
             laptopEntities,
             laptopScheduler,
             laptopBatteryHandler,
             eventHandler,
-            logger
+            loggerFactory.CreateLogger<Laptop>()
         );
         desktop.StartAutomation();
         laptop.StartAutomation();
         lgDisplay.StartAutomation();
-        yield return new MotionAutomation(deskMotionEntities, lgDisplay, logger);
-        yield return new DisplayAutomation(lgDisplay, desktop, laptop, eventHandler, logger);
+        yield return new MotionAutomation(
+            deskMotionEntities,
+            lgDisplay,
+            loggerFactory.CreateLogger<MotionAutomation>()
+        );
+        yield return new DisplayAutomation(
+            lgDisplay,
+            desktop,
+            laptop,
+            eventHandler,
+            loggerFactory.CreateLogger<DisplayAutomation>()
+        );
     }
 }

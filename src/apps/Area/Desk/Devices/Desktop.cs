@@ -5,7 +5,7 @@ public class Desktop(
     IEventHandler eventHandler,
     INotificationServices notificationServices,
     IScheduler scheduler,
-    ILogger logger
+    ILogger<Desktop> logger
 ) : ComputerBase(eventHandler, logger)
 {
     protected override string ShowEvent { get; } = "show_pc";

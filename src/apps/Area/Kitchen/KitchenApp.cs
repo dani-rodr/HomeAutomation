@@ -5,12 +5,18 @@ namespace HomeAutomation.apps.Area.Kitchen;
 public class KitchenApp(
     IKitchenMotionEntities motionEntities,
     ICookingEntities cookingEntities,
-    ILogger<KitchenApp> logger
+    ILoggerFactory loggerFactory
 ) : AppBase<KitchenApp>()
 {
     protected override IEnumerable<IAutomation> CreateAutomations()
     {
-        yield return new MotionAutomation(motionEntities, logger);
-        yield return new CookingAutomation(cookingEntities, logger);
+        yield return new MotionAutomation(
+            motionEntities,
+            loggerFactory.CreateLogger<MotionAutomation>()
+        );
+        yield return new CookingAutomation(
+            cookingEntities,
+            loggerFactory.CreateLogger<CookingAutomation>()
+        );
     }
 }

@@ -2,7 +2,7 @@ using System.Linq;
 
 namespace HomeAutomation.apps.Area.LivingRoom.Automations;
 
-public class FanAutomation(ILivingRoomFanEntities entities, ILogger logger)
+public class FanAutomation(ILivingRoomFanEntities entities, ILogger<FanAutomation> logger)
     : FanAutomationBase(entities, logger)
 {
     private SwitchEntity ExhaustFan => Fans.Last();

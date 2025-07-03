@@ -6,7 +6,7 @@ public class LockAutomation(
     ILockingEntities entities,
     INotificationServices services,
     IEventHandler eventHandler,
-    ILogger logger
+    ILogger<LockAutomation> logger
 ) : AutomationBase(logger, entities.MasterSwitch)
 {
     private const string LOCK_TAG = "lock";

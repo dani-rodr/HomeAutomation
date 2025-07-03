@@ -3,7 +3,7 @@ namespace HomeAutomation.apps.Area.Bathroom.Automations;
 public class MotionAutomation(
     IMotionAutomationEntities entities,
     IDimmingLightController dimmingController,
-    ILogger logger
+    ILogger<MotionAutomation> logger
 ) : MotionAutomationBase(entities, logger)
 {
     public override void StartAutomation()

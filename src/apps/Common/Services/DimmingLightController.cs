@@ -2,8 +2,11 @@ using System.Reactive.Threading.Tasks;
 
 namespace HomeAutomation.apps.Common.Services;
 
-public class DimmingLightController(NumberEntity sensorDelay, IScheduler scheduler, ILogger logger)
-    : IDimmingLightController
+public class DimmingLightController(
+    NumberEntity sensorDelay,
+    IScheduler scheduler,
+    ILogger<DimmingLightController> logger
+) : IDimmingLightController
 {
     private CancellationTokenSource? _lightTurnOffCancellationToken;
     private int _sensorActiveDelayValue = 5;

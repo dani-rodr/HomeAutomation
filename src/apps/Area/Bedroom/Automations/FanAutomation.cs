@@ -2,7 +2,7 @@ using System.Reactive.Disposables;
 
 namespace HomeAutomation.apps.Area.Bedroom.Automations;
 
-public class FanAutomation(IBedroomFanEntities entities, ILogger logger)
+public class FanAutomation(IBedroomFanEntities entities, ILogger<FanAutomation> logger)
     : FanAutomationBase(entities, logger)
 {
     protected override IDisposable GetIdleOperationAutomations() => Disposable.Empty;

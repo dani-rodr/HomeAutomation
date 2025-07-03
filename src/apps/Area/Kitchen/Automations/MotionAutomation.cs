@@ -1,6 +1,6 @@
 namespace HomeAutomation.apps.Area.Kitchen.Automations;
 
-public class MotionAutomation(IKitchenMotionEntities entities, ILogger logger)
+public class MotionAutomation(IKitchenMotionEntities entities, ILogger<MotionAutomation> logger)
     : MotionAutomationBase(entities, logger)
 {
     private readonly BinarySensorEntity _powerPlug = entities.PowerPlug;

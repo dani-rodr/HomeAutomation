@@ -3,7 +3,7 @@ namespace HomeAutomation.apps.Area.LivingRoom.Automations;
 public class MotionAutomation(
     ILivingRoomMotionEntities entities,
     IDimmingLightController dimmingController,
-    ILogger logger
+    ILogger<MotionAutomation> logger
 ) : MotionAutomationBase(entities, logger)
 {
     protected override int SensorWaitTime => 30;
