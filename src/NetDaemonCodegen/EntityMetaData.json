@@ -286,6 +286,11 @@
           "cSharpName": "_65c755Television"
         },
         {
+          "id": "media_player.lg_tv",
+          "friendlyName": "LG TV",
+          "cSharpName": "LgTv"
+        },
+        {
           "id": "media_player.lg_webos_smart_tv",
           "friendlyName": "LG webOS Smart TV",
           "cSharpName": "LgWebosSmartTv"
@@ -720,6 +725,11 @@
           "cSharpName": "FlytrapOverheated"
         },
         {
+          "id": "binary_sensor.front_door",
+          "friendlyName": "Front Door",
+          "cSharpName": "FrontDoor"
+        },
+        {
           "id": "binary_sensor.front_door_door",
           "friendlyName": "Front Door Door",
           "cSharpName": "FrontDoorDoor"
@@ -845,11 +855,6 @@
           "cSharpName": "PantryMotionSensors"
         },
         {
-          "id": "binary_sensor.poco_f4_gt_app_inactive",
-          "friendlyName": "POCO F4 GT App inactive",
-          "cSharpName": "PocoF4GtAppInactive"
-        },
-        {
           "id": "binary_sensor.poco_f4_gt_ble",
           "friendlyName": "Poco F4 GT BLE",
           "cSharpName": "PocoF4GtBle"
@@ -858,26 +863,6 @@
           "id": "binary_sensor.poco_f4_gt_bluetooth_state",
           "friendlyName": "POCO F4 GT Bluetooth state",
           "cSharpName": "PocoF4GtBluetoothState"
-        },
-        {
-          "id": "binary_sensor.poco_f4_gt_device_locked",
-          "friendlyName": "POCO F4 GT Device locked",
-          "cSharpName": "PocoF4GtDeviceLocked"
-        },
-        {
-          "id": "binary_sensor.poco_f4_gt_is_charging",
-          "friendlyName": "POCO F4 GT Is charging",
-          "cSharpName": "PocoF4GtIsCharging"
-        },
-        {
-          "id": "binary_sensor.poco_f4_gt_keyguard_locked",
-          "friendlyName": "POCO F4 GT Keyguard locked",
-          "cSharpName": "PocoF4GtKeyguardLocked"
-        },
-        {
-          "id": "binary_sensor.poco_f4_gt_mobile_data",
-          "friendlyName": "POCO F4 GT Mobile data",
-          "cSharpName": "PocoF4GtMobileData"
         },
         {
           "id": "binary_sensor.redmi_watch_5_ble",
@@ -1000,9 +985,9 @@
           "cSharpName": "SmartTvProWifiState"
         },
         {
-          "id": "binary_sensor.temperature_reached",
-          "friendlyName": "Temperature Reached",
-          "cSharpName": "TemperatureReached"
+          "id": "binary_sensor.sun_solar_rising",
+          "friendlyName": "Sun Solar rising",
+          "cSharpName": "SunSolarRising"
         },
         {
           "id": "binary_sensor.wifi_temperature_humidity_tamper",
@@ -1327,6 +1312,11 @@
           "cSharpName": "InductionCookerPower"
         },
         {
+          "id": "button.launch_mi_remote",
+          "friendlyName": "Launch Mi Remote",
+          "cSharpName": "LaunchMiRemote"
+        },
+        {
           "id": "button.ld2410_esp32_1_factory_reset",
           "friendlyName": "ld2410-esp32_1 factory reset",
           "cSharpName": "Ld2410Esp321FactoryReset"
@@ -1375,16 +1365,6 @@
           "id": "button.ld2410_esp32_5_restart_esp32",
           "friendlyName": "ld2410-esp32_5 Restart ESP32",
           "cSharpName": "Ld2410Esp325RestartEsp32"
-        },
-        {
-          "id": "button.lg_display_laptop",
-          "friendlyName": "LG Display Laptop",
-          "cSharpName": "LgDisplayLaptop"
-        },
-        {
-          "id": "button.lg_display_pc",
-          "friendlyName": "LG Display PC",
-          "cSharpName": "LgDisplayPc"
         },
         {
           "id": "button.lg_webos_tv_fe94_identify",
@@ -2250,9 +2230,9 @@
           "cSharpName": "FrontDoor"
         },
         {
-          "id": "lock.front_door_2",
+          "id": "lock.front_door_1",
           "friendlyName": "Front Door",
-          "cSharpName": "FrontDoor2"
+          "cSharpName": "FrontDoor1"
         },
         {
           "id": "lock.lock_wrapper",
@@ -4152,26 +4132,6 @@
           "cSharpName": "Persons"
         },
         {
-          "id": "sensor.poco_f4_gt_app_importance",
-          "friendlyName": "POCO F4 GT App importance",
-          "cSharpName": "PocoF4GtAppImportance"
-        },
-        {
-          "id": "sensor.poco_f4_gt_audio_mode",
-          "friendlyName": "POCO F4 GT Audio mode",
-          "cSharpName": "PocoF4GtAudioMode"
-        },
-        {
-          "id": "sensor.poco_f4_gt_battery_health",
-          "friendlyName": "POCO F4 GT Battery health",
-          "cSharpName": "PocoF4GtBatteryHealth"
-        },
-        {
-          "id": "sensor.poco_f4_gt_battery_state",
-          "friendlyName": "POCO F4 GT Battery state",
-          "cSharpName": "PocoF4GtBatteryState"
-        },
-        {
           "id": "sensor.poco_f4_gt_ble_area",
           "friendlyName": "Poco F4 GT BLE Area",
           "cSharpName": "PocoF4GtBleArea"
@@ -4182,49 +4142,14 @@
           "cSharpName": "PocoF4GtBleTransmitter"
         },
         {
-          "id": "sensor.poco_f4_gt_charger_type",
-          "friendlyName": "POCO F4 GT Charger type",
-          "cSharpName": "PocoF4GtChargerType"
-        },
-        {
           "id": "sensor.poco_f4_gt_detected_activity",
           "friendlyName": "POCO F4 GT Detected activity",
           "cSharpName": "PocoF4GtDetectedActivity"
         },
         {
-          "id": "sensor.poco_f4_gt_last_notification",
-          "friendlyName": "POCO F4 GT Last notification",
-          "cSharpName": "PocoF4GtLastNotification"
-        },
-        {
-          "id": "sensor.poco_f4_gt_last_removed_notification",
-          "friendlyName": "POCO F4 GT Last removed notification",
-          "cSharpName": "PocoF4GtLastRemovedNotification"
-        },
-        {
           "id": "sensor.poco_f4_gt_last_update_trigger",
           "friendlyName": "POCO F4 GT Last update trigger",
           "cSharpName": "PocoF4GtLastUpdateTrigger"
-        },
-        {
-          "id": "sensor.poco_f4_gt_last_used_app",
-          "friendlyName": "POCO F4 GT Last used app",
-          "cSharpName": "PocoF4GtLastUsedApp"
-        },
-        {
-          "id": "sensor.poco_f4_gt_media_session",
-          "friendlyName": "POCO F4 GT Media session",
-          "cSharpName": "PocoF4GtMediaSession"
-        },
-        {
-          "id": "sensor.poco_f4_gt_network_type",
-          "friendlyName": "POCO F4 GT Network type",
-          "cSharpName": "PocoF4GtNetworkType"
-        },
-        {
-          "id": "sensor.poco_f4_gt_next_alarm",
-          "friendlyName": "POCO F4 GT Next alarm",
-          "cSharpName": "PocoF4GtNextAlarm"
         },
         {
           "id": "sensor.remotes",
@@ -4355,11 +4280,6 @@
           "id": "sensor.sun_next_setting",
           "friendlyName": "Sun Next setting",
           "cSharpName": "SunNextSetting"
-        },
-        {
-          "id": "sensor.sun_solar_rising",
-          "friendlyName": "Sun Solar rising",
-          "cSharpName": "SunSolarRising"
         },
         {
           "id": "sensor.suns",
@@ -5720,44 +5640,14 @@
           "cSharpName": "MipadBrowserWidth"
         },
         {
-          "id": "sensor.poco_f4_gt_active_notification_count",
-          "friendlyName": "POCO F4 GT Active notification count",
-          "cSharpName": "PocoF4GtActiveNotificationCount"
-        },
-        {
-          "id": "sensor.poco_f4_gt_battery_level",
-          "friendlyName": "POCO F4 GT Battery level",
-          "cSharpName": "PocoF4GtBatteryLevel"
-        },
-        {
-          "id": "sensor.poco_f4_gt_battery_power",
-          "friendlyName": "POCO F4 GT Battery power",
-          "cSharpName": "PocoF4GtBatteryPower"
-        },
-        {
-          "id": "sensor.poco_f4_gt_battery_temperature",
-          "friendlyName": "POCO F4 GT Battery temperature",
-          "cSharpName": "PocoF4GtBatteryTemperature"
-        },
-        {
           "id": "sensor.poco_f4_gt_bluetooth_connection",
           "friendlyName": "POCO F4 GT Bluetooth connection",
           "cSharpName": "PocoF4GtBluetoothConnection"
         },
         {
-          "id": "sensor.poco_f4_gt_remaining_charge_time",
-          "friendlyName": "POCO F4 GT Remaining charge time",
-          "cSharpName": "PocoF4GtRemainingChargeTime"
-        },
-        {
           "id": "sensor.poco_f4_gt_sleep_confidence",
           "friendlyName": "POCO F4 GT Sleep confidence",
           "cSharpName": "PocoF4GtSleepConfidence"
-        },
-        {
-          "id": "sensor.poco_f4_gt_sleep_segment",
-          "friendlyName": "POCO F4 GT Sleep segment",
-          "cSharpName": "PocoF4GtSleepSegment"
         },
         {
           "id": "sensor.rice_cooker_current",
@@ -5773,6 +5663,11 @@
           "id": "sensor.rice_cooker_voltage",
           "friendlyName": "Rice Cooker Voltage",
           "cSharpName": "RiceCookerVoltage"
+        },
+        {
+          "id": "sensor.rice_cooker_wattage",
+          "friendlyName": "Rice Cooker Wattage",
+          "cSharpName": "RiceCookerWattage"
         },
         {
           "id": "sensor.smart_plug_1_sonoff_s31_power",
@@ -5840,6 +5735,21 @@
           "cSharpName": "Sonoff1002163cb5Power"
         },
         {
+          "id": "sensor.speedtest_download",
+          "friendlyName": "SpeedTest Download",
+          "cSharpName": "SpeedtestDownload"
+        },
+        {
+          "id": "sensor.speedtest_ping",
+          "friendlyName": "SpeedTest Ping",
+          "cSharpName": "SpeedtestPing"
+        },
+        {
+          "id": "sensor.speedtest_upload",
+          "friendlyName": "SpeedTest Upload",
+          "cSharpName": "SpeedtestUpload"
+        },
+        {
           "id": "sensor.sun_solar_azimuth",
           "friendlyName": "Sun Solar azimuth",
           "cSharpName": "SunSolarAzimuth"
@@ -5853,11 +5763,6 @@
           "id": "sensor.temperature_bedroom",
           "friendlyName": "Temperature (Bedroom)",
           "cSharpName": "TemperatureBedroom"
-        },
-        {
-          "id": "sensor.temperature_sala",
-          "friendlyName": "Temperature (Sala)",
-          "cSharpName": "TemperatureSala"
         },
         {
           "id": "sensor.thinkpadt14_battery_charge_remaining_percentage",
@@ -7530,6 +7435,36 @@
           "jsonName": "com.android.providers.downloads_2147483647_post_time",
           "cSharpName": "Com_android_providers_downloads2147483647PostTime",
           "clrType": "System.Double"
+        },
+        {
+          "jsonName": "server_name",
+          "cSharpName": "ServerName",
+          "clrType": "System.String"
+        },
+        {
+          "jsonName": "server_country",
+          "cSharpName": "ServerCountry",
+          "clrType": "System.String"
+        },
+        {
+          "jsonName": "server_id",
+          "cSharpName": "ServerId",
+          "clrType": "System.String"
+        },
+        {
+          "jsonName": "attribution",
+          "cSharpName": "Attribution",
+          "clrType": "System.String"
+        },
+        {
+          "jsonName": "bytes_received",
+          "cSharpName": "BytesReceived",
+          "clrType": "System.Double"
+        },
+        {
+          "jsonName": "bytes_sent",
+          "cSharpName": "BytesSent",
+          "clrType": "System.Double"
         }
       ]
     },
@@ -7734,9 +7669,9 @@
           "cSharpName": "DanielPc"
         },
         {
-          "id": "switch.displaylaptop",
-          "friendlyName": "DisplayLaptop",
-          "cSharpName": "Displaylaptop"
+          "id": "switch.display_pc",
+          "friendlyName": "Display PC",
+          "cSharpName": "DisplayPc"
         },
         {
           "id": "switch.esp32_presence_bedroom_control_bluetooth",
@@ -7799,6 +7734,11 @@
           "cSharpName": "Laptop"
         },
         {
+          "id": "switch.laptop_3",
+          "friendlyName": "Laptop",
+          "cSharpName": "Laptop3"
+        },
+        {
           "id": "switch.laptop_charger_child_lock",
           "friendlyName": "Laptop Charger Child lock",
           "cSharpName": "LaptopChargerChildLock"
@@ -7830,8 +7770,13 @@
         },
         {
           "id": "switch.lg_screen",
-          "friendlyName": "LG Screen",
+          "friendlyName": "Lg Screen",
           "cSharpName": "LgScreen"
+        },
+        {
+          "id": "switch.lg_screen_1",
+          "friendlyName": "LG Screen",
+          "cSharpName": "LgScreen1"
         },
         {
           "id": "switch.lg_screensaver",
@@ -7847,6 +7792,11 @@
           "id": "switch.lg_tv_motion_sensor",
           "friendlyName": "LG TV Motion Sensor",
           "cSharpName": "LgTvMotionSensor"
+        },
+        {
+          "id": "switch.lg_tv_motion_sensor_3",
+          "friendlyName": "LG TV Motion Sensor",
+          "cSharpName": "LgTvMotionSensor3"
         },
         {
           "id": "switch.lg_webos_tv_fe94_mute",
@@ -8159,6 +8109,16 @@
           "jsonName": "assumed_state",
           "cSharpName": "AssumedState",
           "clrType": "System.Boolean"
+        },
+        {
+          "jsonName": "restored",
+          "cSharpName": "Restored",
+          "clrType": "System.Boolean"
+        },
+        {
+          "jsonName": "supported_features",
+          "cSharpName": "SupportedFeatures",
+          "clrType": "System.Double"
         }
       ]
     },
@@ -8372,6 +8332,11 @@
           "cSharpName": "ChronyUpdate"
         },
         {
+          "id": "update.cupertino_icons_update",
+          "friendlyName": "cupertino-icons update",
+          "cSharpName": "CupertinoIconsUpdate"
+        },
+        {
           "id": "update.esphome_update",
           "friendlyName": "ESPHome Device Builder Update",
           "cSharpName": "EsphomeUpdate"
@@ -8437,11 +8402,6 @@
           "cSharpName": "Ld2410Esp325Firmware"
         },
         {
-          "id": "update.matter_server_update",
-          "friendlyName": "Matter Server Update",
-          "cSharpName": "MatterServerUpdate"
-        },
-        {
           "id": "update.mosquitto_broker_update",
           "friendlyName": "Mosquitto broker Update",
           "cSharpName": "MosquittoBrokerUpdate"
@@ -8472,14 +8432,14 @@
           "cSharpName": "NodeRedUpdate"
         },
         {
-          "id": "update.openwakeword_update",
-          "friendlyName": "openWakeWord Update",
-          "cSharpName": "OpenwakewordUpdate"
-        },
-        {
           "id": "update.passive_ble_monitor_integration_update",
           "friendlyName": "Passive BLE monitor integration update",
           "cSharpName": "PassiveBleMonitorIntegrationUpdate"
+        },
+        {
+          "id": "update.powercalc_update",
+          "friendlyName": "Powercalc update",
+          "cSharpName": "PowercalcUpdate"
         },
         {
           "id": "update.qbittorrent_update",
@@ -8804,6 +8764,23 @@
           "cSharpName": "Icon",
           "clrType": "System.String"
         },
+        {
+          "jsonName": "friendly_name",
+          "cSharpName": "FriendlyName",
+          "clrType": "System.String"
+        }
+      ]
+    },
+    {
+      "domain": "tts",
+      "entities": [
+        {
+          "id": "tts.google_ai_tts",
+          "friendlyName": "Google AI TTS",
+          "cSharpName": "GoogleAiTts"
+        }
+      ],
+      "attributes": [
         {
           "jsonName": "friendly_name",
           "cSharpName": "FriendlyName",

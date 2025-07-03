@@ -177,7 +177,7 @@ public class LaptopEntities(Entities entities, CommonEntities common) : ILaptopE
 
 public class LgDisplayEntities(Entities entities) : ILgDisplayEntities
 {
-    public MediaPlayerEntity MediaPlayer => entities.MediaPlayer.LgWebosSmartTv;
+    public MediaPlayerEntity MediaPlayer => entities.MediaPlayer.LgTv;
     public LightEntity Display => entities.Light.LgDisplay;
 }
 
