@@ -39,6 +39,12 @@ public class LgDisplay(ILgDisplayEntities entities, IServices services, ILogger<
     {
         if (value == _brightness)
         {
+            Logger.LogDebug("Brightness is already set to {Value}. No action taken.", value);
+            return;
+        }
+        if (_lightDisplay.IsOff())
+        {
+            Logger.LogWarning("Display is off, cannot set brightness.");
             return;
         }
         try
