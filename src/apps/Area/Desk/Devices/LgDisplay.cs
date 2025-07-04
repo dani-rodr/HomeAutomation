@@ -174,7 +174,7 @@ public class LgDisplay(ILgDisplayEntities entities, IServices services, ILogger<
             .StateChanges()
             .IsOn()
             .Where(_ => Entity.IsOff())
-            .Subscribe(_ => Entity.TurnOn());
+            .Subscribe(_ => TurnOn());
     }
 
     private IDisposable AdjustBrightnessFromInput()
