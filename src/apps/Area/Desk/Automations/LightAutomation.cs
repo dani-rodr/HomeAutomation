@@ -30,7 +30,7 @@ public class LightAutomation(
             .StateChanges()
             .Subscribe(e =>
             {
-                if (e.Entity.State.IsUnavailable())
+                if (e.Entity.State.IsUnavailable() || monitor.IsOff())
                 {
                     return;
                 }
