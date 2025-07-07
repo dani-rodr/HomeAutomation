@@ -182,7 +182,7 @@ public class ClimateAutomation(
         var currentTemp = _ac.Attributes?.Temperature;
         var currentMode = _ac.State;
 
-        if (currentTemp == targetTemp && _ac.State.Is(currentMode))
+        if (currentTemp == targetTemp && _ac.State.Is(setting.Mode))
         {
             Logger.LogDebug(
                 "Skipping AC settings: Already configured correctly - Temp: {CurrentTemp}°C = {TargetTemp}°C, Mode: {CurrentMode} = {TargetMode}",
