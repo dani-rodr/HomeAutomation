@@ -833,7 +833,7 @@ public class ClimateAutomationTests : IDisposable
         SetupSchedulerMock(TimeBlock.Sunset, testSetting);
 
         // Setup for a scenario that would normally activate fan (hot room)
-        _mockHaContext.SetEntityState(_entities.MotionSensor.EntityId, "on");
+        _mockHaContext.SetEntityState(_entities.MotionSensor.EntityId, "off");
         _mockHaContext.SetEntityState(_entities.Door.EntityId, "off");
         _mockHaContext.SetEntityState(_entities.AirConditioner.EntityId, "cool");
         _mockHaContext.SetEntityAttributes(

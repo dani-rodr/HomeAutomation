@@ -226,8 +226,11 @@ public class ClimateAutomation(
             entities.FanAutomation.TurnOn();
             return;
         }
-
-        entities.Fan.TurnOff();
-        entities.FanAutomation.TurnOff();
+        if (_motionSensor.IsClear())
+        {
+            entities.Fan.TurnOff();
+            entities.FanAutomation.TurnOff();
+            return;
+        }
     }
 }
