@@ -4292,6 +4292,11 @@
           "cSharpName": "Switches"
         },
         {
+          "id": "sensor.system_monitor_last_boot",
+          "friendlyName": "System Monitor Last boot",
+          "cSharpName": "SystemMonitorLastBoot"
+        },
+        {
           "id": "sensor.texts",
           "friendlyName": "Home Assistant Texts",
           "cSharpName": "Texts"
@@ -5758,6 +5763,21 @@
           "id": "sensor.sun_solar_elevation",
           "friendlyName": "Sun Solar elevation",
           "cSharpName": "SunSolarElevation"
+        },
+        {
+          "id": "sensor.system_monitor_memory_usage",
+          "friendlyName": "System Monitor Memory usage",
+          "cSharpName": "SystemMonitorMemoryUsage"
+        },
+        {
+          "id": "sensor.system_monitor_processor_temperature",
+          "friendlyName": "System Monitor Processor temperature",
+          "cSharpName": "SystemMonitorProcessorTemperature"
+        },
+        {
+          "id": "sensor.system_monitor_processor_use",
+          "friendlyName": "System Monitor Processor use",
+          "cSharpName": "SystemMonitorProcessorUse"
         },
         {
           "id": "sensor.temperature_bedroom",
@@ -7989,6 +8009,11 @@
           "cSharpName": "Switch"
         },
         {
+          "id": "switch.tablet_automation",
+          "friendlyName": "Tablet Automation",
+          "cSharpName": "TabletAutomation"
+        },
+        {
           "id": "switch.tp_link_integration",
           "friendlyName": "TP Link Integration",
           "cSharpName": "TpLinkIntegration"
@@ -8327,16 +8352,6 @@
           "cSharpName": "CardModUpdate"
         },
         {
-          "id": "update.chrony_update",
-          "friendlyName": "chrony Update",
-          "cSharpName": "ChronyUpdate"
-        },
-        {
-          "id": "update.cupertino_icons_update",
-          "friendlyName": "cupertino-icons update",
-          "cSharpName": "CupertinoIconsUpdate"
-        },
-        {
           "id": "update.esphome_update",
           "friendlyName": "ESPHome Device Builder Update",
           "cSharpName": "EsphomeUpdate"
@@ -8387,11 +8402,6 @@
           "cSharpName": "IphoneDeviceTrackerUpdate"
         },
         {
-          "id": "update.jellyfin_nas_update",
-          "friendlyName": "Jellyfin NAS Update",
-          "cSharpName": "JellyfinNasUpdate"
-        },
-        {
           "id": "update.ld2410_esp32_1_firmware",
           "friendlyName": "ld2410-esp32_1 Firmware",
           "cSharpName": "Ld2410Esp321Firmware"
@@ -8440,11 +8450,6 @@
           "id": "update.powercalc_update",
           "friendlyName": "Powercalc update",
           "cSharpName": "PowercalcUpdate"
-        },
-        {
-          "id": "update.qbittorrent_update",
-          "friendlyName": "qBittorrent Update",
-          "cSharpName": "QbittorrentUpdate"
         },
         {
           "id": "update.samba_share_update",

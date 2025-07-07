@@ -37,7 +37,7 @@ public class CommonEntities(Entities entities)
         public SwitchEntity Bedroom => entities.Switch.BedroomMotionSensor;
         public SwitchEntity LivingRoom => entities.Switch.SalaMotionSensor;
         public SwitchEntity Pantry => entities.Switch.PantryMotionSensor;
-        public SwitchEntity LivingRoomFan => entities.Switch.SalaFanAutomation;
+        public SwitchEntity Tablet => entities.Switch.TabletAutomation;
     }
 
     public class ContactSensorGroup(Entities entities)
@@ -206,7 +206,7 @@ public class LivingRoomFanEntities(Entities entities, CommonEntities common)
 
 public class LivingRoomTabletEntities(Entities entities, CommonEntities common) : ITabletEntities
 {
-    public SwitchEntity MasterSwitch => common.MotionAutomations.LivingRoom;
+    public SwitchEntity MasterSwitch => common.MotionAutomations.Tablet;
     public BinarySensorEntity MotionSensor => common.MotionSensors.LivingRoom;
     public LightEntity Light => entities.Light.MipadScreen;
     public BinarySensorEntity TabletActive => entities.BinarySensor.Mipad;
