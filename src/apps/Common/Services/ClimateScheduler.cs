@@ -41,8 +41,13 @@ public class ClimateScheduler : IClimateScheduler
             }
             // Fire 1 minute after the hour to avoid boundary ambiguity
             // At exact boundary times (5:00 AM), time block evaluation can be ambiguous
-            // Running at 5:01 AM ensures we're clearly within the Sunrise period
-            string cron = $"1 {setting.HourStart} * * *";
+            // Running at 5:05 AM ensures we're clearly within the Sunrise period
+            string cron = $"5 {setting.HourStart} * * *";
+            _logger.LogInformation(
+                "Scheduling action for TimeBlock {TimeBlock} at cron '{Cron}'",
+                timeBlock,
+                cron
+            );
             yield return _scheduler.ScheduleCron(cron, action);
         }
     }
@@ -69,7 +74,7 @@ public class ClimateScheduler : IClimateScheduler
     public TimeBlock? FindCurrentTimeBlock()
     {
         var currentTime = _scheduler.Now.LocalDateTime;
-        _logger.LogDebug("Finding time block for current hour: {CurrentHour}", currentTime.Hour);
+        _logger.LogDebug("Finding time block for current time: {CurrentTime}", currentTime);
 
         var settings = GetCurrentAcScheduleSettings();
 
