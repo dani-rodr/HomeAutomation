@@ -1,4 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using NetDaemon.Extensions.Scheduler;
 
 namespace HomeAutomation.apps.Common.Services;
@@ -38,7 +39,10 @@ public class ClimateScheduler : IClimateScheduler
                 );
                 continue;
             }
-            string cron = $"0 {setting.HourStart} * * *";
+            // Fire 1 minute after the hour to avoid boundary ambiguity
+            // At exact boundary times (5:00 AM), time block evaluation can be ambiguous
+            // Running at 5:01 AM ensures we're clearly within the Sunrise period
+            string cron = $"1 {setting.HourStart} * * *";
             yield return _scheduler.ScheduleCron(cron, action);
         }
     }
@@ -67,24 +71,32 @@ public class ClimateScheduler : IClimateScheduler
         var currentTime = _scheduler.Now.LocalDateTime;
         _logger.LogDebug("Finding time block for current hour: {CurrentHour}", currentTime.Hour);
 
-        foreach (var kv in GetCurrentAcScheduleSettings())
+        var settings = GetCurrentAcScheduleSettings();
+
+        // Find the first time block that matches current time
+        // Let TimeRange.IsTimeInBetween handle all the overnight range logic
+        foreach (var (timeBlock, setting) in settings)
         {
             if (
-                TimeRange.IsTimeInBetween(
-                    currentTime.TimeOfDay,
-                    kv.Value.HourStart,
-                    kv.Value.HourEnd
-                )
+                TimeRange.IsTimeInBetween(currentTime.TimeOfDay, setting.HourStart, setting.HourEnd)
             )
             {
                 _logger.LogDebug(
                     "Found matching time block: {TimeBlock} (range: {StartHour}-{EndHour})",
-                    kv.Key,
-                    kv.Value.HourStart,
-                    kv.Value.HourEnd
+                    timeBlock,
+                    setting.HourStart,
+                    setting.HourEnd
                 );
-                return kv.Key;
+                return timeBlock;
             }
+
+            _logger.LogDebug(
+                "Time block {TimeBlock} (range: {StartHour}-{EndHour}) does not match current time {CurrentTime}",
+                timeBlock,
+                setting.HourStart,
+                setting.HourEnd,
+                currentTime.TimeOfDay
+            );
         }
 
         _logger.LogDebug("No time block found for current hour {CurrentHour}", currentTime.Hour);

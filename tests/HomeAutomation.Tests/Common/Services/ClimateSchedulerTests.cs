@@ -39,8 +39,9 @@ public class ClimateSchedulerTests : IDisposable
 
     private void SetupDefaultSunSensorStates()
     {
-        // Setup valid sun sensor times for testing - using format that works with DateTime.TryParse
-        _mockHaContext.SetEntityState(_weatherEntities.SunRising.EntityId, "2024-01-01T06:00:00");
+        // Setup sun sensor times to match the original logs where 5AM should be Sunrise
+        // Original logs show: Sunrise: 5-18, Sunset: 18-0, Midnight: 0-5
+        _mockHaContext.SetEntityState(_weatherEntities.SunRising.EntityId, "2024-01-01T05:00:00");
         _mockHaContext.SetEntityState(_weatherEntities.SunSetting.EntityId, "2024-01-01T18:00:00");
         _mockHaContext.SetEntityState(_weatherEntities.SunMidnight.EntityId, "2024-01-01T00:00:00");
         _mockHaContext.SetEntityState(_weatherEntities.Weather.EntityId, "sunny");
@@ -269,6 +270,63 @@ public class ClimateSchedulerTests : IDisposable
             .Be(TimeBlock.Midnight, "12 AM should start Midnight period");
     }
 
+    [Fact]
+    public void FindCurrentTimeBlock_At5AM_Should_ReturnSunriseNotMidnight()
+    {
+        // Arrange - Create scheduler with mocked time at exactly 5:00 AM
+        // This test is designed to catch the bug where 5:00 AM incorrectly returns Midnight instead of Sunrise
+        var scheduler5AM = new ClimateScheduler(
+            _weatherEntities,
+            new TestSchedulerWithTime(5), // Exactly 5:00 AM
+            _mockCalculator.Object,
+            _mockLogger.Object
+        );
+
+        // Act
+        var timeBlock = scheduler5AM.FindCurrentTimeBlock();
+
+        // Assert
+        timeBlock
+            .Should()
+            .Be(
+                TimeBlock.Sunrise,
+                "5:00 AM should be start of Sunrise period, not end of Midnight period. "
+                    + "This test catches the bug where dictionary iteration order causes wrong block selection."
+            );
+    }
+
+    [Theory]
+    [InlineData(4, 59, TimeBlock.Midnight, "4:59 AM should be in Midnight period (0-5)")]
+    [InlineData(5, 0, TimeBlock.Sunrise, "5:00 AM should be in Sunrise period (5-18)")]
+    [InlineData(5, 1, TimeBlock.Sunrise, "5:01 AM should be in Sunrise period (5-18)")]
+    [InlineData(17, 59, TimeBlock.Sunrise, "5:59 PM should be in Sunrise period (5-18)")]
+    [InlineData(18, 0, TimeBlock.Sunset, "6:00 PM should be in Sunset period (18-0)")]
+    [InlineData(18, 1, TimeBlock.Sunset, "6:01 PM should be in Sunset period (18-0)")]
+    [InlineData(23, 59, TimeBlock.Sunset, "11:59 PM should be in Sunset period (18-0)")]
+    [InlineData(0, 0, TimeBlock.Midnight, "12:00 AM should be in Midnight period (0-5)")]
+    [InlineData(0, 1, TimeBlock.Midnight, "12:01 AM should be in Midnight period (0-5)")]
+    public void FindCurrentTimeBlock_BoundaryTransitions_Should_BeCorrect(
+        int hour,
+        int minute,
+        TimeBlock expectedBlock,
+        string reason
+    )
+    {
+        // Arrange
+        var scheduler = new ClimateScheduler(
+            _weatherEntities,
+            new TestSchedulerWithTimeAndMinutes(hour, minute),
+            _mockCalculator.Object,
+            _mockLogger.Object
+        );
+
+        // Act
+        var actualBlock = scheduler.FindCurrentTimeBlock();
+
+        // Assert
+        actualBlock.Should().Be(expectedBlock, reason);
+    }
+
     #endregion
 
     #region Scheduling Logic Tests
@@ -411,5 +469,14 @@ public class ClimateSchedulerTests : IDisposable
         private readonly int _hour = hour;
 
         public override DateTimeOffset Now => new(2024, 1, 1, _hour, 0, 0, TimeSpan.FromHours(+8)); // Account for local hours
+    }
+
+    private class TestSchedulerWithTimeAndMinutes(int hour, int minute) : TestScheduler
+    {
+        private readonly int _hour = hour;
+        private readonly int _minute = minute;
+
+        public override DateTimeOffset Now =>
+            new(2024, 1, 1, _hour, _minute, 0, TimeSpan.FromHours(+8)); // Account for local hours
     }
 }
