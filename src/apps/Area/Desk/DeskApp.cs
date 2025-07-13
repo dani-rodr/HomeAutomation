@@ -38,6 +38,7 @@ public class DeskApp(
         yield return new LightAutomation(
             deskMotionEntities,
             lgDisplay,
+            scheduler,
             loggerFactory.CreateLogger<LightAutomation>()
         );
         yield return new DisplayAutomation(

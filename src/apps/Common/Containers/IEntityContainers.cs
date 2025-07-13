@@ -10,6 +10,7 @@ public interface ILightAutomationEntities : IMotionBase
 {
     NumberEntity SensorDelay { get; }
     LightEntity Light { get; }
+    ButtonEntity Restart { get; }
 }
 
 public interface IFanAutomationEntities : IMotionBase

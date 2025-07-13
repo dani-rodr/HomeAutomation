@@ -22,6 +22,7 @@ public class LivingRoomApp(
         );
         yield return new TabletAutomation(
             tabletEntities,
+            scheduler,
             loggerFactory.CreateLogger<TabletAutomation>()
         );
         yield return new LightAutomation(
@@ -31,6 +32,7 @@ public class LivingRoomApp(
                 scheduler,
                 loggerFactory.CreateLogger<DimmingLightController>()
             ),
+            scheduler,
             loggerFactory.CreateLogger<LightAutomation>()
         );
     }

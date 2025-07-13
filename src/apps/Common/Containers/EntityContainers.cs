@@ -5,6 +5,7 @@ public class CommonEntities(Entities entities)
     public MotionSensorGroup MotionSensors => new(entities);
     public FanGroup Fans => new(entities);
     public MotionAutomationGroup MotionAutomations => new(entities);
+    public MotionSensorRestartButtonGroup RestartButtons => new(entities);
     public FanAutomationGroup FanAutomations => new(entities);
     public ContactSensorGroup ContactSensors => new(entities);
     public LightGroup Lights => new(entities);
@@ -13,11 +14,22 @@ public class CommonEntities(Entities entities)
     public class MotionSensorGroup(Entities entities)
     {
         public BinarySensorEntity Bedroom => entities.BinarySensor.BedroomPresenceSensors;
+        public BinarySensorEntity Bathroom => entities.BinarySensor.BathroomPresenceSensors;
         public BinarySensorEntity LivingRoom => entities.BinarySensor.LivingRoomPresenceSensors;
         public BinarySensorEntity Kitchen => entities.BinarySensor.KitchenMotionSensors;
         public BinarySensorEntity Pantry => entities.BinarySensor.PantryMotionSensors;
         public BinarySensorEntity Desk => entities.BinarySensor.DeskSmartPresence;
         public BinarySensorEntity House => entities.BinarySensor.House;
+    }
+
+    public class MotionSensorRestartButtonGroup(Entities entities)
+    {
+        public ButtonEntity Bedroom => entities.Button.Esp32PresenceBedroomRestartEsp32;
+        public ButtonEntity LivingRoom => entities.Button.Ld2410Esp321RestartEsp32;
+        public ButtonEntity Kitchen => entities.Button.Ld2410Esp325RestartEsp32;
+        public ButtonEntity Pantry => entities.Button.ZEsp32C63RestartEsp32;
+        public ButtonEntity Desk => entities.Button.ZEsp32C61RestartEsp322;
+        public ButtonEntity Bathroom => entities.Button.ZEsp32C62RestartEsp32;
     }
 
     public class FanGroup(Entities entities)
@@ -65,6 +77,7 @@ public class BedroomLightEntities(Entities entities, CommonEntities common) : IB
     public NumberEntity SensorDelay => entities.Number.Esp32PresenceBedroomStillTargetDelay;
     public SwitchEntity RightSideEmptySwitch => entities.Switch.Sonoff1002352c401;
     public SwitchEntity LeftSideFanSwitch => common.Fans.Bedroom;
+    public ButtonEntity Restart => common.RestartButtons.Bedroom;
 }
 
 public class LivingRoomLightEntities(Entities entities, CommonEntities common)
@@ -81,14 +94,17 @@ public class LivingRoomLightEntities(Entities entities, CommonEntities common)
     public LightEntity PantryLights => common.Lights.Pantry;
     public SwitchEntity PantryMotionSensor => common.MotionAutomations.Pantry;
     public BinarySensorEntity PantryMotionSensors => common.MotionSensors.Pantry;
+    public ButtonEntity Restart => common.RestartButtons.LivingRoom;
 }
 
-public class BathroomLightEntities(Entities entities) : IBathroomLightEntities
+public class BathroomLightEntities(Entities entities, CommonEntities common)
+    : IBathroomLightEntities
 {
     public SwitchEntity MasterSwitch => entities.Switch.BathroomMotionSensor;
-    public BinarySensorEntity MotionSensor => entities.BinarySensor.BathroomPresenceSensors;
+    public BinarySensorEntity MotionSensor => common.MotionSensors.Bathroom;
     public LightEntity Light => entities.Light.BathroomLights;
     public NumberEntity SensorDelay => entities.Number.ZEsp32C62StillTargetDelay;
+    public ButtonEntity Restart => common.RestartButtons.Bathroom;
 }
 
 public class DeskLightEntities(Entities entities, CommonEntities common) : IDeskLightEntities
@@ -98,6 +114,7 @@ public class DeskLightEntities(Entities entities, CommonEntities common) : IDesk
     public LightEntity Light => entities.Light.LgDisplay;
     public NumberEntity SensorDelay => entities.Number.ZEsp32C61StillTargetDelay2;
     public LightEntity SalaLights => common.Lights.LivingRoom;
+    public ButtonEntity Restart => common.RestartButtons.Desk;
 }
 
 public class AirQualityEntities(Entities entities, CommonEntities common) : IAirQualityEntities
@@ -192,6 +209,7 @@ public class TclDisplayEntities(Entities entities, CommonEntities common) : ITcl
     public NumberEntity SensorDelay => common.DelaySensors.LivingRoom;
 
     public LightEntity Light => entities.Light.TvBacklight3Lite;
+    public ButtonEntity Restart => common.RestartButtons.LivingRoom;
 }
 
 public class LivingRoomFanEntities(Entities entities, CommonEntities common)
@@ -211,6 +229,7 @@ public class LivingRoomTabletEntities(Entities entities, CommonEntities common) 
     public LightEntity Light => entities.Light.MipadScreen;
     public BinarySensorEntity TabletActive => entities.BinarySensor.Mipad;
     public NumberEntity SensorDelay => common.DelaySensors.LivingRoom;
+    public ButtonEntity Restart => common.RestartButtons.LivingRoom;
 }
 
 public class PantryLightEntities(Entities entities, CommonEntities common) : IPantryLightEntities
@@ -223,6 +242,7 @@ public class PantryLightEntities(Entities entities, CommonEntities common) : IPa
         entities.BinarySensor.Esp32PresenceBedroomMiScalePresence;
     public LightEntity MirrorLight => entities.Light.ControllerRgbDf1c0d;
     public BinarySensorEntity BedroomDoor => common.ContactSensors.Bedroom;
+    public ButtonEntity Restart => common.RestartButtons.Pantry;
 }
 
 public class KitchenLightEntities(Entities entities, CommonEntities common) : IKitchenLightEntities
@@ -232,6 +252,7 @@ public class KitchenLightEntities(Entities entities, CommonEntities common) : IK
     public LightEntity Light => entities.Light.RgbLightStrip;
     public NumberEntity SensorDelay => entities.Number.Ld2410Esp325StillTargetDelay;
     public BinarySensorEntity PowerPlug => entities.BinarySensor.SmartPlug3PowerExceedsThreshold;
+    public ButtonEntity Restart => common.RestartButtons.Kitchen;
 }
 
 public class LockingEntities(Entities entities, CommonEntities common) : ILockingEntities

@@ -3,8 +3,9 @@ namespace HomeAutomation.apps.Area.LivingRoom.Automations;
 public class LightAutomation(
     ILivingRoomLightEntities entities,
     IDimmingLightController dimmingController,
+    IScheduler scheduler,
     ILogger<LightAutomation> logger
-) : LightAutomationBase(entities, logger)
+) : LightAutomationBase(entities, scheduler, logger)
 {
     protected override int SensorWaitTime => 30;
     protected override int SensorActiveDelayValue => 45;

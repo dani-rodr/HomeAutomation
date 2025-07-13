@@ -17,6 +17,7 @@ public class BathroomApp(
                 scheduler,
                 loggerFactory.CreateLogger<DimmingLightController>()
             ),
+            scheduler,
             loggerFactory.CreateLogger<LightAutomation>()
         );
     }

@@ -9,6 +9,8 @@ public interface IAutomationScheduler
 
 public interface ILaptopScheduler : IAutomationScheduler;
 
+public interface IMotionSensorRestartScheduler : IAutomationScheduler;
+
 public interface IClimateScheduler : IAutomationScheduler
 {
     IDisposable GetResetSchedule();

@@ -14,6 +14,7 @@ public class LightAutomationTests : IDisposable
     private readonly MockHaContext _mockHaContext;
     private readonly Mock<ILogger<LightAutomation>> _mockLogger;
     private readonly Mock<ILgDisplay> _mockLgDisplay;
+    private readonly Mock<IScheduler> _mockScheduler;
     private readonly TestEntities _entities;
     private readonly LightAutomation _automation;
 
@@ -22,11 +23,17 @@ public class LightAutomationTests : IDisposable
         _mockHaContext = new MockHaContext();
         _mockLogger = new Mock<ILogger<LightAutomation>>();
         _mockLgDisplay = new Mock<ILgDisplay>();
+        _mockScheduler = new Mock<IScheduler>();
 
         // Create test entities wrapper for desk-specific entities
         _entities = new TestEntities(_mockHaContext);
 
-        _automation = new LightAutomation(_entities, _mockLgDisplay.Object, _mockLogger.Object);
+        _automation = new LightAutomation(
+            _entities,
+            _mockLgDisplay.Object,
+            _mockScheduler.Object,
+            _mockLogger.Object
+        );
 
         // Start the automation to set up subscriptions
         _automation.StartAutomation();
@@ -60,5 +67,7 @@ public class LightAutomationTests : IDisposable
             new NumberEntity(haContext, "number.z_esp32_c6_1_still_target_delay_2");
 
         public LightEntity SalaLights { get; } = new LightEntity(haContext, "light.sala_lights");
+
+        public ButtonEntity Restart { get; } = new ButtonEntity(haContext, "button.restart");
     }
 }

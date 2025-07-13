@@ -6,10 +6,12 @@ public class LightAutomation(
     IBedroomLightEntities entities,
     IScheduler scheduler,
     ILogger<LightAutomation> logger
-) : LightAutomationBase(entities, logger)
+) : LightAutomationBase(entities, scheduler, logger)
 {
     private readonly SwitchEntity _rightSideEmptySwitch = entities.RightSideEmptySwitch;
     private readonly SwitchEntity _leftSideFanSwitch = entities.LeftSideFanSwitch;
+    private readonly IScheduler _scheduler = scheduler;
+
     protected override int SensorActiveDelayValue => 45;
 
     protected override IEnumerable<IDisposable> GetAdditionalPersistentAutomations() =>
@@ -36,7 +38,7 @@ public class LightAutomation(
     {
         yield return _leftSideFanSwitch
             .StateChanges()
-            .OnDoubleClick(timeout: 2, scheduler)
+            .OnDoubleClick(timeout: 2, _scheduler)
             .Subscribe(e =>
             {
                 ToggleLightsViaSwitch(e.First());

@@ -11,6 +11,7 @@ namespace HomeAutomation.Tests.Area.Bathroom.Automations;
 public class LightAutomationTests : IDisposable
 {
     private readonly MockHaContext _mockHaContext;
+    private readonly Mock<IScheduler> _mockScheduler;
     private readonly Mock<ILogger<LightAutomation>> _mockLogger;
     private readonly Mock<IDimmingLightController> _mockDimmingController;
     private readonly TestEntities _entities;
@@ -20,6 +21,7 @@ public class LightAutomationTests : IDisposable
     {
         _mockHaContext = new MockHaContext();
         _mockLogger = new Mock<ILogger<LightAutomation>>();
+        _mockScheduler = new Mock<IScheduler>();
         _mockDimmingController = new Mock<IDimmingLightController>();
 
         // Create test entities wrapper - much simpler!
@@ -28,6 +30,7 @@ public class LightAutomationTests : IDisposable
         _automation = new LightAutomation(
             _entities,
             _mockDimmingController.Object,
+            _mockScheduler.Object,
             _mockLogger.Object
         );
 
@@ -227,5 +230,6 @@ public class LightAutomationTests : IDisposable
         public LightEntity Light { get; } = new LightEntity(haContext, "light.bathroom_lights");
         public NumberEntity SensorDelay { get; } =
             new NumberEntity(haContext, "number.z_esp32_c6_2_still_target_delay");
+        public ButtonEntity Restart { get; } = new ButtonEntity(haContext, "button.restart");
     }
 }

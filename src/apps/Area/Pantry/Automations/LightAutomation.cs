@@ -1,7 +1,10 @@
 namespace HomeAutomation.apps.Area.Pantry.Automations;
 
-public class LightAutomation(IPantryLightEntities entities, ILogger<LightAutomation> logger)
-    : LightAutomationBase(entities, logger)
+public class LightAutomation(
+    IPantryLightEntities entities,
+    IScheduler scheduler,
+    ILogger<LightAutomation> logger
+) : LightAutomationBase(entities, scheduler, logger)
 {
     protected override int SensorWaitTime => 10;
 

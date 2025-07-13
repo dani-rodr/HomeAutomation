@@ -572,5 +572,6 @@ public class LightAutomationTests : IDisposable
             new SwitchEntity(haContext, "switch.right_side_empty_switch");
         public SwitchEntity LeftSideFanSwitch { get; } =
             new SwitchEntity(haContext, "switch.left_side_fan_switch");
+        public ButtonEntity Restart { get; } = new ButtonEntity(haContext, "button.restart");
     }
 }

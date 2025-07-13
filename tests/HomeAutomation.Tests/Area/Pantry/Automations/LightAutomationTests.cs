@@ -11,18 +11,20 @@ public class LightAutomationTests : IDisposable
 {
     private readonly MockHaContext _mockHaContext;
     private readonly Mock<ILogger<LightAutomation>> _mockLogger;
+    private readonly Mock<IScheduler> _mockScheduler;
     private readonly TestEntities _entities;
     private readonly LightAutomation _automation;
 
     public LightAutomationTests()
     {
         _mockHaContext = new MockHaContext();
+        _mockScheduler = new Mock<IScheduler>();
         _mockLogger = new Mock<ILogger<LightAutomation>>();
 
         // Create test entities wrapper - much simpler!
         _entities = new TestEntities(_mockHaContext);
 
-        _automation = new LightAutomation(_entities, _mockLogger.Object);
+        _automation = new LightAutomation(_entities, _mockScheduler.Object, _mockLogger.Object);
 
         // Start the automation to set up subscriptions
         _automation.StartAutomation();
@@ -237,5 +239,6 @@ public class LightAutomationTests : IDisposable
             new LightEntity(haContext, "light.controller_rgb_df1c0d");
         public BinarySensorEntity BedroomDoor { get; } =
             new BinarySensorEntity(haContext, "binary_sensor.contact_sensor_door");
+        public ButtonEntity Restart { get; } = new ButtonEntity(haContext, "button.restart");
     }
 }
