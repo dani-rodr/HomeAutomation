@@ -1,7 +1,6 @@
 using HomeAutomation.apps.Area.LivingRoom.Automations;
 using HomeAutomation.apps.Common.Containers;
 using HomeAutomation.apps.Common.Interface;
-using NetDaemon.Extensions.Scheduler;
 
 namespace HomeAutomation.Tests.Area.LivingRoom.Automations;
 
@@ -60,6 +59,20 @@ public class LightAutomationTests : IDisposable
             x => x.OnMotionDetected(_entities.Light),
             Times.Once,
             "Should call OnMotionDetected on dimming controller when motion is detected"
+        );
+    }
+
+    [Fact]
+    public void DoorOpened_Should_CallDimmingControllerOnMotionDetected()
+    {
+        // Act - Simulate door opening
+        _mockHaContext.SimulateStateChange(_entities.LivingRoomDoor.EntityId, "off", "on");
+
+        // Assert - Should call dimming controller with light entity
+        _mockDimmingController.Verify(
+            x => x.OnMotionDetected(_entities.Light),
+            Times.Once,
+            "Should call OnMotionDetected on dimming controller when door is opened"
         );
     }
 
@@ -618,5 +631,8 @@ public class LightAutomationTests : IDisposable
         public BinarySensorEntity PantryMotionSensors { get; } =
             new BinarySensorEntity(haContext, "binary_sensor.pantry_motion_sensors");
         public ButtonEntity Restart { get; } = new ButtonEntity(haContext, "button.restart");
+
+        public BinarySensorEntity LivingRoomDoor { get; } =
+            new BinarySensorEntity(haContext, "binary_sensor.door_wrapper");
     }
 }

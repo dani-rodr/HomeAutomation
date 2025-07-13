@@ -27,6 +27,7 @@ public interface IBedroomLightEntities : ILightAutomationEntities
 public interface ILivingRoomLightEntities : ILightAutomationEntities
 {
     BinarySensorEntity BedroomDoor { get; }
+    BinarySensorEntity LivingRoomDoor { get; }
     BinarySensorEntity BedroomMotionSensors { get; }
     MediaPlayerEntity TclTv { get; }
     BinarySensorEntity KitchenMotionSensors { get; }

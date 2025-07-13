@@ -55,6 +55,7 @@ public class CommonEntities(Entities entities)
     public class ContactSensorGroup(Entities entities)
     {
         public BinarySensorEntity Bedroom => entities.BinarySensor.ContactSensorDoor;
+        public BinarySensorEntity LivingRoom => entities.BinarySensor.DoorWrapper;
     }
 
     public class LightGroup(Entities entities)
@@ -95,6 +96,7 @@ public class LivingRoomLightEntities(Entities entities, CommonEntities common)
     public SwitchEntity PantryMotionSensor => common.MotionAutomations.Pantry;
     public BinarySensorEntity PantryMotionSensors => common.MotionSensors.Pantry;
     public ButtonEntity Restart => common.RestartButtons.LivingRoom;
+    public BinarySensorEntity LivingRoomDoor => common.ContactSensors.LivingRoom;
 }
 
 public class BathroomLightEntities(Entities entities, CommonEntities common)
