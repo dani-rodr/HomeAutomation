@@ -15,10 +15,10 @@ public class FanAutomation(IBedroomFanEntities entities, ILogger<FanAutomation> 
             {
                 if (Fan.IsOn() && MotionSensor.IsOn())
                 {
-                    MasterSwitch?.TurnOn();
+                    MasterSwitch.TurnOn();
                     return;
                 }
-                MasterSwitch?.TurnOff();
+                MasterSwitch.TurnOff();
             });
     }
 

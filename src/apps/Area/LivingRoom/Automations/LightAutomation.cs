@@ -51,7 +51,7 @@ public class LightAutomation(
             .Where(_ =>
                 entities.BedroomDoor.IsClosed() && entities.BedroomMotionSensors.IsOccupied()
             )
-            .Subscribe(_ => MasterSwitch?.TurnOn());
+            .Subscribe(_ => MasterSwitch.TurnOn());
     }
 
     private IDisposable TurnOnMotionSensorOnTvOff()
@@ -60,7 +60,7 @@ public class LightAutomation(
             .StateChanges()
             .IsOffForMinutes(30)
             .Where(_ => entities.TclTv.IsOff())
-            .Subscribe(_ => MasterSwitch?.TurnOn());
+            .Subscribe(_ => MasterSwitch.TurnOn());
     }
 
     private IDisposable SetSensorDelayOnKitchenOccupancy()

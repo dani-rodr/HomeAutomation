@@ -349,6 +349,16 @@
           "id": "media_player.xiaomi_air_fryer",
           "friendlyName": "Xiaomi Air Fryer",
           "cSharpName": "XiaomiAirFryer"
+        },
+        {
+          "id": "media_player.xiaomi_tv_box",
+          "friendlyName": "Xiaomi TV Box",
+          "cSharpName": "XiaomiTvBox"
+        },
+        {
+          "id": "media_player.xiaomi_tv_box_11",
+          "friendlyName": null,
+          "cSharpName": "XiaomiTvBox11"
         }
       ],
       "attributes": [
@@ -655,6 +665,16 @@
           "cSharpName": "ContactSensorDoor"
         },
         {
+          "id": "binary_sensor.daniel_pc_client",
+          "friendlyName": "daniel-pc Client",
+          "cSharpName": "DanielPcClient"
+        },
+        {
+          "id": "binary_sensor.daniel_pc_key_expiry_disabled",
+          "friendlyName": "daniel-pc Key expiry disabled",
+          "cSharpName": "DanielPcKeyExpiryDisabled"
+        },
+        {
           "id": "binary_sensor.daniel_pc_network_status",
           "friendlyName": "DANIEL-PC Network status",
           "cSharpName": "DanielPcNetworkStatus"
@@ -663,6 +683,36 @@
           "id": "binary_sensor.daniel_pc_ssh_status",
           "friendlyName": "DANIEL-PC SSH status",
           "cSharpName": "DanielPcSshStatus"
+        },
+        {
+          "id": "binary_sensor.daniel_pc_supports_hairpinning",
+          "friendlyName": "daniel-pc Supports hairpinning",
+          "cSharpName": "DanielPcSupportsHairpinning"
+        },
+        {
+          "id": "binary_sensor.daniel_pc_supports_ipv6",
+          "friendlyName": "daniel-pc Supports IPv6",
+          "cSharpName": "DanielPcSupportsIpv6"
+        },
+        {
+          "id": "binary_sensor.daniel_pc_supports_nat_pmp",
+          "friendlyName": "daniel-pc Supports NAT-PMP",
+          "cSharpName": "DanielPcSupportsNatPmp"
+        },
+        {
+          "id": "binary_sensor.daniel_pc_supports_pcp",
+          "friendlyName": "daniel-pc Supports PCP",
+          "cSharpName": "DanielPcSupportsPcp"
+        },
+        {
+          "id": "binary_sensor.daniel_pc_supports_udp",
+          "friendlyName": "daniel-pc Supports UDP",
+          "cSharpName": "DanielPcSupportsUdp"
+        },
+        {
+          "id": "binary_sensor.daniel_pc_supports_upnp",
+          "friendlyName": "daniel-pc Supports UPnP",
+          "cSharpName": "DanielPcSupportsUpnp"
         },
         {
           "id": "binary_sensor.desk_smart_presence",
@@ -733,6 +783,46 @@
           "id": "binary_sensor.front_door_door",
           "friendlyName": "Front Door Door",
           "cSharpName": "FrontDoorDoor"
+        },
+        {
+          "id": "binary_sensor.homeassistant_client",
+          "friendlyName": "homeassistant Client",
+          "cSharpName": "HomeassistantClient"
+        },
+        {
+          "id": "binary_sensor.homeassistant_key_expiry_disabled",
+          "friendlyName": "homeassistant Key expiry disabled",
+          "cSharpName": "HomeassistantKeyExpiryDisabled"
+        },
+        {
+          "id": "binary_sensor.homeassistant_supports_hairpinning",
+          "friendlyName": "homeassistant Supports hairpinning",
+          "cSharpName": "HomeassistantSupportsHairpinning"
+        },
+        {
+          "id": "binary_sensor.homeassistant_supports_ipv6",
+          "friendlyName": "homeassistant Supports IPv6",
+          "cSharpName": "HomeassistantSupportsIpv6"
+        },
+        {
+          "id": "binary_sensor.homeassistant_supports_nat_pmp",
+          "friendlyName": "homeassistant Supports NAT-PMP",
+          "cSharpName": "HomeassistantSupportsNatPmp"
+        },
+        {
+          "id": "binary_sensor.homeassistant_supports_pcp",
+          "friendlyName": "homeassistant Supports PCP",
+          "cSharpName": "HomeassistantSupportsPcp"
+        },
+        {
+          "id": "binary_sensor.homeassistant_supports_udp",
+          "friendlyName": "homeassistant Supports UDP",
+          "cSharpName": "HomeassistantSupportsUdp"
+        },
+        {
+          "id": "binary_sensor.homeassistant_supports_upnp",
+          "friendlyName": "homeassistant Supports UPnP",
+          "cSharpName": "HomeassistantSupportsUpnp"
         },
         {
           "id": "binary_sensor.house",
@@ -965,26 +1055,6 @@
           "cSharpName": "SmartPlug4SonoffS31Status"
         },
         {
-          "id": "binary_sensor.smart_tv_pro_bluetooth_state",
-          "friendlyName": "Smart TV Pro Bluetooth state",
-          "cSharpName": "SmartTvProBluetoothState"
-        },
-        {
-          "id": "binary_sensor.smart_tv_pro_mic_muted",
-          "friendlyName": "Smart TV Pro Mic muted",
-          "cSharpName": "SmartTvProMicMuted"
-        },
-        {
-          "id": "binary_sensor.smart_tv_pro_music_active",
-          "friendlyName": "Smart TV Pro Music active",
-          "cSharpName": "SmartTvProMusicActive"
-        },
-        {
-          "id": "binary_sensor.smart_tv_pro_wifi_state",
-          "friendlyName": "Smart TV Pro WiFi state",
-          "cSharpName": "SmartTvProWifiState"
-        },
-        {
           "id": "binary_sensor.sun_solar_rising",
           "friendlyName": "Sun Solar rising",
           "cSharpName": "SunSolarRising"
@@ -993,6 +1063,46 @@
           "id": "binary_sensor.wifi_temperature_humidity_tamper",
           "friendlyName": "WiFi Temperature \u0026 Humidity Tamper",
           "cSharpName": "WifiTemperatureHumidityTamper"
+        },
+        {
+          "id": "binary_sensor.xiaomi_21121210g_client",
+          "friendlyName": "xiaomi-21121210g Client",
+          "cSharpName": "Xiaomi21121210gClient"
+        },
+        {
+          "id": "binary_sensor.xiaomi_21121210g_key_expiry_disabled",
+          "friendlyName": "xiaomi-21121210g Key expiry disabled",
+          "cSharpName": "Xiaomi21121210gKeyExpiryDisabled"
+        },
+        {
+          "id": "binary_sensor.xiaomi_21121210g_supports_hairpinning",
+          "friendlyName": "xiaomi-21121210g Supports hairpinning",
+          "cSharpName": "Xiaomi21121210gSupportsHairpinning"
+        },
+        {
+          "id": "binary_sensor.xiaomi_21121210g_supports_ipv6",
+          "friendlyName": "xiaomi-21121210g Supports IPv6",
+          "cSharpName": "Xiaomi21121210gSupportsIpv6"
+        },
+        {
+          "id": "binary_sensor.xiaomi_21121210g_supports_nat_pmp",
+          "friendlyName": "xiaomi-21121210g Supports NAT-PMP",
+          "cSharpName": "Xiaomi21121210gSupportsNatPmp"
+        },
+        {
+          "id": "binary_sensor.xiaomi_21121210g_supports_pcp",
+          "friendlyName": "xiaomi-21121210g Supports PCP",
+          "cSharpName": "Xiaomi21121210gSupportsPcp"
+        },
+        {
+          "id": "binary_sensor.xiaomi_21121210g_supports_udp",
+          "friendlyName": "xiaomi-21121210g Supports UDP",
+          "cSharpName": "Xiaomi21121210gSupportsUdp"
+        },
+        {
+          "id": "binary_sensor.xiaomi_21121210g_supports_upnp",
+          "friendlyName": "xiaomi-21121210g Supports UPnP",
+          "cSharpName": "Xiaomi21121210gSupportsUpnp"
         },
         {
           "id": "binary_sensor.z_esp32_c6_1_moving_target_2",
@@ -3262,6 +3372,11 @@
           "id": "remote.projector",
           "friendlyName": "Projector",
           "cSharpName": "Projector"
+        },
+        {
+          "id": "remote.xiaomi_tv_box_11",
+          "friendlyName": null,
+          "cSharpName": "XiaomiTvBox11"
         }
       ],
       "attributes": [
@@ -3426,12 +3541,12 @@
         },
         {
           "id": "select.laptop_charger_indicator_light_mode",
-          "friendlyName": "Laptop Charger Indicator light mode",
+          "friendlyName": "Mipad Charger Indicator light mode",
           "cSharpName": "LaptopChargerIndicatorLightMode"
         },
         {
           "id": "select.laptop_charger_power_on_behavior",
-          "friendlyName": "Laptop Charger Power on behavior",
+          "friendlyName": "Mipad Charger Power on behavior",
           "cSharpName": "LaptopChargerPowerOnBehavior"
         },
         {
@@ -3777,6 +3892,11 @@
           "cSharpName": "CustomIntegrations"
         },
         {
+          "id": "sensor.daniel_pc_expires",
+          "friendlyName": "daniel-pc Expires",
+          "cSharpName": "DanielPcExpires"
+        },
+        {
           "id": "sensor.daniel_pc_hass_agent_daniel_pc_hass_agent_activewindow",
           "friendlyName": "DANIEL-PC_hass-agent DANIEL-PC_hass-agent_activewindow",
           "cSharpName": "DanielPcHassAgentDanielPcHassAgentActivewindow"
@@ -3785,6 +3905,16 @@
           "id": "sensor.daniel_pc_hass_agent_daniel_pc_hass_agent_incognito",
           "friendlyName": "DANIEL-PC_hass-agent DANIEL-PC_hass-agent_incognito",
           "cSharpName": "DanielPcHassAgentDanielPcHassAgentIncognito"
+        },
+        {
+          "id": "sensor.daniel_pc_ip_address",
+          "friendlyName": "daniel-pc IP address",
+          "cSharpName": "DanielPcIpAddress"
+        },
+        {
+          "id": "sensor.daniel_pc_last_seen",
+          "friendlyName": "daniel-pc Last seen",
+          "cSharpName": "DanielPcLastSeen"
         },
         {
           "id": "sensor.daniel_pc_network_interface",
@@ -3880,6 +4010,21 @@
           "id": "sensor.govee_to_mqtt_version",
           "friendlyName": "Govee to MQTT Version",
           "cSharpName": "GoveeToMqttVersion"
+        },
+        {
+          "id": "sensor.homeassistant_expires",
+          "friendlyName": "homeassistant Expires",
+          "cSharpName": "HomeassistantExpires"
+        },
+        {
+          "id": "sensor.homeassistant_ip_address",
+          "friendlyName": "homeassistant IP address",
+          "cSharpName": "HomeassistantIpAddress"
+        },
+        {
+          "id": "sensor.homeassistant_last_seen",
+          "friendlyName": "homeassistant Last seen",
+          "cSharpName": "HomeassistantLastSeen"
         },
         {
           "id": "sensor.humidifiers",
@@ -4197,34 +4342,9 @@
           "cSharpName": "Sirens"
         },
         {
-          "id": "sensor.smart_tv_pro_audio_mode",
-          "friendlyName": "Smart TV Pro Audio mode",
-          "cSharpName": "SmartTvProAudioMode"
-        },
-        {
-          "id": "sensor.smart_tv_pro_beacon_monitor",
-          "friendlyName": "Smart TV Pro Beacon monitor",
-          "cSharpName": "SmartTvProBeaconMonitor"
-        },
-        {
-          "id": "sensor.smart_tv_pro_last_reboot",
-          "friendlyName": "Smart TV Pro Last reboot",
-          "cSharpName": "SmartTvProLastReboot"
-        },
-        {
-          "id": "sensor.smart_tv_pro_public_ip_address",
-          "friendlyName": "Smart TV Pro Public IP address",
-          "cSharpName": "SmartTvProPublicIpAddress"
-        },
-        {
-          "id": "sensor.smart_tv_pro_wifi_connection",
-          "friendlyName": "Smart TV Pro WiFi connection",
-          "cSharpName": "SmartTvProWifiConnection"
-        },
-        {
-          "id": "sensor.smart_tv_pro_wifi_ip_address",
-          "friendlyName": "Smart TV Pro WiFi IP address",
-          "cSharpName": "SmartTvProWifiIpAddress"
+          "id": "sensor.smart_tv_pro_last_used_app",
+          "friendlyName": "Smart TV Pro Last used app",
+          "cSharpName": "SmartTvProLastUsedApp"
         },
         {
           "id": "sensor.sonoff_1002352c40_action",
@@ -4390,6 +4510,21 @@
           "id": "sensor.weather",
           "friendlyName": "Home Assistant Weather",
           "cSharpName": "Weather"
+        },
+        {
+          "id": "sensor.xiaomi_21121210g_expires",
+          "friendlyName": "xiaomi-21121210g Expires",
+          "cSharpName": "Xiaomi21121210gExpires"
+        },
+        {
+          "id": "sensor.xiaomi_21121210g_ip_address",
+          "friendlyName": "xiaomi-21121210g IP address",
+          "cSharpName": "Xiaomi21121210gIpAddress"
+        },
+        {
+          "id": "sensor.xiaomi_21121210g_last_seen",
+          "friendlyName": "xiaomi-21121210g Last seen",
+          "cSharpName": "Xiaomi21121210gLastSeen"
         },
         {
           "id": "sensor.xiaomi_sg_753990712_cpa4_fault_p_2_2",
@@ -5411,7 +5546,7 @@
         },
         {
           "id": "sensor.laptop_charger_power",
-          "friendlyName": "Laptop Charger Power",
+          "friendlyName": "Mipad Charger Power",
           "cSharpName": "LaptopChargerPower"
         },
         {
@@ -5713,21 +5848,6 @@
           "id": "sensor.smart_plug_power_meter_cost",
           "friendlyName": "sensor Cost",
           "cSharpName": "SmartPlugPowerMeterCost"
-        },
-        {
-          "id": "sensor.smart_tv_pro_bluetooth_connection",
-          "friendlyName": "Smart TV Pro Bluetooth connection",
-          "cSharpName": "SmartTvProBluetoothConnection"
-        },
-        {
-          "id": "sensor.smart_tv_pro_wifi_frequency",
-          "friendlyName": "Smart TV Pro WiFi frequency",
-          "cSharpName": "SmartTvProWifiFrequency"
-        },
-        {
-          "id": "sensor.smart_tv_pro_wifi_link_speed",
-          "friendlyName": "Smart TV Pro WiFi link speed",
-          "cSharpName": "SmartTvProWifiLinkSpeed"
         },
         {
           "id": "sensor.sonoff_1002163cb5_energy",
@@ -7669,6 +7789,11 @@
           "cSharpName": "ControllerRgbDf1c0dRemoteAccess"
         },
         {
+          "id": "switch.cooking_automation",
+          "friendlyName": "Cooking Automation",
+          "cSharpName": "CookingAutomation"
+        },
+        {
           "id": "switch.cozylife_2ac9",
           "friendlyName": "Mi Pad Charger",
           "cSharpName": "Cozylife2ac9"
@@ -7760,13 +7885,8 @@
         },
         {
           "id": "switch.laptop_charger_child_lock",
-          "friendlyName": "Laptop Charger Child lock",
+          "friendlyName": "Mipad Charger Child lock",
           "cSharpName": "LaptopChargerChildLock"
-        },
-        {
-          "id": "switch.laptop_charger_socket_1",
-          "friendlyName": "Laptop Charger Socket 1",
-          "cSharpName": "LaptopChargerSocket1"
         },
         {
           "id": "switch.ld2410_esp32_1_control_bluetooth",
@@ -7837,6 +7957,11 @@
           "id": "switch.mi_pad_5_screensaver",
           "friendlyName": "Mi Pad 5 Screensaver",
           "cSharpName": "MiPad5Screensaver"
+        },
+        {
+          "id": "switch.mipad_charger_socket_1",
+          "friendlyName": "Mipad Charger Socket 1",
+          "cSharpName": "MipadChargerSocket1"
         },
         {
           "id": "switch.motion_sensor_auto_reactivate",
@@ -8495,6 +8620,11 @@
           "id": "update.ssh_update",
           "friendlyName": "SSH update",
           "cSharpName": "SshUpdate"
+        },
+        {
+          "id": "update.streamline_card_update",
+          "friendlyName": "Streamline Card update",
+          "cSharpName": "StreamlineCardUpdate"
         },
         {
           "id": "update.studio_code_server_update",

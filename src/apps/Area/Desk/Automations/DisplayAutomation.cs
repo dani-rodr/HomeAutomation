@@ -5,8 +5,9 @@ public class DisplayAutomation(
     IComputer desktop,
     IComputer laptop,
     IEventHandler eventHandler,
+    SwitchEntity masterSwitch,
     ILogger<DisplayAutomation> logger
-) : AutomationBase(logger)
+) : AutomationBase(logger, masterSwitch)
 {
     protected override IEnumerable<IDisposable> GetPersistentAutomations() =>
         [

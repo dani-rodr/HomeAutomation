@@ -57,6 +57,7 @@ public interface IKitchenLightEntities : ILightAutomationEntities
 
 public interface ICookingEntities
 {
+    SwitchEntity MasterSwitch { get; }
     NumericSensorEntity RiceCookerPower { get; }
     SwitchEntity RiceCookerSwitch { get; }
     SensorEntity AirFryerStatus { get; }

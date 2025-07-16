@@ -136,12 +136,12 @@ public abstract class LightAutomationBase(
         if (lightState == motionState)
         {
             Logger.LogDebug("Enabling automation via MasterSwitch (states match)");
-            MasterSwitch?.TurnOn();
+            MasterSwitch.TurnOn();
             return;
         }
 
         Logger.LogDebug("Disabling automation via MasterSwitch (states mismatch)");
-        MasterSwitch?.TurnOff();
+        MasterSwitch.TurnOff();
     }
 
     private void ControlLightOnMotionChange(StateChange evt)

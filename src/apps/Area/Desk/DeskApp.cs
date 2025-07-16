@@ -46,6 +46,7 @@ public class DeskApp(
             desktop,
             laptop,
             eventHandler,
+            deskMotionEntities.MasterSwitch,
             loggerFactory.CreateLogger<DisplayAutomation>()
         );
     }

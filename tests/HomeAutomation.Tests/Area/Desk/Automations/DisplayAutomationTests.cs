@@ -121,6 +121,7 @@ public class DisplayAutomationTests : IDisposable
             _desktop,
             _laptop,
             _mockEventHandler.Object,
+            _lgDisplayEntities.MasterSwitch,
             _mockLogger.Object
         );
 
@@ -693,6 +694,7 @@ public class DisplayAutomationTests : IDisposable
         public MediaPlayerEntity MediaPlayer => new(haContext, "media_player.lg_webos_smart_tv");
 
         public LightEntity Display => new(haContext, "light.lgdisplay");
+        public SwitchEntity MasterSwitch => new(haContext, "switch.master_switch");
     }
 
     #endregion

@@ -48,7 +48,7 @@ public class LightAutomation(
             .StateChanges()
             .IsAutomated()
             .IsOn()
-            .Subscribe(_ => MasterSwitch?.TurnOn());
+            .Subscribe(_ => MasterSwitch.TurnOn());
     }
 
     private void ToggleLightsViaSwitch(StateChange e)
@@ -58,6 +58,6 @@ public class LightAutomation(
             return;
         }
         Light.Toggle();
-        MasterSwitch?.TurnOff();
+        MasterSwitch.TurnOff();
     }
 }

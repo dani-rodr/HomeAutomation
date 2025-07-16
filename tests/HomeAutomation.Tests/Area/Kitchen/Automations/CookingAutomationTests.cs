@@ -437,5 +437,8 @@ public class CookingAutomationTests : IDisposable
             new ButtonEntity(haContext, "button.induction_cooker_power");
         public NumericSensorEntity InductionPower { get; } =
             new NumericSensorEntity(haContext, "sensor.smart_plug_3_sonoff_s31_power");
+
+        public SwitchEntity MasterSwitch { get; } =
+            new SwitchEntity(haContext, "binary_sensor.master_switch");
     }
 }

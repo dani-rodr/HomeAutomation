@@ -22,7 +22,7 @@ public class ClimateAutomation(
             .StateChangesWithCurrent()
             .IsOffForHours(1)
             .Where(_ => MasterSwitch.IsOff())
-            .Subscribe(_ => MasterSwitch?.TurnOn());
+            .Subscribe(_ => MasterSwitch.TurnOn());
         yield return _doorSensor
             .StateChanges()
             .IsClosed()
@@ -30,7 +30,7 @@ public class ClimateAutomation(
             {
                 if (MasterSwitch.IsOff())
                 {
-                    MasterSwitch?.TurnOn();
+                    MasterSwitch.TurnOn();
                     return;
                 }
                 ApplyTimeBasedAcSetting(e);
@@ -55,7 +55,7 @@ public class ClimateAutomation(
 
         if (oldTemp.HasValue && newTemp.HasValue && oldTemp != newTemp)
         {
-            MasterSwitch?.TurnOff();
+            MasterSwitch.TurnOff();
             Logger.LogDebug(
                 "AC state changed: {OldState} ➜ {NewState} | Temp: {OldTemp} ➜ {NewTemp} | By: {User}",
                 e.Old?.State,

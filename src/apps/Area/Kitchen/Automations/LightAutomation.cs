@@ -31,5 +31,5 @@ public class LightAutomation(
             .Subscribe(_ => SensorDelay?.SetNumericValue(SensorActiveDelayValue));
 
     private IDisposable SetupMotionSensorReactivation() =>
-        MotionSensor.StateChanges().IsOffForHours(1).Subscribe(_ => MasterSwitch?.TurnOn());
+        MotionSensor.StateChanges().IsOffForHours(1).Subscribe(_ => MasterSwitch.TurnOn());
 }

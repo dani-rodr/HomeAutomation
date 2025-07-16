@@ -9,7 +9,7 @@ public class LightAutomation(
     protected override int SensorWaitTime => 10;
 
     protected override IEnumerable<IDisposable> GetAdditionalPersistentAutomations() =>
-        [entities.BedroomDoor.StateChanges().IsOff().Subscribe(_ => MasterSwitch?.TurnOn())];
+        [entities.BedroomDoor.StateChanges().IsOff().Subscribe(_ => MasterSwitch.TurnOn())];
 
     protected override IEnumerable<IDisposable> GetLightAutomations()
     {

@@ -142,6 +142,7 @@ public class KitchenCookingEntities(Entities entities) : ICookingEntities
     public SensorEntity AirFryerStatus => entities.Sensor.CareliSg593061393Maf05aStatusP21;
     public ButtonEntity InductionTurnOff => entities.Button.InductionCookerPower;
     public NumericSensorEntity InductionPower => entities.Sensor.SmartPlug3SonoffS31Power;
+    public SwitchEntity MasterSwitch => entities.Switch.CookingAutomation;
 }
 
 public class BedroomClimateEntities(Entities entities, CommonEntities common) : IClimateEntities

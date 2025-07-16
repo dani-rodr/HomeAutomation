@@ -78,11 +78,11 @@ public abstract class FanAutomationBase : AutomationBase
             {
                 if (e.IsOn())
                 {
-                    MasterSwitch?.TurnOn();
+                    MasterSwitch.TurnOn();
                 }
                 else if (e.IsOff())
                 {
-                    MasterSwitch?.TurnOff();
+                    MasterSwitch.TurnOff();
                 }
             });
 
@@ -91,7 +91,7 @@ public abstract class FanAutomationBase : AutomationBase
             .StateChanges()
             .IsOffForMinutes(15)
             .Where(_ => MasterSwitch.IsOff())
-            .Subscribe(_ => MasterSwitch?.TurnOn());
+            .Subscribe(_ => MasterSwitch.TurnOn());
 
     private IDisposable GetMasterSwitchAutomations() =>
         MasterSwitch!

@@ -2,11 +2,11 @@ using System.Reactive.Disposables;
 
 namespace HomeAutomation.apps.Common.Base;
 
-public abstract class AutomationBase(ILogger logger, SwitchEntity? masterSwitch = null)
+public abstract class AutomationBase(ILogger logger, SwitchEntity masterSwitch)
     : IAutomation,
         IDisposable
 {
-    protected SwitchEntity? MasterSwitch => masterSwitch;
+    protected SwitchEntity MasterSwitch => masterSwitch;
     protected ILogger Logger => logger;
     protected abstract IEnumerable<IDisposable> GetToggleableAutomations();
     protected abstract IEnumerable<IDisposable> GetPersistentAutomations();
@@ -103,11 +103,11 @@ public abstract class AutomationBase(ILogger logger, SwitchEntity? masterSwitch 
             "Master switch state change: {OldState} → {NewState} for {EntityId} by {UserId}",
             e.Old?.State,
             e.New?.State,
-            MasterSwitch?.EntityId,
+            MasterSwitch.EntityId,
             e.Username() ?? "unknown"
         );
 
-        if (MasterSwitch?.State != HaEntityStates.ON)
+        if (MasterSwitch.State != HaEntityStates.ON)
         {
             Logger.LogDebug(
                 "Master switch OFF - disabling automations for {AutomationType}",
