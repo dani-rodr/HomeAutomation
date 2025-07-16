@@ -7,7 +7,7 @@ public class DisplayAutomation(
     IEventHandler eventHandler,
     SwitchEntity masterSwitch,
     ILogger<DisplayAutomation> logger
-) : AutomationBase(logger, masterSwitch)
+) : AutomationBase(masterSwitch, logger)
 {
     protected override IEnumerable<IDisposable> GetPersistentAutomations() =>
         [

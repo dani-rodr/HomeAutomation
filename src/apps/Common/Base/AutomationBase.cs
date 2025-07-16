@@ -2,7 +2,7 @@ using System.Reactive.Disposables;
 
 namespace HomeAutomation.apps.Common.Base;
 
-public abstract class AutomationBase(ILogger logger, SwitchEntity masterSwitch)
+public abstract class AutomationBase(SwitchEntity masterSwitch, ILogger logger)
     : IAutomation,
         IDisposable
 {
@@ -107,7 +107,7 @@ public abstract class AutomationBase(ILogger logger, SwitchEntity masterSwitch)
             e.Username() ?? "unknown"
         );
 
-        if (MasterSwitch.State != HaEntityStates.ON)
+        if (MasterSwitch.IsOff())
         {
             Logger.LogDebug(
                 "Master switch OFF - disabling automations for {AutomationType}",

@@ -6,7 +6,7 @@ public abstract class LightAutomationBase(
     ILightAutomationEntities entities,
     IScheduler scheduler,
     ILogger logger
-) : AutomationBase(logger, entities.MasterSwitch)
+) : AutomationBase(entities.MasterSwitch, logger)
 {
     protected readonly BinarySensorEntity MotionSensor = entities.MotionSensor;
     protected readonly NumberEntity? SensorDelay = entities.SensorDelay;

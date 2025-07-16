@@ -6,7 +6,7 @@ public class ClimateAutomation(
     IClimateEntities entities,
     IClimateScheduler scheduler,
     ILogger<ClimateAutomation> logger
-) : AutomationBase(logger, entities.MasterSwitch)
+) : AutomationBase(entities.MasterSwitch, logger)
 {
     private readonly ClimateEntity _ac = entities.AirConditioner;
     private readonly BinarySensorEntity _motionSensor = entities.MotionSensor;

@@ -9,7 +9,7 @@ public abstract class FanAutomationBase : AutomationBase
     protected readonly SwitchEntity Fan;
 
     protected FanAutomationBase(IFanAutomationEntities entities, ILogger logger)
-        : base(logger, entities.MasterSwitch)
+        : base(entities.MasterSwitch, logger)
     {
         MotionSensor = entities.MotionSensor;
         Fans = entities.Fans;
