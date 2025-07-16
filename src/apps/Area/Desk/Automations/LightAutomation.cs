@@ -13,7 +13,17 @@ public class LightAutomation(
     protected override IEnumerable<IDisposable> GetLightAutomations() =>
         [GetLightMotionAutomation(), GetSalaLightsAutomation()];
 
-    protected override IEnumerable<IDisposable> GetPersistentAutomations() => [];
+    protected override IEnumerable<IDisposable> GetAdditionalPersistentAutomations()
+    {
+        yield return MasterSwitch!
+            .StateChanges()
+            .Where(_ => Light.IsOn() && monitor.IsOn())
+            .Subscribe(e =>
+            {
+                var status = e.IsOn() ? "ON" : "OFF";
+                monitor.ShowToast($"LG Display Automation is {status}");
+            });
+    }
 
     protected override IEnumerable<IDisposable> GetSensorDelayAutomations()
     {
