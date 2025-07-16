@@ -15,7 +15,7 @@ public class LgDisplay(ILgDisplayEntities entities, IServices services, ILogger<
 {
     private const string MAC_ADDRESS = "D4:8D:26:B8:C4:AA";
     private const int HIGH_BRIGHTNESS = 230;
-    private const int LOW_BRIGTNESS = 102;
+    private const int LOW_BRIGTNESS = 125;
     private readonly WebostvServices _webosServices = services.Webostv;
     private readonly WakeOnLanServices _wolServices = services.WakeOnLan;
     private readonly LightEntity _lightDisplay = entities.Display;
