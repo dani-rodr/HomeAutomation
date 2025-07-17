@@ -373,7 +373,7 @@ public class LaptopTests : IDisposable
     #region StateChanges Observable Tests (with Throttling)
 
     [Fact]
-    public void StateChanges_Should_EmitCorrectInitialValues()
+    public void StateChanges_Should_NotEmitInitialValues()
     {
         // Arrange
         _mockHaContext.SetEntityState(_entities.VirtualSwitch.EntityId, "on");
@@ -384,12 +384,8 @@ public class LaptopTests : IDisposable
         // Act
         _laptop.StateChanges().Subscribe(results.Add);
 
-        // Assert - StateChanges now emits initial switch state via StartWith()
-        results
-            .Should()
-            .ContainSingle("StateChanges should emit initial switch state (true)")
-            .Which.Should()
-            .BeTrue("initial switch state is 'on'");
+        // Assert - StateChanges should not emit anything on subscription
+        results.Should().BeEmpty("no initial value should be emitted without state changes");
     }
 
     [Fact]

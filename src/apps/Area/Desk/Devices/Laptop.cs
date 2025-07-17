@@ -44,10 +44,7 @@ public class Laptop(
 
     public override IObservable<bool> StateChanges()
     {
-        var switchStateChanges = entities
-            .VirtualSwitch.StateChanges()
-            .Select(e => e.IsOn())
-            .StartWith(entities.VirtualSwitch.State.IsOn());
+        var switchStateChanges = entities.VirtualSwitch.StateChanges().Select(e => e.IsOn());
 
         var sessionLocked = entities
             .Session.StateChanges()
