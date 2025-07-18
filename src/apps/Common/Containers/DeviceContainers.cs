@@ -46,12 +46,20 @@ public class Devices(Entities entities)
                     ["CeilingFan"] = entities.Switch.CeilingFan,
                     ["StandFan"] = entities.Switch.Sonoff10023810231,
                     ["ExhaustFan"] = entities.Switch.Cozylife955f,
-                    ["AirPurifier"] = entities
-                        .Switch
-                        .XiaomiSmartAirPurifier4CompactAirPurifierFanSwitch,
                 }
             ),
-            ContactSensor: entities.BinarySensor.DoorWrapper
+            MediaPlayer: new(
+                entities.MediaPlayer.Tcl65c755,
+                entities.Switch.TvAutomation,
+                entities.Light.TvBacklight3Lite
+            ),
+            ContactSensor: entities.BinarySensor.DoorWrapper,
+            AirPurifierControl: new(
+                entities.Switch.CleanAir,
+                entities.Switch.XiaomiSmartAirPurifier4CompactAirPurifierFanSwitch,
+                entities.Sensor.XiaomiSg753990712Cpa4Pm25DensityP34,
+                entities.Switch.XiaomiSmartAirPurifier4CompactAirPurifierLedStatus
+            )
         );
 
     public Area Kitchen { get; } =
@@ -61,7 +69,15 @@ public class Devices(Entities entities)
                 entities.Button.Ld2410Esp325RestartEsp32,
                 entities.Number.Ld2410Esp325StillTargetDelay
             ),
-            new LightControl(entities.Switch.KitchenMotionSensor, entities.Light.RgbLightStrip)
+            new LightControl(entities.Switch.KitchenMotionSensor, entities.Light.RgbLightStrip),
+            CookingControl: new(
+                entities.Sensor.RiceCookerPower,
+                entities.Switch.RiceCookerSocket1,
+                entities.Sensor.CareliSg593061393Maf05aStatusP21,
+                entities.Button.InductionCookerPower,
+                entities.Sensor.SmartPlug3SonoffS31Power,
+                entities.Switch.CookingAutomation
+            )
         );
 
     public Area Pantry { get; } =
@@ -91,7 +107,8 @@ public class Devices(Entities entities)
                 entities.Button.ZEsp32C61RestartEsp322,
                 entities.Number.ZEsp32C61StillTargetDelay2
             ),
-            new LightControl(entities.Switch.LgTvMotionSensor, entities.Light.LgDisplay)
+            new LightControl(entities.Switch.LgTvMotionSensor, entities.Light.LgDisplay),
+            MediaPlayer: new(entities.MediaPlayer.LgWebosSmartTv, entities.Switch.LgTvMotionSensor)
         );
 }
 
@@ -132,6 +149,36 @@ public record LaptopControl(
     public static implicit operator SensorEntity(LaptopControl control) => control.Session;
 }
 
+public record AirPurifierControl(
+    SwitchEntity Automation,
+    SwitchEntity Fan,
+    NumericSensorEntity Pm25Sensor,
+    SwitchEntity LedStatus
+);
+
+public record MediaControl(
+    MediaPlayerEntity MediaPlayer,
+    SwitchEntity Automation,
+    LightEntity? Backlight = null
+)
+{
+    public static implicit operator MediaPlayerEntity(MediaControl control) => control.MediaPlayer;
+
+    public static implicit operator SwitchEntity(MediaControl control) => control.Automation;
+}
+
+public record CookingControl(
+    NumericSensorEntity RiceCookerPower,
+    SwitchEntity RiceCookerSwitch,
+    SensorEntity AirFryerStatus,
+    ButtonEntity InductionTurnOff,
+    NumericSensorEntity InductionPower,
+    SwitchEntity Automation
+)
+{
+    public static implicit operator SwitchEntity(CookingControl control) => control.Automation;
+}
+
 public class GlobalEntities(Entities entities)
 {
     public BinarySensorEntity HouseOccupancy => entities.BinarySensor.House;
@@ -142,5 +189,8 @@ public record Area(
     LightControl LightControl,
     FanControl? FanControl = null,
     BinarySensorEntity? ContactSensor = null,
-    LaptopControl? LaptopControl = null
+    LaptopControl? LaptopControl = null,
+    AirPurifierControl? AirPurifierControl = null,
+    MediaControl? MediaPlayer = null,
+    CookingControl? CookingControl = null
 );
