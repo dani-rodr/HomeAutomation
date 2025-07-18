@@ -49,7 +49,7 @@ public class LightAutomation(
             .StateChanges()
             .IsOffForMinutes(2)
             .Where(_ =>
-                entities.BedroomDoor.IsClosed() && entities.BedroomMotionSensors.IsOccupied()
+                entities.BedroomDoor.IsClosed() && entities.BedroomMotionSensor.IsOccupied()
             )
             .Subscribe(_ => MasterSwitch.TurnOn());
     }
@@ -66,7 +66,7 @@ public class LightAutomation(
     private IDisposable SetSensorDelayOnKitchenOccupancy()
     {
         return entities
-            .KitchenMotionSensors.StateChanges()
+            .KitchenMotionSensor.StateChanges()
             .IsOnForSeconds(10)
             .Subscribe(_ => SensorDelay?.SetNumericValue(SensorActiveDelayValue));
     }
@@ -81,7 +81,7 @@ public class LightAutomation(
     }
 
     private bool PantryUnoccupied() =>
-        entities.PantryMotionSensor.IsOn() && entities.PantryMotionSensors.IsOff();
+        entities.PantryMotionAutomation.IsOn() && entities.PantryMotionSensor.IsOff();
 
     public override void Dispose()
     {

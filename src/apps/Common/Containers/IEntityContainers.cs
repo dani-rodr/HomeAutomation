@@ -28,12 +28,12 @@ public interface ILivingRoomLightEntities : ILightAutomationEntities
 {
     BinarySensorEntity BedroomDoor { get; }
     BinarySensorEntity LivingRoomDoor { get; }
-    BinarySensorEntity BedroomMotionSensors { get; }
+    BinarySensorEntity BedroomMotionSensor { get; }
     MediaPlayerEntity TclTv { get; }
-    BinarySensorEntity KitchenMotionSensors { get; }
+    BinarySensorEntity KitchenMotionSensor { get; }
     LightEntity PantryLights { get; }
-    SwitchEntity PantryMotionSensor { get; }
-    BinarySensorEntity PantryMotionSensors { get; }
+    SwitchEntity PantryMotionAutomation { get; }
+    BinarySensorEntity PantryMotionSensor { get; }
 }
 
 public interface IPantryLightEntities : ILightAutomationEntities

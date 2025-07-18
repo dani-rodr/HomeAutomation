@@ -167,7 +167,7 @@ public class LightAutomationTests : IDisposable
     {
         // Arrange - Set bedroom door closed and bedroom motion sensors occupied
         _mockHaContext.SetEntityState(_entities.BedroomDoor.EntityId, "off"); // closed
-        _mockHaContext.SetEntityState(_entities.BedroomMotionSensors.EntityId, "on"); // occupied
+        _mockHaContext.SetEntityState(_entities.BedroomMotionSensor.EntityId, "on"); // occupied
         _mockHaContext.ClearServiceCalls();
 
         // Act - Simulate motion sensor being off for 2 minutes
@@ -175,7 +175,7 @@ public class LightAutomationTests : IDisposable
         _mockHaContext.StateChangeSubject.OnNext(stateChange);
 
         // Simulate the 2-minute timeout condition
-        if (_entities.BedroomDoor.IsClosed() && _entities.BedroomMotionSensors.IsOccupied())
+        if (_entities.BedroomDoor.IsClosed() && _entities.BedroomMotionSensor.IsOccupied())
         {
             _entities.MasterSwitch.TurnOn();
         }
@@ -189,7 +189,7 @@ public class LightAutomationTests : IDisposable
     {
         // Arrange - Set bedroom door open and bedroom motion sensors occupied
         _mockHaContext.SetEntityState(_entities.BedroomDoor.EntityId, "on"); // open
-        _mockHaContext.SetEntityState(_entities.BedroomMotionSensors.EntityId, "on"); // occupied
+        _mockHaContext.SetEntityState(_entities.BedroomMotionSensor.EntityId, "on"); // occupied
         _mockHaContext.ClearServiceCalls();
 
         // Act - Simulate motion sensor being off for 2 minutes with door open
@@ -197,7 +197,7 @@ public class LightAutomationTests : IDisposable
         _mockHaContext.StateChangeSubject.OnNext(stateChange);
 
         // Simulate the condition check - should fail because door is open
-        if (_entities.BedroomDoor.IsClosed() && _entities.BedroomMotionSensors.IsOccupied())
+        if (_entities.BedroomDoor.IsClosed() && _entities.BedroomMotionSensor.IsOccupied())
         {
             _entities.MasterSwitch.TurnOn();
         }
@@ -211,7 +211,7 @@ public class LightAutomationTests : IDisposable
     {
         // Arrange - Set bedroom door closed but bedroom motion sensors not occupied
         _mockHaContext.SetEntityState(_entities.BedroomDoor.EntityId, "off"); // closed
-        _mockHaContext.SetEntityState(_entities.BedroomMotionSensors.EntityId, "off"); // not occupied
+        _mockHaContext.SetEntityState(_entities.BedroomMotionSensor.EntityId, "off"); // not occupied
         _mockHaContext.ClearServiceCalls();
 
         // Act - Simulate motion sensor being off for 2 minutes with bedroom unoccupied
@@ -219,7 +219,7 @@ public class LightAutomationTests : IDisposable
         _mockHaContext.StateChangeSubject.OnNext(stateChange);
 
         // Simulate the condition check - should fail because bedroom is not occupied
-        if (_entities.BedroomDoor.IsClosed() && _entities.BedroomMotionSensors.IsOccupied())
+        if (_entities.BedroomDoor.IsClosed() && _entities.BedroomMotionSensor.IsOccupied())
         {
             _entities.MasterSwitch.TurnOn();
         }
@@ -236,7 +236,7 @@ public class LightAutomationTests : IDisposable
     public void KitchenMotionSensorsOnFor10Seconds_Should_SetSensorDelayToActiveValue()
     {
         // Act - Simulate kitchen motion sensors being on for 10 seconds
-        var stateChange = StateChangeHelpers.MotionDetected(_entities.KitchenMotionSensors);
+        var stateChange = StateChangeHelpers.MotionDetected(_entities.KitchenMotionSensor);
         _mockHaContext.StateChangeSubject.OnNext(stateChange);
 
         // Simulate the 10-second timeout condition
@@ -258,7 +258,7 @@ public class LightAutomationTests : IDisposable
         _mockHaContext.ClearServiceCalls();
 
         // Act - Simulate kitchen motion sensors turning off (should not trigger delay change)
-        var stateChange = StateChangeHelpers.MotionCleared(_entities.KitchenMotionSensors);
+        var stateChange = StateChangeHelpers.MotionCleared(_entities.KitchenMotionSensor);
         _mockHaContext.StateChangeSubject.OnNext(stateChange);
 
         // Assert - Should not call SetNumericValue when kitchen motion is cleared
@@ -274,8 +274,8 @@ public class LightAutomationTests : IDisposable
     {
         // Arrange - Set pantry conditions for "unoccupied" state
         // PantryUnoccupied() returns: entities.PantryMotionSensor.IsOn() && entities.PantryMotionSensors.IsOff()
-        _mockHaContext.SetEntityState(_entities.PantryMotionSensor.EntityId, "on"); // motion sensor switch on
-        _mockHaContext.SetEntityState(_entities.PantryMotionSensors.EntityId, "off"); // but motion sensors off
+        _mockHaContext.SetEntityState(_entities.PantryMotionAutomation.EntityId, "on"); // motion sensor switch on
+        _mockHaContext.SetEntityState(_entities.PantryMotionSensor.EntityId, "off"); // but motion sensors off
         _mockHaContext.ClearServiceCalls();
 
         // Act - Simulate living room light turning off
@@ -283,7 +283,7 @@ public class LightAutomationTests : IDisposable
         _mockHaContext.StateChangeSubject.OnNext(stateChange);
 
         // Simulate the pantry unoccupied check and action
-        if (_entities.PantryMotionSensor.IsOn() && _entities.PantryMotionSensors.IsOff())
+        if (_entities.PantryMotionAutomation.IsOn() && _entities.PantryMotionSensor.IsOff())
         {
             _entities.PantryLights.TurnOff();
         }
@@ -296,8 +296,8 @@ public class LightAutomationTests : IDisposable
     public void LivingRoomLightOff_WithPantryOccupied_Should_NotTurnOffPantryLights()
     {
         // Arrange - Set pantry conditions for "occupied" state
-        _mockHaContext.SetEntityState(_entities.PantryMotionSensor.EntityId, "on"); // motion sensor switch on
-        _mockHaContext.SetEntityState(_entities.PantryMotionSensors.EntityId, "on"); // and motion sensors on (occupied)
+        _mockHaContext.SetEntityState(_entities.PantryMotionAutomation.EntityId, "on"); // motion sensor switch on
+        _mockHaContext.SetEntityState(_entities.PantryMotionSensor.EntityId, "on"); // and motion sensors on (occupied)
         _mockHaContext.ClearServiceCalls();
 
         // Act - Simulate living room light turning off
@@ -305,7 +305,7 @@ public class LightAutomationTests : IDisposable
         _mockHaContext.StateChangeSubject.OnNext(stateChange);
 
         // Simulate the pantry unoccupied check - should fail because pantry is occupied
-        if (_entities.PantryMotionSensor.IsOn() && _entities.PantryMotionSensors.IsOff())
+        if (_entities.PantryMotionAutomation.IsOn() && _entities.PantryMotionSensor.IsOff())
         {
             _entities.PantryLights.TurnOff();
         }
@@ -318,8 +318,8 @@ public class LightAutomationTests : IDisposable
     public void LivingRoomLightOff_WithPantryMotionSensorOff_Should_NotTurnOffPantryLights()
     {
         // Arrange - Set pantry motion sensor off (disabled)
-        _mockHaContext.SetEntityState(_entities.PantryMotionSensor.EntityId, "off"); // motion sensor switch off
-        _mockHaContext.SetEntityState(_entities.PantryMotionSensors.EntityId, "off"); // motion sensors off
+        _mockHaContext.SetEntityState(_entities.PantryMotionAutomation.EntityId, "off"); // motion sensor switch off
+        _mockHaContext.SetEntityState(_entities.PantryMotionSensor.EntityId, "off"); // motion sensors off
         _mockHaContext.ClearServiceCalls();
 
         // Act - Simulate living room light turning off
@@ -327,7 +327,7 @@ public class LightAutomationTests : IDisposable
         _mockHaContext.StateChangeSubject.OnNext(stateChange);
 
         // Simulate the pantry unoccupied check - should fail because motion sensor is disabled
-        if (_entities.PantryMotionSensor.IsOn() && _entities.PantryMotionSensors.IsOff())
+        if (_entities.PantryMotionAutomation.IsOn() && _entities.PantryMotionSensor.IsOff())
         {
             _entities.PantryLights.TurnOff();
         }
@@ -403,7 +403,7 @@ public class LightAutomationTests : IDisposable
         // Arrange - Set up initial states
         _mockHaContext.SetEntityState(_entities.TclTv.EntityId, "on");
         _mockHaContext.SetEntityState(_entities.BedroomDoor.EntityId, "off");
-        _mockHaContext.SetEntityState(_entities.BedroomMotionSensors.EntityId, "on");
+        _mockHaContext.SetEntityState(_entities.BedroomMotionSensor.EntityId, "on");
         _mockHaContext.ClearServiceCalls();
 
         // Act 1 - Motion detected in living room
@@ -411,7 +411,7 @@ public class LightAutomationTests : IDisposable
         _mockHaContext.StateChangeSubject.OnNext(motionStateChange);
 
         // Act 2 - Kitchen motion detected (should trigger sensor delay change)
-        var kitchenStateChange = StateChangeHelpers.MotionDetected(_entities.KitchenMotionSensors);
+        var kitchenStateChange = StateChangeHelpers.MotionDetected(_entities.KitchenMotionSensor);
         _mockHaContext.StateChangeSubject.OnNext(kitchenStateChange);
         _entities.SensorDelay.SetNumericValue(45); // Simulate the delay change
 
@@ -466,11 +466,11 @@ public class LightAutomationTests : IDisposable
         {
             // Arrange for each scenario
             _mockHaContext.SetEntityState(
-                _entities.PantryMotionSensor.EntityId,
+                _entities.PantryMotionAutomation.EntityId,
                 scenario.PantrySensorOn ? "on" : "off"
             );
             _mockHaContext.SetEntityState(
-                _entities.PantryMotionSensors.EntityId,
+                _entities.PantryMotionSensor.EntityId,
                 scenario.PantryMotionOn ? "on" : "off"
             );
             _mockHaContext.ClearServiceCalls();
@@ -480,7 +480,7 @@ public class LightAutomationTests : IDisposable
             _mockHaContext.StateChangeSubject.OnNext(stateChange);
 
             // Simulate the pantry logic
-            if (_entities.PantryMotionSensor.IsOn() && _entities.PantryMotionSensors.IsOff())
+            if (_entities.PantryMotionAutomation.IsOn() && _entities.PantryMotionSensor.IsOff())
             {
                 _entities.PantryLights.TurnOff();
             }
@@ -525,9 +525,9 @@ public class LightAutomationTests : IDisposable
             .BeTrue("bedroom door should report closed when off");
 
         // Kitchen motion sensors
-        _mockHaContext.SetEntityState(_entities.KitchenMotionSensors.EntityId, "on");
+        _mockHaContext.SetEntityState(_entities.KitchenMotionSensor.EntityId, "on");
         _entities
-            .KitchenMotionSensors.IsOccupied()
+            .KitchenMotionSensor.IsOccupied()
             .Should()
             .BeTrue("kitchen motion sensors should report occupied");
     }
@@ -547,7 +547,7 @@ public class LightAutomationTests : IDisposable
                 StateChangeHelpers.MotionCleared(_entities.MotionSensor)
             );
             _mockHaContext.StateChangeSubject.OnNext(
-                StateChangeHelpers.MotionDetected(_entities.KitchenMotionSensors)
+                StateChangeHelpers.MotionDetected(_entities.KitchenMotionSensor)
             );
             _mockHaContext.StateChangeSubject.OnNext(
                 StateChangeHelpers.CreateStateChange(_entities.TclTv, "on", "off")
@@ -556,7 +556,7 @@ public class LightAutomationTests : IDisposable
                 StateChangeHelpers.DoorClosed(_entities.BedroomDoor)
             );
             _mockHaContext.StateChangeSubject.OnNext(
-                StateChangeHelpers.MotionDetected(_entities.BedroomMotionSensors)
+                StateChangeHelpers.MotionDetected(_entities.BedroomMotionSensor)
             );
             _mockHaContext.StateChangeSubject.OnNext(
                 StateChangeHelpers.CreateStateChange(_entities.Light, "on", "off")
@@ -612,7 +612,7 @@ public class LightAutomationTests : IDisposable
         // Cross-area bedroom dependencies
         public BinarySensorEntity BedroomDoor { get; } =
             new BinarySensorEntity(haContext, "binary_sensor.contact_sensor_door");
-        public BinarySensorEntity BedroomMotionSensors { get; } =
+        public BinarySensorEntity BedroomMotionSensor { get; } =
             new BinarySensorEntity(haContext, "binary_sensor.bedroom_motion_sensors");
 
         // TV integration
@@ -620,15 +620,15 @@ public class LightAutomationTests : IDisposable
             new MediaPlayerEntity(haContext, "media_player.tcl_android_tv");
 
         // Cross-area kitchen dependencies
-        public BinarySensorEntity KitchenMotionSensors { get; } =
+        public BinarySensorEntity KitchenMotionSensor { get; } =
             new BinarySensorEntity(haContext, "binary_sensor.kitchen_motion_sensors");
 
         // Cross-area pantry dependencies
         public LightEntity PantryLights { get; } =
             new LightEntity(haContext, "light.pantry_lights");
-        public SwitchEntity PantryMotionSensor { get; } =
+        public SwitchEntity PantryMotionAutomation { get; } =
             new SwitchEntity(haContext, "switch.pantry_motion_sensor");
-        public BinarySensorEntity PantryMotionSensors { get; } =
+        public BinarySensorEntity PantryMotionSensor { get; } =
             new BinarySensorEntity(haContext, "binary_sensor.pantry_motion_sensors");
         public ButtonEntity Restart { get; } = new ButtonEntity(haContext, "button.restart");
 
