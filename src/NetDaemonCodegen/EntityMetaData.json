@@ -29,9 +29,9 @@
           "cSharpName": "ControllerRgbDf1c0d"
         },
         {
-          "id": "light.ld2410_esp32_5_blue_status_light",
-          "friendlyName": "ld2410-esp32_5 Blue Status Light",
-          "cSharpName": "Ld2410Esp325BlueStatusLight"
+          "id": "light.kitchen_motion_sensor_blue_status_light",
+          "friendlyName": "Kitchen Motion Sensor Blue Status Light",
+          "cSharpName": "KitchenMotionSensorBlueStatusLight"
         },
         {
           "id": "light.lg_display",
@@ -630,6 +630,31 @@
           "cSharpName": "BathroomLightsOverheated"
         },
         {
+          "id": "binary_sensor.bathroom_motion_sensor_moving_target",
+          "friendlyName": "Bathroom Motion Sensor Moving Target",
+          "cSharpName": "BathroomMotionSensorMovingTarget"
+        },
+        {
+          "id": "binary_sensor.bathroom_motion_sensor_presence",
+          "friendlyName": "Bathroom Motion Sensor Presence",
+          "cSharpName": "BathroomMotionSensorPresence"
+        },
+        {
+          "id": "binary_sensor.bathroom_motion_sensor_smart_presence",
+          "friendlyName": "Bathroom Motion Sensor Smart Presence",
+          "cSharpName": "BathroomMotionSensorSmartPresence"
+        },
+        {
+          "id": "binary_sensor.bathroom_motion_sensor_smart_presence_unfiltered",
+          "friendlyName": "Bathroom Motion Sensor Smart Presence Unfiltered",
+          "cSharpName": "BathroomMotionSensorSmartPresenceUnfiltered"
+        },
+        {
+          "id": "binary_sensor.bathroom_motion_sensor_still_target",
+          "friendlyName": "Bathroom Motion Sensor Still Target",
+          "cSharpName": "BathroomMotionSensorStillTarget"
+        },
+        {
           "id": "binary_sensor.bathroom_presence_sensors",
           "friendlyName": "Bathroom Presence Sensors",
           "cSharpName": "BathroomPresenceSensors"
@@ -643,6 +668,41 @@
           "id": "binary_sensor.bed_lights_overheated",
           "friendlyName": "Bed Lights  Overheated",
           "cSharpName": "BedLightsOverheated"
+        },
+        {
+          "id": "binary_sensor.bedroom_motion_sensor_connectivity",
+          "friendlyName": "Bedroom Motion Sensor Connectivity",
+          "cSharpName": "BedroomMotionSensorConnectivity"
+        },
+        {
+          "id": "binary_sensor.bedroom_motion_sensor_mi_scale_presence",
+          "friendlyName": "Bedroom Motion Sensor Mi Scale Presence",
+          "cSharpName": "BedroomMotionSensorMiScalePresence"
+        },
+        {
+          "id": "binary_sensor.bedroom_motion_sensor_moving_target",
+          "friendlyName": "Bedroom Motion Sensor Moving Target",
+          "cSharpName": "BedroomMotionSensorMovingTarget"
+        },
+        {
+          "id": "binary_sensor.bedroom_motion_sensor_presence",
+          "friendlyName": "Bedroom Motion Sensor Presence",
+          "cSharpName": "BedroomMotionSensorPresence"
+        },
+        {
+          "id": "binary_sensor.bedroom_motion_sensor_smart_presence",
+          "friendlyName": "Bedroom Motion Sensor Smart Presence",
+          "cSharpName": "BedroomMotionSensorSmartPresence"
+        },
+        {
+          "id": "binary_sensor.bedroom_motion_sensor_smart_presence_unfiltered",
+          "friendlyName": "Bedroom Motion Sensor Smart Presence Unfiltered",
+          "cSharpName": "BedroomMotionSensorSmartPresenceUnfiltered"
+        },
+        {
+          "id": "binary_sensor.bedroom_motion_sensor_still_target",
+          "friendlyName": "Bedroom Motion Sensor Still Target",
+          "cSharpName": "BedroomMotionSensorStillTarget"
         },
         {
           "id": "binary_sensor.bedroom_presence_sensors",
@@ -715,9 +775,29 @@
           "cSharpName": "DanielPcSupportsUpnp"
         },
         {
-          "id": "binary_sensor.desk_smart_presence",
-          "friendlyName": "z-esp32-c6-1 Smart Presence",
-          "cSharpName": "DeskSmartPresence"
+          "id": "binary_sensor.desk_motion_sensor_moving_target",
+          "friendlyName": "Desk Motion Sensor Moving Target",
+          "cSharpName": "DeskMotionSensorMovingTarget"
+        },
+        {
+          "id": "binary_sensor.desk_motion_sensor_presence",
+          "friendlyName": "Desk Motion Sensor Presence",
+          "cSharpName": "DeskMotionSensorPresence"
+        },
+        {
+          "id": "binary_sensor.desk_motion_sensor_smart_presence",
+          "friendlyName": "Desk Motion Sensor Smart Presence",
+          "cSharpName": "DeskMotionSensorSmartPresence"
+        },
+        {
+          "id": "binary_sensor.desk_motion_sensor_smart_presence_unfiltered",
+          "friendlyName": "Desk Motion Sensor Smart Presence Unfiltered",
+          "cSharpName": "DeskMotionSensorSmartPresenceUnfiltered"
+        },
+        {
+          "id": "binary_sensor.desk_motion_sensor_still_target",
+          "friendlyName": "Desk Motion Sensor Still Target",
+          "cSharpName": "DeskMotionSensorStillTarget"
         },
         {
           "id": "binary_sensor.door_wrapper",
@@ -725,44 +805,9 @@
           "cSharpName": "DoorWrapper"
         },
         {
-          "id": "binary_sensor.esp32_presence_bedroom_mi_scale_presence",
-          "friendlyName": "Bedroom Presence Mi Scale Presence",
-          "cSharpName": "Esp32PresenceBedroomMiScalePresence"
-        },
-        {
-          "id": "binary_sensor.esp32_presence_bedroom_moving_target",
-          "friendlyName": "Bedroom Presence Moving Target",
-          "cSharpName": "Esp32PresenceBedroomMovingTarget"
-        },
-        {
-          "id": "binary_sensor.esp32_presence_bedroom_presence",
-          "friendlyName": "Bedroom Presence Presence",
-          "cSharpName": "Esp32PresenceBedroomPresence"
-        },
-        {
-          "id": "binary_sensor.esp32_presence_bedroom_smart_presence",
-          "friendlyName": "Bedroom Presence Smart Presence",
-          "cSharpName": "Esp32PresenceBedroomSmartPresence"
-        },
-        {
-          "id": "binary_sensor.esp32_presence_bedroom_smart_presence_unfiltered",
-          "friendlyName": "Bedroom Presence Smart Presence Unfiltered",
-          "cSharpName": "Esp32PresenceBedroomSmartPresenceUnfiltered"
-        },
-        {
-          "id": "binary_sensor.esp32_presence_bedroom_still_target",
-          "friendlyName": "Bedroom Presence Still Target",
-          "cSharpName": "Esp32PresenceBedroomStillTarget"
-        },
-        {
           "id": "binary_sensor.esphome_running",
           "friendlyName": "ESPHome Device Builder Running",
           "cSharpName": "EsphomeRunning"
-        },
-        {
-          "id": "binary_sensor.espresence_bedroom_connectivity",
-          "friendlyName": "Bedroom Presence Connectivity",
-          "cSharpName": "EspresenceBedroomConnectivity"
         },
         {
           "id": "binary_sensor.flytrap_cloud_connection",
@@ -850,59 +895,34 @@
           "cSharpName": "IphoneFocus"
         },
         {
+          "id": "binary_sensor.kitchen_motion_sensor_moving_target",
+          "friendlyName": "Kitchen Motion Sensor Moving Target",
+          "cSharpName": "KitchenMotionSensorMovingTarget"
+        },
+        {
+          "id": "binary_sensor.kitchen_motion_sensor_presence",
+          "friendlyName": "Kitchen Motion Sensor Presence",
+          "cSharpName": "KitchenMotionSensorPresence"
+        },
+        {
+          "id": "binary_sensor.kitchen_motion_sensor_smart_presence",
+          "friendlyName": "Kitchen Motion Sensor Smart Presence",
+          "cSharpName": "KitchenMotionSensorSmartPresence"
+        },
+        {
+          "id": "binary_sensor.kitchen_motion_sensor_smart_presence_unfiltered",
+          "friendlyName": "Kitchen Motion Sensor Smart Presence Unfiltered",
+          "cSharpName": "KitchenMotionSensorSmartPresenceUnfiltered"
+        },
+        {
+          "id": "binary_sensor.kitchen_motion_sensor_still_target",
+          "friendlyName": "Kitchen Motion Sensor Still Target",
+          "cSharpName": "KitchenMotionSensorStillTarget"
+        },
+        {
           "id": "binary_sensor.kitchen_motion_sensors",
           "friendlyName": "Kitchen Motion Sensors",
           "cSharpName": "KitchenMotionSensors"
-        },
-        {
-          "id": "binary_sensor.ld2410_esp32_1_moving_target",
-          "friendlyName": "Sala Moving Presence",
-          "cSharpName": "Ld2410Esp321MovingTarget"
-        },
-        {
-          "id": "binary_sensor.ld2410_esp32_1_presence",
-          "friendlyName": "Sala Presence - 1",
-          "cSharpName": "Ld2410Esp321Presence"
-        },
-        {
-          "id": "binary_sensor.ld2410_esp32_1_smart_presence",
-          "friendlyName": "ld2410-esp32_1 Smart Presence",
-          "cSharpName": "Ld2410Esp321SmartPresence"
-        },
-        {
-          "id": "binary_sensor.ld2410_esp32_1_smart_presence_unfiltered",
-          "friendlyName": "ld2410-esp32_1 Smart Presence Unfiltered",
-          "cSharpName": "Ld2410Esp321SmartPresenceUnfiltered"
-        },
-        {
-          "id": "binary_sensor.ld2410_esp32_1_still_target",
-          "friendlyName": "Sala Static Presence",
-          "cSharpName": "Ld2410Esp321StillTarget"
-        },
-        {
-          "id": "binary_sensor.ld2410_esp32_5_moving_target",
-          "friendlyName": "ld2410-esp32_5 Moving Target",
-          "cSharpName": "Ld2410Esp325MovingTarget"
-        },
-        {
-          "id": "binary_sensor.ld2410_esp32_5_presence",
-          "friendlyName": "ld2410-esp32_5 Presence",
-          "cSharpName": "Ld2410Esp325Presence"
-        },
-        {
-          "id": "binary_sensor.ld2410_esp32_5_smart_presence",
-          "friendlyName": "ld2410-esp32_5 Smart Presence",
-          "cSharpName": "Ld2410Esp325SmartPresence"
-        },
-        {
-          "id": "binary_sensor.ld2410_esp32_5_smart_presence_unfiltered",
-          "friendlyName": "ld2410-esp32_5 Smart Presence Unfiltered",
-          "cSharpName": "Ld2410Esp325SmartPresenceUnfiltered"
-        },
-        {
-          "id": "binary_sensor.ld2410_esp32_5_still_target",
-          "friendlyName": "ld2410-esp32_5 Still Target",
-          "cSharpName": "Ld2410Esp325StillTarget"
         },
         {
           "id": "binary_sensor.living_room_presence_sensors",
@@ -938,6 +958,31 @@
           "id": "binary_sensor.pantry_lights_overheated",
           "friendlyName": "Pantry Lights Overheated",
           "cSharpName": "PantryLightsOverheated"
+        },
+        {
+          "id": "binary_sensor.pantry_motion_sensor_moving_target",
+          "friendlyName": "Pantry Motion Sensor Moving Target",
+          "cSharpName": "PantryMotionSensorMovingTarget"
+        },
+        {
+          "id": "binary_sensor.pantry_motion_sensor_presence",
+          "friendlyName": "Pantry Motion Sensor Presence",
+          "cSharpName": "PantryMotionSensorPresence"
+        },
+        {
+          "id": "binary_sensor.pantry_motion_sensor_smart_presence",
+          "friendlyName": "Pantry Motion Sensor Smart Presence",
+          "cSharpName": "PantryMotionSensorSmartPresence"
+        },
+        {
+          "id": "binary_sensor.pantry_motion_sensor_smart_presence_unfiltered",
+          "friendlyName": "Pantry Motion Sensor Smart Presence Unfiltered",
+          "cSharpName": "PantryMotionSensorSmartPresenceUnfiltered"
+        },
+        {
+          "id": "binary_sensor.pantry_motion_sensor_still_target",
+          "friendlyName": "Pantry Motion Sensor Still Target",
+          "cSharpName": "PantryMotionSensorStillTarget"
         },
         {
           "id": "binary_sensor.pantry_motion_sensors",
@@ -993,6 +1038,31 @@
           "id": "binary_sensor.sala_lights_overheated",
           "friendlyName": "Sala Lights Overheated",
           "cSharpName": "SalaLightsOverheated"
+        },
+        {
+          "id": "binary_sensor.sala_motion_sensor_smart_presence",
+          "friendlyName": "Sala Motion Sensor Smart Presence",
+          "cSharpName": "SalaMotionSensorSmartPresence"
+        },
+        {
+          "id": "binary_sensor.sala_motion_sensor_smart_presence_unfiltered",
+          "friendlyName": "Sala Motion Sensor Smart Presence Unfiltered",
+          "cSharpName": "SalaMotionSensorSmartPresenceUnfiltered"
+        },
+        {
+          "id": "binary_sensor.sala_moving_presence",
+          "friendlyName": "Sala Moving Presence",
+          "cSharpName": "SalaMovingPresence"
+        },
+        {
+          "id": "binary_sensor.sala_presence_1",
+          "friendlyName": "Sala Presence - 1",
+          "cSharpName": "SalaPresence1"
+        },
+        {
+          "id": "binary_sensor.sala_static_presence",
+          "friendlyName": "Sala Static Presence",
+          "cSharpName": "SalaStaticPresence"
         },
         {
           "id": "binary_sensor.smart_plug_1_power_exceeds_threshold",
@@ -1103,76 +1173,6 @@
           "id": "binary_sensor.xiaomi_21121210g_supports_upnp",
           "friendlyName": "xiaomi-21121210g Supports UPnP",
           "cSharpName": "Xiaomi21121210gSupportsUpnp"
-        },
-        {
-          "id": "binary_sensor.z_esp32_c6_1_moving_target_2",
-          "friendlyName": "z-esp32-c6-1 Moving Target",
-          "cSharpName": "ZEsp32C61MovingTarget2"
-        },
-        {
-          "id": "binary_sensor.z_esp32_c6_1_presence_2",
-          "friendlyName": "z-esp32-c6-1 Presence",
-          "cSharpName": "ZEsp32C61Presence2"
-        },
-        {
-          "id": "binary_sensor.z_esp32_c6_1_smart_presence_unfiltered_2",
-          "friendlyName": "z-esp32-c6-1 Smart Presence Unfiltered",
-          "cSharpName": "ZEsp32C61SmartPresenceUnfiltered2"
-        },
-        {
-          "id": "binary_sensor.z_esp32_c6_1_still_target_2",
-          "friendlyName": "z-esp32-c6-1 Still Target",
-          "cSharpName": "ZEsp32C61StillTarget2"
-        },
-        {
-          "id": "binary_sensor.z_esp32_c6_2_moving_target",
-          "friendlyName": "z-esp32-c6-2 Moving Target",
-          "cSharpName": "ZEsp32C62MovingTarget"
-        },
-        {
-          "id": "binary_sensor.z_esp32_c6_2_presence",
-          "friendlyName": "z-esp32-c6-2 Presence",
-          "cSharpName": "ZEsp32C62Presence"
-        },
-        {
-          "id": "binary_sensor.z_esp32_c6_2_smart_presence",
-          "friendlyName": "z-esp32-c6-2 Smart Presence",
-          "cSharpName": "ZEsp32C62SmartPresence"
-        },
-        {
-          "id": "binary_sensor.z_esp32_c6_2_smart_presence_unfiltered",
-          "friendlyName": "z-esp32-c6-2 Smart Presence Unfiltered",
-          "cSharpName": "ZEsp32C62SmartPresenceUnfiltered"
-        },
-        {
-          "id": "binary_sensor.z_esp32_c6_2_still_target",
-          "friendlyName": "z-esp32-c6-2 Still Target",
-          "cSharpName": "ZEsp32C62StillTarget"
-        },
-        {
-          "id": "binary_sensor.z_esp32_c6_3_moving_target",
-          "friendlyName": "z-esp32-c6-3 Moving Target",
-          "cSharpName": "ZEsp32C63MovingTarget"
-        },
-        {
-          "id": "binary_sensor.z_esp32_c6_3_presence",
-          "friendlyName": "z-esp32-c6-3 Presence",
-          "cSharpName": "ZEsp32C63Presence"
-        },
-        {
-          "id": "binary_sensor.z_esp32_c6_3_smart_presence",
-          "friendlyName": "z-esp32-c6-3 Smart Presence",
-          "cSharpName": "ZEsp32C63SmartPresence"
-        },
-        {
-          "id": "binary_sensor.z_esp32_c6_3_smart_presence_unfiltered",
-          "friendlyName": "z-esp32-c6-3 Smart Presence Unfiltered",
-          "cSharpName": "ZEsp32C63SmartPresenceUnfiltered"
-        },
-        {
-          "id": "binary_sensor.z_esp32_c6_3_still_target",
-          "friendlyName": "z-esp32-c6-3 Still Target",
-          "cSharpName": "ZEsp32C63StillTarget"
         }
       ],
       "attributes": [
@@ -1257,6 +1257,71 @@
           "cSharpName": "BathroomLightsRestart"
         },
         {
+          "id": "button.bathroom_motion_sensor_factory_reset",
+          "friendlyName": "Bathroom Motion Sensor factory reset",
+          "cSharpName": "BathroomMotionSensorFactoryReset"
+        },
+        {
+          "id": "button.bathroom_motion_sensor_manual_clear",
+          "friendlyName": "Bathroom Motion Sensor Manual Clear",
+          "cSharpName": "BathroomMotionSensorManualClear"
+        },
+        {
+          "id": "button.bathroom_motion_sensor_query_params",
+          "friendlyName": "Bathroom Motion Sensor query params",
+          "cSharpName": "BathroomMotionSensorQueryParams"
+        },
+        {
+          "id": "button.bathroom_motion_sensor_restart",
+          "friendlyName": "Bathroom Motion Sensor restart",
+          "cSharpName": "BathroomMotionSensorRestart"
+        },
+        {
+          "id": "button.bathroom_motion_sensor_restart_esp32",
+          "friendlyName": "Bathroom Motion Sensor Restart ESP32",
+          "cSharpName": "BathroomMotionSensorRestartEsp32"
+        },
+        {
+          "id": "button.bedroom_motion_sensor_enroll",
+          "friendlyName": "Bedroom Motion Sensor Enroll",
+          "cSharpName": "BedroomMotionSensorEnroll"
+        },
+        {
+          "id": "button.bedroom_motion_sensor_factory_reset",
+          "friendlyName": "Bedroom Motion Sensor factory reset",
+          "cSharpName": "BedroomMotionSensorFactoryReset"
+        },
+        {
+          "id": "button.bedroom_motion_sensor_manual_clear",
+          "friendlyName": "Bedroom Motion Sensor Manual Clear",
+          "cSharpName": "BedroomMotionSensorManualClear"
+        },
+        {
+          "id": "button.bedroom_motion_sensor_query_params",
+          "friendlyName": "Bedroom Motion Sensor query params",
+          "cSharpName": "BedroomMotionSensorQueryParams"
+        },
+        {
+          "id": "button.bedroom_motion_sensor_restart",
+          "friendlyName": "Bedroom Motion Sensor restart",
+          "cSharpName": "BedroomMotionSensorRestart"
+        },
+        {
+          "id": "button.bedroom_motion_sensor_restart_2",
+          "friendlyName": "Bedroom Motion Sensor Restart",
+          "cSharpName": "BedroomMotionSensorRestart2"
+        },
+        {
+          "id": "button.bedroom_motion_sensor_restart_esp32",
+          "friendlyName": "Bedroom Motion Sensor Restart ESP32",
+          "cSharpName": "BedroomMotionSensorRestartEsp32"
+        },
+        {
+          "id": "button.bedroom_motion_sensor_update",
+          "friendlyName": "Bedroom Motion Sensor Update",
+          "cSharpName": "BedroomMotionSensorUpdate"
+        },
+        {
           "id": "button.careli_sg_593061393_maf05a_cancel_cooking_a_2_2",
           "friendlyName": "Xiaomi Smart Air Fryer Pro 4L  Air Fryer Stop Program",
           "cSharpName": "CareliSg593061393Maf05aCancelCookingA22"
@@ -1327,64 +1392,29 @@
           "cSharpName": "DanielPcRestart"
         },
         {
-          "id": "button.esp32_presence_bedroom_factory_reset",
-          "friendlyName": "Bedroom Presence factory reset",
-          "cSharpName": "Esp32PresenceBedroomFactoryReset"
+          "id": "button.desk_motion_sensor_factory_reset",
+          "friendlyName": "Desk Motion Sensor factory reset",
+          "cSharpName": "DeskMotionSensorFactoryReset"
         },
         {
-          "id": "button.esp32_presence_bedroom_manual_clear",
-          "friendlyName": "Bedroom Presence Manual Clear",
-          "cSharpName": "Esp32PresenceBedroomManualClear"
+          "id": "button.desk_motion_sensor_manual_clear",
+          "friendlyName": "Desk Motion Sensor Manual Clear",
+          "cSharpName": "DeskMotionSensorManualClear"
         },
         {
-          "id": "button.esp32_presence_bedroom_projector_power",
-          "friendlyName": "Bedroom Presence Projector Power",
-          "cSharpName": "Esp32PresenceBedroomProjectorPower"
+          "id": "button.desk_motion_sensor_query_params",
+          "friendlyName": "Desk Motion Sensor query params",
+          "cSharpName": "DeskMotionSensorQueryParams"
         },
         {
-          "id": "button.esp32_presence_bedroom_projector_power_off",
-          "friendlyName": "Bedroom Presence Projector Power Off",
-          "cSharpName": "Esp32PresenceBedroomProjectorPowerOff"
+          "id": "button.desk_motion_sensor_restart",
+          "friendlyName": "Desk Motion Sensor restart",
+          "cSharpName": "DeskMotionSensorRestart"
         },
         {
-          "id": "button.esp32_presence_bedroom_projector_volume",
-          "friendlyName": "Bedroom Presence Projector Volume\u002B",
-          "cSharpName": "Esp32PresenceBedroomProjectorVolume"
-        },
-        {
-          "id": "button.esp32_presence_bedroom_projector_volume_2",
-          "friendlyName": "Bedroom Presence Projector Volume-",
-          "cSharpName": "Esp32PresenceBedroomProjectorVolume2"
-        },
-        {
-          "id": "button.esp32_presence_bedroom_query_params",
-          "friendlyName": "Bedroom Presence query params",
-          "cSharpName": "Esp32PresenceBedroomQueryParams"
-        },
-        {
-          "id": "button.esp32_presence_bedroom_restart",
-          "friendlyName": "Bedroom Presence restart",
-          "cSharpName": "Esp32PresenceBedroomRestart"
-        },
-        {
-          "id": "button.esp32_presence_bedroom_restart_esp32",
-          "friendlyName": "Bedroom Presence Restart ESP32",
-          "cSharpName": "Esp32PresenceBedroomRestartEsp32"
-        },
-        {
-          "id": "button.espresence_bedroom_enroll",
-          "friendlyName": "Bedroom Presence Enroll",
-          "cSharpName": "EspresenceBedroomEnroll"
-        },
-        {
-          "id": "button.espresence_bedroom_restart",
-          "friendlyName": "Bedroom Presence Restart",
-          "cSharpName": "EspresenceBedroomRestart"
-        },
-        {
-          "id": "button.espresence_bedroom_update",
-          "friendlyName": "Bedroom Presence Update",
-          "cSharpName": "EspresenceBedroomUpdate"
+          "id": "button.desk_motion_sensor_restart_esp32",
+          "friendlyName": "Desk Motion Sensor Restart ESP32",
+          "cSharpName": "DeskMotionSensorRestartEsp32"
         },
         {
           "id": "button.front_door_wake",
@@ -1422,59 +1452,34 @@
           "cSharpName": "InductionCookerPower"
         },
         {
+          "id": "button.kitchen_motion_sensor_factory_reset",
+          "friendlyName": "Kitchen Motion Sensor factory reset",
+          "cSharpName": "KitchenMotionSensorFactoryReset"
+        },
+        {
+          "id": "button.kitchen_motion_sensor_manual_clear",
+          "friendlyName": "Kitchen Motion Sensor Manual Clear",
+          "cSharpName": "KitchenMotionSensorManualClear"
+        },
+        {
+          "id": "button.kitchen_motion_sensor_query_params",
+          "friendlyName": "Kitchen Motion Sensor query params",
+          "cSharpName": "KitchenMotionSensorQueryParams"
+        },
+        {
+          "id": "button.kitchen_motion_sensor_restart",
+          "friendlyName": "Kitchen Motion Sensor restart",
+          "cSharpName": "KitchenMotionSensorRestart"
+        },
+        {
+          "id": "button.kitchen_motion_sensor_restart_esp32",
+          "friendlyName": "Kitchen Motion Sensor Restart ESP32",
+          "cSharpName": "KitchenMotionSensorRestartEsp32"
+        },
+        {
           "id": "button.launch_mi_remote",
           "friendlyName": "Launch Mi Remote",
           "cSharpName": "LaunchMiRemote"
-        },
-        {
-          "id": "button.ld2410_esp32_1_factory_reset",
-          "friendlyName": "ld2410-esp32_1 factory reset",
-          "cSharpName": "Ld2410Esp321FactoryReset"
-        },
-        {
-          "id": "button.ld2410_esp32_1_manual_clear",
-          "friendlyName": "ld2410-esp32_1 Manual Clear",
-          "cSharpName": "Ld2410Esp321ManualClear"
-        },
-        {
-          "id": "button.ld2410_esp32_1_query_params",
-          "friendlyName": "ld2410-esp32_1 query params",
-          "cSharpName": "Ld2410Esp321QueryParams"
-        },
-        {
-          "id": "button.ld2410_esp32_1_restart",
-          "friendlyName": "ld2410-esp32_1 restart",
-          "cSharpName": "Ld2410Esp321Restart"
-        },
-        {
-          "id": "button.ld2410_esp32_1_restart_esp32",
-          "friendlyName": "ld2410-esp32_1 Restart ESP32",
-          "cSharpName": "Ld2410Esp321RestartEsp32"
-        },
-        {
-          "id": "button.ld2410_esp32_5_factory_reset",
-          "friendlyName": "ld2410-esp32_5 factory reset",
-          "cSharpName": "Ld2410Esp325FactoryReset"
-        },
-        {
-          "id": "button.ld2410_esp32_5_manual_clear",
-          "friendlyName": "ld2410-esp32_5 Manual Clear",
-          "cSharpName": "Ld2410Esp325ManualClear"
-        },
-        {
-          "id": "button.ld2410_esp32_5_query_params",
-          "friendlyName": "ld2410-esp32_5 query params",
-          "cSharpName": "Ld2410Esp325QueryParams"
-        },
-        {
-          "id": "button.ld2410_esp32_5_restart",
-          "friendlyName": "ld2410-esp32_5 restart",
-          "cSharpName": "Ld2410Esp325Restart"
-        },
-        {
-          "id": "button.ld2410_esp32_5_restart_esp32",
-          "friendlyName": "ld2410-esp32_5 Restart ESP32",
-          "cSharpName": "Ld2410Esp325RestartEsp32"
         },
         {
           "id": "button.lg_webos_tv_fe94_identify",
@@ -1497,6 +1502,31 @@
           "cSharpName": "NoderedE44494a60e30483b"
         },
         {
+          "id": "button.pantry_motion_sensor_factory_reset",
+          "friendlyName": "Pantry Motion Sensor factory reset",
+          "cSharpName": "PantryMotionSensorFactoryReset"
+        },
+        {
+          "id": "button.pantry_motion_sensor_manual_clear",
+          "friendlyName": "Pantry Motion Sensor Manual Clear",
+          "cSharpName": "PantryMotionSensorManualClear"
+        },
+        {
+          "id": "button.pantry_motion_sensor_query_params",
+          "friendlyName": "Pantry Motion Sensor query params",
+          "cSharpName": "PantryMotionSensorQueryParams"
+        },
+        {
+          "id": "button.pantry_motion_sensor_restart",
+          "friendlyName": "Pantry Motion Sensor restart",
+          "cSharpName": "PantryMotionSensorRestart"
+        },
+        {
+          "id": "button.pantry_motion_sensor_restart_esp32",
+          "friendlyName": "Pantry Motion Sensor Restart ESP32",
+          "cSharpName": "PantryMotionSensorRestartEsp32"
+        },
+        {
           "id": "button.restart_fast_timer_notification",
           "friendlyName": "Restart Fast Timer Notification",
           "cSharpName": "RestartFastTimerNotification"
@@ -1505,6 +1535,31 @@
           "id": "button.rgb_light_strip_restart",
           "friendlyName": "RGB Light Strip Restart",
           "cSharpName": "RgbLightStripRestart"
+        },
+        {
+          "id": "button.sala_motion_sensor_factory_reset",
+          "friendlyName": "Sala Motion Sensor factory reset",
+          "cSharpName": "SalaMotionSensorFactoryReset"
+        },
+        {
+          "id": "button.sala_motion_sensor_manual_clear",
+          "friendlyName": "Sala Motion Sensor Manual Clear",
+          "cSharpName": "SalaMotionSensorManualClear"
+        },
+        {
+          "id": "button.sala_motion_sensor_query_params",
+          "friendlyName": "Sala Motion Sensor query params",
+          "cSharpName": "SalaMotionSensorQueryParams"
+        },
+        {
+          "id": "button.sala_motion_sensor_restart",
+          "friendlyName": "Sala Motion Sensor restart",
+          "cSharpName": "SalaMotionSensorRestart"
+        },
+        {
+          "id": "button.sala_motion_sensor_restart_esp32",
+          "friendlyName": "Sala Motion Sensor Restart ESP32",
+          "cSharpName": "SalaMotionSensorRestartEsp32"
         },
         {
           "id": "button.thinkpadt14_lock",
@@ -1560,81 +1615,6 @@
           "id": "button.xiaomi_sg_753990712_cpa4_toggle_mode_a_9_1",
           "friendlyName": "Xiaomi Smart Air Purifier 4 Compact * custom-service toggle-mode",
           "cSharpName": "XiaomiSg753990712Cpa4ToggleModeA91"
-        },
-        {
-          "id": "button.z_esp32_c6_1_factory_reset_2",
-          "friendlyName": "z-esp32-c6-1 factory reset",
-          "cSharpName": "ZEsp32C61FactoryReset2"
-        },
-        {
-          "id": "button.z_esp32_c6_1_manual_clear",
-          "friendlyName": "z-esp32-c6-1 Manual Clear",
-          "cSharpName": "ZEsp32C61ManualClear"
-        },
-        {
-          "id": "button.z_esp32_c6_1_query_params_2",
-          "friendlyName": "z-esp32-c6-1 query params",
-          "cSharpName": "ZEsp32C61QueryParams2"
-        },
-        {
-          "id": "button.z_esp32_c6_1_restart_2",
-          "friendlyName": "z-esp32-c6-1 restart",
-          "cSharpName": "ZEsp32C61Restart2"
-        },
-        {
-          "id": "button.z_esp32_c6_1_restart_esp32_2",
-          "friendlyName": "z-esp32-c6-1 Restart ESP32",
-          "cSharpName": "ZEsp32C61RestartEsp322"
-        },
-        {
-          "id": "button.z_esp32_c6_2_factory_reset",
-          "friendlyName": "z-esp32-c6-2 factory reset",
-          "cSharpName": "ZEsp32C62FactoryReset"
-        },
-        {
-          "id": "button.z_esp32_c6_2_manual_clear",
-          "friendlyName": "z-esp32-c6-2 Manual Clear",
-          "cSharpName": "ZEsp32C62ManualClear"
-        },
-        {
-          "id": "button.z_esp32_c6_2_query_params",
-          "friendlyName": "z-esp32-c6-2 query params",
-          "cSharpName": "ZEsp32C62QueryParams"
-        },
-        {
-          "id": "button.z_esp32_c6_2_restart",
-          "friendlyName": "z-esp32-c6-2 restart",
-          "cSharpName": "ZEsp32C62Restart"
-        },
-        {
-          "id": "button.z_esp32_c6_2_restart_esp32",
-          "friendlyName": "z-esp32-c6-2 Restart ESP32",
-          "cSharpName": "ZEsp32C62RestartEsp32"
-        },
-        {
-          "id": "button.z_esp32_c6_3_factory_reset",
-          "friendlyName": "z-esp32-c6-3 factory reset",
-          "cSharpName": "ZEsp32C63FactoryReset"
-        },
-        {
-          "id": "button.z_esp32_c6_3_manual_clear",
-          "friendlyName": "z-esp32-c6-3 Manual Clear",
-          "cSharpName": "ZEsp32C63ManualClear"
-        },
-        {
-          "id": "button.z_esp32_c6_3_query_params",
-          "friendlyName": "z-esp32-c6-3 query params",
-          "cSharpName": "ZEsp32C63QueryParams"
-        },
-        {
-          "id": "button.z_esp32_c6_3_restart",
-          "friendlyName": "z-esp32-c6-3 restart",
-          "cSharpName": "ZEsp32C63Restart"
-        },
-        {
-          "id": "button.z_esp32_c6_3_restart_esp32",
-          "friendlyName": "z-esp32-c6-3 Restart ESP32",
-          "cSharpName": "ZEsp32C63RestartEsp32"
         }
       ],
       "attributes": [
@@ -1744,6 +1724,16 @@
           "jsonName": "supported_features",
           "cSharpName": "SupportedFeatures",
           "clrType": "System.Double"
+        },
+        {
+          "jsonName": "swing_horizontal_modes",
+          "cSharpName": "SwingHorizontalModes",
+          "clrType": "System.Collections.Generic.IReadOnlyList\u00601[System.String]"
+        },
+        {
+          "jsonName": "swing_horizontal_mode",
+          "cSharpName": "SwingHorizontalMode",
+          "clrType": "System.String"
         }
       ]
     },
@@ -2111,6 +2101,11 @@
       "domain": "input_boolean",
       "entities": [
         {
+          "id": "input_boolean.ac_light",
+          "friendlyName": "AC Light",
+          "cSharpName": "AcLight"
+        },
+        {
           "id": "input_boolean.ac_power_saving_mode",
           "friendlyName": "AC Power Saving Mode",
           "cSharpName": "AcPowerSavingMode"
@@ -2415,6 +2410,121 @@
           "cSharpName": "BathroomLightsSmoothOn"
         },
         {
+          "id": "number.bathroom_motion_sensor_g0_move_threshold",
+          "friendlyName": "Bathroom Motion Sensor g0 move threshold",
+          "cSharpName": "BathroomMotionSensorG0MoveThreshold"
+        },
+        {
+          "id": "number.bathroom_motion_sensor_g0_still_threshold",
+          "friendlyName": "Bathroom Motion Sensor g0 still threshold",
+          "cSharpName": "BathroomMotionSensorG0StillThreshold"
+        },
+        {
+          "id": "number.bathroom_motion_sensor_g1_move_threshold",
+          "friendlyName": "Bathroom Motion Sensor g1 move threshold",
+          "cSharpName": "BathroomMotionSensorG1MoveThreshold"
+        },
+        {
+          "id": "number.bathroom_motion_sensor_g1_still_threshold",
+          "friendlyName": "Bathroom Motion Sensor g1 still threshold",
+          "cSharpName": "BathroomMotionSensorG1StillThreshold"
+        },
+        {
+          "id": "number.bathroom_motion_sensor_g2_move_threshold",
+          "friendlyName": "Bathroom Motion Sensor g2 move threshold",
+          "cSharpName": "BathroomMotionSensorG2MoveThreshold"
+        },
+        {
+          "id": "number.bathroom_motion_sensor_g2_still_threshold",
+          "friendlyName": "Bathroom Motion Sensor g2 still threshold",
+          "cSharpName": "BathroomMotionSensorG2StillThreshold"
+        },
+        {
+          "id": "number.bathroom_motion_sensor_g3_move_threshold",
+          "friendlyName": "Bathroom Motion Sensor g3 move threshold",
+          "cSharpName": "BathroomMotionSensorG3MoveThreshold"
+        },
+        {
+          "id": "number.bathroom_motion_sensor_g3_still_threshold",
+          "friendlyName": "Bathroom Motion Sensor g3 still threshold",
+          "cSharpName": "BathroomMotionSensorG3StillThreshold"
+        },
+        {
+          "id": "number.bathroom_motion_sensor_g4_move_threshold",
+          "friendlyName": "Bathroom Motion Sensor g4 move threshold",
+          "cSharpName": "BathroomMotionSensorG4MoveThreshold"
+        },
+        {
+          "id": "number.bathroom_motion_sensor_g4_still_threshold",
+          "friendlyName": "Bathroom Motion Sensor g4 still threshold",
+          "cSharpName": "BathroomMotionSensorG4StillThreshold"
+        },
+        {
+          "id": "number.bathroom_motion_sensor_g5_move_threshold",
+          "friendlyName": "Bathroom Motion Sensor g5 move threshold",
+          "cSharpName": "BathroomMotionSensorG5MoveThreshold"
+        },
+        {
+          "id": "number.bathroom_motion_sensor_g5_still_threshold",
+          "friendlyName": "Bathroom Motion Sensor g5 still threshold",
+          "cSharpName": "BathroomMotionSensorG5StillThreshold"
+        },
+        {
+          "id": "number.bathroom_motion_sensor_g6_move_threshold",
+          "friendlyName": "Bathroom Motion Sensor g6 move threshold",
+          "cSharpName": "BathroomMotionSensorG6MoveThreshold"
+        },
+        {
+          "id": "number.bathroom_motion_sensor_g6_still_threshold",
+          "friendlyName": "Bathroom Motion Sensor g6 still threshold",
+          "cSharpName": "BathroomMotionSensorG6StillThreshold"
+        },
+        {
+          "id": "number.bathroom_motion_sensor_g7_move_threshold",
+          "friendlyName": "Bathroom Motion Sensor g7 move threshold",
+          "cSharpName": "BathroomMotionSensorG7MoveThreshold"
+        },
+        {
+          "id": "number.bathroom_motion_sensor_g7_still_threshold",
+          "friendlyName": "Bathroom Motion Sensor g7 still threshold",
+          "cSharpName": "BathroomMotionSensorG7StillThreshold"
+        },
+        {
+          "id": "number.bathroom_motion_sensor_g8_move_threshold",
+          "friendlyName": "Bathroom Motion Sensor g8 move threshold",
+          "cSharpName": "BathroomMotionSensorG8MoveThreshold"
+        },
+        {
+          "id": "number.bathroom_motion_sensor_g8_still_threshold",
+          "friendlyName": "Bathroom Motion Sensor g8 still threshold",
+          "cSharpName": "BathroomMotionSensorG8StillThreshold"
+        },
+        {
+          "id": "number.bathroom_motion_sensor_light_threshold",
+          "friendlyName": "Bathroom Motion Sensor light threshold",
+          "cSharpName": "BathroomMotionSensorLightThreshold"
+        },
+        {
+          "id": "number.bathroom_motion_sensor_max_move_distance_gate",
+          "friendlyName": "Bathroom Motion Sensor max move distance gate",
+          "cSharpName": "BathroomMotionSensorMaxMoveDistanceGate"
+        },
+        {
+          "id": "number.bathroom_motion_sensor_max_still_distance_gate",
+          "friendlyName": "Bathroom Motion Sensor max still distance gate",
+          "cSharpName": "BathroomMotionSensorMaxStillDistanceGate"
+        },
+        {
+          "id": "number.bathroom_motion_sensor_still_target_delay",
+          "friendlyName": "Bathroom Motion Sensor Still Target Delay",
+          "cSharpName": "BathroomMotionSensorStillTargetDelay"
+        },
+        {
+          "id": "number.bathroom_motion_sensor_timeout",
+          "friendlyName": "Bathroom Motion Sensor timeout",
+          "cSharpName": "BathroomMotionSensorTimeout"
+        },
+        {
           "id": "number.bed_lights_smooth_off",
           "friendlyName": "Bed Lights  Smooth off",
           "cSharpName": "BedLightsSmoothOff"
@@ -2423,6 +2533,131 @@
           "id": "number.bed_lights_smooth_on",
           "friendlyName": "Bed Lights  Smooth on",
           "cSharpName": "BedLightsSmoothOn"
+        },
+        {
+          "id": "number.bedroom_motion_sensor_absorption",
+          "friendlyName": "Bedroom Motion Sensor Absorption",
+          "cSharpName": "BedroomMotionSensorAbsorption"
+        },
+        {
+          "id": "number.bedroom_motion_sensor_g0_move_threshold",
+          "friendlyName": "Bedroom Motion Sensor g0 move threshold",
+          "cSharpName": "BedroomMotionSensorG0MoveThreshold"
+        },
+        {
+          "id": "number.bedroom_motion_sensor_g0_still_threshold",
+          "friendlyName": "Bedroom Motion Sensor g0 still threshold",
+          "cSharpName": "BedroomMotionSensorG0StillThreshold"
+        },
+        {
+          "id": "number.bedroom_motion_sensor_g1_move_threshold",
+          "friendlyName": "Bedroom Motion Sensor g1 move threshold",
+          "cSharpName": "BedroomMotionSensorG1MoveThreshold"
+        },
+        {
+          "id": "number.bedroom_motion_sensor_g1_still_threshold",
+          "friendlyName": "Bedroom Motion Sensor g1 still threshold",
+          "cSharpName": "BedroomMotionSensorG1StillThreshold"
+        },
+        {
+          "id": "number.bedroom_motion_sensor_g2_move_threshold",
+          "friendlyName": "Bedroom Motion Sensor g2 move threshold",
+          "cSharpName": "BedroomMotionSensorG2MoveThreshold"
+        },
+        {
+          "id": "number.bedroom_motion_sensor_g2_still_threshold",
+          "friendlyName": "Bedroom Motion Sensor g2 still threshold",
+          "cSharpName": "BedroomMotionSensorG2StillThreshold"
+        },
+        {
+          "id": "number.bedroom_motion_sensor_g3_move_threshold",
+          "friendlyName": "Bedroom Motion Sensor g3 move threshold",
+          "cSharpName": "BedroomMotionSensorG3MoveThreshold"
+        },
+        {
+          "id": "number.bedroom_motion_sensor_g3_still_threshold",
+          "friendlyName": "Bedroom Motion Sensor g3 still threshold",
+          "cSharpName": "BedroomMotionSensorG3StillThreshold"
+        },
+        {
+          "id": "number.bedroom_motion_sensor_g4_move_threshold",
+          "friendlyName": "Bedroom Motion Sensor g4 move threshold",
+          "cSharpName": "BedroomMotionSensorG4MoveThreshold"
+        },
+        {
+          "id": "number.bedroom_motion_sensor_g4_still_threshold",
+          "friendlyName": "Bedroom Motion Sensor g4 still threshold",
+          "cSharpName": "BedroomMotionSensorG4StillThreshold"
+        },
+        {
+          "id": "number.bedroom_motion_sensor_g5_move_threshold",
+          "friendlyName": "Bedroom Motion Sensor g5 move threshold",
+          "cSharpName": "BedroomMotionSensorG5MoveThreshold"
+        },
+        {
+          "id": "number.bedroom_motion_sensor_g5_still_threshold",
+          "friendlyName": "Bedroom Motion Sensor g5 still threshold",
+          "cSharpName": "BedroomMotionSensorG5StillThreshold"
+        },
+        {
+          "id": "number.bedroom_motion_sensor_g6_move_threshold",
+          "friendlyName": "Bedroom Motion Sensor g6 move threshold",
+          "cSharpName": "BedroomMotionSensorG6MoveThreshold"
+        },
+        {
+          "id": "number.bedroom_motion_sensor_g6_still_threshold",
+          "friendlyName": "Bedroom Motion Sensor g6 still threshold",
+          "cSharpName": "BedroomMotionSensorG6StillThreshold"
+        },
+        {
+          "id": "number.bedroom_motion_sensor_g7_move_threshold",
+          "friendlyName": "Bedroom Motion Sensor g7 move threshold",
+          "cSharpName": "BedroomMotionSensorG7MoveThreshold"
+        },
+        {
+          "id": "number.bedroom_motion_sensor_g7_still_threshold",
+          "friendlyName": "Bedroom Motion Sensor g7 still threshold",
+          "cSharpName": "BedroomMotionSensorG7StillThreshold"
+        },
+        {
+          "id": "number.bedroom_motion_sensor_g8_move_threshold",
+          "friendlyName": "Bedroom Motion Sensor g8 move threshold",
+          "cSharpName": "BedroomMotionSensorG8MoveThreshold"
+        },
+        {
+          "id": "number.bedroom_motion_sensor_g8_still_threshold",
+          "friendlyName": "Bedroom Motion Sensor g8 still threshold",
+          "cSharpName": "BedroomMotionSensorG8StillThreshold"
+        },
+        {
+          "id": "number.bedroom_motion_sensor_light_threshold",
+          "friendlyName": "Bedroom Motion Sensor light threshold",
+          "cSharpName": "BedroomMotionSensorLightThreshold"
+        },
+        {
+          "id": "number.bedroom_motion_sensor_max_distance",
+          "friendlyName": "Bedroom Motion Sensor Max Distance",
+          "cSharpName": "BedroomMotionSensorMaxDistance"
+        },
+        {
+          "id": "number.bedroom_motion_sensor_max_move_distance_gate",
+          "friendlyName": "Bedroom Motion Sensor max move distance gate",
+          "cSharpName": "BedroomMotionSensorMaxMoveDistanceGate"
+        },
+        {
+          "id": "number.bedroom_motion_sensor_max_still_distance_gate",
+          "friendlyName": "Bedroom Motion Sensor max still distance gate",
+          "cSharpName": "BedroomMotionSensorMaxStillDistanceGate"
+        },
+        {
+          "id": "number.bedroom_motion_sensor_still_target_delay",
+          "friendlyName": "Bedroom Motion Sensor Still Target Delay",
+          "cSharpName": "BedroomMotionSensorStillTargetDelay"
+        },
+        {
+          "id": "number.bedroom_motion_sensor_timeout",
+          "friendlyName": "Bedroom Motion Sensor timeout",
+          "cSharpName": "BedroomMotionSensorTimeout"
         },
         {
           "id": "number.careli_sg_593061393_maf05a_appoint_time_p_3_5",
@@ -2460,129 +2695,119 @@
           "cSharpName": "ControllerRgbDf1c0dEffectSpeed"
         },
         {
-          "id": "number.esp32_presence_bedroom_g0_move_threshold",
-          "friendlyName": "Bedroom Presence g0 move threshold",
-          "cSharpName": "Esp32PresenceBedroomG0MoveThreshold"
+          "id": "number.desk_motion_sensor_g0_move_threshold",
+          "friendlyName": "Desk Motion Sensor g0 move threshold",
+          "cSharpName": "DeskMotionSensorG0MoveThreshold"
         },
         {
-          "id": "number.esp32_presence_bedroom_g0_still_threshold",
-          "friendlyName": "Bedroom Presence g0 still threshold",
-          "cSharpName": "Esp32PresenceBedroomG0StillThreshold"
+          "id": "number.desk_motion_sensor_g0_still_threshold",
+          "friendlyName": "Desk Motion Sensor g0 still threshold",
+          "cSharpName": "DeskMotionSensorG0StillThreshold"
         },
         {
-          "id": "number.esp32_presence_bedroom_g1_move_threshold",
-          "friendlyName": "Bedroom Presence g1 move threshold",
-          "cSharpName": "Esp32PresenceBedroomG1MoveThreshold"
+          "id": "number.desk_motion_sensor_g1_move_threshold",
+          "friendlyName": "Desk Motion Sensor g1 move threshold",
+          "cSharpName": "DeskMotionSensorG1MoveThreshold"
         },
         {
-          "id": "number.esp32_presence_bedroom_g1_still_threshold",
-          "friendlyName": "Bedroom Presence g1 still threshold",
-          "cSharpName": "Esp32PresenceBedroomG1StillThreshold"
+          "id": "number.desk_motion_sensor_g1_still_threshold",
+          "friendlyName": "Desk Motion Sensor g1 still threshold",
+          "cSharpName": "DeskMotionSensorG1StillThreshold"
         },
         {
-          "id": "number.esp32_presence_bedroom_g2_move_threshold",
-          "friendlyName": "Bedroom Presence g2 move threshold",
-          "cSharpName": "Esp32PresenceBedroomG2MoveThreshold"
+          "id": "number.desk_motion_sensor_g2_move_threshold",
+          "friendlyName": "Desk Motion Sensor g2 move threshold",
+          "cSharpName": "DeskMotionSensorG2MoveThreshold"
         },
         {
-          "id": "number.esp32_presence_bedroom_g2_still_threshold",
-          "friendlyName": "Bedroom Presence g2 still threshold",
-          "cSharpName": "Esp32PresenceBedroomG2StillThreshold"
+          "id": "number.desk_motion_sensor_g2_still_threshold",
+          "friendlyName": "Desk Motion Sensor g2 still threshold",
+          "cSharpName": "DeskMotionSensorG2StillThreshold"
         },
         {
-          "id": "number.esp32_presence_bedroom_g3_move_threshold",
-          "friendlyName": "Bedroom Presence g3 move threshold",
-          "cSharpName": "Esp32PresenceBedroomG3MoveThreshold"
+          "id": "number.desk_motion_sensor_g3_move_threshold",
+          "friendlyName": "Desk Motion Sensor g3 move threshold",
+          "cSharpName": "DeskMotionSensorG3MoveThreshold"
         },
         {
-          "id": "number.esp32_presence_bedroom_g3_still_threshold",
-          "friendlyName": "Bedroom Presence g3 still threshold",
-          "cSharpName": "Esp32PresenceBedroomG3StillThreshold"
+          "id": "number.desk_motion_sensor_g3_still_threshold",
+          "friendlyName": "Desk Motion Sensor g3 still threshold",
+          "cSharpName": "DeskMotionSensorG3StillThreshold"
         },
         {
-          "id": "number.esp32_presence_bedroom_g4_move_threshold",
-          "friendlyName": "Bedroom Presence g4 move threshold",
-          "cSharpName": "Esp32PresenceBedroomG4MoveThreshold"
+          "id": "number.desk_motion_sensor_g4_move_threshold",
+          "friendlyName": "Desk Motion Sensor g4 move threshold",
+          "cSharpName": "DeskMotionSensorG4MoveThreshold"
         },
         {
-          "id": "number.esp32_presence_bedroom_g4_still_threshold",
-          "friendlyName": "Bedroom Presence g4 still threshold",
-          "cSharpName": "Esp32PresenceBedroomG4StillThreshold"
+          "id": "number.desk_motion_sensor_g4_still_threshold",
+          "friendlyName": "Desk Motion Sensor g4 still threshold",
+          "cSharpName": "DeskMotionSensorG4StillThreshold"
         },
         {
-          "id": "number.esp32_presence_bedroom_g5_move_threshold",
-          "friendlyName": "Bedroom Presence g5 move threshold",
-          "cSharpName": "Esp32PresenceBedroomG5MoveThreshold"
+          "id": "number.desk_motion_sensor_g5_move_threshold",
+          "friendlyName": "Desk Motion Sensor g5 move threshold",
+          "cSharpName": "DeskMotionSensorG5MoveThreshold"
         },
         {
-          "id": "number.esp32_presence_bedroom_g5_still_threshold",
-          "friendlyName": "Bedroom Presence g5 still threshold",
-          "cSharpName": "Esp32PresenceBedroomG5StillThreshold"
+          "id": "number.desk_motion_sensor_g5_still_threshold",
+          "friendlyName": "Desk Motion Sensor g5 still threshold",
+          "cSharpName": "DeskMotionSensorG5StillThreshold"
         },
         {
-          "id": "number.esp32_presence_bedroom_g6_move_threshold",
-          "friendlyName": "Bedroom Presence g6 move threshold",
-          "cSharpName": "Esp32PresenceBedroomG6MoveThreshold"
+          "id": "number.desk_motion_sensor_g6_move_threshold",
+          "friendlyName": "Desk Motion Sensor g6 move threshold",
+          "cSharpName": "DeskMotionSensorG6MoveThreshold"
         },
         {
-          "id": "number.esp32_presence_bedroom_g6_still_threshold",
-          "friendlyName": "Bedroom Presence g6 still threshold",
-          "cSharpName": "Esp32PresenceBedroomG6StillThreshold"
+          "id": "number.desk_motion_sensor_g6_still_threshold",
+          "friendlyName": "Desk Motion Sensor g6 still threshold",
+          "cSharpName": "DeskMotionSensorG6StillThreshold"
         },
         {
-          "id": "number.esp32_presence_bedroom_g7_move_threshold",
-          "friendlyName": "Bedroom Presence g7 move threshold",
-          "cSharpName": "Esp32PresenceBedroomG7MoveThreshold"
+          "id": "number.desk_motion_sensor_g7_move_threshold",
+          "friendlyName": "Desk Motion Sensor g7 move threshold",
+          "cSharpName": "DeskMotionSensorG7MoveThreshold"
         },
         {
-          "id": "number.esp32_presence_bedroom_g7_still_threshold",
-          "friendlyName": "Bedroom Presence g7 still threshold",
-          "cSharpName": "Esp32PresenceBedroomG7StillThreshold"
+          "id": "number.desk_motion_sensor_g7_still_threshold",
+          "friendlyName": "Desk Motion Sensor g7 still threshold",
+          "cSharpName": "DeskMotionSensorG7StillThreshold"
         },
         {
-          "id": "number.esp32_presence_bedroom_g8_move_threshold",
-          "friendlyName": "Bedroom Presence g8 move threshold",
-          "cSharpName": "Esp32PresenceBedroomG8MoveThreshold"
+          "id": "number.desk_motion_sensor_g8_move_threshold",
+          "friendlyName": "Desk Motion Sensor g8 move threshold",
+          "cSharpName": "DeskMotionSensorG8MoveThreshold"
         },
         {
-          "id": "number.esp32_presence_bedroom_g8_still_threshold",
-          "friendlyName": "Bedroom Presence g8 still threshold",
-          "cSharpName": "Esp32PresenceBedroomG8StillThreshold"
+          "id": "number.desk_motion_sensor_g8_still_threshold",
+          "friendlyName": "Desk Motion Sensor g8 still threshold",
+          "cSharpName": "DeskMotionSensorG8StillThreshold"
         },
         {
-          "id": "number.esp32_presence_bedroom_light_threshold",
-          "friendlyName": "Bedroom Presence light threshold",
-          "cSharpName": "Esp32PresenceBedroomLightThreshold"
+          "id": "number.desk_motion_sensor_light_threshold",
+          "friendlyName": "Desk Motion Sensor light threshold",
+          "cSharpName": "DeskMotionSensorLightThreshold"
         },
         {
-          "id": "number.esp32_presence_bedroom_max_move_distance_gate",
-          "friendlyName": "Bedroom Presence max move distance gate",
-          "cSharpName": "Esp32PresenceBedroomMaxMoveDistanceGate"
+          "id": "number.desk_motion_sensor_max_move_distance_gate",
+          "friendlyName": "Desk Motion Sensor max move distance gate",
+          "cSharpName": "DeskMotionSensorMaxMoveDistanceGate"
         },
         {
-          "id": "number.esp32_presence_bedroom_max_still_distance_gate",
-          "friendlyName": "Bedroom Presence max still distance gate",
-          "cSharpName": "Esp32PresenceBedroomMaxStillDistanceGate"
+          "id": "number.desk_motion_sensor_max_still_distance_gate",
+          "friendlyName": "Desk Motion Sensor max still distance gate",
+          "cSharpName": "DeskMotionSensorMaxStillDistanceGate"
         },
         {
-          "id": "number.esp32_presence_bedroom_still_target_delay",
-          "friendlyName": "Bedroom Presence Still Target Delay",
-          "cSharpName": "Esp32PresenceBedroomStillTargetDelay"
+          "id": "number.desk_motion_sensor_still_target_delay",
+          "friendlyName": "Desk Motion Sensor Still Target Delay",
+          "cSharpName": "DeskMotionSensorStillTargetDelay"
         },
         {
-          "id": "number.esp32_presence_bedroom_timeout",
-          "friendlyName": "Bedroom Presence timeout",
-          "cSharpName": "Esp32PresenceBedroomTimeout"
-        },
-        {
-          "id": "number.espresence_bedroom_absorption",
-          "friendlyName": "Bedroom Presence Absorption",
-          "cSharpName": "EspresenceBedroomAbsorption"
-        },
-        {
-          "id": "number.espresence_bedroom_max_distance",
-          "friendlyName": "Bedroom Presence Max Distance",
-          "cSharpName": "EspresenceBedroomMaxDistance"
+          "id": "number.desk_motion_sensor_timeout",
+          "friendlyName": "Desk Motion Sensor timeout",
+          "cSharpName": "DeskMotionSensorTimeout"
         },
         {
           "id": "number.flytrap_turn_off_in",
@@ -2590,234 +2815,119 @@
           "cSharpName": "FlytrapTurnOffIn"
         },
         {
-          "id": "number.ld2410_esp32_1_g0_move_threshold",
-          "friendlyName": "ld2410-esp32_1 g0 move threshold",
-          "cSharpName": "Ld2410Esp321G0MoveThreshold"
+          "id": "number.kitchen_motion_sensor_g0_move_threshold",
+          "friendlyName": "Kitchen Motion Sensor g0 move threshold",
+          "cSharpName": "KitchenMotionSensorG0MoveThreshold"
         },
         {
-          "id": "number.ld2410_esp32_1_g0_still_threshold",
-          "friendlyName": "ld2410-esp32_1 g0 still threshold",
-          "cSharpName": "Ld2410Esp321G0StillThreshold"
+          "id": "number.kitchen_motion_sensor_g0_still_threshold",
+          "friendlyName": "Kitchen Motion Sensor g0 still threshold",
+          "cSharpName": "KitchenMotionSensorG0StillThreshold"
         },
         {
-          "id": "number.ld2410_esp32_1_g1_move_threshold",
-          "friendlyName": "ld2410-esp32_1 g1 move threshold",
-          "cSharpName": "Ld2410Esp321G1MoveThreshold"
+          "id": "number.kitchen_motion_sensor_g1_move_threshold",
+          "friendlyName": "Kitchen Motion Sensor g1 move threshold",
+          "cSharpName": "KitchenMotionSensorG1MoveThreshold"
         },
         {
-          "id": "number.ld2410_esp32_1_g1_still_threshold",
-          "friendlyName": "ld2410-esp32_1 g1 still threshold",
-          "cSharpName": "Ld2410Esp321G1StillThreshold"
+          "id": "number.kitchen_motion_sensor_g1_still_threshold",
+          "friendlyName": "Kitchen Motion Sensor g1 still threshold",
+          "cSharpName": "KitchenMotionSensorG1StillThreshold"
         },
         {
-          "id": "number.ld2410_esp32_1_g2_move_threshold",
-          "friendlyName": "ld2410-esp32_1 g2 move threshold",
-          "cSharpName": "Ld2410Esp321G2MoveThreshold"
+          "id": "number.kitchen_motion_sensor_g2_move_threshold",
+          "friendlyName": "Kitchen Motion Sensor g2 move threshold",
+          "cSharpName": "KitchenMotionSensorG2MoveThreshold"
         },
         {
-          "id": "number.ld2410_esp32_1_g2_still_threshold",
-          "friendlyName": "ld2410-esp32_1 g2 still threshold",
-          "cSharpName": "Ld2410Esp321G2StillThreshold"
+          "id": "number.kitchen_motion_sensor_g2_still_threshold",
+          "friendlyName": "Kitchen Motion Sensor g2 still threshold",
+          "cSharpName": "KitchenMotionSensorG2StillThreshold"
         },
         {
-          "id": "number.ld2410_esp32_1_g3_move_threshold",
-          "friendlyName": "ld2410-esp32_1 g3 move threshold",
-          "cSharpName": "Ld2410Esp321G3MoveThreshold"
+          "id": "number.kitchen_motion_sensor_g3_move_threshold",
+          "friendlyName": "Kitchen Motion Sensor g3 move threshold",
+          "cSharpName": "KitchenMotionSensorG3MoveThreshold"
         },
         {
-          "id": "number.ld2410_esp32_1_g3_still_threshold",
-          "friendlyName": "ld2410-esp32_1 g3 still threshold",
-          "cSharpName": "Ld2410Esp321G3StillThreshold"
+          "id": "number.kitchen_motion_sensor_g3_still_threshold",
+          "friendlyName": "Kitchen Motion Sensor g3 still threshold",
+          "cSharpName": "KitchenMotionSensorG3StillThreshold"
         },
         {
-          "id": "number.ld2410_esp32_1_g4_move_threshold",
-          "friendlyName": "ld2410-esp32_1 g4 move threshold",
-          "cSharpName": "Ld2410Esp321G4MoveThreshold"
+          "id": "number.kitchen_motion_sensor_g4_move_threshold",
+          "friendlyName": "Kitchen Motion Sensor g4 move threshold",
+          "cSharpName": "KitchenMotionSensorG4MoveThreshold"
         },
         {
-          "id": "number.ld2410_esp32_1_g4_still_threshold",
-          "friendlyName": "ld2410-esp32_1 g4 still threshold",
-          "cSharpName": "Ld2410Esp321G4StillThreshold"
+          "id": "number.kitchen_motion_sensor_g4_still_threshold",
+          "friendlyName": "Kitchen Motion Sensor g4 still threshold",
+          "cSharpName": "KitchenMotionSensorG4StillThreshold"
         },
         {
-          "id": "number.ld2410_esp32_1_g5_move_threshold",
-          "friendlyName": "ld2410-esp32_1 g5 move threshold",
-          "cSharpName": "Ld2410Esp321G5MoveThreshold"
+          "id": "number.kitchen_motion_sensor_g5_move_threshold",
+          "friendlyName": "Kitchen Motion Sensor g5 move threshold",
+          "cSharpName": "KitchenMotionSensorG5MoveThreshold"
         },
         {
-          "id": "number.ld2410_esp32_1_g5_still_threshold",
-          "friendlyName": "ld2410-esp32_1 g5 still threshold",
-          "cSharpName": "Ld2410Esp321G5StillThreshold"
+          "id": "number.kitchen_motion_sensor_g5_still_threshold",
+          "friendlyName": "Kitchen Motion Sensor g5 still threshold",
+          "cSharpName": "KitchenMotionSensorG5StillThreshold"
         },
         {
-          "id": "number.ld2410_esp32_1_g6_move_threshold",
-          "friendlyName": "ld2410-esp32_1 g6 move threshold",
-          "cSharpName": "Ld2410Esp321G6MoveThreshold"
+          "id": "number.kitchen_motion_sensor_g6_move_threshold",
+          "friendlyName": "Kitchen Motion Sensor g6 move threshold",
+          "cSharpName": "KitchenMotionSensorG6MoveThreshold"
         },
         {
-          "id": "number.ld2410_esp32_1_g6_still_threshold",
-          "friendlyName": "ld2410-esp32_1 g6 still threshold",
-          "cSharpName": "Ld2410Esp321G6StillThreshold"
+          "id": "number.kitchen_motion_sensor_g6_still_threshold",
+          "friendlyName": "Kitchen Motion Sensor g6 still threshold",
+          "cSharpName": "KitchenMotionSensorG6StillThreshold"
         },
         {
-          "id": "number.ld2410_esp32_1_g7_move_threshold",
-          "friendlyName": "ld2410-esp32_1 g7 move threshold",
-          "cSharpName": "Ld2410Esp321G7MoveThreshold"
+          "id": "number.kitchen_motion_sensor_g7_move_threshold",
+          "friendlyName": "Kitchen Motion Sensor g7 move threshold",
+          "cSharpName": "KitchenMotionSensorG7MoveThreshold"
         },
         {
-          "id": "number.ld2410_esp32_1_g7_still_threshold",
-          "friendlyName": "ld2410-esp32_1 g7 still threshold",
-          "cSharpName": "Ld2410Esp321G7StillThreshold"
+          "id": "number.kitchen_motion_sensor_g7_still_threshold",
+          "friendlyName": "Kitchen Motion Sensor g7 still threshold",
+          "cSharpName": "KitchenMotionSensorG7StillThreshold"
         },
         {
-          "id": "number.ld2410_esp32_1_g8_move_threshold",
-          "friendlyName": "ld2410-esp32_1 g8 move threshold",
-          "cSharpName": "Ld2410Esp321G8MoveThreshold"
+          "id": "number.kitchen_motion_sensor_g8_move_threshold",
+          "friendlyName": "Kitchen Motion Sensor g8 move threshold",
+          "cSharpName": "KitchenMotionSensorG8MoveThreshold"
         },
         {
-          "id": "number.ld2410_esp32_1_g8_still_threshold",
-          "friendlyName": "ld2410-esp32_1 g8 still threshold",
-          "cSharpName": "Ld2410Esp321G8StillThreshold"
+          "id": "number.kitchen_motion_sensor_g8_still_threshold",
+          "friendlyName": "Kitchen Motion Sensor g8 still threshold",
+          "cSharpName": "KitchenMotionSensorG8StillThreshold"
         },
         {
-          "id": "number.ld2410_esp32_1_light_threshold",
-          "friendlyName": "ld2410-esp32_1 light threshold",
-          "cSharpName": "Ld2410Esp321LightThreshold"
+          "id": "number.kitchen_motion_sensor_light_threshold",
+          "friendlyName": "Kitchen Motion Sensor light threshold",
+          "cSharpName": "KitchenMotionSensorLightThreshold"
         },
         {
-          "id": "number.ld2410_esp32_1_max_move_distance_gate",
-          "friendlyName": "ld2410-esp32_1 max move distance gate",
-          "cSharpName": "Ld2410Esp321MaxMoveDistanceGate"
+          "id": "number.kitchen_motion_sensor_max_move_distance_gate",
+          "friendlyName": "Kitchen Motion Sensor max move distance gate",
+          "cSharpName": "KitchenMotionSensorMaxMoveDistanceGate"
         },
         {
-          "id": "number.ld2410_esp32_1_max_still_distance_gate",
-          "friendlyName": "ld2410-esp32_1 max still distance gate",
-          "cSharpName": "Ld2410Esp321MaxStillDistanceGate"
+          "id": "number.kitchen_motion_sensor_max_still_distance_gate",
+          "friendlyName": "Kitchen Motion Sensor max still distance gate",
+          "cSharpName": "KitchenMotionSensorMaxStillDistanceGate"
         },
         {
-          "id": "number.ld2410_esp32_1_still_target_delay",
-          "friendlyName": "ld2410-esp32_1 Still Target Delay",
-          "cSharpName": "Ld2410Esp321StillTargetDelay"
+          "id": "number.kitchen_motion_sensor_still_target_delay",
+          "friendlyName": "Kitchen Motion Sensor Still Target Delay",
+          "cSharpName": "KitchenMotionSensorStillTargetDelay"
         },
         {
-          "id": "number.ld2410_esp32_1_timeout",
-          "friendlyName": "ld2410-esp32_1 timeout",
-          "cSharpName": "Ld2410Esp321Timeout"
-        },
-        {
-          "id": "number.ld2410_esp32_5_g0_move_threshold",
-          "friendlyName": "ld2410-esp32_5 g0 move threshold",
-          "cSharpName": "Ld2410Esp325G0MoveThreshold"
-        },
-        {
-          "id": "number.ld2410_esp32_5_g0_still_threshold",
-          "friendlyName": "ld2410-esp32_5 g0 still threshold",
-          "cSharpName": "Ld2410Esp325G0StillThreshold"
-        },
-        {
-          "id": "number.ld2410_esp32_5_g1_move_threshold",
-          "friendlyName": "ld2410-esp32_5 g1 move threshold",
-          "cSharpName": "Ld2410Esp325G1MoveThreshold"
-        },
-        {
-          "id": "number.ld2410_esp32_5_g1_still_threshold",
-          "friendlyName": "ld2410-esp32_5 g1 still threshold",
-          "cSharpName": "Ld2410Esp325G1StillThreshold"
-        },
-        {
-          "id": "number.ld2410_esp32_5_g2_move_threshold",
-          "friendlyName": "ld2410-esp32_5 g2 move threshold",
-          "cSharpName": "Ld2410Esp325G2MoveThreshold"
-        },
-        {
-          "id": "number.ld2410_esp32_5_g2_still_threshold",
-          "friendlyName": "ld2410-esp32_5 g2 still threshold",
-          "cSharpName": "Ld2410Esp325G2StillThreshold"
-        },
-        {
-          "id": "number.ld2410_esp32_5_g3_move_threshold",
-          "friendlyName": "ld2410-esp32_5 g3 move threshold",
-          "cSharpName": "Ld2410Esp325G3MoveThreshold"
-        },
-        {
-          "id": "number.ld2410_esp32_5_g3_still_threshold",
-          "friendlyName": "ld2410-esp32_5 g3 still threshold",
-          "cSharpName": "Ld2410Esp325G3StillThreshold"
-        },
-        {
-          "id": "number.ld2410_esp32_5_g4_move_threshold",
-          "friendlyName": "ld2410-esp32_5 g4 move threshold",
-          "cSharpName": "Ld2410Esp325G4MoveThreshold"
-        },
-        {
-          "id": "number.ld2410_esp32_5_g4_still_threshold",
-          "friendlyName": "ld2410-esp32_5 g4 still threshold",
-          "cSharpName": "Ld2410Esp325G4StillThreshold"
-        },
-        {
-          "id": "number.ld2410_esp32_5_g5_move_threshold",
-          "friendlyName": "ld2410-esp32_5 g5 move threshold",
-          "cSharpName": "Ld2410Esp325G5MoveThreshold"
-        },
-        {
-          "id": "number.ld2410_esp32_5_g5_still_threshold",
-          "friendlyName": "ld2410-esp32_5 g5 still threshold",
-          "cSharpName": "Ld2410Esp325G5StillThreshold"
-        },
-        {
-          "id": "number.ld2410_esp32_5_g6_move_threshold",
-          "friendlyName": "ld2410-esp32_5 g6 move threshold",
-          "cSharpName": "Ld2410Esp325G6MoveThreshold"
-        },
-        {
-          "id": "number.ld2410_esp32_5_g6_still_threshold",
-          "friendlyName": "ld2410-esp32_5 g6 still threshold",
-          "cSharpName": "Ld2410Esp325G6StillThreshold"
-        },
-        {
-          "id": "number.ld2410_esp32_5_g7_move_threshold",
-          "friendlyName": "ld2410-esp32_5 g7 move threshold",
-          "cSharpName": "Ld2410Esp325G7MoveThreshold"
-        },
-        {
-          "id": "number.ld2410_esp32_5_g7_still_threshold",
-          "friendlyName": "ld2410-esp32_5 g7 still threshold",
-          "cSharpName": "Ld2410Esp325G7StillThreshold"
-        },
-        {
-          "id": "number.ld2410_esp32_5_g8_move_threshold",
-          "friendlyName": "ld2410-esp32_5 g8 move threshold",
-          "cSharpName": "Ld2410Esp325G8MoveThreshold"
-        },
-        {
-          "id": "number.ld2410_esp32_5_g8_still_threshold",
-          "friendlyName": "ld2410-esp32_5 g8 still threshold",
-          "cSharpName": "Ld2410Esp325G8StillThreshold"
-        },
-        {
-          "id": "number.ld2410_esp32_5_light_threshold",
-          "friendlyName": "ld2410-esp32_5 light threshold",
-          "cSharpName": "Ld2410Esp325LightThreshold"
-        },
-        {
-          "id": "number.ld2410_esp32_5_max_move_distance_gate",
-          "friendlyName": "ld2410-esp32_5 max move distance gate",
-          "cSharpName": "Ld2410Esp325MaxMoveDistanceGate"
-        },
-        {
-          "id": "number.ld2410_esp32_5_max_still_distance_gate",
-          "friendlyName": "ld2410-esp32_5 max still distance gate",
-          "cSharpName": "Ld2410Esp325MaxStillDistanceGate"
-        },
-        {
-          "id": "number.ld2410_esp32_5_still_target_delay",
-          "friendlyName": "ld2410-esp32_5 Still Target Delay",
-          "cSharpName": "Ld2410Esp325StillTargetDelay"
-        },
-        {
-          "id": "number.ld2410_esp32_5_timeout",
-          "friendlyName": "ld2410-esp32_5 timeout",
-          "cSharpName": "Ld2410Esp325Timeout"
+          "id": "number.kitchen_motion_sensor_timeout",
+          "friendlyName": "Kitchen Motion Sensor timeout",
+          "cSharpName": "KitchenMotionSensorTimeout"
         },
         {
           "id": "number.mi_watch_lite_79a6_calibration_ref_power_at_1m_0_for_default",
@@ -2833,6 +2943,121 @@
           "id": "number.pantry_lights_smooth_on",
           "friendlyName": "Pantry Lights Smooth on",
           "cSharpName": "PantryLightsSmoothOn"
+        },
+        {
+          "id": "number.pantry_motion_sensor_g0_move_threshold",
+          "friendlyName": "Pantry Motion Sensor g0 move threshold",
+          "cSharpName": "PantryMotionSensorG0MoveThreshold"
+        },
+        {
+          "id": "number.pantry_motion_sensor_g0_still_threshold",
+          "friendlyName": "Pantry Motion Sensor g0 still threshold",
+          "cSharpName": "PantryMotionSensorG0StillThreshold"
+        },
+        {
+          "id": "number.pantry_motion_sensor_g1_move_threshold",
+          "friendlyName": "Pantry Motion Sensor g1 move threshold",
+          "cSharpName": "PantryMotionSensorG1MoveThreshold"
+        },
+        {
+          "id": "number.pantry_motion_sensor_g1_still_threshold",
+          "friendlyName": "Pantry Motion Sensor g1 still threshold",
+          "cSharpName": "PantryMotionSensorG1StillThreshold"
+        },
+        {
+          "id": "number.pantry_motion_sensor_g2_move_threshold",
+          "friendlyName": "Pantry Motion Sensor g2 move threshold",
+          "cSharpName": "PantryMotionSensorG2MoveThreshold"
+        },
+        {
+          "id": "number.pantry_motion_sensor_g2_still_threshold",
+          "friendlyName": "Pantry Motion Sensor g2 still threshold",
+          "cSharpName": "PantryMotionSensorG2StillThreshold"
+        },
+        {
+          "id": "number.pantry_motion_sensor_g3_move_threshold",
+          "friendlyName": "Pantry Motion Sensor g3 move threshold",
+          "cSharpName": "PantryMotionSensorG3MoveThreshold"
+        },
+        {
+          "id": "number.pantry_motion_sensor_g3_still_threshold",
+          "friendlyName": "Pantry Motion Sensor g3 still threshold",
+          "cSharpName": "PantryMotionSensorG3StillThreshold"
+        },
+        {
+          "id": "number.pantry_motion_sensor_g4_move_threshold",
+          "friendlyName": "Pantry Motion Sensor g4 move threshold",
+          "cSharpName": "PantryMotionSensorG4MoveThreshold"
+        },
+        {
+          "id": "number.pantry_motion_sensor_g4_still_threshold",
+          "friendlyName": "Pantry Motion Sensor g4 still threshold",
+          "cSharpName": "PantryMotionSensorG4StillThreshold"
+        },
+        {
+          "id": "number.pantry_motion_sensor_g5_move_threshold",
+          "friendlyName": "Pantry Motion Sensor g5 move threshold",
+          "cSharpName": "PantryMotionSensorG5MoveThreshold"
+        },
+        {
+          "id": "number.pantry_motion_sensor_g5_still_threshold",
+          "friendlyName": "Pantry Motion Sensor g5 still threshold",
+          "cSharpName": "PantryMotionSensorG5StillThreshold"
+        },
+        {
+          "id": "number.pantry_motion_sensor_g6_move_threshold",
+          "friendlyName": "Pantry Motion Sensor g6 move threshold",
+          "cSharpName": "PantryMotionSensorG6MoveThreshold"
+        },
+        {
+          "id": "number.pantry_motion_sensor_g6_still_threshold",
+          "friendlyName": "Pantry Motion Sensor g6 still threshold",
+          "cSharpName": "PantryMotionSensorG6StillThreshold"
+        },
+        {
+          "id": "number.pantry_motion_sensor_g7_move_threshold",
+          "friendlyName": "Pantry Motion Sensor g7 move threshold",
+          "cSharpName": "PantryMotionSensorG7MoveThreshold"
+        },
+        {
+          "id": "number.pantry_motion_sensor_g7_still_threshold",
+          "friendlyName": "Pantry Motion Sensor g7 still threshold",
+          "cSharpName": "PantryMotionSensorG7StillThreshold"
+        },
+        {
+          "id": "number.pantry_motion_sensor_g8_move_threshold",
+          "friendlyName": "Pantry Motion Sensor g8 move threshold",
+          "cSharpName": "PantryMotionSensorG8MoveThreshold"
+        },
+        {
+          "id": "number.pantry_motion_sensor_g8_still_threshold",
+          "friendlyName": "Pantry Motion Sensor g8 still threshold",
+          "cSharpName": "PantryMotionSensorG8StillThreshold"
+        },
+        {
+          "id": "number.pantry_motion_sensor_light_threshold",
+          "friendlyName": "Pantry Motion Sensor light threshold",
+          "cSharpName": "PantryMotionSensorLightThreshold"
+        },
+        {
+          "id": "number.pantry_motion_sensor_max_move_distance_gate",
+          "friendlyName": "Pantry Motion Sensor max move distance gate",
+          "cSharpName": "PantryMotionSensorMaxMoveDistanceGate"
+        },
+        {
+          "id": "number.pantry_motion_sensor_max_still_distance_gate",
+          "friendlyName": "Pantry Motion Sensor max still distance gate",
+          "cSharpName": "PantryMotionSensorMaxStillDistanceGate"
+        },
+        {
+          "id": "number.pantry_motion_sensor_still_target_delay",
+          "friendlyName": "Pantry Motion Sensor Still Target Delay",
+          "cSharpName": "PantryMotionSensorStillTargetDelay"
+        },
+        {
+          "id": "number.pantry_motion_sensor_timeout",
+          "friendlyName": "Pantry Motion Sensor timeout",
+          "cSharpName": "PantryMotionSensorTimeout"
         },
         {
           "id": "number.poco_f4_gt_ble_calibration_ref_power_at_1m_0_for_default",
@@ -2863,6 +3088,121 @@
           "id": "number.sala_lights_smooth_on",
           "friendlyName": "Sala Lights Smooth on",
           "cSharpName": "SalaLightsSmoothOn"
+        },
+        {
+          "id": "number.sala_motion_sensor_g0_move_threshold",
+          "friendlyName": "Sala Motion Sensor g0 move threshold",
+          "cSharpName": "SalaMotionSensorG0MoveThreshold"
+        },
+        {
+          "id": "number.sala_motion_sensor_g0_still_threshold",
+          "friendlyName": "Sala Motion Sensor g0 still threshold",
+          "cSharpName": "SalaMotionSensorG0StillThreshold"
+        },
+        {
+          "id": "number.sala_motion_sensor_g1_move_threshold",
+          "friendlyName": "Sala Motion Sensor g1 move threshold",
+          "cSharpName": "SalaMotionSensorG1MoveThreshold"
+        },
+        {
+          "id": "number.sala_motion_sensor_g1_still_threshold",
+          "friendlyName": "Sala Motion Sensor g1 still threshold",
+          "cSharpName": "SalaMotionSensorG1StillThreshold"
+        },
+        {
+          "id": "number.sala_motion_sensor_g2_move_threshold",
+          "friendlyName": "Sala Motion Sensor g2 move threshold",
+          "cSharpName": "SalaMotionSensorG2MoveThreshold"
+        },
+        {
+          "id": "number.sala_motion_sensor_g2_still_threshold",
+          "friendlyName": "Sala Motion Sensor g2 still threshold",
+          "cSharpName": "SalaMotionSensorG2StillThreshold"
+        },
+        {
+          "id": "number.sala_motion_sensor_g3_move_threshold",
+          "friendlyName": "Sala Motion Sensor g3 move threshold",
+          "cSharpName": "SalaMotionSensorG3MoveThreshold"
+        },
+        {
+          "id": "number.sala_motion_sensor_g3_still_threshold",
+          "friendlyName": "Sala Motion Sensor g3 still threshold",
+          "cSharpName": "SalaMotionSensorG3StillThreshold"
+        },
+        {
+          "id": "number.sala_motion_sensor_g4_move_threshold",
+          "friendlyName": "Sala Motion Sensor g4 move threshold",
+          "cSharpName": "SalaMotionSensorG4MoveThreshold"
+        },
+        {
+          "id": "number.sala_motion_sensor_g4_still_threshold",
+          "friendlyName": "Sala Motion Sensor g4 still threshold",
+          "cSharpName": "SalaMotionSensorG4StillThreshold"
+        },
+        {
+          "id": "number.sala_motion_sensor_g5_move_threshold",
+          "friendlyName": "Sala Motion Sensor g5 move threshold",
+          "cSharpName": "SalaMotionSensorG5MoveThreshold"
+        },
+        {
+          "id": "number.sala_motion_sensor_g5_still_threshold",
+          "friendlyName": "Sala Motion Sensor g5 still threshold",
+          "cSharpName": "SalaMotionSensorG5StillThreshold"
+        },
+        {
+          "id": "number.sala_motion_sensor_g6_move_threshold",
+          "friendlyName": "Sala Motion Sensor g6 move threshold",
+          "cSharpName": "SalaMotionSensorG6MoveThreshold"
+        },
+        {
+          "id": "number.sala_motion_sensor_g6_still_threshold",
+          "friendlyName": "Sala Motion Sensor g6 still threshold",
+          "cSharpName": "SalaMotionSensorG6StillThreshold"
+        },
+        {
+          "id": "number.sala_motion_sensor_g7_move_threshold",
+          "friendlyName": "Sala Motion Sensor g7 move threshold",
+          "cSharpName": "SalaMotionSensorG7MoveThreshold"
+        },
+        {
+          "id": "number.sala_motion_sensor_g7_still_threshold",
+          "friendlyName": "Sala Motion Sensor g7 still threshold",
+          "cSharpName": "SalaMotionSensorG7StillThreshold"
+        },
+        {
+          "id": "number.sala_motion_sensor_g8_move_threshold",
+          "friendlyName": "Sala Motion Sensor g8 move threshold",
+          "cSharpName": "SalaMotionSensorG8MoveThreshold"
+        },
+        {
+          "id": "number.sala_motion_sensor_g8_still_threshold",
+          "friendlyName": "Sala Motion Sensor g8 still threshold",
+          "cSharpName": "SalaMotionSensorG8StillThreshold"
+        },
+        {
+          "id": "number.sala_motion_sensor_light_threshold",
+          "friendlyName": "Sala Motion Sensor light threshold",
+          "cSharpName": "SalaMotionSensorLightThreshold"
+        },
+        {
+          "id": "number.sala_motion_sensor_max_move_distance_gate",
+          "friendlyName": "Sala Motion Sensor max move distance gate",
+          "cSharpName": "SalaMotionSensorMaxMoveDistanceGate"
+        },
+        {
+          "id": "number.sala_motion_sensor_max_still_distance_gate",
+          "friendlyName": "Sala Motion Sensor max still distance gate",
+          "cSharpName": "SalaMotionSensorMaxStillDistanceGate"
+        },
+        {
+          "id": "number.sala_motion_sensor_still_target_delay",
+          "friendlyName": "Sala Motion Sensor Still Target Delay",
+          "cSharpName": "SalaMotionSensorStillTargetDelay"
+        },
+        {
+          "id": "number.sala_motion_sensor_timeout",
+          "friendlyName": "Sala Motion Sensor timeout",
+          "cSharpName": "SalaMotionSensorTimeout"
         },
         {
           "id": "number.smart_plug_1_power_on_threshold",
@@ -2898,351 +3238,6 @@
           "id": "number.xiaomi_sg_753990712_cpa4_filter_used_time_dbg_p_9_12",
           "friendlyName": "Xiaomi Smart Air Purifier 4 Compact * custom-service filter-used-time-dbg",
           "cSharpName": "XiaomiSg753990712Cpa4FilterUsedTimeDbgP912"
-        },
-        {
-          "id": "number.z_esp32_c6_1_g0_move_threshold_2",
-          "friendlyName": "z-esp32-c6-1 g0 move threshold",
-          "cSharpName": "ZEsp32C61G0MoveThreshold2"
-        },
-        {
-          "id": "number.z_esp32_c6_1_g0_still_threshold_2",
-          "friendlyName": "z-esp32-c6-1 g0 still threshold",
-          "cSharpName": "ZEsp32C61G0StillThreshold2"
-        },
-        {
-          "id": "number.z_esp32_c6_1_g1_move_threshold_2",
-          "friendlyName": "z-esp32-c6-1 g1 move threshold",
-          "cSharpName": "ZEsp32C61G1MoveThreshold2"
-        },
-        {
-          "id": "number.z_esp32_c6_1_g1_still_threshold_2",
-          "friendlyName": "z-esp32-c6-1 g1 still threshold",
-          "cSharpName": "ZEsp32C61G1StillThreshold2"
-        },
-        {
-          "id": "number.z_esp32_c6_1_g2_move_threshold_2",
-          "friendlyName": "z-esp32-c6-1 g2 move threshold",
-          "cSharpName": "ZEsp32C61G2MoveThreshold2"
-        },
-        {
-          "id": "number.z_esp32_c6_1_g2_still_threshold_2",
-          "friendlyName": "z-esp32-c6-1 g2 still threshold",
-          "cSharpName": "ZEsp32C61G2StillThreshold2"
-        },
-        {
-          "id": "number.z_esp32_c6_1_g3_move_threshold_2",
-          "friendlyName": "z-esp32-c6-1 g3 move threshold",
-          "cSharpName": "ZEsp32C61G3MoveThreshold2"
-        },
-        {
-          "id": "number.z_esp32_c6_1_g3_still_threshold_2",
-          "friendlyName": "z-esp32-c6-1 g3 still threshold",
-          "cSharpName": "ZEsp32C61G3StillThreshold2"
-        },
-        {
-          "id": "number.z_esp32_c6_1_g4_move_threshold_2",
-          "friendlyName": "z-esp32-c6-1 g4 move threshold",
-          "cSharpName": "ZEsp32C61G4MoveThreshold2"
-        },
-        {
-          "id": "number.z_esp32_c6_1_g4_still_threshold_2",
-          "friendlyName": "z-esp32-c6-1 g4 still threshold",
-          "cSharpName": "ZEsp32C61G4StillThreshold2"
-        },
-        {
-          "id": "number.z_esp32_c6_1_g5_move_threshold_2",
-          "friendlyName": "z-esp32-c6-1 g5 move threshold",
-          "cSharpName": "ZEsp32C61G5MoveThreshold2"
-        },
-        {
-          "id": "number.z_esp32_c6_1_g5_still_threshold_2",
-          "friendlyName": "z-esp32-c6-1 g5 still threshold",
-          "cSharpName": "ZEsp32C61G5StillThreshold2"
-        },
-        {
-          "id": "number.z_esp32_c6_1_g6_move_threshold_2",
-          "friendlyName": "z-esp32-c6-1 g6 move threshold",
-          "cSharpName": "ZEsp32C61G6MoveThreshold2"
-        },
-        {
-          "id": "number.z_esp32_c6_1_g6_still_threshold_2",
-          "friendlyName": "z-esp32-c6-1 g6 still threshold",
-          "cSharpName": "ZEsp32C61G6StillThreshold2"
-        },
-        {
-          "id": "number.z_esp32_c6_1_g7_move_threshold_2",
-          "friendlyName": "z-esp32-c6-1 g7 move threshold",
-          "cSharpName": "ZEsp32C61G7MoveThreshold2"
-        },
-        {
-          "id": "number.z_esp32_c6_1_g7_still_threshold_2",
-          "friendlyName": "z-esp32-c6-1 g7 still threshold",
-          "cSharpName": "ZEsp32C61G7StillThreshold2"
-        },
-        {
-          "id": "number.z_esp32_c6_1_g8_move_threshold_2",
-          "friendlyName": "z-esp32-c6-1 g8 move threshold",
-          "cSharpName": "ZEsp32C61G8MoveThreshold2"
-        },
-        {
-          "id": "number.z_esp32_c6_1_g8_still_threshold_2",
-          "friendlyName": "z-esp32-c6-1 g8 still threshold",
-          "cSharpName": "ZEsp32C61G8StillThreshold2"
-        },
-        {
-          "id": "number.z_esp32_c6_1_light_threshold_2",
-          "friendlyName": "z-esp32-c6-1 light threshold",
-          "cSharpName": "ZEsp32C61LightThreshold2"
-        },
-        {
-          "id": "number.z_esp32_c6_1_max_move_distance_gate_2",
-          "friendlyName": "z-esp32-c6-1 max move distance gate",
-          "cSharpName": "ZEsp32C61MaxMoveDistanceGate2"
-        },
-        {
-          "id": "number.z_esp32_c6_1_max_still_distance_gate_2",
-          "friendlyName": "z-esp32-c6-1 max still distance gate",
-          "cSharpName": "ZEsp32C61MaxStillDistanceGate2"
-        },
-        {
-          "id": "number.z_esp32_c6_1_still_target_delay_2",
-          "friendlyName": "z-esp32-c6-1 Still Target Delay",
-          "cSharpName": "ZEsp32C61StillTargetDelay2"
-        },
-        {
-          "id": "number.z_esp32_c6_1_timeout_2",
-          "friendlyName": "z-esp32-c6-1 timeout",
-          "cSharpName": "ZEsp32C61Timeout2"
-        },
-        {
-          "id": "number.z_esp32_c6_2_g0_move_threshold",
-          "friendlyName": "z-esp32-c6-2 g0 move threshold",
-          "cSharpName": "ZEsp32C62G0MoveThreshold"
-        },
-        {
-          "id": "number.z_esp32_c6_2_g0_still_threshold",
-          "friendlyName": "z-esp32-c6-2 g0 still threshold",
-          "cSharpName": "ZEsp32C62G0StillThreshold"
-        },
-        {
-          "id": "number.z_esp32_c6_2_g1_move_threshold",
-          "friendlyName": "z-esp32-c6-2 g1 move threshold",
-          "cSharpName": "ZEsp32C62G1MoveThreshold"
-        },
-        {
-          "id": "number.z_esp32_c6_2_g1_still_threshold",
-          "friendlyName": "z-esp32-c6-2 g1 still threshold",
-          "cSharpName": "ZEsp32C62G1StillThreshold"
-        },
-        {
-          "id": "number.z_esp32_c6_2_g2_move_threshold",
-          "friendlyName": "z-esp32-c6-2 g2 move threshold",
-          "cSharpName": "ZEsp32C62G2MoveThreshold"
-        },
-        {
-          "id": "number.z_esp32_c6_2_g2_still_threshold",
-          "friendlyName": "z-esp32-c6-2 g2 still threshold",
-          "cSharpName": "ZEsp32C62G2StillThreshold"
-        },
-        {
-          "id": "number.z_esp32_c6_2_g3_move_threshold",
-          "friendlyName": "z-esp32-c6-2 g3 move threshold",
-          "cSharpName": "ZEsp32C62G3MoveThreshold"
-        },
-        {
-          "id": "number.z_esp32_c6_2_g3_still_threshold",
-          "friendlyName": "z-esp32-c6-2 g3 still threshold",
-          "cSharpName": "ZEsp32C62G3StillThreshold"
-        },
-        {
-          "id": "number.z_esp32_c6_2_g4_move_threshold",
-          "friendlyName": "z-esp32-c6-2 g4 move threshold",
-          "cSharpName": "ZEsp32C62G4MoveThreshold"
-        },
-        {
-          "id": "number.z_esp32_c6_2_g4_still_threshold",
-          "friendlyName": "z-esp32-c6-2 g4 still threshold",
-          "cSharpName": "ZEsp32C62G4StillThreshold"
-        },
-        {
-          "id": "number.z_esp32_c6_2_g5_move_threshold",
-          "friendlyName": "z-esp32-c6-2 g5 move threshold",
-          "cSharpName": "ZEsp32C62G5MoveThreshold"
-        },
-        {
-          "id": "number.z_esp32_c6_2_g5_still_threshold",
-          "friendlyName": "z-esp32-c6-2 g5 still threshold",
-          "cSharpName": "ZEsp32C62G5StillThreshold"
-        },
-        {
-          "id": "number.z_esp32_c6_2_g6_move_threshold",
-          "friendlyName": "z-esp32-c6-2 g6 move threshold",
-          "cSharpName": "ZEsp32C62G6MoveThreshold"
-        },
-        {
-          "id": "number.z_esp32_c6_2_g6_still_threshold",
-          "friendlyName": "z-esp32-c6-2 g6 still threshold",
-          "cSharpName": "ZEsp32C62G6StillThreshold"
-        },
-        {
-          "id": "number.z_esp32_c6_2_g7_move_threshold",
-          "friendlyName": "z-esp32-c6-2 g7 move threshold",
-          "cSharpName": "ZEsp32C62G7MoveThreshold"
-        },
-        {
-          "id": "number.z_esp32_c6_2_g7_still_threshold",
-          "friendlyName": "z-esp32-c6-2 g7 still threshold",
-          "cSharpName": "ZEsp32C62G7StillThreshold"
-        },
-        {
-          "id": "number.z_esp32_c6_2_g8_move_threshold",
-          "friendlyName": "z-esp32-c6-2 g8 move threshold",
-          "cSharpName": "ZEsp32C62G8MoveThreshold"
-        },
-        {
-          "id": "number.z_esp32_c6_2_g8_still_threshold",
-          "friendlyName": "z-esp32-c6-2 g8 still threshold",
-          "cSharpName": "ZEsp32C62G8StillThreshold"
-        },
-        {
-          "id": "number.z_esp32_c6_2_light_threshold",
-          "friendlyName": "z-esp32-c6-2 light threshold",
-          "cSharpName": "ZEsp32C62LightThreshold"
-        },
-        {
-          "id": "number.z_esp32_c6_2_max_move_distance_gate",
-          "friendlyName": "z-esp32-c6-2 max move distance gate",
-          "cSharpName": "ZEsp32C62MaxMoveDistanceGate"
-        },
-        {
-          "id": "number.z_esp32_c6_2_max_still_distance_gate",
-          "friendlyName": "z-esp32-c6-2 max still distance gate",
-          "cSharpName": "ZEsp32C62MaxStillDistanceGate"
-        },
-        {
-          "id": "number.z_esp32_c6_2_still_target_delay",
-          "friendlyName": "z-esp32-c6-2 Still Target Delay",
-          "cSharpName": "ZEsp32C62StillTargetDelay"
-        },
-        {
-          "id": "number.z_esp32_c6_2_timeout",
-          "friendlyName": "z-esp32-c6-2 timeout",
-          "cSharpName": "ZEsp32C62Timeout"
-        },
-        {
-          "id": "number.z_esp32_c6_3_g0_move_threshold",
-          "friendlyName": "z-esp32-c6-3 g0 move threshold",
-          "cSharpName": "ZEsp32C63G0MoveThreshold"
-        },
-        {
-          "id": "number.z_esp32_c6_3_g0_still_threshold",
-          "friendlyName": "z-esp32-c6-3 g0 still threshold",
-          "cSharpName": "ZEsp32C63G0StillThreshold"
-        },
-        {
-          "id": "number.z_esp32_c6_3_g1_move_threshold",
-          "friendlyName": "z-esp32-c6-3 g1 move threshold",
-          "cSharpName": "ZEsp32C63G1MoveThreshold"
-        },
-        {
-          "id": "number.z_esp32_c6_3_g1_still_threshold",
-          "friendlyName": "z-esp32-c6-3 g1 still threshold",
-          "cSharpName": "ZEsp32C63G1StillThreshold"
-        },
-        {
-          "id": "number.z_esp32_c6_3_g2_move_threshold",
-          "friendlyName": "z-esp32-c6-3 g2 move threshold",
-          "cSharpName": "ZEsp32C63G2MoveThreshold"
-        },
-        {
-          "id": "number.z_esp32_c6_3_g2_still_threshold",
-          "friendlyName": "z-esp32-c6-3 g2 still threshold",
-          "cSharpName": "ZEsp32C63G2StillThreshold"
-        },
-        {
-          "id": "number.z_esp32_c6_3_g3_move_threshold",
-          "friendlyName": "z-esp32-c6-3 g3 move threshold",
-          "cSharpName": "ZEsp32C63G3MoveThreshold"
-        },
-        {
-          "id": "number.z_esp32_c6_3_g3_still_threshold",
-          "friendlyName": "z-esp32-c6-3 g3 still threshold",
-          "cSharpName": "ZEsp32C63G3StillThreshold"
-        },
-        {
-          "id": "number.z_esp32_c6_3_g4_move_threshold",
-          "friendlyName": "z-esp32-c6-3 g4 move threshold",
-          "cSharpName": "ZEsp32C63G4MoveThreshold"
-        },
-        {
-          "id": "number.z_esp32_c6_3_g4_still_threshold",
-          "friendlyName": "z-esp32-c6-3 g4 still threshold",
-          "cSharpName": "ZEsp32C63G4StillThreshold"
-        },
-        {
-          "id": "number.z_esp32_c6_3_g5_move_threshold",
-          "friendlyName": "z-esp32-c6-3 g5 move threshold",
-          "cSharpName": "ZEsp32C63G5MoveThreshold"
-        },
-        {
-          "id": "number.z_esp32_c6_3_g5_still_threshold",
-          "friendlyName": "z-esp32-c6-3 g5 still threshold",
-          "cSharpName": "ZEsp32C63G5StillThreshold"
-        },
-        {
-          "id": "number.z_esp32_c6_3_g6_move_threshold",
-          "friendlyName": "z-esp32-c6-3 g6 move threshold",
-          "cSharpName": "ZEsp32C63G6MoveThreshold"
-        },
-        {
-          "id": "number.z_esp32_c6_3_g6_still_threshold",
-          "friendlyName": "z-esp32-c6-3 g6 still threshold",
-          "cSharpName": "ZEsp32C63G6StillThreshold"
-        },
-        {
-          "id": "number.z_esp32_c6_3_g7_move_threshold",
-          "friendlyName": "z-esp32-c6-3 g7 move threshold",
-          "cSharpName": "ZEsp32C63G7MoveThreshold"
-        },
-        {
-          "id": "number.z_esp32_c6_3_g7_still_threshold",
-          "friendlyName": "z-esp32-c6-3 g7 still threshold",
-          "cSharpName": "ZEsp32C63G7StillThreshold"
-        },
-        {
-          "id": "number.z_esp32_c6_3_g8_move_threshold",
-          "friendlyName": "z-esp32-c6-3 g8 move threshold",
-          "cSharpName": "ZEsp32C63G8MoveThreshold"
-        },
-        {
-          "id": "number.z_esp32_c6_3_g8_still_threshold",
-          "friendlyName": "z-esp32-c6-3 g8 still threshold",
-          "cSharpName": "ZEsp32C63G8StillThreshold"
-        },
-        {
-          "id": "number.z_esp32_c6_3_light_threshold",
-          "friendlyName": "z-esp32-c6-3 light threshold",
-          "cSharpName": "ZEsp32C63LightThreshold"
-        },
-        {
-          "id": "number.z_esp32_c6_3_max_move_distance_gate",
-          "friendlyName": "z-esp32-c6-3 max move distance gate",
-          "cSharpName": "ZEsp32C63MaxMoveDistanceGate"
-        },
-        {
-          "id": "number.z_esp32_c6_3_max_still_distance_gate",
-          "friendlyName": "z-esp32-c6-3 max still distance gate",
-          "cSharpName": "ZEsp32C63MaxStillDistanceGate"
-        },
-        {
-          "id": "number.z_esp32_c6_3_still_target_delay",
-          "friendlyName": "z-esp32-c6-3 Still Target Delay",
-          "cSharpName": "ZEsp32C63StillTargetDelay"
-        },
-        {
-          "id": "number.z_esp32_c6_3_timeout",
-          "friendlyName": "z-esp32-c6-3 timeout",
-          "cSharpName": "ZEsp32C63Timeout"
         }
       ],
       "attributes": [
@@ -3485,9 +3480,49 @@
           "cSharpName": "BathroomLightsLightPreset"
         },
         {
+          "id": "select.bathroom_motion_sensor_baud_rate",
+          "friendlyName": "Bathroom Motion Sensor baud rate",
+          "cSharpName": "BathroomMotionSensorBaudRate"
+        },
+        {
+          "id": "select.bathroom_motion_sensor_distance_resolution",
+          "friendlyName": "Bathroom Motion Sensor distance resolution",
+          "cSharpName": "BathroomMotionSensorDistanceResolution"
+        },
+        {
+          "id": "select.bathroom_motion_sensor_light_function",
+          "friendlyName": "Bathroom Motion Sensor light function",
+          "cSharpName": "BathroomMotionSensorLightFunction"
+        },
+        {
+          "id": "select.bathroom_motion_sensor_out_pin_level",
+          "friendlyName": "Bathroom Motion Sensor out pin level",
+          "cSharpName": "BathroomMotionSensorOutPinLevel"
+        },
+        {
           "id": "select.bed_lights_light_preset",
           "friendlyName": "Bed Lights  Light preset",
           "cSharpName": "BedLightsLightPreset"
+        },
+        {
+          "id": "select.bedroom_motion_sensor_baud_rate",
+          "friendlyName": "Bedroom Motion Sensor baud rate",
+          "cSharpName": "BedroomMotionSensorBaudRate"
+        },
+        {
+          "id": "select.bedroom_motion_sensor_distance_resolution",
+          "friendlyName": "Bedroom Motion Sensor distance resolution",
+          "cSharpName": "BedroomMotionSensorDistanceResolution"
+        },
+        {
+          "id": "select.bedroom_motion_sensor_light_function",
+          "friendlyName": "Bedroom Motion Sensor light function",
+          "cSharpName": "BedroomMotionSensorLightFunction"
+        },
+        {
+          "id": "select.bedroom_motion_sensor_out_pin_level",
+          "friendlyName": "Bedroom Motion Sensor out pin level",
+          "cSharpName": "BedroomMotionSensorOutPinLevel"
         },
         {
           "id": "select.careli_sg_593061393_maf05a_food_quanty_p_3_6",
@@ -3520,24 +3555,44 @@
           "cSharpName": "ControllerRgbDf1c0dWiring"
         },
         {
-          "id": "select.esp32_presence_bedroom_baud_rate",
-          "friendlyName": "Bedroom Presence baud rate",
-          "cSharpName": "Esp32PresenceBedroomBaudRate"
+          "id": "select.desk_motion_sensor_baud_rate",
+          "friendlyName": "Desk Motion Sensor baud rate",
+          "cSharpName": "DeskMotionSensorBaudRate"
         },
         {
-          "id": "select.esp32_presence_bedroom_distance_resolution",
-          "friendlyName": "Bedroom Presence distance resolution",
-          "cSharpName": "Esp32PresenceBedroomDistanceResolution"
+          "id": "select.desk_motion_sensor_distance_resolution",
+          "friendlyName": "Desk Motion Sensor distance resolution",
+          "cSharpName": "DeskMotionSensorDistanceResolution"
         },
         {
-          "id": "select.esp32_presence_bedroom_light_function",
-          "friendlyName": "Bedroom Presence light function",
-          "cSharpName": "Esp32PresenceBedroomLightFunction"
+          "id": "select.desk_motion_sensor_light_function",
+          "friendlyName": "Desk Motion Sensor light function",
+          "cSharpName": "DeskMotionSensorLightFunction"
         },
         {
-          "id": "select.esp32_presence_bedroom_out_pin_level",
-          "friendlyName": "Bedroom Presence out pin level",
-          "cSharpName": "Esp32PresenceBedroomOutPinLevel"
+          "id": "select.desk_motion_sensor_out_pin_level",
+          "friendlyName": "Desk Motion Sensor out pin level",
+          "cSharpName": "DeskMotionSensorOutPinLevel"
+        },
+        {
+          "id": "select.kitchen_motion_sensor_baud_rate",
+          "friendlyName": "Kitchen Motion Sensor baud rate",
+          "cSharpName": "KitchenMotionSensorBaudRate"
+        },
+        {
+          "id": "select.kitchen_motion_sensor_distance_resolution",
+          "friendlyName": "Kitchen Motion Sensor distance resolution",
+          "cSharpName": "KitchenMotionSensorDistanceResolution"
+        },
+        {
+          "id": "select.kitchen_motion_sensor_light_function",
+          "friendlyName": "Kitchen Motion Sensor light function",
+          "cSharpName": "KitchenMotionSensorLightFunction"
+        },
+        {
+          "id": "select.kitchen_motion_sensor_out_pin_level",
+          "friendlyName": "Kitchen Motion Sensor out pin level",
+          "cSharpName": "KitchenMotionSensorOutPinLevel"
         },
         {
           "id": "select.laptop_charger_indicator_light_mode",
@@ -3550,49 +3605,29 @@
           "cSharpName": "LaptopChargerPowerOnBehavior"
         },
         {
-          "id": "select.ld2410_esp32_1_baud_rate",
-          "friendlyName": "ld2410-esp32_1 baud rate",
-          "cSharpName": "Ld2410Esp321BaudRate"
-        },
-        {
-          "id": "select.ld2410_esp32_1_distance_resolution",
-          "friendlyName": "ld2410-esp32_1 distance resolution",
-          "cSharpName": "Ld2410Esp321DistanceResolution"
-        },
-        {
-          "id": "select.ld2410_esp32_1_light_function",
-          "friendlyName": "ld2410-esp32_1 light function",
-          "cSharpName": "Ld2410Esp321LightFunction"
-        },
-        {
-          "id": "select.ld2410_esp32_1_out_pin_level",
-          "friendlyName": "ld2410-esp32_1 out pin level",
-          "cSharpName": "Ld2410Esp321OutPinLevel"
-        },
-        {
-          "id": "select.ld2410_esp32_5_baud_rate",
-          "friendlyName": "ld2410-esp32_5 baud rate",
-          "cSharpName": "Ld2410Esp325BaudRate"
-        },
-        {
-          "id": "select.ld2410_esp32_5_distance_resolution",
-          "friendlyName": "ld2410-esp32_5 distance resolution",
-          "cSharpName": "Ld2410Esp325DistanceResolution"
-        },
-        {
-          "id": "select.ld2410_esp32_5_light_function",
-          "friendlyName": "ld2410-esp32_5 light function",
-          "cSharpName": "Ld2410Esp325LightFunction"
-        },
-        {
-          "id": "select.ld2410_esp32_5_out_pin_level",
-          "friendlyName": "ld2410-esp32_5 out pin level",
-          "cSharpName": "Ld2410Esp325OutPinLevel"
-        },
-        {
           "id": "select.pantry_lights_light_preset",
           "friendlyName": "Pantry Lights Light preset",
           "cSharpName": "PantryLightsLightPreset"
+        },
+        {
+          "id": "select.pantry_motion_sensor_baud_rate",
+          "friendlyName": "Pantry Motion Sensor baud rate",
+          "cSharpName": "PantryMotionSensorBaudRate"
+        },
+        {
+          "id": "select.pantry_motion_sensor_distance_resolution",
+          "friendlyName": "Pantry Motion Sensor distance resolution",
+          "cSharpName": "PantryMotionSensorDistanceResolution"
+        },
+        {
+          "id": "select.pantry_motion_sensor_light_function",
+          "friendlyName": "Pantry Motion Sensor light function",
+          "cSharpName": "PantryMotionSensorLightFunction"
+        },
+        {
+          "id": "select.pantry_motion_sensor_out_pin_level",
+          "friendlyName": "Pantry Motion Sensor out pin level",
+          "cSharpName": "PantryMotionSensorOutPinLevel"
         },
         {
           "id": "select.rgb_light_strip_light_preset",
@@ -3620,6 +3655,26 @@
           "cSharpName": "SalaLightsLightPreset"
         },
         {
+          "id": "select.sala_motion_sensor_baud_rate",
+          "friendlyName": "Sala Motion Sensor baud rate",
+          "cSharpName": "SalaMotionSensorBaudRate"
+        },
+        {
+          "id": "select.sala_motion_sensor_distance_resolution",
+          "friendlyName": "Sala Motion Sensor distance resolution",
+          "cSharpName": "SalaMotionSensorDistanceResolution"
+        },
+        {
+          "id": "select.sala_motion_sensor_light_function",
+          "friendlyName": "Sala Motion Sensor light function",
+          "cSharpName": "SalaMotionSensorLightFunction"
+        },
+        {
+          "id": "select.sala_motion_sensor_out_pin_level",
+          "friendlyName": "Sala Motion Sensor out pin level",
+          "cSharpName": "SalaMotionSensorOutPinLevel"
+        },
+        {
           "id": "select.water_dispenser_indicator_light_mode",
           "friendlyName": "Water Dispenser Indicator light mode",
           "cSharpName": "WaterDispenserIndicatorLightMode"
@@ -3643,66 +3698,6 @@
           "id": "select.xiaomi_sg_753990712_cpa4_mode_p_2_4",
           "friendlyName": "Xiaomi Smart Air Purifier 4 Compact  Air Purifier Mode",
           "cSharpName": "XiaomiSg753990712Cpa4ModeP24"
-        },
-        {
-          "id": "select.z_esp32_c6_1_baud_rate_2",
-          "friendlyName": "z-esp32-c6-1 baud rate",
-          "cSharpName": "ZEsp32C61BaudRate2"
-        },
-        {
-          "id": "select.z_esp32_c6_1_distance_resolution_2",
-          "friendlyName": "z-esp32-c6-1 distance resolution",
-          "cSharpName": "ZEsp32C61DistanceResolution2"
-        },
-        {
-          "id": "select.z_esp32_c6_1_light_function_2",
-          "friendlyName": "z-esp32-c6-1 light function",
-          "cSharpName": "ZEsp32C61LightFunction2"
-        },
-        {
-          "id": "select.z_esp32_c6_1_out_pin_level_2",
-          "friendlyName": "z-esp32-c6-1 out pin level",
-          "cSharpName": "ZEsp32C61OutPinLevel2"
-        },
-        {
-          "id": "select.z_esp32_c6_2_baud_rate",
-          "friendlyName": "z-esp32-c6-2 baud rate",
-          "cSharpName": "ZEsp32C62BaudRate"
-        },
-        {
-          "id": "select.z_esp32_c6_2_distance_resolution",
-          "friendlyName": "z-esp32-c6-2 distance resolution",
-          "cSharpName": "ZEsp32C62DistanceResolution"
-        },
-        {
-          "id": "select.z_esp32_c6_2_light_function",
-          "friendlyName": "z-esp32-c6-2 light function",
-          "cSharpName": "ZEsp32C62LightFunction"
-        },
-        {
-          "id": "select.z_esp32_c6_2_out_pin_level",
-          "friendlyName": "z-esp32-c6-2 out pin level",
-          "cSharpName": "ZEsp32C62OutPinLevel"
-        },
-        {
-          "id": "select.z_esp32_c6_3_baud_rate",
-          "friendlyName": "z-esp32-c6-3 baud rate",
-          "cSharpName": "ZEsp32C63BaudRate"
-        },
-        {
-          "id": "select.z_esp32_c6_3_distance_resolution",
-          "friendlyName": "z-esp32-c6-3 distance resolution",
-          "cSharpName": "ZEsp32C63DistanceResolution"
-        },
-        {
-          "id": "select.z_esp32_c6_3_light_function",
-          "friendlyName": "z-esp32-c6-3 light function",
-          "cSharpName": "ZEsp32C63LightFunction"
-        },
-        {
-          "id": "select.z_esp32_c6_3_out_pin_level",
-          "friendlyName": "z-esp32-c6-3 out pin level",
-          "cSharpName": "ZEsp32C63OutPinLevel"
         }
       ],
       "attributes": [
@@ -3822,9 +3817,44 @@
           "cSharpName": "BathroomLightsSignalLevel"
         },
         {
+          "id": "sensor.bathroom_motion_sensor_light",
+          "friendlyName": "Bathroom Motion Sensor light",
+          "cSharpName": "BathroomMotionSensorLight"
+        },
+        {
+          "id": "sensor.bathroom_motion_sensor_presence_sensor_mac_address",
+          "friendlyName": "Bathroom Motion Sensor Presence sensor mac address",
+          "cSharpName": "BathroomMotionSensorPresenceSensorMacAddress"
+        },
+        {
+          "id": "sensor.bathroom_motion_sensor_presence_sensor_version",
+          "friendlyName": "Bathroom Motion Sensor Presence sensor version",
+          "cSharpName": "BathroomMotionSensorPresenceSensorVersion"
+        },
+        {
           "id": "sensor.bed_lights_signal_level",
           "friendlyName": "Bed Lights  Signal level",
           "cSharpName": "BedLightsSignalLevel"
+        },
+        {
+          "id": "sensor.bedroom_motion_sensor_current_scale_reading",
+          "friendlyName": "Bedroom Motion Sensor Current Scale Reading",
+          "cSharpName": "BedroomMotionSensorCurrentScaleReading"
+        },
+        {
+          "id": "sensor.bedroom_motion_sensor_light",
+          "friendlyName": "Bedroom Motion Sensor light",
+          "cSharpName": "BedroomMotionSensorLight"
+        },
+        {
+          "id": "sensor.bedroom_motion_sensor_presence_sensor_mac_address",
+          "friendlyName": "Bedroom Motion Sensor Presence sensor mac address",
+          "cSharpName": "BedroomMotionSensorPresenceSensorMacAddress"
+        },
+        {
+          "id": "sensor.bedroom_motion_sensor_presence_sensor_version",
+          "friendlyName": "Bedroom Motion Sensor Presence sensor version",
+          "cSharpName": "BedroomMotionSensorPresenceSensorVersion"
         },
         {
           "id": "sensor.bermuda_global_active_proxy_count",
@@ -3937,6 +3967,16 @@
           "cSharpName": "Datetimes"
         },
         {
+          "id": "sensor.desk_motion_sensor_presence_sensor_mac_address",
+          "friendlyName": "Desk Motion Sensor Presence sensor mac address",
+          "cSharpName": "DeskMotionSensorPresenceSensorMacAddress"
+        },
+        {
+          "id": "sensor.desk_motion_sensor_presence_sensor_version",
+          "friendlyName": "Desk Motion Sensor Presence sensor version",
+          "cSharpName": "DeskMotionSensorPresenceSensorVersion"
+        },
+        {
           "id": "sensor.device_trackers",
           "friendlyName": "Home Assistant Device trackers",
           "cSharpName": "DeviceTrackers"
@@ -3950,26 +3990,6 @@
           "id": "sensor.entities",
           "friendlyName": "Home Assistant Entities",
           "cSharpName": "Entities"
-        },
-        {
-          "id": "sensor.esp32_presence_bedroom_current_scale_reading",
-          "friendlyName": "Bedroom Presence Current Scale Reading",
-          "cSharpName": "Esp32PresenceBedroomCurrentScaleReading"
-        },
-        {
-          "id": "sensor.esp32_presence_bedroom_light",
-          "friendlyName": "Bedroom Presence light",
-          "cSharpName": "Esp32PresenceBedroomLight"
-        },
-        {
-          "id": "sensor.esp32_presence_bedroom_presence_sensor_mac_address",
-          "friendlyName": "Bedroom Presence Presence sensor mac address",
-          "cSharpName": "Esp32PresenceBedroomPresenceSensorMacAddress"
-        },
-        {
-          "id": "sensor.esp32_presence_bedroom_presence_sensor_version",
-          "friendlyName": "Bedroom Presence Presence sensor version",
-          "cSharpName": "Esp32PresenceBedroomPresenceSensorVersion"
         },
         {
           "id": "sensor.esphome_newest_version",
@@ -4182,39 +4202,24 @@
           "cSharpName": "IphoneSsid"
         },
         {
+          "id": "sensor.kitchen_motion_sensor_light",
+          "friendlyName": "Kitchen Motion Sensor light",
+          "cSharpName": "KitchenMotionSensorLight"
+        },
+        {
+          "id": "sensor.kitchen_motion_sensor_presence_sensor_mac_address",
+          "friendlyName": "Kitchen Motion Sensor Presence sensor mac address",
+          "cSharpName": "KitchenMotionSensorPresenceSensorMacAddress"
+        },
+        {
+          "id": "sensor.kitchen_motion_sensor_presence_sensor_version",
+          "friendlyName": "Kitchen Motion Sensor Presence sensor version",
+          "cSharpName": "KitchenMotionSensorPresenceSensorVersion"
+        },
+        {
           "id": "sensor.last_triggered_motion_sensor_friendly_name",
           "friendlyName": "Last Triggered Motion Sensor Friendly Name",
           "cSharpName": "LastTriggeredMotionSensorFriendlyName"
-        },
-        {
-          "id": "sensor.ld2410_esp32_1_light",
-          "friendlyName": "ld2410-esp32_1 light",
-          "cSharpName": "Ld2410Esp321Light"
-        },
-        {
-          "id": "sensor.ld2410_esp32_1_presence_sensor_mac_address",
-          "friendlyName": "ld2410-esp32_1 Presence sensor mac address",
-          "cSharpName": "Ld2410Esp321PresenceSensorMacAddress"
-        },
-        {
-          "id": "sensor.ld2410_esp32_1_presence_sensor_version",
-          "friendlyName": "ld2410-esp32_1 Presence sensor version",
-          "cSharpName": "Ld2410Esp321PresenceSensorVersion"
-        },
-        {
-          "id": "sensor.ld2410_esp32_5_light",
-          "friendlyName": "ld2410-esp32_5 light",
-          "cSharpName": "Ld2410Esp325Light"
-        },
-        {
-          "id": "sensor.ld2410_esp32_5_presence_sensor_mac_address",
-          "friendlyName": "ld2410-esp32_5 Presence sensor mac address",
-          "cSharpName": "Ld2410Esp325PresenceSensorMacAddress"
-        },
-        {
-          "id": "sensor.ld2410_esp32_5_presence_sensor_version",
-          "friendlyName": "ld2410-esp32_5 Presence sensor version",
-          "cSharpName": "Ld2410Esp325PresenceSensorVersion"
         },
         {
           "id": "sensor.lights",
@@ -4267,6 +4272,21 @@
           "cSharpName": "PantryLightsSignalLevel2"
         },
         {
+          "id": "sensor.pantry_motion_sensor_light",
+          "friendlyName": "Pantry Motion Sensor light",
+          "cSharpName": "PantryMotionSensorLight"
+        },
+        {
+          "id": "sensor.pantry_motion_sensor_presence_sensor_mac_address",
+          "friendlyName": "Pantry Motion Sensor Presence sensor mac address",
+          "cSharpName": "PantryMotionSensorPresenceSensorMacAddress"
+        },
+        {
+          "id": "sensor.pantry_motion_sensor_presence_sensor_version",
+          "friendlyName": "Pantry Motion Sensor Presence sensor version",
+          "cSharpName": "PantryMotionSensorPresenceSensorVersion"
+        },
+        {
           "id": "sensor.persistent_notifications",
           "friendlyName": "Home Assistant Persistent notifications",
           "cSharpName": "PersistentNotifications"
@@ -4315,6 +4335,21 @@
           "id": "sensor.sala_lights_signal_level_2",
           "friendlyName": "Sala Lights Signal level",
           "cSharpName": "SalaLightsSignalLevel2"
+        },
+        {
+          "id": "sensor.sala_motion_sensor_light",
+          "friendlyName": "Sala Motion Sensor light",
+          "cSharpName": "SalaMotionSensorLight"
+        },
+        {
+          "id": "sensor.sala_motion_sensor_presence_sensor_mac_address",
+          "friendlyName": "Sala Motion Sensor Presence sensor mac address",
+          "cSharpName": "SalaMotionSensorPresenceSensorMacAddress"
+        },
+        {
+          "id": "sensor.sala_motion_sensor_presence_sensor_version",
+          "friendlyName": "Sala Motion Sensor Presence sensor version",
+          "cSharpName": "SalaMotionSensorPresenceSensorVersion"
         },
         {
           "id": "sensor.scenes",
@@ -4535,46 +4570,6 @@
           "id": "sensor.xiaomi_sg_753990712_cpa4_motor_speed_rpm_p_9_1",
           "friendlyName": "Xiaomi Smart Air Purifier 4 Compact * custom-service motor-speed-rpm",
           "cSharpName": "XiaomiSg753990712Cpa4MotorSpeedRpmP91"
-        },
-        {
-          "id": "sensor.z_esp32_c6_1_presence_sensor_mac_address",
-          "friendlyName": "z-esp32-c6-1 Presence sensor mac address",
-          "cSharpName": "ZEsp32C61PresenceSensorMacAddress"
-        },
-        {
-          "id": "sensor.z_esp32_c6_1_presence_sensor_version",
-          "friendlyName": "z-esp32-c6-1 Presence sensor version",
-          "cSharpName": "ZEsp32C61PresenceSensorVersion"
-        },
-        {
-          "id": "sensor.z_esp32_c6_2_light",
-          "friendlyName": "z-esp32-c6-2 light",
-          "cSharpName": "ZEsp32C62Light"
-        },
-        {
-          "id": "sensor.z_esp32_c6_2_presence_sensor_mac_address",
-          "friendlyName": "z-esp32-c6-2 Presence sensor mac address",
-          "cSharpName": "ZEsp32C62PresenceSensorMacAddress"
-        },
-        {
-          "id": "sensor.z_esp32_c6_2_presence_sensor_version",
-          "friendlyName": "z-esp32-c6-2 Presence sensor version",
-          "cSharpName": "ZEsp32C62PresenceSensorVersion"
-        },
-        {
-          "id": "sensor.z_esp32_c6_3_light",
-          "friendlyName": "z-esp32-c6-3 light",
-          "cSharpName": "ZEsp32C63Light"
-        },
-        {
-          "id": "sensor.z_esp32_c6_3_presence_sensor_mac_address",
-          "friendlyName": "z-esp32-c6-3 Presence sensor mac address",
-          "cSharpName": "ZEsp32C63PresenceSensorMacAddress"
-        },
-        {
-          "id": "sensor.z_esp32_c6_3_presence_sensor_version",
-          "friendlyName": "z-esp32-c6-3 Presence sensor version",
-          "cSharpName": "ZEsp32C63PresenceSensorVersion"
         },
         {
           "id": "sensor.zones",
@@ -5105,9 +5100,229 @@
           "cSharpName": "BaseusTagDistance"
         },
         {
+          "id": "sensor.bathroom_motion_sensor_g0_move_energy",
+          "friendlyName": "Bathroom Motion Sensor g0 move energy",
+          "cSharpName": "BathroomMotionSensorG0MoveEnergy"
+        },
+        {
+          "id": "sensor.bathroom_motion_sensor_g0_still_energy",
+          "friendlyName": "Bathroom Motion Sensor g0 still energy",
+          "cSharpName": "BathroomMotionSensorG0StillEnergy"
+        },
+        {
+          "id": "sensor.bathroom_motion_sensor_g1_move_energy",
+          "friendlyName": "Bathroom Motion Sensor g1 move energy",
+          "cSharpName": "BathroomMotionSensorG1MoveEnergy"
+        },
+        {
+          "id": "sensor.bathroom_motion_sensor_g1_still_energy",
+          "friendlyName": "Bathroom Motion Sensor g1 still energy",
+          "cSharpName": "BathroomMotionSensorG1StillEnergy"
+        },
+        {
+          "id": "sensor.bathroom_motion_sensor_g2_move_energy",
+          "friendlyName": "Bathroom Motion Sensor g2 move energy",
+          "cSharpName": "BathroomMotionSensorG2MoveEnergy"
+        },
+        {
+          "id": "sensor.bathroom_motion_sensor_g2_still_energy",
+          "friendlyName": "Bathroom Motion Sensor g2 still energy",
+          "cSharpName": "BathroomMotionSensorG2StillEnergy"
+        },
+        {
+          "id": "sensor.bathroom_motion_sensor_g3_move_energy",
+          "friendlyName": "Bathroom Motion Sensor g3 move energy",
+          "cSharpName": "BathroomMotionSensorG3MoveEnergy"
+        },
+        {
+          "id": "sensor.bathroom_motion_sensor_g3_still_energy",
+          "friendlyName": "Bathroom Motion Sensor g3 still energy",
+          "cSharpName": "BathroomMotionSensorG3StillEnergy"
+        },
+        {
+          "id": "sensor.bathroom_motion_sensor_g4_move_energy",
+          "friendlyName": "Bathroom Motion Sensor g4 move energy",
+          "cSharpName": "BathroomMotionSensorG4MoveEnergy"
+        },
+        {
+          "id": "sensor.bathroom_motion_sensor_g4_still_energy",
+          "friendlyName": "Bathroom Motion Sensor g4 still energy",
+          "cSharpName": "BathroomMotionSensorG4StillEnergy"
+        },
+        {
+          "id": "sensor.bathroom_motion_sensor_g5_move_energy",
+          "friendlyName": "Bathroom Motion Sensor g5 move energy",
+          "cSharpName": "BathroomMotionSensorG5MoveEnergy"
+        },
+        {
+          "id": "sensor.bathroom_motion_sensor_g5_still_energy",
+          "friendlyName": "Bathroom Motion Sensor g5 still energy",
+          "cSharpName": "BathroomMotionSensorG5StillEnergy"
+        },
+        {
+          "id": "sensor.bathroom_motion_sensor_g6_move_energy",
+          "friendlyName": "Bathroom Motion Sensor g6 move energy",
+          "cSharpName": "BathroomMotionSensorG6MoveEnergy"
+        },
+        {
+          "id": "sensor.bathroom_motion_sensor_g6_still_energy",
+          "friendlyName": "Bathroom Motion Sensor g6 still energy",
+          "cSharpName": "BathroomMotionSensorG6StillEnergy"
+        },
+        {
+          "id": "sensor.bathroom_motion_sensor_g7_move_energy",
+          "friendlyName": "Bathroom Motion Sensor g7 move energy",
+          "cSharpName": "BathroomMotionSensorG7MoveEnergy"
+        },
+        {
+          "id": "sensor.bathroom_motion_sensor_g7_still_energy",
+          "friendlyName": "Bathroom Motion Sensor g7 still energy",
+          "cSharpName": "BathroomMotionSensorG7StillEnergy"
+        },
+        {
+          "id": "sensor.bathroom_motion_sensor_g8_move_energy",
+          "friendlyName": "Bathroom Motion Sensor g8 move energy",
+          "cSharpName": "BathroomMotionSensorG8MoveEnergy"
+        },
+        {
+          "id": "sensor.bathroom_motion_sensor_g8_still_energy",
+          "friendlyName": "Bathroom Motion Sensor g8 still energy",
+          "cSharpName": "BathroomMotionSensorG8StillEnergy"
+        },
+        {
+          "id": "sensor.bathroom_motion_sensor_occupancy_timeout",
+          "friendlyName": "Bathroom Motion Sensor Occupancy Timeout",
+          "cSharpName": "BathroomMotionSensorOccupancyTimeout"
+        },
+        {
+          "id": "sensor.bathroom_motion_sensor_uptime_sensor",
+          "friendlyName": "Bathroom Motion Sensor Uptime Sensor",
+          "cSharpName": "BathroomMotionSensorUptimeSensor"
+        },
+        {
           "id": "sensor.battery_rechargable",
           "friendlyName": "Battery (Rechargable)",
           "cSharpName": "BatteryRechargable"
+        },
+        {
+          "id": "sensor.bedroom_motion_sensor_free_mem",
+          "friendlyName": "Bedroom Motion Sensor Free Mem",
+          "cSharpName": "BedroomMotionSensorFreeMem"
+        },
+        {
+          "id": "sensor.bedroom_motion_sensor_g0_move_energy",
+          "friendlyName": "Bedroom Motion Sensor g0 move energy",
+          "cSharpName": "BedroomMotionSensorG0MoveEnergy"
+        },
+        {
+          "id": "sensor.bedroom_motion_sensor_g0_still_energy",
+          "friendlyName": "Bedroom Motion Sensor g0 still energy",
+          "cSharpName": "BedroomMotionSensorG0StillEnergy"
+        },
+        {
+          "id": "sensor.bedroom_motion_sensor_g1_move_energy",
+          "friendlyName": "Bedroom Motion Sensor g1 move energy",
+          "cSharpName": "BedroomMotionSensorG1MoveEnergy"
+        },
+        {
+          "id": "sensor.bedroom_motion_sensor_g1_still_energy",
+          "friendlyName": "Bedroom Motion Sensor g1 still energy",
+          "cSharpName": "BedroomMotionSensorG1StillEnergy"
+        },
+        {
+          "id": "sensor.bedroom_motion_sensor_g2_move_energy",
+          "friendlyName": "Bedroom Motion Sensor g2 move energy",
+          "cSharpName": "BedroomMotionSensorG2MoveEnergy"
+        },
+        {
+          "id": "sensor.bedroom_motion_sensor_g2_still_energy",
+          "friendlyName": "Bedroom Motion Sensor g2 still energy",
+          "cSharpName": "BedroomMotionSensorG2StillEnergy"
+        },
+        {
+          "id": "sensor.bedroom_motion_sensor_g3_move_energy",
+          "friendlyName": "Bedroom Motion Sensor g3 move energy",
+          "cSharpName": "BedroomMotionSensorG3MoveEnergy"
+        },
+        {
+          "id": "sensor.bedroom_motion_sensor_g3_still_energy",
+          "friendlyName": "Bedroom Motion Sensor g3 still energy",
+          "cSharpName": "BedroomMotionSensorG3StillEnergy"
+        },
+        {
+          "id": "sensor.bedroom_motion_sensor_g4_move_energy",
+          "friendlyName": "Bedroom Motion Sensor g4 move energy",
+          "cSharpName": "BedroomMotionSensorG4MoveEnergy"
+        },
+        {
+          "id": "sensor.bedroom_motion_sensor_g4_still_energy",
+          "friendlyName": "Bedroom Motion Sensor g4 still energy",
+          "cSharpName": "BedroomMotionSensorG4StillEnergy"
+        },
+        {
+          "id": "sensor.bedroom_motion_sensor_g5_move_energy",
+          "friendlyName": "Bedroom Motion Sensor g5 move energy",
+          "cSharpName": "BedroomMotionSensorG5MoveEnergy"
+        },
+        {
+          "id": "sensor.bedroom_motion_sensor_g5_still_energy",
+          "friendlyName": "Bedroom Motion Sensor g5 still energy",
+          "cSharpName": "BedroomMotionSensorG5StillEnergy"
+        },
+        {
+          "id": "sensor.bedroom_motion_sensor_g6_move_energy",
+          "friendlyName": "Bedroom Motion Sensor g6 move energy",
+          "cSharpName": "BedroomMotionSensorG6MoveEnergy"
+        },
+        {
+          "id": "sensor.bedroom_motion_sensor_g6_still_energy",
+          "friendlyName": "Bedroom Motion Sensor g6 still energy",
+          "cSharpName": "BedroomMotionSensorG6StillEnergy"
+        },
+        {
+          "id": "sensor.bedroom_motion_sensor_g7_move_energy",
+          "friendlyName": "Bedroom Motion Sensor g7 move energy",
+          "cSharpName": "BedroomMotionSensorG7MoveEnergy"
+        },
+        {
+          "id": "sensor.bedroom_motion_sensor_g7_still_energy",
+          "friendlyName": "Bedroom Motion Sensor g7 still energy",
+          "cSharpName": "BedroomMotionSensorG7StillEnergy"
+        },
+        {
+          "id": "sensor.bedroom_motion_sensor_g8_move_energy",
+          "friendlyName": "Bedroom Motion Sensor g8 move energy",
+          "cSharpName": "BedroomMotionSensorG8MoveEnergy"
+        },
+        {
+          "id": "sensor.bedroom_motion_sensor_g8_still_energy",
+          "friendlyName": "Bedroom Motion Sensor g8 still energy",
+          "cSharpName": "BedroomMotionSensorG8StillEnergy"
+        },
+        {
+          "id": "sensor.bedroom_motion_sensor_occupancy_timeout",
+          "friendlyName": "Bedroom Motion Sensor Occupancy Timeout",
+          "cSharpName": "BedroomMotionSensorOccupancyTimeout"
+        },
+        {
+          "id": "sensor.bedroom_motion_sensor_uptime",
+          "friendlyName": "Bedroom Motion Sensor Uptime",
+          "cSharpName": "BedroomMotionSensorUptime"
+        },
+        {
+          "id": "sensor.bedroom_motion_sensor_uptime_sensor",
+          "friendlyName": "Bedroom Motion Sensor Uptime Sensor",
+          "cSharpName": "BedroomMotionSensorUptimeSensor"
+        },
+        {
+          "id": "sensor.bedroom_motion_sensor_xiaomi_mi_scale_impedance",
+          "friendlyName": "Bedroom Motion Sensor Xiaomi Mi Scale Impedance",
+          "cSharpName": "BedroomMotionSensorXiaomiMiScaleImpedance"
+        },
+        {
+          "id": "sensor.bedroom_motion_sensor_xiaomi_mi_scale_weight",
+          "friendlyName": "Bedroom Motion Sensor Xiaomi Mi Scale Weight",
+          "cSharpName": "BedroomMotionSensorXiaomiMiScaleWeight"
         },
         {
           "id": "sensor.careli_sg_593061393_maf05a_appoint_time_left_p_3_8",
@@ -5148,6 +5363,106 @@
           "id": "sensor.delta_monthly_energy_reading",
           "friendlyName": "Delta Monthly Energy Reading",
           "cSharpName": "DeltaMonthlyEnergyReading"
+        },
+        {
+          "id": "sensor.desk_motion_sensor_g0_move_energy",
+          "friendlyName": "Desk Motion Sensor g0 move energy",
+          "cSharpName": "DeskMotionSensorG0MoveEnergy"
+        },
+        {
+          "id": "sensor.desk_motion_sensor_g0_still_energy",
+          "friendlyName": "Desk Motion Sensor g0 still energy",
+          "cSharpName": "DeskMotionSensorG0StillEnergy"
+        },
+        {
+          "id": "sensor.desk_motion_sensor_g1_move_energy",
+          "friendlyName": "Desk Motion Sensor g1 move energy",
+          "cSharpName": "DeskMotionSensorG1MoveEnergy"
+        },
+        {
+          "id": "sensor.desk_motion_sensor_g1_still_energy",
+          "friendlyName": "Desk Motion Sensor g1 still energy",
+          "cSharpName": "DeskMotionSensorG1StillEnergy"
+        },
+        {
+          "id": "sensor.desk_motion_sensor_g2_move_energy",
+          "friendlyName": "Desk Motion Sensor g2 move energy",
+          "cSharpName": "DeskMotionSensorG2MoveEnergy"
+        },
+        {
+          "id": "sensor.desk_motion_sensor_g2_still_energy",
+          "friendlyName": "Desk Motion Sensor g2 still energy",
+          "cSharpName": "DeskMotionSensorG2StillEnergy"
+        },
+        {
+          "id": "sensor.desk_motion_sensor_g3_move_energy",
+          "friendlyName": "Desk Motion Sensor g3 move energy",
+          "cSharpName": "DeskMotionSensorG3MoveEnergy"
+        },
+        {
+          "id": "sensor.desk_motion_sensor_g3_still_energy",
+          "friendlyName": "Desk Motion Sensor g3 still energy",
+          "cSharpName": "DeskMotionSensorG3StillEnergy"
+        },
+        {
+          "id": "sensor.desk_motion_sensor_g4_move_energy",
+          "friendlyName": "Desk Motion Sensor g4 move energy",
+          "cSharpName": "DeskMotionSensorG4MoveEnergy"
+        },
+        {
+          "id": "sensor.desk_motion_sensor_g4_still_energy",
+          "friendlyName": "Desk Motion Sensor g4 still energy",
+          "cSharpName": "DeskMotionSensorG4StillEnergy"
+        },
+        {
+          "id": "sensor.desk_motion_sensor_g5_move_energy",
+          "friendlyName": "Desk Motion Sensor g5 move energy",
+          "cSharpName": "DeskMotionSensorG5MoveEnergy"
+        },
+        {
+          "id": "sensor.desk_motion_sensor_g5_still_energy",
+          "friendlyName": "Desk Motion Sensor g5 still energy",
+          "cSharpName": "DeskMotionSensorG5StillEnergy"
+        },
+        {
+          "id": "sensor.desk_motion_sensor_g6_move_energy",
+          "friendlyName": "Desk Motion Sensor g6 move energy",
+          "cSharpName": "DeskMotionSensorG6MoveEnergy"
+        },
+        {
+          "id": "sensor.desk_motion_sensor_g6_still_energy",
+          "friendlyName": "Desk Motion Sensor g6 still energy",
+          "cSharpName": "DeskMotionSensorG6StillEnergy"
+        },
+        {
+          "id": "sensor.desk_motion_sensor_g7_move_energy",
+          "friendlyName": "Desk Motion Sensor g7 move energy",
+          "cSharpName": "DeskMotionSensorG7MoveEnergy"
+        },
+        {
+          "id": "sensor.desk_motion_sensor_g7_still_energy",
+          "friendlyName": "Desk Motion Sensor g7 still energy",
+          "cSharpName": "DeskMotionSensorG7StillEnergy"
+        },
+        {
+          "id": "sensor.desk_motion_sensor_g8_move_energy",
+          "friendlyName": "Desk Motion Sensor g8 move energy",
+          "cSharpName": "DeskMotionSensorG8MoveEnergy"
+        },
+        {
+          "id": "sensor.desk_motion_sensor_g8_still_energy",
+          "friendlyName": "Desk Motion Sensor g8 still energy",
+          "cSharpName": "DeskMotionSensorG8StillEnergy"
+        },
+        {
+          "id": "sensor.desk_motion_sensor_occupancy_timeout",
+          "friendlyName": "Desk Motion Sensor Occupancy Timeout",
+          "cSharpName": "DeskMotionSensorOccupancyTimeout"
+        },
+        {
+          "id": "sensor.desk_motion_sensor_uptime_sensor",
+          "friendlyName": "Desk Motion Sensor Uptime Sensor",
+          "cSharpName": "DeskMotionSensorUptimeSensor"
         },
         {
           "id": "sensor.energy_athena_s_laptop",
@@ -5350,126 +5665,6 @@
           "cSharpName": "EnergyWorkLaptopCost"
         },
         {
-          "id": "sensor.esp32_presence_bedroom_g0_move_energy",
-          "friendlyName": "Bedroom Presence g0 move energy",
-          "cSharpName": "Esp32PresenceBedroomG0MoveEnergy"
-        },
-        {
-          "id": "sensor.esp32_presence_bedroom_g0_still_energy",
-          "friendlyName": "Bedroom Presence g0 still energy",
-          "cSharpName": "Esp32PresenceBedroomG0StillEnergy"
-        },
-        {
-          "id": "sensor.esp32_presence_bedroom_g1_move_energy",
-          "friendlyName": "Bedroom Presence g1 move energy",
-          "cSharpName": "Esp32PresenceBedroomG1MoveEnergy"
-        },
-        {
-          "id": "sensor.esp32_presence_bedroom_g1_still_energy",
-          "friendlyName": "Bedroom Presence g1 still energy",
-          "cSharpName": "Esp32PresenceBedroomG1StillEnergy"
-        },
-        {
-          "id": "sensor.esp32_presence_bedroom_g2_move_energy",
-          "friendlyName": "Bedroom Presence g2 move energy",
-          "cSharpName": "Esp32PresenceBedroomG2MoveEnergy"
-        },
-        {
-          "id": "sensor.esp32_presence_bedroom_g2_still_energy",
-          "friendlyName": "Bedroom Presence g2 still energy",
-          "cSharpName": "Esp32PresenceBedroomG2StillEnergy"
-        },
-        {
-          "id": "sensor.esp32_presence_bedroom_g3_move_energy",
-          "friendlyName": "Bedroom Presence g3 move energy",
-          "cSharpName": "Esp32PresenceBedroomG3MoveEnergy"
-        },
-        {
-          "id": "sensor.esp32_presence_bedroom_g3_still_energy",
-          "friendlyName": "Bedroom Presence g3 still energy",
-          "cSharpName": "Esp32PresenceBedroomG3StillEnergy"
-        },
-        {
-          "id": "sensor.esp32_presence_bedroom_g4_move_energy",
-          "friendlyName": "Bedroom Presence g4 move energy",
-          "cSharpName": "Esp32PresenceBedroomG4MoveEnergy"
-        },
-        {
-          "id": "sensor.esp32_presence_bedroom_g4_still_energy",
-          "friendlyName": "Bedroom Presence g4 still energy",
-          "cSharpName": "Esp32PresenceBedroomG4StillEnergy"
-        },
-        {
-          "id": "sensor.esp32_presence_bedroom_g5_move_energy",
-          "friendlyName": "Bedroom Presence g5 move energy",
-          "cSharpName": "Esp32PresenceBedroomG5MoveEnergy"
-        },
-        {
-          "id": "sensor.esp32_presence_bedroom_g5_still_energy",
-          "friendlyName": "Bedroom Presence g5 still energy",
-          "cSharpName": "Esp32PresenceBedroomG5StillEnergy"
-        },
-        {
-          "id": "sensor.esp32_presence_bedroom_g6_move_energy",
-          "friendlyName": "Bedroom Presence g6 move energy",
-          "cSharpName": "Esp32PresenceBedroomG6MoveEnergy"
-        },
-        {
-          "id": "sensor.esp32_presence_bedroom_g6_still_energy",
-          "friendlyName": "Bedroom Presence g6 still energy",
-          "cSharpName": "Esp32PresenceBedroomG6StillEnergy"
-        },
-        {
-          "id": "sensor.esp32_presence_bedroom_g7_move_energy",
-          "friendlyName": "Bedroom Presence g7 move energy",
-          "cSharpName": "Esp32PresenceBedroomG7MoveEnergy"
-        },
-        {
-          "id": "sensor.esp32_presence_bedroom_g7_still_energy",
-          "friendlyName": "Bedroom Presence g7 still energy",
-          "cSharpName": "Esp32PresenceBedroomG7StillEnergy"
-        },
-        {
-          "id": "sensor.esp32_presence_bedroom_g8_move_energy",
-          "friendlyName": "Bedroom Presence g8 move energy",
-          "cSharpName": "Esp32PresenceBedroomG8MoveEnergy"
-        },
-        {
-          "id": "sensor.esp32_presence_bedroom_g8_still_energy",
-          "friendlyName": "Bedroom Presence g8 still energy",
-          "cSharpName": "Esp32PresenceBedroomG8StillEnergy"
-        },
-        {
-          "id": "sensor.esp32_presence_bedroom_occupancy_timeout",
-          "friendlyName": "Bedroom Presence Occupancy Timeout",
-          "cSharpName": "Esp32PresenceBedroomOccupancyTimeout"
-        },
-        {
-          "id": "sensor.esp32_presence_bedroom_uptime_sensor",
-          "friendlyName": "Bedroom Presence Uptime Sensor",
-          "cSharpName": "Esp32PresenceBedroomUptimeSensor"
-        },
-        {
-          "id": "sensor.esp32_presence_bedroom_xiaomi_mi_scale_impedance",
-          "friendlyName": "Bedroom Presence Xiaomi Mi Scale Impedance",
-          "cSharpName": "Esp32PresenceBedroomXiaomiMiScaleImpedance"
-        },
-        {
-          "id": "sensor.esp32_presence_bedroom_xiaomi_mi_scale_weight",
-          "friendlyName": "Bedroom Presence Xiaomi Mi Scale Weight",
-          "cSharpName": "Esp32PresenceBedroomXiaomiMiScaleWeight"
-        },
-        {
-          "id": "sensor.espresence_bedroom_free_mem",
-          "friendlyName": "Bedroom Presence Free Mem",
-          "cSharpName": "EspresenceBedroomFreeMem"
-        },
-        {
-          "id": "sensor.espresence_bedroom_uptime",
-          "friendlyName": "Bedroom Presence Uptime",
-          "cSharpName": "EspresenceBedroomUptime"
-        },
-        {
           "id": "sensor.estimated_monthly_energy_reading",
           "friendlyName": "Estimated Monthly Energy Reading",
           "cSharpName": "EstimatedMonthlyEnergyReading"
@@ -5545,209 +5740,109 @@
           "cSharpName": "Issues"
         },
         {
+          "id": "sensor.kitchen_motion_sensor_g0_move_energy",
+          "friendlyName": "Kitchen Motion Sensor g0 move energy",
+          "cSharpName": "KitchenMotionSensorG0MoveEnergy"
+        },
+        {
+          "id": "sensor.kitchen_motion_sensor_g0_still_energy",
+          "friendlyName": "Kitchen Motion Sensor g0 still energy",
+          "cSharpName": "KitchenMotionSensorG0StillEnergy"
+        },
+        {
+          "id": "sensor.kitchen_motion_sensor_g1_move_energy",
+          "friendlyName": "Kitchen Motion Sensor g1 move energy",
+          "cSharpName": "KitchenMotionSensorG1MoveEnergy"
+        },
+        {
+          "id": "sensor.kitchen_motion_sensor_g1_still_energy",
+          "friendlyName": "Kitchen Motion Sensor g1 still energy",
+          "cSharpName": "KitchenMotionSensorG1StillEnergy"
+        },
+        {
+          "id": "sensor.kitchen_motion_sensor_g2_move_energy",
+          "friendlyName": "Kitchen Motion Sensor g2 move energy",
+          "cSharpName": "KitchenMotionSensorG2MoveEnergy"
+        },
+        {
+          "id": "sensor.kitchen_motion_sensor_g2_still_energy",
+          "friendlyName": "Kitchen Motion Sensor g2 still energy",
+          "cSharpName": "KitchenMotionSensorG2StillEnergy"
+        },
+        {
+          "id": "sensor.kitchen_motion_sensor_g3_move_energy",
+          "friendlyName": "Kitchen Motion Sensor g3 move energy",
+          "cSharpName": "KitchenMotionSensorG3MoveEnergy"
+        },
+        {
+          "id": "sensor.kitchen_motion_sensor_g3_still_energy",
+          "friendlyName": "Kitchen Motion Sensor g3 still energy",
+          "cSharpName": "KitchenMotionSensorG3StillEnergy"
+        },
+        {
+          "id": "sensor.kitchen_motion_sensor_g4_move_energy",
+          "friendlyName": "Kitchen Motion Sensor g4 move energy",
+          "cSharpName": "KitchenMotionSensorG4MoveEnergy"
+        },
+        {
+          "id": "sensor.kitchen_motion_sensor_g4_still_energy",
+          "friendlyName": "Kitchen Motion Sensor g4 still energy",
+          "cSharpName": "KitchenMotionSensorG4StillEnergy"
+        },
+        {
+          "id": "sensor.kitchen_motion_sensor_g5_move_energy",
+          "friendlyName": "Kitchen Motion Sensor g5 move energy",
+          "cSharpName": "KitchenMotionSensorG5MoveEnergy"
+        },
+        {
+          "id": "sensor.kitchen_motion_sensor_g5_still_energy",
+          "friendlyName": "Kitchen Motion Sensor g5 still energy",
+          "cSharpName": "KitchenMotionSensorG5StillEnergy"
+        },
+        {
+          "id": "sensor.kitchen_motion_sensor_g6_move_energy",
+          "friendlyName": "Kitchen Motion Sensor g6 move energy",
+          "cSharpName": "KitchenMotionSensorG6MoveEnergy"
+        },
+        {
+          "id": "sensor.kitchen_motion_sensor_g6_still_energy",
+          "friendlyName": "Kitchen Motion Sensor g6 still energy",
+          "cSharpName": "KitchenMotionSensorG6StillEnergy"
+        },
+        {
+          "id": "sensor.kitchen_motion_sensor_g7_move_energy",
+          "friendlyName": "Kitchen Motion Sensor g7 move energy",
+          "cSharpName": "KitchenMotionSensorG7MoveEnergy"
+        },
+        {
+          "id": "sensor.kitchen_motion_sensor_g7_still_energy",
+          "friendlyName": "Kitchen Motion Sensor g7 still energy",
+          "cSharpName": "KitchenMotionSensorG7StillEnergy"
+        },
+        {
+          "id": "sensor.kitchen_motion_sensor_g8_move_energy",
+          "friendlyName": "Kitchen Motion Sensor g8 move energy",
+          "cSharpName": "KitchenMotionSensorG8MoveEnergy"
+        },
+        {
+          "id": "sensor.kitchen_motion_sensor_g8_still_energy",
+          "friendlyName": "Kitchen Motion Sensor g8 still energy",
+          "cSharpName": "KitchenMotionSensorG8StillEnergy"
+        },
+        {
+          "id": "sensor.kitchen_motion_sensor_occupancy_timeout",
+          "friendlyName": "Kitchen Motion Sensor Occupancy Timeout",
+          "cSharpName": "KitchenMotionSensorOccupancyTimeout"
+        },
+        {
+          "id": "sensor.kitchen_motion_sensor_uptime_sensor",
+          "friendlyName": "Kitchen Motion Sensor Uptime Sensor",
+          "cSharpName": "KitchenMotionSensorUptimeSensor"
+        },
+        {
           "id": "sensor.laptop_charger_power",
           "friendlyName": "Mipad Charger Power",
           "cSharpName": "LaptopChargerPower"
-        },
-        {
-          "id": "sensor.ld2410_esp32_1_g0_move_energy",
-          "friendlyName": "ld2410-esp32_1 g0 move energy",
-          "cSharpName": "Ld2410Esp321G0MoveEnergy"
-        },
-        {
-          "id": "sensor.ld2410_esp32_1_g0_still_energy",
-          "friendlyName": "ld2410-esp32_1 g0 still energy",
-          "cSharpName": "Ld2410Esp321G0StillEnergy"
-        },
-        {
-          "id": "sensor.ld2410_esp32_1_g1_move_energy",
-          "friendlyName": "ld2410-esp32_1 g1 move energy",
-          "cSharpName": "Ld2410Esp321G1MoveEnergy"
-        },
-        {
-          "id": "sensor.ld2410_esp32_1_g1_still_energy",
-          "friendlyName": "ld2410-esp32_1 g1 still energy",
-          "cSharpName": "Ld2410Esp321G1StillEnergy"
-        },
-        {
-          "id": "sensor.ld2410_esp32_1_g2_move_energy",
-          "friendlyName": "ld2410-esp32_1 g2 move energy",
-          "cSharpName": "Ld2410Esp321G2MoveEnergy"
-        },
-        {
-          "id": "sensor.ld2410_esp32_1_g2_still_energy",
-          "friendlyName": "ld2410-esp32_1 g2 still energy",
-          "cSharpName": "Ld2410Esp321G2StillEnergy"
-        },
-        {
-          "id": "sensor.ld2410_esp32_1_g3_move_energy",
-          "friendlyName": "ld2410-esp32_1 g3 move energy",
-          "cSharpName": "Ld2410Esp321G3MoveEnergy"
-        },
-        {
-          "id": "sensor.ld2410_esp32_1_g3_still_energy",
-          "friendlyName": "ld2410-esp32_1 g3 still energy",
-          "cSharpName": "Ld2410Esp321G3StillEnergy"
-        },
-        {
-          "id": "sensor.ld2410_esp32_1_g4_move_energy",
-          "friendlyName": "ld2410-esp32_1 g4 move energy",
-          "cSharpName": "Ld2410Esp321G4MoveEnergy"
-        },
-        {
-          "id": "sensor.ld2410_esp32_1_g4_still_energy",
-          "friendlyName": "ld2410-esp32_1 g4 still energy",
-          "cSharpName": "Ld2410Esp321G4StillEnergy"
-        },
-        {
-          "id": "sensor.ld2410_esp32_1_g5_move_energy",
-          "friendlyName": "ld2410-esp32_1 g5 move energy",
-          "cSharpName": "Ld2410Esp321G5MoveEnergy"
-        },
-        {
-          "id": "sensor.ld2410_esp32_1_g5_still_energy",
-          "friendlyName": "ld2410-esp32_1 g5 still energy",
-          "cSharpName": "Ld2410Esp321G5StillEnergy"
-        },
-        {
-          "id": "sensor.ld2410_esp32_1_g6_move_energy",
-          "friendlyName": "ld2410-esp32_1 g6 move energy",
-          "cSharpName": "Ld2410Esp321G6MoveEnergy"
-        },
-        {
-          "id": "sensor.ld2410_esp32_1_g6_still_energy",
-          "friendlyName": "ld2410-esp32_1 g6 still energy",
-          "cSharpName": "Ld2410Esp321G6StillEnergy"
-        },
-        {
-          "id": "sensor.ld2410_esp32_1_g7_move_energy",
-          "friendlyName": "ld2410-esp32_1 g7 move energy",
-          "cSharpName": "Ld2410Esp321G7MoveEnergy"
-        },
-        {
-          "id": "sensor.ld2410_esp32_1_g7_still_energy",
-          "friendlyName": "ld2410-esp32_1 g7 still energy",
-          "cSharpName": "Ld2410Esp321G7StillEnergy"
-        },
-        {
-          "id": "sensor.ld2410_esp32_1_g8_move_energy",
-          "friendlyName": "ld2410-esp32_1 g8 move energy",
-          "cSharpName": "Ld2410Esp321G8MoveEnergy"
-        },
-        {
-          "id": "sensor.ld2410_esp32_1_g8_still_energy",
-          "friendlyName": "ld2410-esp32_1 g8 still energy",
-          "cSharpName": "Ld2410Esp321G8StillEnergy"
-        },
-        {
-          "id": "sensor.ld2410_esp32_1_occupancy_timeout",
-          "friendlyName": "ld2410-esp32_1 Occupancy Timeout",
-          "cSharpName": "Ld2410Esp321OccupancyTimeout"
-        },
-        {
-          "id": "sensor.ld2410_esp32_1_uptime_sensor",
-          "friendlyName": "ld2410-esp32_1 Uptime Sensor",
-          "cSharpName": "Ld2410Esp321UptimeSensor"
-        },
-        {
-          "id": "sensor.ld2410_esp32_5_g0_move_energy",
-          "friendlyName": "ld2410-esp32_5 g0 move energy",
-          "cSharpName": "Ld2410Esp325G0MoveEnergy"
-        },
-        {
-          "id": "sensor.ld2410_esp32_5_g0_still_energy",
-          "friendlyName": "ld2410-esp32_5 g0 still energy",
-          "cSharpName": "Ld2410Esp325G0StillEnergy"
-        },
-        {
-          "id": "sensor.ld2410_esp32_5_g1_move_energy",
-          "friendlyName": "ld2410-esp32_5 g1 move energy",
-          "cSharpName": "Ld2410Esp325G1MoveEnergy"
-        },
-        {
-          "id": "sensor.ld2410_esp32_5_g1_still_energy",
-          "friendlyName": "ld2410-esp32_5 g1 still energy",
-          "cSharpName": "Ld2410Esp325G1StillEnergy"
-        },
-        {
-          "id": "sensor.ld2410_esp32_5_g2_move_energy",
-          "friendlyName": "ld2410-esp32_5 g2 move energy",
-          "cSharpName": "Ld2410Esp325G2MoveEnergy"
-        },
-        {
-          "id": "sensor.ld2410_esp32_5_g2_still_energy",
-          "friendlyName": "ld2410-esp32_5 g2 still energy",
-          "cSharpName": "Ld2410Esp325G2StillEnergy"
-        },
-        {
-          "id": "sensor.ld2410_esp32_5_g3_move_energy",
-          "friendlyName": "ld2410-esp32_5 g3 move energy",
-          "cSharpName": "Ld2410Esp325G3MoveEnergy"
-        },
-        {
-          "id": "sensor.ld2410_esp32_5_g3_still_energy",
-          "friendlyName": "ld2410-esp32_5 g3 still energy",
-          "cSharpName": "Ld2410Esp325G3StillEnergy"
-        },
-        {
-          "id": "sensor.ld2410_esp32_5_g4_move_energy",
-          "friendlyName": "ld2410-esp32_5 g4 move energy",
-          "cSharpName": "Ld2410Esp325G4MoveEnergy"
-        },
-        {
-          "id": "sensor.ld2410_esp32_5_g4_still_energy",
-          "friendlyName": "ld2410-esp32_5 g4 still energy",
-          "cSharpName": "Ld2410Esp325G4StillEnergy"
-        },
-        {
-          "id": "sensor.ld2410_esp32_5_g5_move_energy",
-          "friendlyName": "ld2410-esp32_5 g5 move energy",
-          "cSharpName": "Ld2410Esp325G5MoveEnergy"
-        },
-        {
-          "id": "sensor.ld2410_esp32_5_g5_still_energy",
-          "friendlyName": "ld2410-esp32_5 g5 still energy",
-          "cSharpName": "Ld2410Esp325G5StillEnergy"
-        },
-        {
-          "id": "sensor.ld2410_esp32_5_g6_move_energy",
-          "friendlyName": "ld2410-esp32_5 g6 move energy",
-          "cSharpName": "Ld2410Esp325G6MoveEnergy"
-        },
-        {
-          "id": "sensor.ld2410_esp32_5_g6_still_energy",
-          "friendlyName": "ld2410-esp32_5 g6 still energy",
-          "cSharpName": "Ld2410Esp325G6StillEnergy"
-        },
-        {
-          "id": "sensor.ld2410_esp32_5_g7_move_energy",
-          "friendlyName": "ld2410-esp32_5 g7 move energy",
-          "cSharpName": "Ld2410Esp325G7MoveEnergy"
-        },
-        {
-          "id": "sensor.ld2410_esp32_5_g7_still_energy",
-          "friendlyName": "ld2410-esp32_5 g7 still energy",
-          "cSharpName": "Ld2410Esp325G7StillEnergy"
-        },
-        {
-          "id": "sensor.ld2410_esp32_5_g8_move_energy",
-          "friendlyName": "ld2410-esp32_5 g8 move energy",
-          "cSharpName": "Ld2410Esp325G8MoveEnergy"
-        },
-        {
-          "id": "sensor.ld2410_esp32_5_g8_still_energy",
-          "friendlyName": "ld2410-esp32_5 g8 still energy",
-          "cSharpName": "Ld2410Esp325G8StillEnergy"
-        },
-        {
-          "id": "sensor.ld2410_esp32_5_occupancy_timeout",
-          "friendlyName": "ld2410-esp32_5 Occupancy Timeout",
-          "cSharpName": "Ld2410Esp325OccupancyTimeout"
-        },
-        {
-          "id": "sensor.ld2410_esp32_5_uptime_sensor",
-          "friendlyName": "ld2410-esp32_5 Uptime Sensor",
-          "cSharpName": "Ld2410Esp325UptimeSensor"
         },
         {
           "id": "sensor.mi_body_composition_scale_b3e1_impedance",
@@ -5780,6 +5875,106 @@
           "cSharpName": "MipadBrowserWidth"
         },
         {
+          "id": "sensor.pantry_motion_sensor_g0_move_energy",
+          "friendlyName": "Pantry Motion Sensor g0 move energy",
+          "cSharpName": "PantryMotionSensorG0MoveEnergy"
+        },
+        {
+          "id": "sensor.pantry_motion_sensor_g0_still_energy",
+          "friendlyName": "Pantry Motion Sensor g0 still energy",
+          "cSharpName": "PantryMotionSensorG0StillEnergy"
+        },
+        {
+          "id": "sensor.pantry_motion_sensor_g1_move_energy",
+          "friendlyName": "Pantry Motion Sensor g1 move energy",
+          "cSharpName": "PantryMotionSensorG1MoveEnergy"
+        },
+        {
+          "id": "sensor.pantry_motion_sensor_g1_still_energy",
+          "friendlyName": "Pantry Motion Sensor g1 still energy",
+          "cSharpName": "PantryMotionSensorG1StillEnergy"
+        },
+        {
+          "id": "sensor.pantry_motion_sensor_g2_move_energy",
+          "friendlyName": "Pantry Motion Sensor g2 move energy",
+          "cSharpName": "PantryMotionSensorG2MoveEnergy"
+        },
+        {
+          "id": "sensor.pantry_motion_sensor_g2_still_energy",
+          "friendlyName": "Pantry Motion Sensor g2 still energy",
+          "cSharpName": "PantryMotionSensorG2StillEnergy"
+        },
+        {
+          "id": "sensor.pantry_motion_sensor_g3_move_energy",
+          "friendlyName": "Pantry Motion Sensor g3 move energy",
+          "cSharpName": "PantryMotionSensorG3MoveEnergy"
+        },
+        {
+          "id": "sensor.pantry_motion_sensor_g3_still_energy",
+          "friendlyName": "Pantry Motion Sensor g3 still energy",
+          "cSharpName": "PantryMotionSensorG3StillEnergy"
+        },
+        {
+          "id": "sensor.pantry_motion_sensor_g4_move_energy",
+          "friendlyName": "Pantry Motion Sensor g4 move energy",
+          "cSharpName": "PantryMotionSensorG4MoveEnergy"
+        },
+        {
+          "id": "sensor.pantry_motion_sensor_g4_still_energy",
+          "friendlyName": "Pantry Motion Sensor g4 still energy",
+          "cSharpName": "PantryMotionSensorG4StillEnergy"
+        },
+        {
+          "id": "sensor.pantry_motion_sensor_g5_move_energy",
+          "friendlyName": "Pantry Motion Sensor g5 move energy",
+          "cSharpName": "PantryMotionSensorG5MoveEnergy"
+        },
+        {
+          "id": "sensor.pantry_motion_sensor_g5_still_energy",
+          "friendlyName": "Pantry Motion Sensor g5 still energy",
+          "cSharpName": "PantryMotionSensorG5StillEnergy"
+        },
+        {
+          "id": "sensor.pantry_motion_sensor_g6_move_energy",
+          "friendlyName": "Pantry Motion Sensor g6 move energy",
+          "cSharpName": "PantryMotionSensorG6MoveEnergy"
+        },
+        {
+          "id": "sensor.pantry_motion_sensor_g6_still_energy",
+          "friendlyName": "Pantry Motion Sensor g6 still energy",
+          "cSharpName": "PantryMotionSensorG6StillEnergy"
+        },
+        {
+          "id": "sensor.pantry_motion_sensor_g7_move_energy",
+          "friendlyName": "Pantry Motion Sensor g7 move energy",
+          "cSharpName": "PantryMotionSensorG7MoveEnergy"
+        },
+        {
+          "id": "sensor.pantry_motion_sensor_g7_still_energy",
+          "friendlyName": "Pantry Motion Sensor g7 still energy",
+          "cSharpName": "PantryMotionSensorG7StillEnergy"
+        },
+        {
+          "id": "sensor.pantry_motion_sensor_g8_move_energy",
+          "friendlyName": "Pantry Motion Sensor g8 move energy",
+          "cSharpName": "PantryMotionSensorG8MoveEnergy"
+        },
+        {
+          "id": "sensor.pantry_motion_sensor_g8_still_energy",
+          "friendlyName": "Pantry Motion Sensor g8 still energy",
+          "cSharpName": "PantryMotionSensorG8StillEnergy"
+        },
+        {
+          "id": "sensor.pantry_motion_sensor_occupancy_timeout",
+          "friendlyName": "Pantry Motion Sensor Occupancy Timeout",
+          "cSharpName": "PantryMotionSensorOccupancyTimeout"
+        },
+        {
+          "id": "sensor.pantry_motion_sensor_uptime_sensor",
+          "friendlyName": "Pantry Motion Sensor Uptime Sensor",
+          "cSharpName": "PantryMotionSensorUptimeSensor"
+        },
+        {
           "id": "sensor.poco_f4_gt_bluetooth_connection",
           "friendlyName": "POCO F4 GT Bluetooth connection",
           "cSharpName": "PocoF4GtBluetoothConnection"
@@ -5808,6 +6003,106 @@
           "id": "sensor.rice_cooker_wattage",
           "friendlyName": "Rice Cooker Wattage",
           "cSharpName": "RiceCookerWattage"
+        },
+        {
+          "id": "sensor.sala_motion_sensor_g0_move_energy",
+          "friendlyName": "Sala Motion Sensor g0 move energy",
+          "cSharpName": "SalaMotionSensorG0MoveEnergy"
+        },
+        {
+          "id": "sensor.sala_motion_sensor_g0_still_energy",
+          "friendlyName": "Sala Motion Sensor g0 still energy",
+          "cSharpName": "SalaMotionSensorG0StillEnergy"
+        },
+        {
+          "id": "sensor.sala_motion_sensor_g1_move_energy",
+          "friendlyName": "Sala Motion Sensor g1 move energy",
+          "cSharpName": "SalaMotionSensorG1MoveEnergy"
+        },
+        {
+          "id": "sensor.sala_motion_sensor_g1_still_energy",
+          "friendlyName": "Sala Motion Sensor g1 still energy",
+          "cSharpName": "SalaMotionSensorG1StillEnergy"
+        },
+        {
+          "id": "sensor.sala_motion_sensor_g2_move_energy",
+          "friendlyName": "Sala Motion Sensor g2 move energy",
+          "cSharpName": "SalaMotionSensorG2MoveEnergy"
+        },
+        {
+          "id": "sensor.sala_motion_sensor_g2_still_energy",
+          "friendlyName": "Sala Motion Sensor g2 still energy",
+          "cSharpName": "SalaMotionSensorG2StillEnergy"
+        },
+        {
+          "id": "sensor.sala_motion_sensor_g3_move_energy",
+          "friendlyName": "Sala Motion Sensor g3 move energy",
+          "cSharpName": "SalaMotionSensorG3MoveEnergy"
+        },
+        {
+          "id": "sensor.sala_motion_sensor_g3_still_energy",
+          "friendlyName": "Sala Motion Sensor g3 still energy",
+          "cSharpName": "SalaMotionSensorG3StillEnergy"
+        },
+        {
+          "id": "sensor.sala_motion_sensor_g4_move_energy",
+          "friendlyName": "Sala Motion Sensor g4 move energy",
+          "cSharpName": "SalaMotionSensorG4MoveEnergy"
+        },
+        {
+          "id": "sensor.sala_motion_sensor_g4_still_energy",
+          "friendlyName": "Sala Motion Sensor g4 still energy",
+          "cSharpName": "SalaMotionSensorG4StillEnergy"
+        },
+        {
+          "id": "sensor.sala_motion_sensor_g5_move_energy",
+          "friendlyName": "Sala Motion Sensor g5 move energy",
+          "cSharpName": "SalaMotionSensorG5MoveEnergy"
+        },
+        {
+          "id": "sensor.sala_motion_sensor_g5_still_energy",
+          "friendlyName": "Sala Motion Sensor g5 still energy",
+          "cSharpName": "SalaMotionSensorG5StillEnergy"
+        },
+        {
+          "id": "sensor.sala_motion_sensor_g6_move_energy",
+          "friendlyName": "Sala Motion Sensor g6 move energy",
+          "cSharpName": "SalaMotionSensorG6MoveEnergy"
+        },
+        {
+          "id": "sensor.sala_motion_sensor_g6_still_energy",
+          "friendlyName": "Sala Motion Sensor g6 still energy",
+          "cSharpName": "SalaMotionSensorG6StillEnergy"
+        },
+        {
+          "id": "sensor.sala_motion_sensor_g7_move_energy",
+          "friendlyName": "Sala Motion Sensor g7 move energy",
+          "cSharpName": "SalaMotionSensorG7MoveEnergy"
+        },
+        {
+          "id": "sensor.sala_motion_sensor_g7_still_energy",
+          "friendlyName": "Sala Motion Sensor g7 still energy",
+          "cSharpName": "SalaMotionSensorG7StillEnergy"
+        },
+        {
+          "id": "sensor.sala_motion_sensor_g8_move_energy",
+          "friendlyName": "Sala Motion Sensor g8 move energy",
+          "cSharpName": "SalaMotionSensorG8MoveEnergy"
+        },
+        {
+          "id": "sensor.sala_motion_sensor_g8_still_energy",
+          "friendlyName": "Sala Motion Sensor g8 still energy",
+          "cSharpName": "SalaMotionSensorG8StillEnergy"
+        },
+        {
+          "id": "sensor.sala_motion_sensor_occupancy_timeout",
+          "friendlyName": "Sala Motion Sensor Occupancy Timeout",
+          "cSharpName": "SalaMotionSensorOccupancyTimeout"
+        },
+        {
+          "id": "sensor.sala_motion_sensor_uptime_sensor",
+          "friendlyName": "Sala Motion Sensor Uptime Sensor",
+          "cSharpName": "SalaMotionSensorUptimeSensor"
         },
         {
           "id": "sensor.smart_plug_1_sonoff_s31_power",
@@ -6033,306 +6328,6 @@
           "id": "sensor.xiaomi_sg_753990712_cpa4_pm2_5_density_p_3_4",
           "friendlyName": "Xiaomi Smart Air Purifier 4 Compact  Environment PM2.5",
           "cSharpName": "XiaomiSg753990712Cpa4Pm25DensityP34"
-        },
-        {
-          "id": "sensor.z_esp32_c6_1_g0_move_energy_2",
-          "friendlyName": "z-esp32-c6-1 g0 move energy",
-          "cSharpName": "ZEsp32C61G0MoveEnergy2"
-        },
-        {
-          "id": "sensor.z_esp32_c6_1_g0_still_energy_2",
-          "friendlyName": "z-esp32-c6-1 g0 still energy",
-          "cSharpName": "ZEsp32C61G0StillEnergy2"
-        },
-        {
-          "id": "sensor.z_esp32_c6_1_g1_move_energy_2",
-          "friendlyName": "z-esp32-c6-1 g1 move energy",
-          "cSharpName": "ZEsp32C61G1MoveEnergy2"
-        },
-        {
-          "id": "sensor.z_esp32_c6_1_g1_still_energy_2",
-          "friendlyName": "z-esp32-c6-1 g1 still energy",
-          "cSharpName": "ZEsp32C61G1StillEnergy2"
-        },
-        {
-          "id": "sensor.z_esp32_c6_1_g2_move_energy_2",
-          "friendlyName": "z-esp32-c6-1 g2 move energy",
-          "cSharpName": "ZEsp32C61G2MoveEnergy2"
-        },
-        {
-          "id": "sensor.z_esp32_c6_1_g2_still_energy_2",
-          "friendlyName": "z-esp32-c6-1 g2 still energy",
-          "cSharpName": "ZEsp32C61G2StillEnergy2"
-        },
-        {
-          "id": "sensor.z_esp32_c6_1_g3_move_energy_2",
-          "friendlyName": "z-esp32-c6-1 g3 move energy",
-          "cSharpName": "ZEsp32C61G3MoveEnergy2"
-        },
-        {
-          "id": "sensor.z_esp32_c6_1_g3_still_energy_2",
-          "friendlyName": "z-esp32-c6-1 g3 still energy",
-          "cSharpName": "ZEsp32C61G3StillEnergy2"
-        },
-        {
-          "id": "sensor.z_esp32_c6_1_g4_move_energy_2",
-          "friendlyName": "z-esp32-c6-1 g4 move energy",
-          "cSharpName": "ZEsp32C61G4MoveEnergy2"
-        },
-        {
-          "id": "sensor.z_esp32_c6_1_g4_still_energy_2",
-          "friendlyName": "z-esp32-c6-1 g4 still energy",
-          "cSharpName": "ZEsp32C61G4StillEnergy2"
-        },
-        {
-          "id": "sensor.z_esp32_c6_1_g5_move_energy_2",
-          "friendlyName": "z-esp32-c6-1 g5 move energy",
-          "cSharpName": "ZEsp32C61G5MoveEnergy2"
-        },
-        {
-          "id": "sensor.z_esp32_c6_1_g5_still_energy_2",
-          "friendlyName": "z-esp32-c6-1 g5 still energy",
-          "cSharpName": "ZEsp32C61G5StillEnergy2"
-        },
-        {
-          "id": "sensor.z_esp32_c6_1_g6_move_energy_2",
-          "friendlyName": "z-esp32-c6-1 g6 move energy",
-          "cSharpName": "ZEsp32C61G6MoveEnergy2"
-        },
-        {
-          "id": "sensor.z_esp32_c6_1_g6_still_energy_2",
-          "friendlyName": "z-esp32-c6-1 g6 still energy",
-          "cSharpName": "ZEsp32C61G6StillEnergy2"
-        },
-        {
-          "id": "sensor.z_esp32_c6_1_g7_move_energy_2",
-          "friendlyName": "z-esp32-c6-1 g7 move energy",
-          "cSharpName": "ZEsp32C61G7MoveEnergy2"
-        },
-        {
-          "id": "sensor.z_esp32_c6_1_g7_still_energy_2",
-          "friendlyName": "z-esp32-c6-1 g7 still energy",
-          "cSharpName": "ZEsp32C61G7StillEnergy2"
-        },
-        {
-          "id": "sensor.z_esp32_c6_1_g8_move_energy_2",
-          "friendlyName": "z-esp32-c6-1 g8 move energy",
-          "cSharpName": "ZEsp32C61G8MoveEnergy2"
-        },
-        {
-          "id": "sensor.z_esp32_c6_1_g8_still_energy_2",
-          "friendlyName": "z-esp32-c6-1 g8 still energy",
-          "cSharpName": "ZEsp32C61G8StillEnergy2"
-        },
-        {
-          "id": "sensor.z_esp32_c6_1_occupancy_timeout_2",
-          "friendlyName": "z-esp32-c6-1 Occupancy Timeout",
-          "cSharpName": "ZEsp32C61OccupancyTimeout2"
-        },
-        {
-          "id": "sensor.z_esp32_c6_1_uptime_sensor_2",
-          "friendlyName": "z-esp32-c6-1 Uptime Sensor",
-          "cSharpName": "ZEsp32C61UptimeSensor2"
-        },
-        {
-          "id": "sensor.z_esp32_c6_2_g0_move_energy",
-          "friendlyName": "z-esp32-c6-2 g0 move energy",
-          "cSharpName": "ZEsp32C62G0MoveEnergy"
-        },
-        {
-          "id": "sensor.z_esp32_c6_2_g0_still_energy",
-          "friendlyName": "z-esp32-c6-2 g0 still energy",
-          "cSharpName": "ZEsp32C62G0StillEnergy"
-        },
-        {
-          "id": "sensor.z_esp32_c6_2_g1_move_energy",
-          "friendlyName": "z-esp32-c6-2 g1 move energy",
-          "cSharpName": "ZEsp32C62G1MoveEnergy"
-        },
-        {
-          "id": "sensor.z_esp32_c6_2_g1_still_energy",
-          "friendlyName": "z-esp32-c6-2 g1 still energy",
-          "cSharpName": "ZEsp32C62G1StillEnergy"
-        },
-        {
-          "id": "sensor.z_esp32_c6_2_g2_move_energy",
-          "friendlyName": "z-esp32-c6-2 g2 move energy",
-          "cSharpName": "ZEsp32C62G2MoveEnergy"
-        },
-        {
-          "id": "sensor.z_esp32_c6_2_g2_still_energy",
-          "friendlyName": "z-esp32-c6-2 g2 still energy",
-          "cSharpName": "ZEsp32C62G2StillEnergy"
-        },
-        {
-          "id": "sensor.z_esp32_c6_2_g3_move_energy",
-          "friendlyName": "z-esp32-c6-2 g3 move energy",
-          "cSharpName": "ZEsp32C62G3MoveEnergy"
-        },
-        {
-          "id": "sensor.z_esp32_c6_2_g3_still_energy",
-          "friendlyName": "z-esp32-c6-2 g3 still energy",
-          "cSharpName": "ZEsp32C62G3StillEnergy"
-        },
-        {
-          "id": "sensor.z_esp32_c6_2_g4_move_energy",
-          "friendlyName": "z-esp32-c6-2 g4 move energy",
-          "cSharpName": "ZEsp32C62G4MoveEnergy"
-        },
-        {
-          "id": "sensor.z_esp32_c6_2_g4_still_energy",
-          "friendlyName": "z-esp32-c6-2 g4 still energy",
-          "cSharpName": "ZEsp32C62G4StillEnergy"
-        },
-        {
-          "id": "sensor.z_esp32_c6_2_g5_move_energy",
-          "friendlyName": "z-esp32-c6-2 g5 move energy",
-          "cSharpName": "ZEsp32C62G5MoveEnergy"
-        },
-        {
-          "id": "sensor.z_esp32_c6_2_g5_still_energy",
-          "friendlyName": "z-esp32-c6-2 g5 still energy",
-          "cSharpName": "ZEsp32C62G5StillEnergy"
-        },
-        {
-          "id": "sensor.z_esp32_c6_2_g6_move_energy",
-          "friendlyName": "z-esp32-c6-2 g6 move energy",
-          "cSharpName": "ZEsp32C62G6MoveEnergy"
-        },
-        {
-          "id": "sensor.z_esp32_c6_2_g6_still_energy",
-          "friendlyName": "z-esp32-c6-2 g6 still energy",
-          "cSharpName": "ZEsp32C62G6StillEnergy"
-        },
-        {
-          "id": "sensor.z_esp32_c6_2_g7_move_energy",
-          "friendlyName": "z-esp32-c6-2 g7 move energy",
-          "cSharpName": "ZEsp32C62G7MoveEnergy"
-        },
-        {
-          "id": "sensor.z_esp32_c6_2_g7_still_energy",
-          "friendlyName": "z-esp32-c6-2 g7 still energy",
-          "cSharpName": "ZEsp32C62G7StillEnergy"
-        },
-        {
-          "id": "sensor.z_esp32_c6_2_g8_move_energy",
-          "friendlyName": "z-esp32-c6-2 g8 move energy",
-          "cSharpName": "ZEsp32C62G8MoveEnergy"
-        },
-        {
-          "id": "sensor.z_esp32_c6_2_g8_still_energy",
-          "friendlyName": "z-esp32-c6-2 g8 still energy",
-          "cSharpName": "ZEsp32C62G8StillEnergy"
-        },
-        {
-          "id": "sensor.z_esp32_c6_2_occupancy_timeout",
-          "friendlyName": "z-esp32-c6-2 Occupancy Timeout",
-          "cSharpName": "ZEsp32C62OccupancyTimeout"
-        },
-        {
-          "id": "sensor.z_esp32_c6_2_uptime_sensor",
-          "friendlyName": "z-esp32-c6-2 Uptime Sensor",
-          "cSharpName": "ZEsp32C62UptimeSensor"
-        },
-        {
-          "id": "sensor.z_esp32_c6_3_g0_move_energy",
-          "friendlyName": "z-esp32-c6-3 g0 move energy",
-          "cSharpName": "ZEsp32C63G0MoveEnergy"
-        },
-        {
-          "id": "sensor.z_esp32_c6_3_g0_still_energy",
-          "friendlyName": "z-esp32-c6-3 g0 still energy",
-          "cSharpName": "ZEsp32C63G0StillEnergy"
-        },
-        {
-          "id": "sensor.z_esp32_c6_3_g1_move_energy",
-          "friendlyName": "z-esp32-c6-3 g1 move energy",
-          "cSharpName": "ZEsp32C63G1MoveEnergy"
-        },
-        {
-          "id": "sensor.z_esp32_c6_3_g1_still_energy",
-          "friendlyName": "z-esp32-c6-3 g1 still energy",
-          "cSharpName": "ZEsp32C63G1StillEnergy"
-        },
-        {
-          "id": "sensor.z_esp32_c6_3_g2_move_energy",
-          "friendlyName": "z-esp32-c6-3 g2 move energy",
-          "cSharpName": "ZEsp32C63G2MoveEnergy"
-        },
-        {
-          "id": "sensor.z_esp32_c6_3_g2_still_energy",
-          "friendlyName": "z-esp32-c6-3 g2 still energy",
-          "cSharpName": "ZEsp32C63G2StillEnergy"
-        },
-        {
-          "id": "sensor.z_esp32_c6_3_g3_move_energy",
-          "friendlyName": "z-esp32-c6-3 g3 move energy",
-          "cSharpName": "ZEsp32C63G3MoveEnergy"
-        },
-        {
-          "id": "sensor.z_esp32_c6_3_g3_still_energy",
-          "friendlyName": "z-esp32-c6-3 g3 still energy",
-          "cSharpName": "ZEsp32C63G3StillEnergy"
-        },
-        {
-          "id": "sensor.z_esp32_c6_3_g4_move_energy",
-          "friendlyName": "z-esp32-c6-3 g4 move energy",
-          "cSharpName": "ZEsp32C63G4MoveEnergy"
-        },
-        {
-          "id": "sensor.z_esp32_c6_3_g4_still_energy",
-          "friendlyName": "z-esp32-c6-3 g4 still energy",
-          "cSharpName": "ZEsp32C63G4StillEnergy"
-        },
-        {
-          "id": "sensor.z_esp32_c6_3_g5_move_energy",
-          "friendlyName": "z-esp32-c6-3 g5 move energy",
-          "cSharpName": "ZEsp32C63G5MoveEnergy"
-        },
-        {
-          "id": "sensor.z_esp32_c6_3_g5_still_energy",
-          "friendlyName": "z-esp32-c6-3 g5 still energy",
-          "cSharpName": "ZEsp32C63G5StillEnergy"
-        },
-        {
-          "id": "sensor.z_esp32_c6_3_g6_move_energy",
-          "friendlyName": "z-esp32-c6-3 g6 move energy",
-          "cSharpName": "ZEsp32C63G6MoveEnergy"
-        },
-        {
-          "id": "sensor.z_esp32_c6_3_g6_still_energy",
-          "friendlyName": "z-esp32-c6-3 g6 still energy",
-          "cSharpName": "ZEsp32C63G6StillEnergy"
-        },
-        {
-          "id": "sensor.z_esp32_c6_3_g7_move_energy",
-          "friendlyName": "z-esp32-c6-3 g7 move energy",
-          "cSharpName": "ZEsp32C63G7MoveEnergy"
-        },
-        {
-          "id": "sensor.z_esp32_c6_3_g7_still_energy",
-          "friendlyName": "z-esp32-c6-3 g7 still energy",
-          "cSharpName": "ZEsp32C63G7StillEnergy"
-        },
-        {
-          "id": "sensor.z_esp32_c6_3_g8_move_energy",
-          "friendlyName": "z-esp32-c6-3 g8 move energy",
-          "cSharpName": "ZEsp32C63G8MoveEnergy"
-        },
-        {
-          "id": "sensor.z_esp32_c6_3_g8_still_energy",
-          "friendlyName": "z-esp32-c6-3 g8 still energy",
-          "cSharpName": "ZEsp32C63G8StillEnergy"
-        },
-        {
-          "id": "sensor.z_esp32_c6_3_occupancy_timeout",
-          "friendlyName": "z-esp32-c6-3 Occupancy Timeout",
-          "cSharpName": "ZEsp32C63OccupancyTimeout"
-        },
-        {
-          "id": "sensor.z_esp32_c6_3_uptime_sensor",
-          "friendlyName": "z-esp32-c6-3 Uptime Sensor",
-          "cSharpName": "ZEsp32C63UptimeSensor"
         }
       ],
       "attributes": [
@@ -7685,17 +7680,17 @@
         },
         {
           "id": "switch.ac_fresh_air",
-          "friendlyName": "AC Fresh air",
+          "friendlyName": "Fresh air",
           "cSharpName": "AcFreshAir"
         },
         {
           "id": "switch.ac_panel_light",
-          "friendlyName": "AC Panel light",
+          "friendlyName": "Panel light",
           "cSharpName": "AcPanelLight"
         },
         {
           "id": "switch.ac_quiet",
-          "friendlyName": "AC Quiet mode",
+          "friendlyName": "Quiet mode",
           "cSharpName": "AcQuiet"
         },
         {
@@ -7705,7 +7700,7 @@
         },
         {
           "id": "switch.ac_xfan",
-          "friendlyName": "AC Xtra fan",
+          "friendlyName": "Xtra fan",
           "cSharpName": "AcXfan"
         },
         {
@@ -7717,6 +7712,21 @@
           "id": "switch.bathroom_motion_sensor",
           "friendlyName": "Bathroom Motion Sensor",
           "cSharpName": "BathroomMotionSensor"
+        },
+        {
+          "id": "switch.bathroom_motion_sensor_auto_calibrate",
+          "friendlyName": "Bathroom Motion Sensor Auto Calibrate",
+          "cSharpName": "BathroomMotionSensorAutoCalibrate"
+        },
+        {
+          "id": "switch.bathroom_motion_sensor_control_bluetooth",
+          "friendlyName": "Bathroom Motion Sensor control Bluetooth",
+          "cSharpName": "BathroomMotionSensorControlBluetooth"
+        },
+        {
+          "id": "switch.bathroom_motion_sensor_engineering_mode",
+          "friendlyName": "Bathroom Motion Sensor engineering mode",
+          "cSharpName": "BathroomMotionSensorEngineeringMode"
         },
         {
           "id": "switch.bed_lights_auto_update_enabled",
@@ -7732,6 +7742,36 @@
           "id": "switch.bedroom_motion_sensor",
           "friendlyName": "Bedroom Motion Sensor",
           "cSharpName": "BedroomMotionSensor"
+        },
+        {
+          "id": "switch.bedroom_motion_sensor_arduino_ota",
+          "friendlyName": "Bedroom Motion Sensor Arduino OTA",
+          "cSharpName": "BedroomMotionSensorArduinoOta"
+        },
+        {
+          "id": "switch.bedroom_motion_sensor_auto_calibrate",
+          "friendlyName": "Bedroom Motion Sensor Auto Calibrate",
+          "cSharpName": "BedroomMotionSensorAutoCalibrate"
+        },
+        {
+          "id": "switch.bedroom_motion_sensor_auto_update",
+          "friendlyName": "Bedroom Motion Sensor Auto Update",
+          "cSharpName": "BedroomMotionSensorAutoUpdate"
+        },
+        {
+          "id": "switch.bedroom_motion_sensor_control_bluetooth",
+          "friendlyName": "Bedroom Motion Sensor control Bluetooth",
+          "cSharpName": "BedroomMotionSensorControlBluetooth"
+        },
+        {
+          "id": "switch.bedroom_motion_sensor_engineering_mode",
+          "friendlyName": "Bedroom Motion Sensor engineering mode",
+          "cSharpName": "BedroomMotionSensorEngineeringMode"
+        },
+        {
+          "id": "switch.bedroom_motion_sensor_prerelease",
+          "friendlyName": "Bedroom Motion Sensor Prerelease",
+          "cSharpName": "BedroomMotionSensorPrerelease"
         },
         {
           "id": "switch.ceiling_fan",
@@ -7814,34 +7854,29 @@
           "cSharpName": "DanielPc"
         },
         {
+          "id": "switch.desk_motion_sensor_auto_calibrate",
+          "friendlyName": "Desk Motion Sensor Auto Calibrate",
+          "cSharpName": "DeskMotionSensorAutoCalibrate"
+        },
+        {
+          "id": "switch.desk_motion_sensor_control_bluetooth",
+          "friendlyName": "Desk Motion Sensor control Bluetooth",
+          "cSharpName": "DeskMotionSensorControlBluetooth"
+        },
+        {
+          "id": "switch.desk_motion_sensor_engineering_mode",
+          "friendlyName": "Desk Motion Sensor engineering mode",
+          "cSharpName": "DeskMotionSensorEngineeringMode"
+        },
+        {
           "id": "switch.display_pc",
           "friendlyName": "Display PC",
           "cSharpName": "DisplayPc"
         },
         {
-          "id": "switch.esp32_presence_bedroom_control_bluetooth",
-          "friendlyName": "Bedroom Presence control Bluetooth",
-          "cSharpName": "Esp32PresenceBedroomControlBluetooth"
-        },
-        {
-          "id": "switch.esp32_presence_bedroom_engineering_mode",
-          "friendlyName": "Bedroom Presence engineering mode",
-          "cSharpName": "Esp32PresenceBedroomEngineeringMode"
-        },
-        {
-          "id": "switch.espresence_bedroom_arduino_ota",
-          "friendlyName": "Bedroom Presence Arduino OTA",
-          "cSharpName": "EspresenceBedroomArduinoOta"
-        },
-        {
-          "id": "switch.espresence_bedroom_auto_update",
-          "friendlyName": "Bedroom Presence Auto Update",
-          "cSharpName": "EspresenceBedroomAutoUpdate"
-        },
-        {
-          "id": "switch.espresence_bedroom_prerelease",
-          "friendlyName": "Bedroom Presence Prerelease",
-          "cSharpName": "EspresenceBedroomPrerelease"
+          "id": "switch.engineering_mode",
+          "friendlyName": "Engineering Mode",
+          "cSharpName": "EngineeringMode"
         },
         {
           "id": "switch.flytrap",
@@ -7864,6 +7899,11 @@
           "cSharpName": "FlytrapLed"
         },
         {
+          "id": "switch.gree_a_c_pre_release",
+          "friendlyName": "Gree A/C Pre-release",
+          "cSharpName": "GreeACPreRelease"
+        },
+        {
           "id": "switch.induction",
           "friendlyName": "Induction",
           "cSharpName": "Induction"
@@ -7872,6 +7912,21 @@
           "id": "switch.kitchen_motion_sensor",
           "friendlyName": "Kitchen Motion Sensor",
           "cSharpName": "KitchenMotionSensor"
+        },
+        {
+          "id": "switch.kitchen_motion_sensor_auto_calibrate",
+          "friendlyName": "Kitchen Motion Sensor Auto Calibrate",
+          "cSharpName": "KitchenMotionSensorAutoCalibrate"
+        },
+        {
+          "id": "switch.kitchen_motion_sensor_control_bluetooth",
+          "friendlyName": "Kitchen Motion Sensor control Bluetooth",
+          "cSharpName": "KitchenMotionSensorControlBluetooth"
+        },
+        {
+          "id": "switch.kitchen_motion_sensor_engineering_mode",
+          "friendlyName": "Kitchen Motion Sensor engineering mode",
+          "cSharpName": "KitchenMotionSensorEngineeringMode"
         },
         {
           "id": "switch.laptop",
@@ -7887,26 +7942,6 @@
           "id": "switch.laptop_charger_child_lock",
           "friendlyName": "Mipad Charger Child lock",
           "cSharpName": "LaptopChargerChildLock"
-        },
-        {
-          "id": "switch.ld2410_esp32_1_control_bluetooth",
-          "friendlyName": "ld2410-esp32_1 control Bluetooth",
-          "cSharpName": "Ld2410Esp321ControlBluetooth"
-        },
-        {
-          "id": "switch.ld2410_esp32_1_engineering_mode",
-          "friendlyName": "ld2410-esp32_1 engineering mode",
-          "cSharpName": "Ld2410Esp321EngineeringMode"
-        },
-        {
-          "id": "switch.ld2410_esp32_5_control_bluetooth",
-          "friendlyName": "ld2410-esp32_5 control Bluetooth",
-          "cSharpName": "Ld2410Esp325ControlBluetooth"
-        },
-        {
-          "id": "switch.ld2410_esp32_5_engineering_mode",
-          "friendlyName": "ld2410-esp32_5 engineering mode",
-          "cSharpName": "Ld2410Esp325EngineeringMode"
         },
         {
           "id": "switch.lg_screen",
@@ -7994,6 +8029,21 @@
           "cSharpName": "PantryMotionSensor"
         },
         {
+          "id": "switch.pantry_motion_sensor_auto_calibrate",
+          "friendlyName": "Pantry Motion Sensor Auto Calibrate",
+          "cSharpName": "PantryMotionSensorAutoCalibrate"
+        },
+        {
+          "id": "switch.pantry_motion_sensor_control_bluetooth",
+          "friendlyName": "Pantry Motion Sensor control Bluetooth",
+          "cSharpName": "PantryMotionSensorControlBluetooth"
+        },
+        {
+          "id": "switch.pantry_motion_sensor_engineering_mode",
+          "friendlyName": "Pantry Motion Sensor engineering mode",
+          "cSharpName": "PantryMotionSensorEngineeringMode"
+        },
+        {
           "id": "switch.rgb_light_strip_auto_update_enabled",
           "friendlyName": "RGB Light Strip Auto-update enabled",
           "cSharpName": "RgbLightStripAutoUpdateEnabled"
@@ -8037,6 +8087,21 @@
           "id": "switch.sala_motion_sensor",
           "friendlyName": "Sala Motion Sensor",
           "cSharpName": "SalaMotionSensor"
+        },
+        {
+          "id": "switch.sala_motion_sensor_auto_calibrate",
+          "friendlyName": "Sala Motion Sensor Auto Calibrate",
+          "cSharpName": "SalaMotionSensorAutoCalibrate"
+        },
+        {
+          "id": "switch.sala_motion_sensor_control_bluetooth",
+          "friendlyName": "Sala Motion Sensor control Bluetooth",
+          "cSharpName": "SalaMotionSensorControlBluetooth"
+        },
+        {
+          "id": "switch.sala_motion_sensor_engineering_mode",
+          "friendlyName": "Sala Motion Sensor engineering mode",
+          "cSharpName": "SalaMotionSensorEngineeringMode"
         },
         {
           "id": "switch.smart_plug_1_sonoff_s31_relay",
@@ -8202,36 +8267,6 @@
           "id": "switch.xiaomi_smart_air_purifier_4_compact_air_purifier_led_status",
           "friendlyName": "Xiaomi Smart Air Purifier 4 Compact Air Purifier LED Status",
           "cSharpName": "XiaomiSmartAirPurifier4CompactAirPurifierLedStatus"
-        },
-        {
-          "id": "switch.z_esp32_c6_1_control_bluetooth_2",
-          "friendlyName": "z-esp32-c6-1 control Bluetooth",
-          "cSharpName": "ZEsp32C61ControlBluetooth2"
-        },
-        {
-          "id": "switch.z_esp32_c6_1_engineering_mode_2",
-          "friendlyName": "z-esp32-c6-1 engineering mode",
-          "cSharpName": "ZEsp32C61EngineeringMode2"
-        },
-        {
-          "id": "switch.z_esp32_c6_2_control_bluetooth",
-          "friendlyName": "z-esp32-c6-2 control Bluetooth",
-          "cSharpName": "ZEsp32C62ControlBluetooth"
-        },
-        {
-          "id": "switch.z_esp32_c6_2_engineering_mode",
-          "friendlyName": "z-esp32-c6-2 engineering mode",
-          "cSharpName": "ZEsp32C62EngineeringMode"
-        },
-        {
-          "id": "switch.z_esp32_c6_3_control_bluetooth",
-          "friendlyName": "z-esp32-c6-3 control Bluetooth",
-          "cSharpName": "ZEsp32C63ControlBluetooth"
-        },
-        {
-          "id": "switch.z_esp32_c6_3_engineering_mode",
-          "friendlyName": "z-esp32-c6-3 engineering mode",
-          "cSharpName": "ZEsp32C63EngineeringMode"
         }
       ],
       "attributes": [
@@ -8457,9 +8492,9 @@
           "cSharpName": "AttributeAsSensorUpdate"
         },
         {
-          "id": "update.bedroom_presence_firmware",
-          "friendlyName": "Bedroom Presence Firmware",
-          "cSharpName": "BedroomPresenceFirmware"
+          "id": "update.bedroom_motion_sensor_firmware",
+          "friendlyName": "Bedroom Motion Sensor Firmware",
+          "cSharpName": "BedroomMotionSensorFirmware"
         },
         {
           "id": "update.bermuda_ble_trilateration_update",
@@ -8490,6 +8525,11 @@
           "id": "update.govee_to_mqtt_bridge_update",
           "friendlyName": "Govee to MQTT Bridge Update",
           "cSharpName": "GoveeToMqttBridgeUpdate"
+        },
+        {
+          "id": "update.gree_a_c_update",
+          "friendlyName": "Gree A/C update",
+          "cSharpName": "GreeACUpdate"
         },
         {
           "id": "update.hacs_update",
@@ -8528,12 +8568,12 @@
         },
         {
           "id": "update.ld2410_esp32_1_firmware",
-          "friendlyName": "ld2410-esp32_1 Firmware",
+          "friendlyName": "Firmware",
           "cSharpName": "Ld2410Esp321Firmware"
         },
         {
           "id": "update.ld2410_esp32_5_firmware",
-          "friendlyName": "ld2410-esp32_5 Firmware",
+          "friendlyName": "Firmware",
           "cSharpName": "Ld2410Esp325Firmware"
         },
         {
@@ -8545,6 +8585,11 @@
           "id": "update.mushroom_update",
           "friendlyName": "Mushroom update",
           "cSharpName": "MushroomUpdate"
+        },
+        {
+          "id": "update.n8n_update",
+          "friendlyName": "n8n Update",
+          "cSharpName": "N8nUpdate"
         },
         {
           "id": "update.netdaemon_update",
@@ -8658,17 +8703,17 @@
         },
         {
           "id": "update.z_esp32_c6_1_firmware_2",
-          "friendlyName": "z-esp32-c6-1 Firmware",
+          "friendlyName": "Firmware",
           "cSharpName": "ZEsp32C61Firmware2"
         },
         {
           "id": "update.z_esp32_c6_2_firmware",
-          "friendlyName": "z-esp32-c6-2 Firmware",
+          "friendlyName": "Firmware",
           "cSharpName": "ZEsp32C62Firmware"
         },
         {
           "id": "update.z_esp32_c6_3_firmware",
-          "friendlyName": "z-esp32-c6-3 Firmware",
+          "friendlyName": "Firmware",
           "cSharpName": "ZEsp32C63Firmware"
         }
       ],
@@ -8742,6 +8787,11 @@
           "jsonName": "device_class",
           "cSharpName": "DeviceClass",
           "clrType": "System.String"
+        },
+        {
+          "jsonName": "restored",
+          "cSharpName": "Restored",
+          "clrType": "System.Boolean"
         }
       ]
     },

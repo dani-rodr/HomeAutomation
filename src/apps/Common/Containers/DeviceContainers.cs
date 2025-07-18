@@ -9,8 +9,8 @@ public class Devices(Entities entities)
         new(
             new MotionControl(
                 entities.BinarySensor.BedroomPresenceSensors,
-                entities.Button.Esp32PresenceBedroomRestartEsp32,
-                entities.Number.Esp32PresenceBedroomStillTargetDelay
+                entities.Button.BedroomMotionSensorRestartEsp32,
+                entities.Number.BedroomMotionSensorStillTargetDelay
             ),
             new LightControl(entities.Switch.BedroomMotionSensor, entities.Light.BedLights),
             new FanControl(
@@ -35,8 +35,8 @@ public class Devices(Entities entities)
         new(
             new MotionControl(
                 entities.BinarySensor.LivingRoomPresenceSensors,
-                entities.Button.Ld2410Esp321RestartEsp32,
-                entities.Number.Ld2410Esp321StillTargetDelay
+                entities.Button.SalaMotionSensorRestartEsp32,
+                entities.Number.SalaMotionSensorStillTargetDelay
             ),
             new LightControl(entities.Switch.SalaMotionSensor, entities.Light.SalaLightsGroup),
             new FanControl(
@@ -66,8 +66,8 @@ public class Devices(Entities entities)
         new(
             new MotionControl(
                 entities.BinarySensor.KitchenMotionSensors,
-                entities.Button.Ld2410Esp325RestartEsp32,
-                entities.Number.Ld2410Esp325StillTargetDelay
+                entities.Button.KitchenMotionSensorRestartEsp32,
+                entities.Number.KitchenMotionSensorStillTargetDelay
             ),
             new LightControl(entities.Switch.KitchenMotionSensor, entities.Light.RgbLightStrip),
             CookingControl: new(
@@ -84,8 +84,8 @@ public class Devices(Entities entities)
         new(
             new MotionControl(
                 entities.BinarySensor.PantryMotionSensors,
-                entities.Button.ZEsp32C63RestartEsp32,
-                entities.Number.ZEsp32C63StillTargetDelay
+                entities.Button.PantryMotionSensorRestartEsp32,
+                entities.Number.PantryMotionSensorStillTargetDelay
             ),
             new LightControl(entities.Switch.PantryMotionSensor, entities.Light.PantryLights)
         );
@@ -94,8 +94,8 @@ public class Devices(Entities entities)
         new(
             new MotionControl(
                 entities.BinarySensor.BathroomPresenceSensors,
-                entities.Button.ZEsp32C62RestartEsp32,
-                entities.Number.ZEsp32C62StillTargetDelay
+                entities.Button.BathroomMotionSensorRestart,
+                entities.Number.BathroomMotionSensorStillTargetDelay
             ),
             new LightControl(entities.Switch.BathroomMotionSensor, entities.Light.BathroomLights)
         );
@@ -103,9 +103,9 @@ public class Devices(Entities entities)
     public Area Desk { get; } =
         new(
             new MotionControl(
-                entities.BinarySensor.DeskSmartPresence,
-                entities.Button.ZEsp32C61RestartEsp322,
-                entities.Number.ZEsp32C61StillTargetDelay2
+                entities.BinarySensor.DeskMotionSensorSmartPresence,
+                entities.Button.DeskMotionSensorRestartEsp32,
+                entities.Number.DeskMotionSensorStillTargetDelay
             ),
             new LightControl(entities.Switch.LgTvMotionSensor, entities.Light.LgDisplay),
             MediaPlayer: new(entities.MediaPlayer.LgWebosSmartTv, entities.Switch.LgTvMotionSensor)

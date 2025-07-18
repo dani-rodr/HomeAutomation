@@ -168,7 +168,7 @@ public class PantryLightEntities(Entities entities, Devices devices) : IPantryLi
     public LightEntity Light => devices.Pantry.LightControl;
     public NumberEntity SensorDelay => devices.Pantry.MotionControl;
     public BinarySensorEntity MiScalePresenceSensor =>
-        entities.BinarySensor.Esp32PresenceBedroomMiScalePresence;
+        entities.BinarySensor.BedroomMotionSensorMiScalePresence;
     public LightEntity MirrorLight => entities.Light.ControllerRgbDf1c0d;
     public BinarySensorEntity BedroomDoor => devices.Bedroom.ContactSensor!;
     public ButtonEntity Restart => devices.Pantry.MotionControl;
