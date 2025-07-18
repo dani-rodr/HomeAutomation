@@ -56,6 +56,12 @@ public static class StateChangeObservableExtensions
             && states.Any(s => string.Equals(s, e.New.State, StringComparison.OrdinalIgnoreCase))
         );
 
+    public static IObservable<StateChange> WasOff(this IObservable<StateChange> source) =>
+        source.Where(e => e.Old.IsOff());
+
+    public static IObservable<StateChange> WasOn(this IObservable<StateChange> source) =>
+        source.Where(e => e.Old.IsOn());
+
     /// <summary>
     /// Filters state changes to only emit when the entity turns on.
     /// </summary>

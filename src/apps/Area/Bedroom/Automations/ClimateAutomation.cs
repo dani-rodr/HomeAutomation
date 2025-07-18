@@ -35,7 +35,11 @@ public class ClimateAutomation(
                 }
                 ApplyTimeBasedAcSetting(e);
             });
-        yield return MasterSwitch!.StateChanges().IsOn().Subscribe(ApplyTimeBasedAcSetting);
+        yield return MasterSwitch!
+            .StateChanges()
+            .WasOff()
+            .IsOn()
+            .Subscribe(ApplyTimeBasedAcSetting);
     }
 
     protected override IEnumerable<IDisposable> GetToggleableAutomations() =>
