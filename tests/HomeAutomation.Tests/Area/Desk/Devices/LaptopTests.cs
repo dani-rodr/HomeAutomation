@@ -146,10 +146,11 @@ public class LaptopTests : IDisposable
         _laptop.TurnOn();
 
         // Assert - Verify all WOL buttons were pressed
-        foreach (var button in _entities.WakeOnLanButtons)
-        {
-            _mockHaContext.ShouldHaveCalledService("button", "press", button.EntityId);
-        }
+        _mockHaContext.ShouldHaveCalledService(
+            "button",
+            "press",
+            _entities.WakeOnLanButton.EntityId
+        );
     }
 
     [Fact]
@@ -158,20 +159,15 @@ public class LaptopTests : IDisposable
         // Act
         _laptop.TurnOn();
 
-        // Assert - Verify complete startup sequence (1 switch + 2 WOL buttons = 3 calls)
-        _mockHaContext.ShouldHaveServiceCallCount(3);
+        // Assert - Verify complete startup sequence (1 switch + 1 WOL buttons = 2 calls)
+        _mockHaContext.ShouldHaveServiceCallCount(2);
 
         // Verify specific components
         _mockHaContext.ShouldHaveCalledSwitchTurnOn(_entities.VirtualSwitch.EntityId);
         _mockHaContext.ShouldHaveCalledService(
             "button",
             "press",
-            _entities.WakeOnLanButtons[0].EntityId
-        );
-        _mockHaContext.ShouldHaveCalledService(
-            "button",
-            "press",
-            _entities.WakeOnLanButtons[1].EntityId
+            _entities.WakeOnLanButton.EntityId
         );
     }
 
@@ -320,10 +316,11 @@ public class LaptopTests : IDisposable
         // Assert - Should trigger full turn on sequence
         _mockHaContext.ShouldHaveCalledSwitchTurnOn(_entities.VirtualSwitch.EntityId);
 
-        foreach (var button in _entities.WakeOnLanButtons)
-        {
-            _mockHaContext.ShouldHaveCalledService("button", "press", button.EntityId);
-        }
+        _mockHaContext.ShouldHaveCalledService(
+            "button",
+            "press",
+            _entities.WakeOnLanButton.EntityId
+        );
     }
 
     [Fact]
@@ -361,11 +358,11 @@ public class LaptopTests : IDisposable
         );
 
         // Assert - Should handle each change correctly
-        // First on: switch + 2 WOL buttons = 3 calls
+        // First on: switch + 1 WOL button = 2 calls
         // First off: switch only = 1 call (session not unlocked)
-        // Second on: switch + 2 WOL buttons = 3 calls
-        // Total: 7 calls
-        _mockHaContext.ShouldHaveServiceCallCount(7);
+        // Second on: switch + 1 WOL button = 2 calls
+        // Total: 5 calls
+        _mockHaContext.ShouldHaveServiceCallCount(5);
     }
 
     #endregion
@@ -569,8 +566,8 @@ public class LaptopTests : IDisposable
         _laptop.TurnOn();
 
         // Assert - Should handle all calls correctly
-        // First TurnOn: 3 calls, TurnOff: 1 call, Second TurnOn: 3 calls = 7 total
-        _mockHaContext.ShouldHaveServiceCallCount(7);
+        // First TurnOn: 2 calls, TurnOff: 1 call, Second TurnOn: 2 calls = 5 total
+        _mockHaContext.ShouldHaveServiceCallCount(5);
     }
 
     [Fact]
@@ -838,9 +835,7 @@ public class LaptopTests : IDisposable
         _entities.BatteryLevel.EntityId.Should().Be("sensor.thinkpadt14_battery_level");
 
         // Verify WOL buttons
-        _entities.WakeOnLanButtons.Should().HaveCount(2, "should have two WOL buttons");
-        _entities.WakeOnLanButtons[0].EntityId.Should().Be("button.thinkpadt14_wake_on_lan");
-        _entities.WakeOnLanButtons[1].EntityId.Should().Be("button.thinkpadt14_wake_on_wlan");
+        _entities.WakeOnLanButton.EntityId.Should().Be("button.thinkpadt14_wake_on_lan");
     }
 
     #endregion
@@ -859,11 +854,8 @@ public class LaptopTests : IDisposable
     {
         public SwitchEntity VirtualSwitch { get; } =
             new SwitchEntity(haContext, "switch.laptop_virtual");
-        public ButtonEntity[] WakeOnLanButtons { get; } =
-            [
-                new ButtonEntity(haContext, "button.thinkpadt14_wake_on_lan"),
-                new ButtonEntity(haContext, "button.thinkpadt14_wake_on_wlan"),
-            ];
+        public ButtonEntity WakeOnLanButton { get; } =
+            new ButtonEntity(haContext, "button.thinkpadt14_wake_on_lan");
         public SensorEntity Session { get; } =
             new SensorEntity(haContext, "sensor.thinkpadt14_session");
         public NumericSensorEntity BatteryLevel { get; } =

@@ -87,7 +87,7 @@ public interface IClimateEntities : IMotionBase
 public interface ILaptopEntities
 {
     SwitchEntity VirtualSwitch { get; }
-    ButtonEntity[] WakeOnLanButtons { get; }
+    ButtonEntity WakeOnLanButton { get; }
     SensorEntity Session { get; }
     NumericSensorEntity BatteryLevel { get; }
     ButtonEntity Lock { get; }

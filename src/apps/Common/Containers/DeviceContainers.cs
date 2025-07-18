@@ -1,61 +1,146 @@
+using System.Linq;
+
 namespace HomeAutomation.apps.Common.Containers;
 
 public class Devices(Entities entities)
 {
-    public MotionSensors MotionSensors { get; } = new(entities);
+    public GlobalEntities GlobalEntities { get; } = new(entities);
+    public Area Bedroom { get; } =
+        new(
+            new MotionControl(
+                entities.BinarySensor.BedroomPresenceSensors,
+                entities.Button.Esp32PresenceBedroomRestartEsp32,
+                entities.Number.Esp32PresenceBedroomStillTargetDelay
+            ),
+            new LightControl(entities.Switch.BedroomMotionSensor, entities.Light.BedLights),
+            new FanControl(
+                entities.Switch.BedroomFanAutomation,
+                new Dictionary<string, SwitchEntity>
+                {
+                    ["Main"] = entities.Switch.Sonoff100238104e1,
+                }
+            ),
+            ContactSensor: entities.BinarySensor.ContactSensorDoor,
+            LaptopControl: new(
+                entities.Sensor.Thinkpadt14BatteryChargeRemainingPercentage,
+                entities.Switch.Sonoff1002380fe51,
+                entities.Button.Thinkpadt14WakeOnWlan,
+                entities.Sensor.Thinkpadt14Sessionstate,
+                entities.Switch.Laptop,
+                entities.Button.Thinkpadt14Lock
+            )
+        );
+
+    public Area LivingRoom { get; } =
+        new(
+            new MotionControl(
+                entities.BinarySensor.LivingRoomPresenceSensors,
+                entities.Button.Ld2410Esp321RestartEsp32,
+                entities.Number.Ld2410Esp321StillTargetDelay
+            ),
+            new LightControl(entities.Switch.SalaMotionSensor, entities.Light.SalaLightsGroup),
+            new FanControl(
+                entities.Switch.SalaFanAutomation,
+                new Dictionary<string, SwitchEntity>
+                {
+                    ["CeilingFan"] = entities.Switch.CeilingFan,
+                    ["StandFan"] = entities.Switch.Sonoff10023810231,
+                    ["ExhaustFan"] = entities.Switch.Cozylife955f,
+                    ["AirPurifier"] = entities
+                        .Switch
+                        .XiaomiSmartAirPurifier4CompactAirPurifierFanSwitch,
+                }
+            ),
+            ContactSensor: entities.BinarySensor.DoorWrapper
+        );
+
+    public Area Kitchen { get; } =
+        new(
+            new MotionControl(
+                entities.BinarySensor.KitchenMotionSensors,
+                entities.Button.Ld2410Esp325RestartEsp32,
+                entities.Number.Ld2410Esp325StillTargetDelay
+            ),
+            new LightControl(entities.Switch.KitchenMotionSensor, entities.Light.RgbLightStrip)
+        );
+
+    public Area Pantry { get; } =
+        new(
+            new MotionControl(
+                entities.BinarySensor.PantryMotionSensors,
+                entities.Button.ZEsp32C63RestartEsp32,
+                entities.Number.ZEsp32C63StillTargetDelay
+            ),
+            new LightControl(entities.Switch.PantryMotionSensor, entities.Light.PantryLights)
+        );
+
+    public Area Bathroom { get; } =
+        new(
+            new MotionControl(
+                entities.BinarySensor.BathroomPresenceSensors,
+                entities.Button.ZEsp32C62RestartEsp32,
+                entities.Number.ZEsp32C62StillTargetDelay
+            ),
+            new LightControl(entities.Switch.BathroomMotionSensor, entities.Light.BathroomLights)
+        );
+
+    public Area Desk { get; } =
+        new(
+            new MotionControl(
+                entities.BinarySensor.DeskSmartPresence,
+                entities.Button.ZEsp32C61RestartEsp322,
+                entities.Number.ZEsp32C61StillTargetDelay2
+            ),
+            new LightControl(entities.Switch.LgTvMotionSensor, entities.Light.LgDisplay)
+        );
 }
 
-public class MotionSensors(Entities entities)
+public record MotionControl(BinarySensorEntity Sensor, ButtonEntity Restart, NumberEntity Timer)
 {
-    public MotionSensor Bedroom { get; } =
-        new(
-            entities.BinarySensor.BedroomPresenceSensors,
-            entities.Switch.BedroomMotionSensor,
-            entities.Button.Esp32PresenceBedroomRestartEsp32,
-            entities.Number.Esp32PresenceBedroomStillTargetDelay
-        );
-    public MotionSensor LivingRoom { get; } =
-        new(
-            entities.BinarySensor.LivingRoomPresenceSensors,
-            entities.Switch.SalaMotionSensor,
-            entities.Button.Ld2410Esp321RestartEsp32,
-            entities.Number.Ld2410Esp321StillTargetDelay
-        );
-    public MotionSensor Kitchen { get; } =
-        new(
-            entities.BinarySensor.KitchenMotionSensors,
-            entities.Switch.KitchenMotionSensor,
-            entities.Button.Ld2410Esp325RestartEsp32,
-            entities.Number.Ld2410Esp325StillTargetDelay
-        );
-    public MotionSensor Pantry { get; } =
-        new(
-            entities.BinarySensor.PantryMotionSensors,
-            entities.Switch.PantryMotionSensor,
-            entities.Button.ZEsp32C63RestartEsp32,
-            entities.Number.ZEsp32C63StillTargetDelay
-        );
-    public MotionSensor Desk { get; } =
-        new(
-            entities.BinarySensor.DeskSmartPresence,
-            entities.Switch.LgTvMotionSensor,
-            entities.Button.ZEsp32C61RestartEsp322,
-            entities.Number.ZEsp32C61StillTargetDelay2
-        );
-    public MotionSensor Bathroom { get; } =
-        new(
-            entities.BinarySensor.BathroomPresenceSensors,
-            entities.Switch.BathroomMotionSensor,
-            entities.Button.ZEsp32C62RestartEsp32,
-            entities.Number.ZEsp32C62StillTargetDelay
-        );
+    public static implicit operator BinarySensorEntity(MotionControl control) => control.Sensor;
 
-    public IEnumerable<MotionSensor> All => [Bedroom, LivingRoom, Kitchen, Pantry, Desk, Bathroom];
+    public static implicit operator ButtonEntity(MotionControl control) => control.Restart;
 
-    public record MotionSensor(
-        BinarySensorEntity Sensor,
-        SwitchEntity Automation,
-        ButtonEntity Restart,
-        NumberEntity Timer
-    );
+    public static implicit operator NumberEntity(MotionControl control) => control.Timer;
 }
+
+public record LightControl(SwitchEntity Automation, LightEntity Light)
+{
+    public static implicit operator SwitchEntity(LightControl control) => control.Automation;
+
+    public static implicit operator LightEntity(LightControl control) => control.Light;
+}
+
+public record FanControl(SwitchEntity Automation, Dictionary<string, SwitchEntity> Fans)
+{
+    public SwitchEntity this[string key] => Fans[key];
+
+    public static implicit operator SwitchEntity(FanControl control) => control.Fans.First().Value;
+}
+
+public record LaptopControl(
+    NumericSensorEntity Level,
+    SwitchEntity PowerPlug,
+    ButtonEntity WakeOnLanButton,
+    SensorEntity Session,
+    SwitchEntity VirtualSwitch,
+    ButtonEntity Lock
+)
+{
+    public static implicit operator NumericSensorEntity(LaptopControl control) => control.Level;
+
+    public static implicit operator SensorEntity(LaptopControl control) => control.Session;
+}
+
+public class GlobalEntities(Entities entities)
+{
+    public BinarySensorEntity HouseOccupancy => entities.BinarySensor.House;
+}
+
+public record Area(
+    MotionControl MotionControl,
+    LightControl LightControl,
+    FanControl? FanControl = null,
+    BinarySensorEntity? ContactSensor = null,
+    LaptopControl? LaptopControl = null
+);

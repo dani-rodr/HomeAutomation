@@ -649,10 +649,7 @@ public class DisplayAutomationTests : IDisposable
     private void VerifyWakeOnLanButtonsPressed()
     {
         // Verify all wake-on-lan buttons are pressed
-        foreach (var button in _laptopEntities.WakeOnLanButtons)
-        {
-            _mockHaContext.ShouldHaveCalledButtonPress(button.EntityId);
-        }
+        _mockHaContext.ShouldHaveCalledButtonPress(_laptopEntities.WakeOnLanButton.EntityId);
     }
 
     private void VerifyLockButtonPressed()
@@ -675,11 +672,8 @@ public class DisplayAutomationTests : IDisposable
     {
         public SwitchEntity VirtualSwitch { get; } =
             new SwitchEntity(haContext, "switch.laptop_virtual");
-        public ButtonEntity[] WakeOnLanButtons { get; } =
-            [
-                new ButtonEntity(haContext, "button.laptop_wol_1"),
-                new ButtonEntity(haContext, "button.laptop_wol_2"),
-            ];
+        public ButtonEntity WakeOnLanButton { get; } =
+            new ButtonEntity(haContext, "button.laptop_wol");
         public SensorEntity Session { get; } = new SensorEntity(haContext, "sensor.laptop_session");
         public NumericSensorEntity BatteryLevel { get; } =
             new NumericSensorEntity(haContext, "sensor.laptop_battery");

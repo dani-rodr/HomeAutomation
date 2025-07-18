@@ -10,7 +10,6 @@ public static class ServiceCollectionExtensions
     {
         return services
             .AddScoped<IEventHandler, HaEventHandler>()
-            .AddSingleton<CommonEntities>()
             .AddSingleton<Devices>()
             .AddTransientEntity<ILockingEntities, LockingEntities>()
             .AddScoped<INotificationServices>(p => new NotificationServices(

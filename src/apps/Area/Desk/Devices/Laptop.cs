@@ -59,10 +59,7 @@ public class Laptop(
     {
         entities.VirtualSwitch.TurnOn();
         batteryHandler.HandleLaptopTurnedOn();
-        foreach (var button in entities.WakeOnLanButtons)
-        {
-            button.Press();
-        }
+        entities.WakeOnLanButton.Press();
     }
 
     public override void TurnOff()
