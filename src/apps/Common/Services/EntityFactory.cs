@@ -2,18 +2,23 @@ using System.Text;
 
 namespace HomeAutomation.apps.Common.Services;
 
-public class EntityFactory(IHaContext haContext, ILogger logger)
+public interface ITypedEntityFactory
 {
-    public T Create<T>(string shortName)
+    public T Create<T>(string entityId)
+        where T : Entity;
+    public string DeviceName { get; set; }
+}
+
+public class EntityFactory(IHaContext haContext) : ITypedEntityFactory
+{
+    public string DeviceName { get; set; } = string.Empty;
+
+    public T Create<T>(string entityId)
         where T : Entity
     {
         var domain = GetDomainFromType<T>();
-        var fullEntityId = $"{domain}.{shortName}";
-        logger.LogDebug(
-            "Creating entity of type {EntityType} with ID {EntityId}",
-            typeof(T).Name,
-            fullEntityId
-        );
+        var prefix = string.IsNullOrEmpty(DeviceName) ? "" : DeviceName + "_";
+        var fullEntityId = $"{domain}.{prefix}{entityId}".ToLower();
 
         var ctor =
             typeof(T).GetConstructor([typeof(IHaContext), typeof(string)])
@@ -23,7 +28,7 @@ public class EntityFactory(IHaContext haContext, ILogger logger)
         return (T)ctor.Invoke([haContext, fullEntityId]);
     }
 
-    private string GetDomainFromType<T>()
+    private static string GetDomainFromType<T>()
         where T : Entity
     {
         var typeName = typeof(T).Name;
@@ -35,7 +40,6 @@ public class EntityFactory(IHaContext haContext, ILogger logger)
 
         var domainPascal = typeName[..^"Entity".Length];
         var domain = ToSnakeCase(domainPascal);
-        logger.LogDebug("Inferred domain {Domain} from type {TypeName}", domain, typeName);
         return domain;
     }
 

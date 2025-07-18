@@ -10,24 +10,25 @@ public class TestEntityFactory
 
     public TestEntityFactory()
     {
-        _factory = new EntityFactory(_mockHaContext, _mockLogger.Object);
+        _factory = new EntityFactory(_mockHaContext);
     }
 
     [Theory]
-    [InlineData(typeof(SwitchEntity), "coffee_machine", "switch.coffee_machine")]
+    [InlineData(typeof(SwitchEntity), "coffee_machine", "switch.test_device_coffee_machine")]
     [InlineData(
         typeof(BinarySensorEntity),
         "living_room_motion",
-        "binary_sensor.living_room_motion"
+        "binary_sensor.test_device_living_room_motion"
     )]
-    [InlineData(typeof(LightEntity), "kitchen_ceiling", "light.kitchen_ceiling")]
-    [InlineData(typeof(SensorEntity), "temperature", "sensor.temperature")]
-    public void Should_Create_Entity_With_Correct_EntityId(
+    [InlineData(typeof(LightEntity), "kitchen_ceiling", "light.test_device_kitchen_ceiling")]
+    [InlineData(typeof(SensorEntity), "temperature", "sensor.test_device_temperature")]
+    public void Should_Create_Entity_With_Correct_EntityId_When_DeviceName_Set(
         Type entityType,
         string shortName,
         string expectedEntityId
     )
     {
+        _factory.DeviceName = "test_device";
         var method = typeof(EntityFactory)
             .GetMethod(nameof(EntityFactory.Create))!
             .MakeGenericMethod(entityType);
@@ -38,14 +39,19 @@ public class TestEntityFactory
     }
 
     [Fact]
-    public void Should_Create_BinarySensorEntity_With_Correct_EntityId()
+    public void Should_Create_Entity_Without_Prefix_When_DeviceName_Is_Empty()
     {
-        var shortName = "living_room_motion";
+        var entity = _factory.Create<LightEntity>("kitchen");
+        Assert.Equal("light.kitchen", entity.EntityId);
+    }
 
-        var entity = _factory.Create<BinarySensorEntity>(shortName);
+    [Fact]
+    public void Should_Create_Entity_Without_Prefix_When_DeviceName_Is_Null()
+    {
+        _factory.DeviceName = null!;
 
-        Assert.NotNull(entity);
-        Assert.Equal("binary_sensor.living_room_motion", entity.EntityId);
+        var entity = _factory.Create<LightEntity>("kitchen");
+        Assert.Equal("light.kitchen", entity.EntityId);
     }
 
     [Fact]
@@ -61,12 +67,8 @@ public class TestEntityFactory
     [Fact]
     public void Should_Throw_When_Entity_Missing_Required_Constructor()
     {
-        // Arrange
-        var shortName = "test";
-
-        // Act & Assert
         var ex = Assert.Throws<InvalidOperationException>(() =>
-            _factory.Create<MissingCtorEntity>(shortName)
+            _factory.Create<MissingCtorEntity>("test")
         );
 
         Assert.Contains("No suitable constructor found for MissingCtorEntity", ex.Message);

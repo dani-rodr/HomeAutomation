@@ -10,8 +10,9 @@ public static class ServiceCollectionExtensions
     {
         return services
             .AddScoped<IEventHandler, HaEventHandler>()
-            .AddSingleton<Devices>()
+            .AddTransient<Devices>()
             .AddTransientEntity<ILockingEntities, LockingEntities>()
+            .AddTransientEntity<ITypedEntityFactory, EntityFactory>()
             .AddScoped<INotificationServices>(p => new NotificationServices(
                 p.GetRequiredService<Services>(),
                 p.GetRequiredService<ILogger<NotificationServices>>()
