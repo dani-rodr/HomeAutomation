@@ -45,7 +45,7 @@ public abstract class MotionSensorBase : AutomationBase
     protected override IEnumerable<IDisposable> GetToggleableAutomations()
     {
         yield return MotionSensor
-            .StateChanges()
+            .StateChangesWithCurrent()
             .IsOn()
             .Subscribe(_ => MotionCalibrator.LogMotionTrigger(Zones, Logger));
     }
