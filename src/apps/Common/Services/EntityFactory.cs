@@ -12,7 +12,6 @@ public interface ITypedEntityFactory
 public class EntityFactory(IHaContext haContext) : ITypedEntityFactory
 {
     public string DeviceName { get; set; } = string.Empty;
-
     public T Create<T>(string entityId)
         where T : Entity
     {
