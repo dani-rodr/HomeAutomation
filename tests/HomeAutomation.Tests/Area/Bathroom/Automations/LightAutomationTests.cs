@@ -192,6 +192,25 @@ public class LightAutomationTests : IDisposable
     }
 
     [Fact]
+    public void MotionSensor_UnavailableToOff_Should_CallDimmingController_WhenNotIgnoringAvailability()
+    {
+        // Arrange - simulate motion sensor going on
+        var stateChange = StateChangeHelpers.MotionDetected(_entities.MotionSensor);
+        _mockHaContext.StateChangeSubject.OnNext(stateChange);
+
+        // Act - simulate motion sensor going on -> unavailable -> off
+        _mockHaContext.SimulateStateChange(_entities.MotionSensor.EntityId, "on", "unavailable");
+        _mockHaContext.SimulateStateChange(_entities.MotionSensor.EntityId, "unavailable", "off");
+
+        // Assert - The motion sensor off should still trigger OnMotionStoppedAsync
+        _mockDimmingController.Verify(
+            x => x.OnMotionStoppedAsync(_entities.Light),
+            Times.Once,
+            "Should still respond to unavailable → off transition when ignorePreviousUnavailable is false"
+        );
+    }
+
+    [Fact]
     public void Automation_Should_NotThrow_WhenStateChangesOccur()
     {
         // This test ensures automation setup doesn't throw exceptions

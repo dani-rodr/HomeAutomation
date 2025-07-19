@@ -22,7 +22,7 @@ public class LightAutomation(
             .Subscribe(e => dimmingController.OnMotionDetected(Light));
         yield return MotionSensor
             .StateChangesWithCurrent()
-            .IsOff()
+            .IsOff(ignorePreviousUnavailable: false)
             .Subscribe(async _ => await dimmingController.OnMotionStoppedAsync(Light));
     }
 

@@ -47,12 +47,14 @@ public static class StateChangeObservableExtensions
     /// </remarks>
     public static IObservable<StateChange> IsAnyOfStates(
         this IObservable<StateChange> source,
+        bool ignorePreviousUnavailable = true,
         params string[] states
     ) =>
         source.Where(e =>
-            e.Old?.State != null
-            && !e.Old.State.IsUnavailable()
-            && e.New?.State != null
+            e.New?.State != null
+            && (
+                !ignorePreviousUnavailable || (e.Old?.State != null && !e.Old.State.IsUnavailable())
+            )
             && states.Any(s => string.Equals(s, e.New.State, StringComparison.OrdinalIgnoreCase))
         );
 
@@ -68,8 +70,10 @@ public static class StateChangeObservableExtensions
     /// <param name="source">The source observable of state changes.</param>
     /// <returns>An observable that emits when the entity state changes to "on".</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static IObservable<StateChange> IsOn(this IObservable<StateChange> source) =>
-        source.IsAnyOfStates(HaEntityStates.ON);
+    public static IObservable<StateChange> IsOn(
+        this IObservable<StateChange> source,
+        bool ignorePreviousUnavailable = true
+    ) => source.IsAnyOfStates(ignorePreviousUnavailable, HaEntityStates.ON);
 
     /// <summary>
     /// Filters state changes to only emit when the entity opens (alias for IsOn).
@@ -78,8 +82,10 @@ public static class StateChangeObservableExtensions
     /// <returns>An observable that emits when the entity state changes to "on" (open).</returns>
     /// <remarks>Commonly used for door sensors, window sensors, and other binary sensors.</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static IObservable<StateChange> IsOpen(this IObservable<StateChange> source) =>
-        source.IsOn();
+    public static IObservable<StateChange> IsOpen(
+        this IObservable<StateChange> source,
+        bool ignorePreviousUnavailable = true
+    ) => source.IsOn(ignorePreviousUnavailable);
 
     /// <summary>
     /// Filters state changes to only emit when the entity turns off.
@@ -87,8 +93,10 @@ public static class StateChangeObservableExtensions
     /// <param name="source">The source observable of state changes.</param>
     /// <returns>An observable that emits when the entity state changes to "off".</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static IObservable<StateChange> IsOff(this IObservable<StateChange> source) =>
-        source.IsAnyOfStates(HaEntityStates.OFF);
+    public static IObservable<StateChange> IsOff(
+        this IObservable<StateChange> source,
+        bool ignorePreviousUnavailable = true
+    ) => source.IsAnyOfStates(ignorePreviousUnavailable, HaEntityStates.OFF);
 
     /// <summary>
     /// Filters state changes to only emit when the entity closes (alias for IsOff).
@@ -97,8 +105,10 @@ public static class StateChangeObservableExtensions
     /// <returns>An observable that emits when the entity state changes to "off" (closed).</returns>
     /// <remarks>Commonly used for door sensors, window sensors, and other binary sensors.</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static IObservable<StateChange> IsClosed(this IObservable<StateChange> source) =>
-        source.IsOff();
+    public static IObservable<StateChange> IsClosed(
+        this IObservable<StateChange> source,
+        bool ignorePreviousUnavailable = true
+    ) => source.IsOff(ignorePreviousUnavailable);
 
     /// <summary>
     /// Filters state changes to only emit when the entity becomes locked.
@@ -106,8 +116,10 @@ public static class StateChangeObservableExtensions
     /// <param name="source">The source observable of state changes.</param>
     /// <returns>An observable that emits when the entity state changes to "locked".</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static IObservable<StateChange> IsLocked(this IObservable<StateChange> source) =>
-        source.IsAnyOfStates(HaEntityStates.LOCKED);
+    public static IObservable<StateChange> IsLocked(
+        this IObservable<StateChange> source,
+        bool ignorePreviousUnavailable = true
+    ) => source.IsAnyOfStates(ignorePreviousUnavailable, HaEntityStates.LOCKED);
 
     /// <summary>
     /// Filters state changes to only emit when the entity becomes unlocked.
@@ -115,8 +127,10 @@ public static class StateChangeObservableExtensions
     /// <param name="source">The source observable of state changes.</param>
     /// <returns>An observable that emits when the entity state changes to "unlocked".</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static IObservable<StateChange> IsUnlocked(this IObservable<StateChange> source) =>
-        source.IsAnyOfStates(HaEntityStates.UNLOCKED);
+    public static IObservable<StateChange> IsUnlocked(
+        this IObservable<StateChange> source,
+        bool ignorePreviousUnavailable = true
+    ) => source.IsAnyOfStates(ignorePreviousUnavailable, HaEntityStates.UNLOCKED);
 
     /// <summary>
     /// Filters state changes to only emit when the entity becomes unavailable.
@@ -125,8 +139,10 @@ public static class StateChangeObservableExtensions
     /// <returns>An observable that emits when the entity state changes to "unavailable".</returns>
     /// <remarks>Useful for monitoring device connectivity and handling offline scenarios.</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static IObservable<StateChange> IsUnavailable(this IObservable<StateChange> source) =>
-        source.IsAnyOfStates(HaEntityStates.UNAVAILABLE);
+    public static IObservable<StateChange> IsUnavailable(
+        this IObservable<StateChange> source,
+        bool ignorePreviousUnavailable = true
+    ) => source.IsAnyOfStates(ignorePreviousUnavailable, HaEntityStates.UNAVAILABLE);
 
     /// <summary>
     /// Filters state changes to only emit when the entity state becomes unknown.
@@ -135,8 +151,10 @@ public static class StateChangeObservableExtensions
     /// <returns>An observable that emits when the entity state changes to "unknown".</returns>
     /// <remarks>Useful for detecting initialization states or sensor malfunctions.</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static IObservable<StateChange> IsUnknown(this IObservable<StateChange> source) =>
-        source.IsAnyOfStates(HaEntityStates.UNKNOWN);
+    public static IObservable<StateChange> IsUnknown(
+        this IObservable<StateChange> source,
+        bool ignorePreviousUnavailable = true
+    ) => source.IsAnyOfStates(ignorePreviousUnavailable, HaEntityStates.UNKNOWN);
 
     /// <summary>
     /// Filters state changes to only emit when the change was triggered by manual user operation.
