@@ -10,7 +10,7 @@ public class TestEntityFactory
 
     public TestEntityFactory()
     {
-        _factory = new EntityFactory(_mockHaContext);
+        _factory = new EntityFactory(_mockHaContext, _mockLogger.Object);
     }
 
     public static IEnumerable<object[]> EntityTestData =>
@@ -98,6 +98,15 @@ public class TestEntityFactory
         );
 
         Assert.Contains("No suitable constructor found for MissingCtorEntity", ex.Message);
+    }
+
+    [Fact]
+    public void Should_Create_SensorEntity_When_Type_Is_NumericSensor()
+    {
+        var entity = _factory.Create<NumericSensorEntity>("some_id");
+        Assert.Equal("sensor.some_id", entity.EntityId);
+        Assert.NotEqual("numeric_sensor.some_id", entity.EntityId);
+        Assert.IsType<NumericSensorEntity>(entity);
     }
 
     private record InvalidType(IHaContext HaContext, string EntityId) : Entity(HaContext, EntityId);

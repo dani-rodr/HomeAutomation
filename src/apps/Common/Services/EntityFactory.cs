@@ -11,7 +11,8 @@ public interface ITypedEntityFactory
     public string DeviceName { get; set; }
 }
 
-public class EntityFactory(IHaContext haContext) : ITypedEntityFactory
+public class EntityFactory(IHaContext haContext, ILogger<EntityFactory> logger)
+    : ITypedEntityFactory
 {
     public string DeviceName { get; set; } = string.Empty;
 
@@ -21,6 +22,11 @@ public class EntityFactory(IHaContext haContext) : ITypedEntityFactory
         DeviceName = deviceName;
         return Create<T>(entityId);
     }
+
+    private static readonly Dictionary<Type, string> DomainOverrides = new()
+    {
+        [typeof(NumericSensorEntity)] = "sensor",
+    };
 
     public T Create<T>(string entityId)
         where T : Entity
@@ -34,22 +40,26 @@ public class EntityFactory(IHaContext haContext) : ITypedEntityFactory
             ?? throw new InvalidOperationException(
                 $"No suitable constructor found for {typeof(T).Name}"
             );
-        return (T)ctor.Invoke([haContext, fullEntityId]);
+        var entity = (T)ctor.Invoke([haContext, fullEntityId]);
+        logger.LogDebug("Created entity {EntityId}", entity.EntityId);
+        return entity;
     }
 
     private static string GetDomainFromType<T>()
         where T : Entity
     {
-        var typeName = typeof(T).Name;
+        if (DomainOverrides.TryGetValue(typeof(T), out var domainOverride))
+        {
+            return domainOverride;
+        }
 
+        var typeName = typeof(T).Name;
         if (!typeName.EndsWith("Entity"))
         {
             throw new InvalidOperationException($"Unexpected entity type name: {typeName}");
         }
 
-        var domainPascal = typeName[..^"Entity".Length];
-        var domain = ToSnakeCase(domainPascal);
-        return domain;
+        return ToSnakeCase(typeName[..^"Entity".Length]);
     }
 
     private static string ToSnakeCase(string input)

@@ -14,7 +14,7 @@ public abstract class MotionSensorBase : AutomationBase
     public MotionSensorBase(ITypedEntityFactory factory, string deviceName, ILogger logger)
         : base(factory.Create<SwitchEntity>(deviceName, "auto_calibrate"), logger)
     {
-        MotionSensor = factory.Create<BinarySensorEntity>("smart_presense");
+        MotionSensor = factory.Create<BinarySensorEntity>("smart_presence");
         EngineeringMode = factory.Create<SwitchEntity>("engineering_mode");
         SensorDelay = factory.Create<NumberEntity>("still_target_delay");
         InitializeZoneEntities(factory);
@@ -44,7 +44,10 @@ public abstract class MotionSensorBase : AutomationBase
 
     protected override IEnumerable<IDisposable> GetToggleableAutomations()
     {
-        return MotionCalibrator.Start(Zones, Logger);
+        yield return MotionSensor
+            .StateChanges()
+            .IsOn()
+            .Subscribe(_ => MotionCalibrator.LogMotionTrigger(Zones, Logger));
     }
 
     private void InitializeZoneEntities(ITypedEntityFactory factory)
@@ -63,31 +66,21 @@ public abstract class MotionSensorBase : AutomationBase
 
 public static class MotionCalibrator
 {
-    public static IEnumerable<IDisposable> Start(Ld2410ZoneData[] zones, ILogger logger)
+    public static void LogMotionTrigger(Ld2410ZoneData[] zones, ILogger logger)
     {
-        logger.LogInformation("Starting motion calibration");
-
         foreach (var zone in zones)
         {
-            yield return zone
-                .MoveEnergy.StateChanges()
-                .Where(s => s.Entity.State > zone.MoveThreshold.State)
-                .Select(s => s.Entity.State)
-                .Subscribe(s =>
-                {
-                    if (s.HasValue)
-                    {
-                        // var updatedValue = s.Value + 1;
-                        // zone.MoveThreshold.SetNumericValue(updatedValue);
-                        logger.LogInformation(
-                            "{MoveEnergyId}: MoveEnergy={MoveEnergy}, {MoveThresholdId}: MoveThreshold={MoveThreshold}",
-                            zone.MoveEnergy.EntityId,
-                            zone.MoveEnergy.State,
-                            zone.MoveThreshold.EntityId,
-                            zone.MoveThreshold.State
-                        );
-                    }
-                });
+            if (zone.MoveEnergy.State <= zone.MoveThreshold.State)
+            {
+                continue;
+            }
+            logger.LogInformation(
+                "{MoveEnergyId}: MoveEnergy={MoveEnergy}, {MoveThresholdId}: MoveThreshold={MoveThreshold}",
+                zone.MoveEnergy.EntityId,
+                zone.MoveEnergy.State,
+                zone.MoveThreshold.EntityId,
+                zone.MoveThreshold.State
+            );
         }
     }
 }
