@@ -9,13 +9,13 @@ public class BedroomApp(
     IBedroomFanEntities fanEntities,
     IClimateEntities climateEntities,
     IClimateScheduler climateScheduler,
-    ITypedEntityFactory entityFactory,
+    MotionSensor motionSensor,
     IScheduler scheduler
 ) : AppBase<BedroomApp>()
 {
     protected override IEnumerable<IAutomation> CreateAutomations()
     {
-        yield return new MotionSensor(entityFactory, loggerFactory.CreateLogger<MotionSensor>());
+        yield return motionSensor;
         yield return new LightAutomation(
             motionEntities,
             scheduler,

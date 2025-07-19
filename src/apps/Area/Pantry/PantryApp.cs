@@ -6,13 +6,13 @@ namespace HomeAutomation.apps.Area.Pantry;
 public class PantryApp(
     IPantryLightEntities motionEntities,
     IScheduler scheduler,
-    ITypedEntityFactory entityFactory,
+    MotionSensor motionSensor,
     ILoggerFactory loggerFactory
 ) : AppBase<PantryApp>()
 {
     protected override IEnumerable<IAutomation> CreateAutomations()
     {
-        yield return new MotionSensor(entityFactory, loggerFactory.CreateLogger<MotionSensor>());
+        yield return motionSensor;
 
         yield return new LightAutomation(
             motionEntities,

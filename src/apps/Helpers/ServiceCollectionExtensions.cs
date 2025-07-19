@@ -6,24 +6,24 @@ namespace HomeAutomation.apps.Helpers;
 
 public static class ServiceCollectionExtensions
 {
-    public static IServiceCollection AddServices(this IServiceCollection services)
+    public static IServiceCollection AddHomeEntitiesAndServices(this IServiceCollection services)
     {
         return services
-            .AddScoped<IEventHandler, HaEventHandler>()
+            .AddTransient<IEventHandler, HaEventHandler>()
             .AddTransient<Devices>()
             .AddTransient<ILockingEntities, LockingEntities>()
             .AddTransient<ITypedEntityFactory, EntityFactory>()
-            .AddTransient<INotificationServices>(p => new NotificationServices(
-                p.GetRequiredService<Services>(),
-                p.GetRequiredService<ILogger<NotificationServices>>()
-            ))
+            .AddTransient<IServices, Services>()
+            .AddTransient<INotificationServices, NotificationServices>()
             .AddTransient<IWebhookServices>(p => new WebhookServices(
                 p.GetRequiredService<ITriggerManager>(),
                 p.GetRequiredService<ILogger<WebhookServices>>()
-            ));
+            ))
+            .AddAreaEntities()
+            .AddMotionSensors();
     }
 
-    public static IServiceCollection AddAreaEntities(this IServiceCollection services)
+    private static IServiceCollection AddAreaEntities(this IServiceCollection services)
     {
         return services
             .AddBedroomEntities()
@@ -34,6 +34,17 @@ public static class ServiceCollectionExtensions
             .AddPantryEntities();
     }
 
+    private static IServiceCollection AddMotionSensors(this IServiceCollection services)
+    {
+        return services
+            .AddTransient<Area.Bathroom.Devices.MotionSensor>()
+            .AddTransient<Area.Bedroom.Devices.MotionSensor>()
+            .AddTransient<Area.LivingRoom.Devices.MotionSensor>()
+            .AddTransient<Area.Kitchen.Devices.MotionSensor>()
+            .AddTransient<Area.Desk.Devices.MotionSensor>()
+            .AddTransient<Area.Pantry.Devices.MotionSensor>();
+    }
+
     private static IServiceCollection AddBedroomEntities(this IServiceCollection services)
     {
         return services
@@ -41,16 +52,8 @@ public static class ServiceCollectionExtensions
             .AddTransient<IBedroomFanEntities, BedroomFanEntities>()
             .AddTransient<IClimateEntities, BedroomClimateEntities>()
             .AddTransient<IClimateSchedulerEntities, ClimateSchedulerEntities>()
-            .AddTransient<IAcTemperatureCalculator>(p => new AcTemperatureCalculator(
-                p.GetRequiredService<IClimateSchedulerEntities>(),
-                p.GetRequiredService<ILogger<AcTemperatureCalculator>>()
-            ))
-            .AddTransient<IClimateScheduler>(p => new ClimateScheduler(
-                p.GetRequiredService<IClimateSchedulerEntities>(),
-                p.GetRequiredService<IScheduler>(),
-                p.GetRequiredService<IAcTemperatureCalculator>(),
-                p.GetRequiredService<ILogger<ClimateScheduler>>()
-            ));
+            .AddTransient<IAcTemperatureCalculator, AcTemperatureCalculator>()
+            .AddTransient<IClimateScheduler, ClimateScheduler>();
     }
 
     private static IServiceCollection AddDeskEntities(this IServiceCollection services)
@@ -62,22 +65,9 @@ public static class ServiceCollectionExtensions
             .AddTransient<ILaptopEntities, LaptopEntities>()
             .AddTransient<ILaptopSchedulerEntities, LaptopSchedulerEntities>()
             .AddTransient<IChargingHandlerEntities, LaptopChargingHandlerEntities>()
-            .AddTransient<IChargingHandler>(p => new ChargingHandler(
-                p.GetRequiredService<IChargingHandlerEntities>()
-            ))
-            .AddTransient<ILaptopChargingHandler>(p => new LaptopChargingHandler(
-                p.GetRequiredService<IChargingHandlerEntities>(),
-                p.GetRequiredService<IScheduler>()
-            ))
-            .AddTransient<ILaptopScheduler>(p => new LaptopScheduler(
-                p.GetRequiredService<ILaptopSchedulerEntities>(),
-                p.GetRequiredService<IScheduler>()
-            ))
-            .AddTransient<ILgDisplay>(p => new LgDisplay(
-                p.GetRequiredService<ILgDisplayEntities>(),
-                p.GetRequiredService<Services>(),
-                p.GetRequiredService<ILogger<LgDisplay>>()
-            ));
+            .AddTransient<ILaptopChargingHandler, LaptopChargingHandler>()
+            .AddTransient<ILaptopScheduler, LaptopScheduler>()
+            .AddTransient<ILgDisplay, LgDisplay>();
     }
 
     private static IServiceCollection AddBathroomEntities(this IServiceCollection services)
@@ -100,10 +90,7 @@ public static class ServiceCollectionExtensions
             .AddTransient<IAirQualityEntities, AirQualityEntities>()
             .AddTransient<ITabletEntities, LivingRoomTabletEntities>()
             .AddTransient<ITclDisplayEntities, TclDisplayEntities>()
-            .AddTransient<ITclDisplay>(p => new TclDisplay(
-                p.GetRequiredService<ITclDisplayEntities>(),
-                p.GetRequiredService<ILogger<TclDisplay>>()
-            ));
+            .AddTransient<ITclDisplay, TclDisplay>();
     }
 
     private static IServiceCollection AddPantryEntities(this IServiceCollection services)

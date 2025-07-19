@@ -1,4 +1,4 @@
 namespace HomeAutomation.apps.Area.Bedroom.Devices;
 
-public class MotionSensor(ITypedEntityFactory factory, ILogger logger)
+public class MotionSensor(ITypedEntityFactory factory, ILogger<MotionSensor> logger)
     : MotionSensorBase(factory, "bedroom_motion_sensor", logger);

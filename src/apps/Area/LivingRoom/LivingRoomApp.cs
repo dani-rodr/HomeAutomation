@@ -10,8 +10,8 @@ public class LivingRoomApp(
     ITabletEntities tabletEntities,
     ITclDisplay tclDisplay,
     IScheduler scheduler,
-    ILoggerFactory loggerFactory,
-    ITypedEntityFactory entityFactory
+    MotionSensor motionSensor,
+    ILoggerFactory loggerFactory
 ) : AppBase<LivingRoomApp>()
 {
     protected override IEnumerable<IAutomation> CreateAutomations()
@@ -27,7 +27,7 @@ public class LivingRoomApp(
             scheduler,
             loggerFactory.CreateLogger<TabletAutomation>()
         );
-        yield return new MotionSensor(entityFactory, loggerFactory.CreateLogger<MotionSensor>());
+        yield return motionSensor;
 
         yield return new LightAutomation(
             motionEntities,

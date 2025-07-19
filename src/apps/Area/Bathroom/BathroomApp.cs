@@ -5,14 +5,14 @@ namespace HomeAutomation.apps.Area.Bathroom;
 
 public class BathroomApp(
     IBathroomLightEntities motionEntities,
-    ITypedEntityFactory entityFactory,
     ILoggerFactory loggerFactory,
+    MotionSensor motionSensor,
     IScheduler scheduler
 ) : AppBase<BathroomApp>()
 {
     protected override IEnumerable<IAutomation> CreateAutomations()
     {
-        yield return new MotionSensor(entityFactory, loggerFactory.CreateLogger<MotionSensor>());
+        yield return motionSensor;
 
         yield return new LightAutomation(
             motionEntities,

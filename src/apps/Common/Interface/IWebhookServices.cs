@@ -1,6 +1,6 @@
 namespace HomeAutomation.apps.Common.Interface;
 
-interface IWebhookServices : IDisposable
+public interface IWebhookServices : IDisposable
 {
     bool Register(
         string webhookId,
