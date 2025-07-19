@@ -26,13 +26,12 @@ public class DimmingLightController(
     public async Task OnMotionStoppedAsync(LightEntity light)
     {
         var shouldDim = ShouldDimLights();
-        var currentSensorDelay = sensorDelay.State ?? 0;
 
         logger.LogDebug(
             "Motion stopped for {EntityId} - ShouldDim={ShouldDim} (SensorDelay={CurrentDelay}, ActiveValue={ActiveValue})",
             light.EntityId,
             shouldDim,
-            currentSensorDelay,
+            sensorDelay.State ?? 0,
             _sensorActiveDelayValue
         );
 
@@ -97,7 +96,14 @@ public class DimmingLightController(
         }
     }
 
-    private bool ShouldDimLights() => (sensorDelay.State ?? 0) == _sensorActiveDelayValue;
+    private bool ShouldDimLights()
+    {
+        if (sensorDelay.State == null)
+        {
+            return true;
+        }
+        return sensorDelay.State == _sensorActiveDelayValue;
+    }
 
     private void CancelPendingTurnOff()
     {
