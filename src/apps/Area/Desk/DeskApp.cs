@@ -13,6 +13,7 @@ public class DeskApp(
     IDeskLightEntities deskMotionEntities,
     ILgDisplay lgDisplay,
     IScheduler scheduler,
+    ITypedEntityFactory entityFactory,
     ILoggerFactory loggerFactory
 ) : AppBase<DeskApp>()
 {
@@ -35,6 +36,8 @@ public class DeskApp(
         desktop.StartAutomation();
         laptop.StartAutomation();
         lgDisplay.StartAutomation();
+        yield return new MotionSensor(entityFactory, loggerFactory.CreateLogger<MotionSensor>());
+
         yield return new LightAutomation(
             deskMotionEntities,
             lgDisplay,

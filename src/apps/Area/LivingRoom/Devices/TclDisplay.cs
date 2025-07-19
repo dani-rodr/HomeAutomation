@@ -1,5 +1,3 @@
-using System.Reactive.Disposables;
-
 namespace HomeAutomation.apps.Area.LivingRoom.Devices;
 
 public class TclDisplay(ITclDisplayEntities entities, ILogger<TclDisplay> logger)
