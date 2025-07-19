@@ -192,4 +192,9 @@ public static class StateExtensions
     public static bool IsDisconnected(this string? state) => state.Is(HaEntityStates.DISCONNECTED);
 
     public static bool IsUnavailable(this string? state) => state.Is(HaEntityStates.UNAVAILABLE);
+
+    public static bool IsUnknown(this string? state) => state.Is(HaEntityStates.UNKNOWN);
+
+    public static bool IsAvailable(this string? state) =>
+        !string.IsNullOrEmpty(state) && !state.IsUnavailable() && !state.IsUnknown();
 }

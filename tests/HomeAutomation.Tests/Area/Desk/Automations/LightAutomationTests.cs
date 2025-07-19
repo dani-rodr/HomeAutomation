@@ -45,6 +45,37 @@ public class LightAutomationTests : IDisposable
         _mockHaContext.ClearServiceCalls();
     }
 
+    [Fact]
+    public void MotionSensor_OnToUnavailable_ShouldBeIgnored()
+    {
+        // Arrange - motion ON
+        _mockHaContext.SimulateStateChange(_entities.MotionSensor.EntityId, "off", "on");
+
+        _mockHaContext.ShouldHaveCalledLightTurnOn(_entities.Light.EntityId);
+        _mockHaContext.ClearServiceCalls();
+
+        // Act - simulate motion sensor becoming unavailable
+        _mockHaContext.SimulateStateChange(_entities.MotionSensor.EntityId, "on", "unavailable");
+
+        // Assert
+        _mockHaContext.ShouldHaveNoServiceCalls();
+    }
+
+    [Fact]
+    public void MotionSensor_OnToOff_ShouldTurnOffDisplay()
+    {
+        // Arrange - simulate motion detected
+        _mockHaContext.SimulateStateChange(_entities.MotionSensor.EntityId, "off", "on");
+        _mockHaContext.ShouldHaveCalledLightTurnOn(_entities.Light.EntityId);
+        _mockHaContext.ClearServiceCalls();
+
+        // Act - simulate motion stops
+        _mockHaContext.SimulateStateChange(_entities.MotionSensor.EntityId, "on", "off");
+
+        // Assert
+        _mockHaContext.ShouldHaveCalledLightTurnOff(_entities.Light.EntityId);
+    }
+
     public void Dispose()
     {
         _automation?.Dispose();

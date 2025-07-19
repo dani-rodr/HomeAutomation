@@ -51,7 +51,7 @@ public static class StateChangeObservableExtensions
         params string[] states
     ) =>
         source.Where(e =>
-            e.New?.State != null
+            (e.New?.State.IsAvailable() ?? false)
             && (
                 !ignorePreviousUnavailable || (e.Old?.State != null && !e.Old.State.IsUnavailable())
             )
@@ -142,7 +142,17 @@ public static class StateChangeObservableExtensions
     public static IObservable<StateChange> IsUnavailable(
         this IObservable<StateChange> source,
         bool ignorePreviousUnavailable = true
-    ) => source.IsAnyOfStates(ignorePreviousUnavailable, HaEntityStates.UNAVAILABLE);
+    ) =>
+        source.Where(s =>
+            string.Equals(
+                s.New?.State,
+                HaEntityStates.UNAVAILABLE,
+                StringComparison.OrdinalIgnoreCase
+            )
+            && (
+                !ignorePreviousUnavailable || (s.Old?.State != null && !s.Old.State.IsUnavailable())
+            )
+        );
 
     /// <summary>
     /// Filters state changes to only emit when the entity state becomes unknown.
@@ -154,7 +164,13 @@ public static class StateChangeObservableExtensions
     public static IObservable<StateChange> IsUnknown(
         this IObservable<StateChange> source,
         bool ignorePreviousUnavailable = true
-    ) => source.IsAnyOfStates(ignorePreviousUnavailable, HaEntityStates.UNKNOWN);
+    ) =>
+        source.Where(s =>
+            string.Equals(s.New?.State, HaEntityStates.UNKNOWN, StringComparison.OrdinalIgnoreCase)
+            && (
+                !ignorePreviousUnavailable || (s.Old?.State != null && !s.Old.State.IsUnavailable())
+            )
+        );
 
     /// <summary>
     /// Filters state changes to only emit when the change was triggered by manual user operation.
