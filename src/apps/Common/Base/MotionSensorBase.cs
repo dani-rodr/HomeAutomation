@@ -12,9 +12,8 @@ public abstract class MotionSensorBase : AutomationBase
     // implement sensor delay logic here
 
     public MotionSensorBase(ITypedEntityFactory factory, string deviceName, ILogger logger)
-        : base(factory.Create<SwitchEntity>($"{deviceName}_auto_calibrate"), logger)
+        : base(factory.Create<SwitchEntity>(deviceName, "auto_calibrate"), logger)
     {
-        factory.DeviceName = deviceName;
         MotionSensor = factory.Create<BinarySensorEntity>("smart_presense");
         EngineeringMode = factory.Create<SwitchEntity>("engineering_mode");
         SensorDelay = factory.Create<NumberEntity>("still_target_delay");
