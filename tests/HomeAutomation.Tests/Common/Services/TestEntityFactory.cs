@@ -16,22 +16,30 @@ public class TestEntityFactory
     public static IEnumerable<object[]> EntityTestData =>
         [
             [
-                (Func<EntityFactory, string, Entity>)((f, id) => f.Create<SwitchEntity>(id)),
+                (Func<EntityFactory, string, Entity>)(
+                    (f, id) => f.Create<SwitchEntity>("test_device", id)
+                ),
                 "coffee_machine",
                 "switch.test_device_coffee_machine",
             ],
             [
-                (Func<EntityFactory, string, Entity>)((f, id) => f.Create<BinarySensorEntity>(id)),
+                (Func<EntityFactory, string, Entity>)(
+                    (f, id) => f.Create<BinarySensorEntity>("test_device", id)
+                ),
                 "living_room_motion",
                 "binary_sensor.test_device_living_room_motion",
             ],
             [
-                (Func<EntityFactory, string, Entity>)((f, id) => f.Create<LightEntity>(id)),
+                (Func<EntityFactory, string, Entity>)(
+                    (f, id) => f.Create<LightEntity>("test_device", id)
+                ),
                 "kitchen_ceiling",
                 "light.test_device_kitchen_ceiling",
             ],
             [
-                (Func<EntityFactory, string, Entity>)((f, id) => f.Create<SensorEntity>(id)),
+                (Func<EntityFactory, string, Entity>)(
+                    (f, id) => f.Create<SensorEntity>("test_device", id)
+                ),
                 "temperature",
                 "sensor.test_device_temperature",
             ],
@@ -39,13 +47,12 @@ public class TestEntityFactory
 
     [Theory]
     [MemberData(nameof(EntityTestData))]
-    public void Should_Create_Entity_With_Correct_EntityId_When_DeviceName_Set(
+    public void Should_Create_Entity_With_Correct_EntityId(
         Func<EntityFactory, string, Entity> creator,
         string shortName,
         string expectedEntityId
     )
     {
-        _factory.DeviceName = "test_device";
         var entity = creator(_factory, shortName);
 
         Assert.NotNull(entity);
@@ -53,30 +60,19 @@ public class TestEntityFactory
     }
 
     [Fact]
-    public void Should_Set_DeviceName_When_Creatining_Entity_WithDeviceName()
+    public void Should_Create_Entity_With_And_Without_DeviceName()
     {
-        var entity = _factory.Create<LightEntity>("kitchen");
-        Assert.Equal("light.kitchen", entity.EntityId);
-        Assert.Equal(string.Empty, _factory.DeviceName);
+        var entity1 = _factory.Create<LightEntity>("kitchen");
+        Assert.Equal("light.kitchen", entity1.EntityId);
 
-        entity = _factory.Create<LightEntity>("test_device", "kitchen");
-        Assert.Equal("light.test_device_kitchen", entity.EntityId);
-        Assert.Equal("test_device", _factory.DeviceName);
+        var entity2 = _factory.Create<LightEntity>("test_device", "kitchen");
+        Assert.Equal("light.test_device_kitchen", entity2.EntityId);
     }
 
     [Fact]
-    public void Should_Create_Entity_Without_Prefix_When_DeviceName_Is_Empty()
+    public void Should_Create_Entity_When_DeviceName_Is_Null()
     {
-        var entity = _factory.Create<LightEntity>("kitchen");
-        Assert.Equal("light.kitchen", entity.EntityId);
-    }
-
-    [Fact]
-    public void Should_Create_Entity_Without_Prefix_When_DeviceName_Is_Null()
-    {
-        _factory.DeviceName = null!;
-
-        var entity = _factory.Create<LightEntity>("kitchen");
+        var entity = _factory.Create<LightEntity>(null!, "kitchen");
         Assert.Equal("light.kitchen", entity.EntityId);
     }
 
@@ -101,7 +97,7 @@ public class TestEntityFactory
     }
 
     [Fact]
-    public void Should_Create_SensorEntity_When_Type_Is_NumericSensor()
+    public void Should_Create_NumericSensorEntity_As_Sensor()
     {
         var entity = _factory.Create<NumericSensorEntity>("some_id");
         Assert.Equal("sensor.some_id", entity.EntityId);

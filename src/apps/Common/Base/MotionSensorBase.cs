@@ -1,24 +1,33 @@
+using System.Linq;
+
 namespace HomeAutomation.apps.Common.Base;
 
-public abstract class MotionSensorBase : AutomationBase
+public abstract class MotionSensorBase(
+    ITypedEntityFactory factory,
+    string deviceName,
+    ILogger logger
+) : AutomationBase(factory.Create<SwitchEntity>(deviceName, "auto_calibrate"), logger)
 {
-    protected readonly BinarySensorEntity MotionSensor;
-    protected readonly SwitchEntity EngineeringMode;
-    protected readonly NumberEntity SensorDelay;
-    protected Ld2410ZoneData[] Zones { get; } = new Ld2410ZoneData[9];
+    protected readonly BinarySensorEntity MotionSensor = factory.Create<BinarySensorEntity>(
+        deviceName,
+        "smart_presence"
+    );
+    protected readonly SwitchEntity EngineeringMode = factory.Create<SwitchEntity>(
+        deviceName,
+        "engineering_mode"
+    );
+    protected readonly NumberEntity SensorDelay = factory.Create<NumberEntity>(
+        deviceName,
+        "still_target_delay"
+    );
+    protected readonly IReadOnlyList<Ld2410ZoneData> Zones =
+    [
+        .. InitializeZoneEntities(deviceName, factory),
+    ];
 
     // TODO: remove motion related entities from other class
     // use this class instead
     // implement sensor delay logic here
-
-    public MotionSensorBase(ITypedEntityFactory factory, string deviceName, ILogger logger)
-        : base(factory.Create<SwitchEntity>(deviceName, "auto_calibrate"), logger)
-    {
-        MotionSensor = factory.Create<BinarySensorEntity>("smart_presence");
-        EngineeringMode = factory.Create<SwitchEntity>("engineering_mode");
-        SensorDelay = factory.Create<NumberEntity>("still_target_delay");
-        InitializeZoneEntities(factory);
-    }
 
     protected override IEnumerable<IDisposable> GetPersistentAutomations() =>
         [
@@ -50,23 +59,23 @@ public abstract class MotionSensorBase : AutomationBase
             .Subscribe(_ => MotionCalibrator.LogMotionTrigger(Zones, Logger));
     }
 
-    private void InitializeZoneEntities(ITypedEntityFactory factory)
-    {
-        for (int i = 0; i < Zones.Length; i++)
-        {
-            Zones[i] = new Ld2410ZoneData(
-                factory.Create<NumberEntity>($"g{i}_move_threshold"),
-                factory.Create<NumberEntity>($"g{i}_still_threshold"),
-                factory.Create<NumericSensorEntity>($"g{i}_move_energy"),
-                factory.Create<NumericSensorEntity>($"g{i}_still_energy")
-            );
-        }
-    }
+    private static IEnumerable<Ld2410ZoneData> InitializeZoneEntities(
+        string deviceName,
+        ITypedEntityFactory factory
+    ) =>
+        Enumerable
+            .Range(0, 9)
+            .Select(i => new Ld2410ZoneData(
+                factory.Create<NumberEntity>(deviceName, $"g{i}_move_threshold"),
+                factory.Create<NumberEntity>(deviceName, $"g{i}_still_threshold"),
+                factory.Create<NumericSensorEntity>(deviceName, $"g{i}_move_energy"),
+                factory.Create<NumericSensorEntity>(deviceName, $"g{i}_still_energy")
+            ));
 }
 
 public static class MotionCalibrator
 {
-    public static void LogMotionTrigger(Ld2410ZoneData[] zones, ILogger logger)
+    public static void LogMotionTrigger(IReadOnlyList<Ld2410ZoneData> zones, ILogger logger)
     {
         foreach (var zone in zones)
         {

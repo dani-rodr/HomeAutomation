@@ -4,35 +4,28 @@ namespace HomeAutomation.apps.Common.Services;
 
 public interface ITypedEntityFactory
 {
-    public T Create<T>(string entityId)
-        where T : Entity;
     public T Create<T>(string deviceName, string entityId)
         where T : Entity;
-    public string DeviceName { get; set; }
+    public T Create<T>(string entityId)
+        where T : Entity;
 }
 
 public class EntityFactory(IHaContext haContext, ILogger<EntityFactory> logger)
     : ITypedEntityFactory
 {
-    public string DeviceName { get; set; } = string.Empty;
-
-    public T Create<T>(string deviceName, string entityId)
-        where T : Entity
-    {
-        DeviceName = deviceName;
-        return Create<T>(entityId);
-    }
-
     private static readonly Dictionary<Type, string> DomainOverrides = new()
     {
         [typeof(NumericSensorEntity)] = "sensor",
     };
 
     public T Create<T>(string entityId)
+        where T : Entity => Create<T>(string.Empty, entityId);
+
+    public T Create<T>(string deviceName, string entityId)
         where T : Entity
     {
         var domain = GetDomainFromType<T>();
-        var prefix = string.IsNullOrEmpty(DeviceName) ? "" : DeviceName + "_";
+        var prefix = string.IsNullOrEmpty(deviceName) ? "" : deviceName + "_";
         var fullEntityId = $"{domain}.{prefix}{entityId}".ToLower();
 
         var ctor =
