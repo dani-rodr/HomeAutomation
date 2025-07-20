@@ -31,15 +31,6 @@ public class Devices(Entities entities)
                 new() { ["Main"] = entities.Switch.Sonoff100238104e1 }
             ),
             ContactSensor: entities.BinarySensor.ContactSensorDoor,
-            LaptopControl: new(
-                entities.Sensor.Thinkpadt14BatteryChargeRemainingPercentage,
-                entities.Switch.Sonoff1002380fe51,
-                entities.Button.Thinkpadt14WakeOnWlan,
-                entities.Sensor.Thinkpadt14Sessionstate,
-                entities.Switch.Laptop,
-                entities.Button.Thinkpadt14Lock,
-                entities.InputBoolean.ProjectNationWeek
-            ),
             ClimateControl: new(
                 entities.Switch.AcAutomation,
                 entities.Climate.Ac,
@@ -141,6 +132,15 @@ public class Devices(Entities entities)
             MediaControl: new(
                 entities.MediaPlayer.LgWebosSmartTv,
                 entities.Switch.LgTvMotionSensor
+            ),
+            LaptopControl: new(
+                entities.Sensor.Thinkpadt14BatteryChargeRemainingPercentage,
+                entities.Switch.Sonoff1002380fe51,
+                entities.Button.Thinkpadt14WakeOnWlan,
+                entities.Sensor.Thinkpadt14Sessionstate,
+                entities.Switch.Laptop,
+                entities.Button.Thinkpadt14Lock,
+                entities.InputBoolean.ProjectNationWeek
             ),
             PcControl: new(entities.Switch.DanielPc, entities.InputButton.RemotePc)
         );

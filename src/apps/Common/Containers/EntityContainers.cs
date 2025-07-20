@@ -110,14 +110,14 @@ public class BedroomFanEntities(Devices devices) : IBedroomFanEntities
 
 public class LaptopEntities(Devices devices) : ILaptopEntities
 {
-    public SwitchEntity VirtualSwitch => devices.Bedroom.LaptopControl!.VirtualSwitch;
+    public SwitchEntity VirtualSwitch => devices.Desk.LaptopControl!.VirtualSwitch;
 
-    public ButtonEntity WakeOnLanButton => devices.Bedroom.LaptopControl!.WakeOnLanButton;
+    public ButtonEntity WakeOnLanButton => devices.Desk.LaptopControl!.WakeOnLanButton;
 
-    public SensorEntity Session => devices.Bedroom.LaptopControl!;
-    public NumericSensorEntity BatteryLevel => devices.Bedroom.LaptopControl!;
+    public SensorEntity Session => devices.Desk.LaptopControl!;
+    public NumericSensorEntity BatteryLevel => devices.Desk.LaptopControl!;
 
-    public ButtonEntity Lock => devices.Bedroom.LaptopControl!.Lock;
+    public ButtonEntity Lock => devices.Desk.LaptopControl!.Lock;
 
     public BinarySensorEntity MotionSensor => devices.Desk.MotionControl;
 }
@@ -179,7 +179,7 @@ public class KitchenLightEntities(Devices devices) : IKitchenLightEntities
     public BinarySensorEntity MotionSensor => devices.Kitchen.MotionControl;
     public LightEntity Light => devices.Kitchen.LightControl;
     public NumberEntity SensorDelay => devices.Kitchen.MotionControl;
-    public BinarySensorEntity PowerPlug => devices.Pantry.ExtraControl!.PowerPlug!;
+    public BinarySensorEntity PowerPlug => devices.Kitchen.ExtraControl!.PowerPlug!;
     public ButtonEntity Restart => devices.Kitchen.MotionControl;
 }
 
@@ -205,6 +205,6 @@ public class LaptopSchedulerEntities(Devices devices) : ILaptopSchedulerEntities
 
 public class LaptopChargingHandlerEntities(Devices devices) : IChargingHandlerEntities
 {
-    public NumericSensorEntity Level => devices.Bedroom.LaptopControl!;
-    public SwitchEntity Power => devices.Bedroom.LaptopControl!.PowerPlug;
+    public NumericSensorEntity Level => devices.Desk.LaptopControl!;
+    public SwitchEntity Power => devices.Desk.LaptopControl!.PowerPlug;
 }
