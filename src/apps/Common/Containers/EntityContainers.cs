@@ -2,13 +2,13 @@ using System.Linq;
 
 namespace HomeAutomation.apps.Common.Containers;
 
-public class BedroomLightEntities(Entities entities, Devices devices) : IBedroomLightEntities
+public class BedroomLightEntities(Devices devices) : IBedroomLightEntities
 {
     public SwitchEntity MasterSwitch => devices.Bedroom.LightControl;
     public BinarySensorEntity MotionSensor => devices.Bedroom.MotionControl;
     public LightEntity Light => devices.Bedroom.LightControl;
     public NumberEntity SensorDelay => devices.Bedroom.MotionControl;
-    public SwitchEntity RightSideEmptySwitch => entities.Switch.Sonoff1002352c401;
+    public SwitchEntity RightSideEmptySwitch => devices.Bedroom.ExtraControl!.RightSideEmptySwitch!;
     public SwitchEntity LeftSideFanSwitch => devices.Bedroom.FanControl!;
     public ButtonEntity Restart => devices.Bedroom.MotionControl;
 }
@@ -22,7 +22,7 @@ public class LivingRoomLightEntities(Devices devices) : ILivingRoomLightEntities
     public SwitchEntity LeftSideFanSwitch => devices.LivingRoom.FanControl!;
     public BinarySensorEntity BedroomDoor => devices.Bedroom.ContactSensor!;
     public BinarySensorEntity BedroomMotionSensor => devices.Bedroom.MotionControl;
-    public MediaPlayerEntity TclTv => devices.LivingRoom.MediaPlayer!;
+    public MediaPlayerEntity TclTv => devices.LivingRoom.MediaControl!;
     public BinarySensorEntity KitchenMotionSensor => devices.Kitchen.MotionControl;
     public LightEntity PantryLights => devices.Pantry.LightControl;
     public SwitchEntity PantryMotionAutomation => devices.Pantry.LightControl;
@@ -74,31 +74,31 @@ public class KitchenCookingEntities(Devices devices) : ICookingEntities
     public SwitchEntity MasterSwitch => devices.Kitchen.CookingControl!.Automation;
 }
 
-public class BedroomClimateEntities(Entities entities, Devices devices) : IClimateEntities
+public class BedroomClimateEntities(Devices devices) : IClimateEntities
 {
-    public SwitchEntity MasterSwitch => entities.Switch.AcAutomation;
-    public ClimateEntity AirConditioner => entities.Climate.Ac;
+    public SwitchEntity MasterSwitch => devices.Bedroom.ClimateControl!;
+    public ClimateEntity AirConditioner => devices.Bedroom.ClimateControl!;
     public BinarySensorEntity MotionSensor => devices.Bedroom.MotionControl;
     public BinarySensorEntity Door => devices.Bedroom.ContactSensor!;
     public SwitchEntity FanAutomation => devices.Bedroom.FanControl!.Automation;
-    public BinarySensorEntity HouseMotionSensor => devices.GlobalEntities.HouseOccupancy;
-    public ButtonEntity AcFanModeToggle => entities.Button.AcFanModeToggle;
+    public BinarySensorEntity HouseMotionSensor => devices.Global.MotionControl;
+    public ButtonEntity AcFanModeToggle => devices.Bedroom.ClimateControl!;
     public SwitchEntity Fan => devices.Bedroom.FanControl!;
 }
 
-public class ClimateSchedulerEntities(Entities entities) : IClimateSchedulerEntities
+public class ClimateSchedulerEntities(Devices devices) : IClimateSchedulerEntities
 {
-    public SensorEntity SunRising => entities.Sensor.SunNextRising;
-    public SensorEntity SunSetting => entities.Sensor.SunNextSetting;
-    public SensorEntity SunMidnight => entities.Sensor.SunNextMidnight;
-    public WeatherEntity Weather => entities.Weather.Home;
-    public InputBooleanEntity PowerSavingMode => entities.InputBoolean.AcPowerSavingMode;
+    public SensorEntity SunRising => devices.Global.WeatherControl!.SunRising;
+    public SensorEntity SunSetting => devices.Global.WeatherControl!.SunSetting;
+    public SensorEntity SunMidnight => devices.Global.WeatherControl!.SunMidnight;
+    public WeatherEntity Weather => devices.Global.WeatherControl!.Weather;
+    public InputBooleanEntity PowerSavingMode => devices.Global.WeatherControl!.PowerSavingMode;
 }
 
-public class DeskDesktopEntities(Entities entities) : IDesktopEntities
+public class DeskDesktopEntities(Devices devices) : IDesktopEntities
 {
-    public SwitchEntity Power => entities.Switch.DanielPc;
-    public InputButtonEntity RemotePcButton => entities.InputButton.RemotePc;
+    public SwitchEntity Power => devices.Desk.PcControl!.Power;
+    public InputButtonEntity RemotePcButton => devices.Desk.PcControl!.RemotePcButton;
 }
 
 public class BedroomFanEntities(Devices devices) : IBedroomFanEntities
@@ -124,21 +124,21 @@ public class LaptopEntities(Devices devices) : ILaptopEntities
 
 public class LgDisplayEntities(Devices devices) : ILgDisplayEntities
 {
-    public MediaPlayerEntity MediaPlayer => devices.Desk.MediaPlayer!;
+    public MediaPlayerEntity MediaPlayer => devices.Desk.MediaControl!;
     public LightEntity Display => devices.Desk.LightControl;
 }
 
 public class TclDisplayEntities(Devices devices) : ITclDisplayEntities
 {
-    public MediaPlayerEntity MediaPlayer => devices.LivingRoom.MediaPlayer!;
+    public MediaPlayerEntity MediaPlayer => devices.LivingRoom.MediaControl!;
 
-    public SwitchEntity MasterSwitch => devices.LivingRoom.MediaPlayer!;
+    public SwitchEntity MasterSwitch => devices.LivingRoom.MediaControl!;
 
     public BinarySensorEntity MotionSensor => devices.LivingRoom.MotionControl;
 
     public NumberEntity SensorDelay => devices.LivingRoom.MotionControl;
 
-    public LightEntity Light => devices.LivingRoom.MediaPlayer!.Backlight!;
+    public LightEntity Light => devices.LivingRoom.MediaControl!.Backlight!;
 
     public ButtonEntity Restart => devices.LivingRoom.MotionControl;
 }
@@ -151,57 +151,56 @@ public class LivingRoomFanEntities(Devices devices) : ILivingRoomFanEntities
     public BinarySensorEntity BedroomMotionSensor => devices.Bedroom.MotionControl;
 }
 
-public class LivingRoomTabletEntities(Entities entities, Devices devices) : ITabletEntities
+public class LivingRoomTabletEntities(Devices devices) : ITabletEntities
 {
     public SwitchEntity MasterSwitch => devices.LivingRoom.LightControl;
     public BinarySensorEntity MotionSensor => devices.LivingRoom.MotionControl;
-    public LightEntity Light => entities.Light.MipadScreen;
-    public BinarySensorEntity TabletActive => entities.BinarySensor.Mipad;
+    public LightEntity Light => devices.LivingRoom.MotionLightControl!;
+    public BinarySensorEntity TabletActive => devices.LivingRoom.MotionLightControl!;
     public NumberEntity SensorDelay => devices.LivingRoom.MotionControl;
     public ButtonEntity Restart => devices.LivingRoom.MotionControl;
 }
 
-public class PantryLightEntities(Entities entities, Devices devices) : IPantryLightEntities
+public class PantryLightEntities(Devices devices) : IPantryLightEntities
 {
     public SwitchEntity MasterSwitch => devices.Pantry.LightControl;
     public BinarySensorEntity MotionSensor => devices.Pantry.MotionControl;
     public LightEntity Light => devices.Pantry.LightControl;
     public NumberEntity SensorDelay => devices.Pantry.MotionControl;
-    public BinarySensorEntity MiScalePresenceSensor =>
-        entities.BinarySensor.BedroomMotionSensorMiScalePresence;
-    public LightEntity MirrorLight => entities.Light.ControllerRgbDf1c0d;
+    public BinarySensorEntity MiScalePresenceSensor => devices.Pantry.MotionLightControl!;
+    public LightEntity MirrorLight => devices.Pantry.MotionLightControl!;
     public BinarySensorEntity BedroomDoor => devices.Bedroom.ContactSensor!;
     public ButtonEntity Restart => devices.Pantry.MotionControl;
 }
 
-public class KitchenLightEntities(Entities entities, Devices devices) : IKitchenLightEntities
+public class KitchenLightEntities(Devices devices) : IKitchenLightEntities
 {
     public SwitchEntity MasterSwitch => devices.Kitchen.LightControl;
     public BinarySensorEntity MotionSensor => devices.Kitchen.MotionControl;
     public LightEntity Light => devices.Kitchen.LightControl;
     public NumberEntity SensorDelay => devices.Kitchen.MotionControl;
-    public BinarySensorEntity PowerPlug => entities.BinarySensor.SmartPlug3PowerExceedsThreshold;
+    public BinarySensorEntity PowerPlug => devices.Pantry.ExtraControl!.PowerPlug!;
     public ButtonEntity Restart => devices.Kitchen.MotionControl;
 }
 
-public class LockingEntities(Entities entities, Devices devices) : ILockingEntities
+public class LockingEntities(Devices devices) : ILockingEntities
 {
-    public LockEntity Lock => entities.Lock.LockWrapper;
+    public LockEntity Lock => devices.LivingRoom.LockControl!.Lock;
 
-    public BinarySensorEntity Door => entities.BinarySensor.DoorWrapper;
+    public BinarySensorEntity Door => devices.LivingRoom.LockControl!.Door;
 
-    public BinarySensorEntity HouseStatus => entities.BinarySensor.House;
+    public BinarySensorEntity HouseStatus => devices.LivingRoom.LockControl!.HouseStatus;
 
-    public SwitchEntity MasterSwitch => entities.Switch.LockAutomation;
+    public SwitchEntity MasterSwitch => devices.LivingRoom.LockControl!.Automation;
 
-    public BinarySensorEntity MotionSensor => devices.GlobalEntities.HouseOccupancy;
+    public BinarySensorEntity MotionSensor => devices.Global.MotionControl;
 
-    public SwitchEntity Flytrap => entities.Switch.Flytrap;
+    public SwitchEntity Flytrap => devices.LivingRoom.LockControl!.Flytrap;
 }
 
-public class LaptopSchedulerEntities(Entities entities) : ILaptopSchedulerEntities
+public class LaptopSchedulerEntities(Devices devices) : ILaptopSchedulerEntities
 {
-    public InputBooleanEntity ProjectNationWeek => entities.InputBoolean.ProjectNationWeek;
+    public InputBooleanEntity ProjectNationWeek => devices.Desk.LaptopControl!.ProjectNationWeek;
 }
 
 public class LaptopChargingHandlerEntities(Devices devices) : IChargingHandlerEntities

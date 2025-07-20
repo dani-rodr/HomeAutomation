@@ -39,6 +39,11 @@
           "cSharpName": "LgDisplay"
         },
         {
+          "id": "light.lights",
+          "friendlyName": "Lights",
+          "cSharpName": "Lights"
+        },
+        {
           "id": "light.mipad_screen",
           "friendlyName": "MiPad Screen",
           "cSharpName": "MipadScreen"
@@ -1527,6 +1532,11 @@
           "cSharpName": "PantryMotionSensorRestartEsp32"
         },
         {
+          "id": "button.restart_esp32",
+          "friendlyName": "Restart Esp32",
+          "cSharpName": "RestartEsp32"
+        },
+        {
           "id": "button.restart_fast_timer_notification",
           "friendlyName": "Restart Fast Timer Notification",
           "cSharpName": "RestartFastTimerNotification"
@@ -1642,6 +1652,11 @@
           "jsonName": "supported_features",
           "cSharpName": "SupportedFeatures",
           "clrType": "System.Double"
+        },
+        {
+          "jsonName": "entity_id",
+          "cSharpName": "EntityId",
+          "clrType": "System.Collections.Generic.IReadOnlyList\u00601[System.String]"
         }
       ]
     },
@@ -2533,11 +2548,6 @@
           "id": "number.bed_lights_smooth_on",
           "friendlyName": "Bed Lights  Smooth on",
           "cSharpName": "BedLightsSmoothOn"
-        },
-        {
-          "id": "number.bedroom_motion_sensor_absorption",
-          "friendlyName": "Bedroom Motion Sensor Absorption",
-          "cSharpName": "BedroomMotionSensorAbsorption"
         },
         {
           "id": "number.bedroom_motion_sensor_g0_move_threshold",
@@ -4215,11 +4225,6 @@
           "id": "sensor.kitchen_motion_sensor_presence_sensor_version",
           "friendlyName": "Kitchen Motion Sensor Presence sensor version",
           "cSharpName": "KitchenMotionSensorPresenceSensorVersion"
-        },
-        {
-          "id": "sensor.last_triggered_motion_sensor_friendly_name",
-          "friendlyName": "Last Triggered Motion Sensor Friendly Name",
-          "cSharpName": "LastTriggeredMotionSensorFriendlyName"
         },
         {
           "id": "sensor.lights",
@@ -7704,6 +7709,11 @@
           "cSharpName": "AcXfan"
         },
         {
+          "id": "switch.auto_calibrate",
+          "friendlyName": "Auto Calibrate",
+          "cSharpName": "AutoCalibrate"
+        },
+        {
           "id": "switch.bathroom_lights_auto_update_enabled",
           "friendlyName": "Bathroom Lights Auto-update enabled",
           "cSharpName": "BathroomLightsAutoUpdateEnabled"
@@ -7744,19 +7754,9 @@
           "cSharpName": "BedroomMotionSensor"
         },
         {
-          "id": "switch.bedroom_motion_sensor_arduino_ota",
-          "friendlyName": "Bedroom Motion Sensor Arduino OTA",
-          "cSharpName": "BedroomMotionSensorArduinoOta"
-        },
-        {
           "id": "switch.bedroom_motion_sensor_auto_calibrate",
           "friendlyName": "Bedroom Motion Sensor Auto Calibrate",
           "cSharpName": "BedroomMotionSensorAutoCalibrate"
-        },
-        {
-          "id": "switch.bedroom_motion_sensor_auto_update",
-          "friendlyName": "Bedroom Motion Sensor Auto Update",
-          "cSharpName": "BedroomMotionSensorAutoUpdate"
         },
         {
           "id": "switch.bedroom_motion_sensor_control_bluetooth",
@@ -8492,6 +8492,11 @@
           "cSharpName": "AttributeAsSensorUpdate"
         },
         {
+          "id": "update.bathroom_motion_sensor_firmware",
+          "friendlyName": "Bathroom Motion Sensor Firmware",
+          "cSharpName": "BathroomMotionSensorFirmware"
+        },
+        {
           "id": "update.bedroom_motion_sensor_firmware",
           "friendlyName": "Bedroom Motion Sensor Firmware",
           "cSharpName": "BedroomMotionSensorFirmware"
@@ -8510,6 +8515,11 @@
           "id": "update.card_mod_update",
           "friendlyName": "card-mod update",
           "cSharpName": "CardModUpdate"
+        },
+        {
+          "id": "update.desk_motion_sensor_firmware",
+          "friendlyName": "Desk Motion Sensor Firmware",
+          "cSharpName": "DeskMotionSensorFirmware"
         },
         {
           "id": "update.esphome_update",
@@ -8567,14 +8577,9 @@
           "cSharpName": "IphoneDeviceTrackerUpdate"
         },
         {
-          "id": "update.ld2410_esp32_1_firmware",
-          "friendlyName": "Firmware",
-          "cSharpName": "Ld2410Esp321Firmware"
-        },
-        {
-          "id": "update.ld2410_esp32_5_firmware",
-          "friendlyName": "Firmware",
-          "cSharpName": "Ld2410Esp325Firmware"
+          "id": "update.kitchen_motion_sensor_firmware",
+          "friendlyName": "Kitchen Motion Sensor Firmware",
+          "cSharpName": "KitchenMotionSensorFirmware"
         },
         {
           "id": "update.mosquitto_broker_update",
@@ -8612,6 +8617,11 @@
           "cSharpName": "NodeRedUpdate"
         },
         {
+          "id": "update.pantry_motion_sensor_firmware",
+          "friendlyName": "Pantry Motion Sensor Firmware",
+          "cSharpName": "PantryMotionSensorFirmware"
+        },
+        {
           "id": "update.passive_ble_monitor_integration_update",
           "friendlyName": "Passive BLE monitor integration update",
           "cSharpName": "PassiveBleMonitorIntegrationUpdate"
@@ -8620,6 +8630,11 @@
           "id": "update.powercalc_update",
           "friendlyName": "Powercalc update",
           "cSharpName": "PowercalcUpdate"
+        },
+        {
+          "id": "update.sala_motion_sensor_firmware",
+          "friendlyName": "Sala Motion Sensor Firmware",
+          "cSharpName": "SalaMotionSensorFirmware"
         },
         {
           "id": "update.samba_share_update",
@@ -8700,21 +8715,6 @@
           "id": "update.xiaomi_miot_auto_update",
           "friendlyName": "Xiaomi Miot Auto update",
           "cSharpName": "XiaomiMiotAutoUpdate"
-        },
-        {
-          "id": "update.z_esp32_c6_1_firmware_2",
-          "friendlyName": "Firmware",
-          "cSharpName": "ZEsp32C61Firmware2"
-        },
-        {
-          "id": "update.z_esp32_c6_2_firmware",
-          "friendlyName": "Firmware",
-          "cSharpName": "ZEsp32C62Firmware"
-        },
-        {
-          "id": "update.z_esp32_c6_3_firmware",
-          "friendlyName": "Firmware",
-          "cSharpName": "ZEsp32C63Firmware"
         }
       ],
       "attributes": [
