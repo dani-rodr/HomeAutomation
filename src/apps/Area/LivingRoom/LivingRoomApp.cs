@@ -16,7 +16,7 @@ public class LivingRoomApp(
 {
     protected override IEnumerable<IAutomation> CreateAutomations()
     {
-        tclDisplay.StartAutomation();
+        yield return tclDisplay;
         yield return new FanAutomation(fanEntities, loggerFactory.CreateLogger<FanAutomation>());
         yield return new AirQualityAutomation(
             airQualityEntities,

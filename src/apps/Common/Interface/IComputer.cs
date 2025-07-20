@@ -1,5 +1,9 @@
 namespace HomeAutomation.apps.Common.Interface;
 
+public interface ILaptop : IComputer;
+
+public interface IDesktop : IComputer;
+
 public interface IComputer : IAutomationDevice
 {
     void TurnOn();

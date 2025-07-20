@@ -5,37 +5,19 @@ namespace HomeAutomation.apps.Area.Desk;
 
 public class DeskApp(
     IEventHandler eventHandler,
-    INotificationServices notificationServices,
-    IDesktopEntities desktopEntities,
-    ILaptopEntities laptopEntities,
-    ILaptopScheduler laptopScheduler,
-    ILaptopChargingHandler laptopBatteryHandler,
     IDeskLightEntities deskMotionEntities,
     ILgDisplay lgDisplay,
-    IScheduler scheduler,
+    IDesktop desktop,
+    ILaptop laptop,
     MotionSensor motionSensor,
     ILoggerFactory loggerFactory
 ) : AppBase<DeskApp>()
 {
     protected override IEnumerable<IAutomation> CreateAutomations()
     {
-        Desktop desktop = new(
-            desktopEntities,
-            eventHandler,
-            notificationServices,
-            scheduler,
-            loggerFactory.CreateLogger<Desktop>()
-        );
-        Laptop laptop = new(
-            laptopEntities,
-            laptopScheduler,
-            laptopBatteryHandler,
-            eventHandler,
-            loggerFactory.CreateLogger<Laptop>()
-        );
-        desktop.StartAutomation();
-        laptop.StartAutomation();
-        lgDisplay.StartAutomation();
+        yield return desktop;
+        yield return laptop;
+        yield return lgDisplay;
         yield return motionSensor;
 
         yield return new LightAutomation(

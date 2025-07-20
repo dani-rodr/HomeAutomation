@@ -8,7 +8,7 @@ public class Laptop(
     ILaptopChargingHandler batteryHandler,
     IEventHandler eventHandler,
     ILogger<Laptop> logger
-) : ComputerBase(eventHandler, logger)
+) : ComputerBase(eventHandler, logger), ILaptop
 {
     protected override string ShowEvent { get; } = "show_laptop";
     protected override string HideEvent { get; } = "hide_laptop";

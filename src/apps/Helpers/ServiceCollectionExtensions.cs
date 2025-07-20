@@ -69,7 +69,9 @@ public static class ServiceCollectionExtensions
             .AddTransient<IChargingHandlerEntities, LaptopChargingHandlerEntities>()
             .AddTransient<ILaptopChargingHandler, LaptopChargingHandler>()
             .AddTransient<ILaptopScheduler, LaptopScheduler>()
-            .AddTransient<ILgDisplay, LgDisplay>();
+            .AddTransient<ILgDisplay, LgDisplay>()
+            .AddTransient<IDesktop, Desktop>()
+            .AddTransient<ILaptop, Laptop>();
     }
 
     private static IServiceCollection AddBathroomEntities(this IServiceCollection services)

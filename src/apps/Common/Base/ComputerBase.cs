@@ -1,8 +1,7 @@
 namespace HomeAutomation.apps.Common.Base;
 
 public abstract class ComputerBase(IEventHandler eventHandler, ILogger logger)
-    : AutomationDeviceBase,
-        IComputer
+    : AutomationDeviceBase
 {
     protected abstract string ShowEvent { get; }
     protected abstract string HideEvent { get; }
