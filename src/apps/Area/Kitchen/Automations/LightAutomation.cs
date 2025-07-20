@@ -1,10 +1,7 @@
 namespace HomeAutomation.apps.Area.Kitchen.Automations;
 
-public class LightAutomation(
-    IKitchenLightEntities entities,
-    IScheduler scheduler,
-    ILogger<LightAutomation> logger
-) : LightAutomationBase(entities, scheduler, logger)
+public class LightAutomation(IKitchenLightEntities entities, ILogger<LightAutomation> logger)
+    : LightAutomationBase(entities, logger)
 {
     private readonly BinarySensorEntity _powerPlug = entities.PowerPlug;
 

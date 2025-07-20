@@ -1,6 +1,6 @@
 using HomeAutomation.apps.Common.Containers;
 using HomeAutomation.apps.Common.Interface;
-using HomeAutomation.apps.Common.Services;
+using HomeAutomation.apps.Common.Services.Schedulers;
 
 namespace HomeAutomation.Tests.Common.Services;
 

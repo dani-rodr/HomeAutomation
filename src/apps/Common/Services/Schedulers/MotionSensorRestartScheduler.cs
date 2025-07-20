@@ -1,6 +1,6 @@
 using NetDaemon.Extensions.Scheduler;
 
-namespace HomeAutomation.apps.Common.Services;
+namespace HomeAutomation.apps.Common.Services.Schedulers;
 
 public class MotionSensorRestartScheduler(IScheduler scheduler) : IMotionSensorRestartScheduler
 {

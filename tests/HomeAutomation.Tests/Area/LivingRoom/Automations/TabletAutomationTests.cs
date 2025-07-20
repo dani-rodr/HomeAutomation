@@ -10,7 +10,6 @@ namespace HomeAutomation.Tests.Area.LivingRoom.Automations;
 public class TabletAutomationTests : IDisposable
 {
     private readonly MockHaContext _mockHaContext;
-    private readonly Mock<IScheduler> _mockScheduler;
     private readonly Mock<ILogger<TabletAutomation>> _mockLogger;
     private readonly TestTabletEntities _entities;
     private readonly TabletAutomation _automation;
@@ -18,13 +17,12 @@ public class TabletAutomationTests : IDisposable
     public TabletAutomationTests()
     {
         _mockHaContext = new MockHaContext();
-        _mockScheduler = new Mock<IScheduler>();
         _mockLogger = new Mock<ILogger<TabletAutomation>>();
 
         // Create test entities wrapper
         _entities = new TestTabletEntities(_mockHaContext);
 
-        _automation = new TabletAutomation(_entities, _mockScheduler.Object, _mockLogger.Object);
+        _automation = new TabletAutomation(_entities, _mockLogger.Object);
 
         // Start the automation to set up subscriptions
         _automation.StartAutomation();

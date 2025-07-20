@@ -1,4 +1,4 @@
-using HomeAutomation.apps.Common.Services;
+using HomeAutomation.apps.Common.Services.Factories;
 
 namespace HomeAutomation.Tests.Common.Services;
 

@@ -3,9 +3,8 @@ namespace HomeAutomation.apps.Area.Bathroom.Automations;
 public class LightAutomation(
     ILightAutomationEntities entities,
     IDimmingLightController dimmingController,
-    IScheduler scheduler,
     ILogger<LightAutomation> logger
-) : LightAutomationBase(entities, scheduler, logger)
+) : LightAutomationBase(entities, logger)
 {
     public override void StartAutomation()
     {

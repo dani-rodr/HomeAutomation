@@ -1,6 +1,6 @@
 using System.Text;
 
-namespace HomeAutomation.apps.Common.Services;
+namespace HomeAutomation.apps.Common.Services.Factories;
 
 public interface ITypedEntityFactory
 {

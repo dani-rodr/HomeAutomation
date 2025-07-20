@@ -1,6 +1,6 @@
 using NetDaemon.Extensions.Scheduler;
 
-namespace HomeAutomation.apps.Common.Services;
+namespace HomeAutomation.apps.Common.Services.Schedulers;
 
 public class LaptopScheduler(ILaptopSchedulerEntities entities, IScheduler scheduler)
     : ILaptopScheduler

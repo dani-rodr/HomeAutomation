@@ -11,20 +11,18 @@ public class LightAutomationTests : IDisposable
 {
     private readonly MockHaContext _mockHaContext;
     private readonly Mock<ILogger<LightAutomation>> _mockLogger;
-    private readonly Mock<IScheduler> _mockScheduler;
     private readonly TestEntities _entities;
     private readonly LightAutomation _automation;
 
     public LightAutomationTests()
     {
         _mockHaContext = new MockHaContext();
-        _mockScheduler = new Mock<IScheduler>();
         _mockLogger = new Mock<ILogger<LightAutomation>>();
 
         // Create test entities wrapper - much simpler!
         _entities = new TestEntities(_mockHaContext);
 
-        _automation = new LightAutomation(_entities, _mockScheduler.Object, _mockLogger.Object);
+        _automation = new LightAutomation(_entities, _mockLogger.Object);
 
         // Start the automation to set up subscriptions
         _automation.StartAutomation();

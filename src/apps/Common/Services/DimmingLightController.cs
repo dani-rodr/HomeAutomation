@@ -98,11 +98,8 @@ public class DimmingLightController(
 
     private bool ShouldDimLights()
     {
-        if (sensorDelay.State == null)
-        {
-            return true;
-        }
-        return sensorDelay.State == _sensorActiveDelayValue;
+        bool shouldDimWhenStateIsUnknown = !sensorDelay.State.HasValue;
+        return shouldDimWhenStateIsUnknown || sensorDelay.State == _sensorActiveDelayValue;
     }
 
     private void CancelPendingTurnOff()

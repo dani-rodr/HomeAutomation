@@ -3,9 +3,8 @@ namespace HomeAutomation.apps.Area.Desk.Automations;
 public class LightAutomation(
     IDeskLightEntities entities,
     ILgDisplay monitor,
-    IScheduler scheduler,
     ILogger<LightAutomation> logger
-) : LightAutomationBase(entities, scheduler, logger)
+) : LightAutomationBase(entities, logger)
 {
     private const double LONG_SENSOR_DELAY = 60;
     private const double SHORT_SENSOR_DELAY = 20;

@@ -4,23 +4,28 @@ namespace HomeAutomation.apps.Common.Base;
 
 public abstract class MotionSensorBase(
     ITypedEntityFactory factory,
+    IMotionSensorRestartScheduler scheduler,
     string deviceName,
     ILogger logger
 ) : AutomationBase(factory.Create<SwitchEntity>(deviceName, "auto_calibrate"), logger)
 {
-    protected readonly BinarySensorEntity MotionSensor = factory.Create<BinarySensorEntity>(
+    private readonly BinarySensorEntity MotionSensor = factory.Create<BinarySensorEntity>(
         deviceName,
         "smart_presence"
     );
-    protected readonly SwitchEntity EngineeringMode = factory.Create<SwitchEntity>(
+    private readonly SwitchEntity EngineeringMode = factory.Create<SwitchEntity>(
         deviceName,
         "engineering_mode"
     );
-    protected readonly NumberEntity SensorDelay = factory.Create<NumberEntity>(
+    private readonly NumberEntity SensorDelay = factory.Create<NumberEntity>(
         deviceName,
         "still_target_delay"
     );
-    protected readonly IReadOnlyList<Ld2410ZoneData> Zones =
+    private readonly ButtonEntity Restart = factory.Create<ButtonEntity>(
+        deviceName,
+        "restart_esp32"
+    );
+    private readonly IReadOnlyList<Ld2410ZoneData> Zones =
     [
         .. InitializeZoneEntities(deviceName, factory),
     ];
@@ -49,6 +54,7 @@ public abstract class MotionSensorBase(
                 .IsOffForSeconds(1)
                 .Where(_ => MasterSwitch.IsOn())
                 .Subscribe(_ => EngineeringMode.TurnOn()),
+            .. DailyRestart(),
         ];
 
     protected override IEnumerable<IDisposable> GetToggleableAutomations()
@@ -71,6 +77,35 @@ public abstract class MotionSensorBase(
                 factory.Create<NumericSensorEntity>(deviceName, $"g{i}_move_energy"),
                 factory.Create<NumericSensorEntity>(deviceName, $"g{i}_still_energy")
             ));
+
+    private IEnumerable<IDisposable> DailyRestart() =>
+        scheduler.GetSchedules(() =>
+        {
+            if (MotionSensor.IsClear())
+            {
+                Logger.LogInformation(
+                    "Scheduled restart: motion sensor is clear, pressing restart button."
+                );
+                Restart.Press();
+            }
+            else
+            {
+                Logger.LogInformation(
+                    "Scheduled restart: motion is active, waiting for it to clear."
+                );
+                MotionSensor
+                    .StateChanges()
+                    .Where(e => MotionSensor.IsClear())
+                    .Take(1)
+                    .Subscribe(_ =>
+                    {
+                        Logger.LogInformation(
+                            "Motion sensor is now clear, pressing restart button."
+                        );
+                        Restart.Press();
+                    });
+            }
+        });
 }
 
 public static class MotionCalibrator

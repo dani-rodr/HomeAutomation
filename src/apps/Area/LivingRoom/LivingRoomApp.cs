@@ -9,7 +9,7 @@ public class LivingRoomApp(
     IAirQualityEntities airQualityEntities,
     ITabletEntities tabletEntities,
     ITclDisplay tclDisplay,
-    IScheduler scheduler,
+    IDimmingLightControllerFactory dimmingLightControllerFactory,
     MotionSensor motionSensor,
     ILoggerFactory loggerFactory
 ) : AppBase<LivingRoomApp>()
@@ -24,19 +24,13 @@ public class LivingRoomApp(
         );
         yield return new TabletAutomation(
             tabletEntities,
-            scheduler,
             loggerFactory.CreateLogger<TabletAutomation>()
         );
         yield return motionSensor;
 
         yield return new LightAutomation(
             motionEntities,
-            new DimmingLightController(
-                motionEntities.SensorDelay,
-                scheduler,
-                loggerFactory.CreateLogger<DimmingLightController>()
-            ),
-            scheduler,
+            dimmingLightControllerFactory.Create(motionEntities.SensorDelay),
             loggerFactory.CreateLogger<LightAutomation>()
         );
     }

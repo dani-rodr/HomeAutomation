@@ -1,4 +1,7 @@
 namespace HomeAutomation.apps.Area.LivingRoom.Devices;
 
-public class MotionSensor(ITypedEntityFactory factory, ILogger<MotionSensor> logger)
-    : MotionSensorBase(factory, "sala_motion_sensor", logger);
+public class MotionSensor(
+    ITypedEntityFactory factory,
+    IMotionSensorRestartScheduler scheduler,
+    ILogger<MotionSensor> logger
+) : MotionSensorBase(factory, scheduler, "sala_motion_sensor", logger);

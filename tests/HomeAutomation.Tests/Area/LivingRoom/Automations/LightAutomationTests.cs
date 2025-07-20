@@ -12,7 +12,6 @@ namespace HomeAutomation.Tests.Area.LivingRoom.Automations;
 public class LightAutomationTests : IDisposable
 {
     private readonly MockHaContext _mockHaContext;
-    private readonly Mock<IScheduler> _mockScheduler;
     private readonly Mock<ILogger<LightAutomation>> _mockLogger;
     private readonly Mock<IDimmingLightController> _mockDimmingController;
     private readonly TestEntities _entities;
@@ -21,7 +20,6 @@ public class LightAutomationTests : IDisposable
     public LightAutomationTests()
     {
         _mockHaContext = new MockHaContext();
-        _mockScheduler = new Mock<IScheduler>();
         _mockLogger = new Mock<ILogger<LightAutomation>>();
         _mockDimmingController = new Mock<IDimmingLightController>();
 
@@ -31,7 +29,6 @@ public class LightAutomationTests : IDisposable
         _automation = new LightAutomation(
             _entities,
             _mockDimmingController.Object,
-            _mockScheduler.Object,
             _mockLogger.Object
         );
 

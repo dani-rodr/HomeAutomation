@@ -6,7 +6,7 @@ public class LightAutomation(
     IBedroomLightEntities entities,
     IScheduler scheduler,
     ILogger<LightAutomation> logger
-) : LightAutomationBase(entities, scheduler, logger)
+) : LightAutomationBase(entities, logger)
 {
     private readonly SwitchEntity _rightSideEmptySwitch = entities.RightSideEmptySwitch;
     private readonly SwitchEntity _leftSideFanSwitch = entities.LeftSideFanSwitch;

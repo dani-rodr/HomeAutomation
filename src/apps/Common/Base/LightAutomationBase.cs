@@ -1,12 +1,7 @@
 namespace HomeAutomation.apps.Common.Base;
 
-using NetDaemon.Extensions.Scheduler;
-
-public abstract class LightAutomationBase(
-    ILightAutomationEntities entities,
-    IScheduler scheduler,
-    ILogger logger
-) : AutomationBase(entities.MasterSwitch, logger)
+public abstract class LightAutomationBase(ILightAutomationEntities entities, ILogger logger)
+    : AutomationBase(entities.MasterSwitch, logger)
 {
     protected readonly BinarySensorEntity MotionSensor = entities.MotionSensor;
     protected readonly NumberEntity? SensorDelay = entities.SensorDelay;
@@ -20,36 +15,6 @@ public abstract class LightAutomationBase(
         [
             Light.StateChanges().IsManuallyOperated().Subscribe(ControlMasterSwitchOnLightChange),
             MasterSwitch!.StateChanges().IsOn().Subscribe(ControlLightOnMotionChange),
-            scheduler.ScheduleCron(
-                "0 1 * * *",
-                () =>
-                {
-                    if (MotionSensor.IsClear())
-                    {
-                        Logger.LogInformation(
-                            "Scheduled restart: motion sensor is clear, pressing restart button."
-                        );
-                        Restart.Press();
-                    }
-                    else
-                    {
-                        Logger.LogInformation(
-                            "Scheduled restart: motion is active, waiting for it to clear."
-                        );
-                        MotionSensor
-                            .StateChanges()
-                            .Where(e => MotionSensor.IsClear())
-                            .Take(1)
-                            .Subscribe(_ =>
-                            {
-                                Logger.LogInformation(
-                                    "Motion sensor is now clear, pressing restart button."
-                                );
-                                Restart.Press();
-                            });
-                    }
-                }
-            ),
             .. GetAdditionalPersistentAutomations(),
         ];
 

@@ -7,7 +7,7 @@ public class BathroomApp(
     IBathroomLightEntities motionEntities,
     ILoggerFactory loggerFactory,
     MotionSensor motionSensor,
-    IScheduler scheduler
+    IDimmingLightControllerFactory dimmingLightControllerFactory
 ) : AppBase<BathroomApp>()
 {
     protected override IEnumerable<IAutomation> CreateAutomations()
@@ -16,12 +16,7 @@ public class BathroomApp(
 
         yield return new LightAutomation(
             motionEntities,
-            new DimmingLightController(
-                motionEntities.SensorDelay,
-                scheduler,
-                loggerFactory.CreateLogger<DimmingLightController>()
-            ),
-            scheduler,
+            dimmingLightControllerFactory.Create(motionEntities.SensorDelay),
             loggerFactory.CreateLogger<LightAutomation>()
         );
     }

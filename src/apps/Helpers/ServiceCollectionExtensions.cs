@@ -19,6 +19,8 @@ public static class ServiceCollectionExtensions
                 p.GetRequiredService<ITriggerManager>(),
                 p.GetRequiredService<ILogger<WebhookServices>>()
             ))
+            .AddTransient<IDimmingLightControllerFactory, DimmingLightControllerFactory>()
+            .AddTransient<IMotionSensorRestartScheduler, MotionSensorRestartScheduler>()
             .AddAreaEntities()
             .AddMotionSensors();
     }
