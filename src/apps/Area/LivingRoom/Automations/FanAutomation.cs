@@ -18,9 +18,9 @@ public class FanAutomation(ILivingRoomFanEntities entities, ILogger<FanAutomatio
             entities.BedroomMotionSensor.State
         );
 
-        Fan.TurnOn();
+        MainFan.TurnOn();
 
-        if (entities.BedroomMotionSensor.IsOff())
+        if (entities.BedroomMotionSensor.IsClear())
         {
             Logger.LogDebug(
                 "Bedroom motion sensor {EntityId} is OFF - activating exhaust fan {ExhaustFanId}",

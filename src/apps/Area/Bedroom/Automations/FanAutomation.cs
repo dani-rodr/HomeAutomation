@@ -9,11 +9,12 @@ public class FanAutomation(IBedroomFanEntities entities, ILogger<FanAutomation> 
 
     protected override IEnumerable<IDisposable> GetPersistentAutomations()
     {
-        yield return Fan.StateChanges()
+        yield return MainFan
+            .StateChanges()
             .IsManuallyOperated()
             .Subscribe(_ =>
             {
-                if (Fan.IsOn() && MotionSensor.IsOn())
+                if (MainFan.IsOn() && MotionSensor.IsOn())
                 {
                     MasterSwitch.TurnOn();
                     return;

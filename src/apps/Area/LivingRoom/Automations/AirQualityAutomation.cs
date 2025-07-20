@@ -45,7 +45,7 @@ public class AirQualityAutomation(
             return;
         }
 
-        Fan.TurnOff();
+        MainFan.TurnOff();
     }
 
     private IDisposable SubscribeToAirQuality() =>
@@ -60,7 +60,7 @@ public class AirQualityAutomation(
 
     private void HandleModerateAirQuality()
     {
-        Fan.TurnOn();
+        MainFan.TurnOn();
 
         if (_isCleaningAir && !_activateSupportingFan)
         {
@@ -112,10 +112,11 @@ public class AirQualityAutomation(
             });
 
     private IDisposable SubscribeToFanStateChanges() =>
-        Fan.StateChanges()
+        MainFan
+            .StateChanges()
             .Subscribe(e =>
             {
-                if (Fan.IsOn())
+                if (MainFan.IsOn())
                 {
                     _ledStatus.TurnOn();
                     Logger.LogDebug("Main fan turned ON – LED status ON");

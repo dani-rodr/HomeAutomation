@@ -6,14 +6,14 @@ public abstract class FanAutomationBase : AutomationBase
 {
     protected readonly BinarySensorEntity MotionSensor;
     protected readonly IEnumerable<SwitchEntity> Fans;
-    protected readonly SwitchEntity Fan;
+    protected readonly SwitchEntity MainFan;
 
     protected FanAutomationBase(IFanAutomationEntities entities, ILogger logger)
         : base(entities.MasterSwitch, logger)
     {
         MotionSensor = entities.MotionSensor;
         Fans = entities.Fans;
-        Fan = Fans.First();
+        MainFan = Fans.First();
     }
 
     protected override IEnumerable<IDisposable> GetPersistentAutomations()
@@ -72,7 +72,8 @@ public abstract class FanAutomationBase : AutomationBase
     }
 
     protected virtual IDisposable GetFanManualOperationAutomations() =>
-        Fan.StateChanges()
+        MainFan
+            .StateChanges()
             .IsManuallyOperated()
             .Subscribe(e =>
             {
@@ -101,9 +102,9 @@ public abstract class FanAutomationBase : AutomationBase
             {
                 if (MotionSensor.IsOn())
                 {
-                    Fan.TurnOn();
+                    MainFan.TurnOn();
                     return;
                 }
-                Fan.TurnOff();
+                MainFan.TurnOff();
             });
 }
