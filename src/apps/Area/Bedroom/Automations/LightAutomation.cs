@@ -4,22 +4,23 @@ namespace HomeAutomation.apps.Area.Bedroom.Automations;
 
 public class LightAutomation(
     IBedroomLightEntities entities,
+    MotionAutomationBase motionAutomation,
     IScheduler scheduler,
     ILogger<LightAutomation> logger
-) : LightAutomationBase(entities, logger)
+) : LightAutomationBase(entities, motionAutomation, logger)
 {
     private readonly SwitchEntity _rightSideEmptySwitch = entities.RightSideEmptySwitch;
     private readonly SwitchEntity _leftSideFanSwitch = entities.LeftSideFanSwitch;
     private readonly IScheduler _scheduler = scheduler;
 
-    protected override int SensorActiveDelayValue => 45;
 
     protected override IEnumerable<IDisposable> GetAdditionalPersistentAutomations() =>
-        [.. GetLightSwitchAutomations(), .. GetSensorDelayAutomations()];
+        [.. GetLightSwitchAutomations()];
 
     protected override IEnumerable<IDisposable> GetLightAutomations()
     {
-        yield return MotionSensor
+        yield return MotionAutomation
+            .GetMotionSensor()
             .StateChanges()
             .Subscribe(e =>
             {

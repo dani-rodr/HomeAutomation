@@ -1,9 +1,11 @@
 namespace HomeAutomation.apps.Area.Pantry.Automations;
 
-public class LightAutomation(IPantryLightEntities entities, ILogger<LightAutomation> logger)
-    : LightAutomationBase(entities, logger)
+public class LightAutomation(
+    IPantryLightEntities entities,
+    MotionAutomationBase motionAutomation,
+    ILogger<LightAutomation> logger
+) : LightAutomationBase(entities, motionAutomation, logger)
 {
-    protected override int SensorWaitTime => 10;
 
     protected override IEnumerable<IDisposable> GetAdditionalPersistentAutomations() =>
         [entities.BedroomDoor.StateChanges().IsOff().Subscribe(_ => MasterSwitch.TurnOn())];
@@ -11,8 +13,13 @@ public class LightAutomation(IPantryLightEntities entities, ILogger<LightAutomat
     protected override IEnumerable<IDisposable> GetLightAutomations()
     {
         var mirrorLight = entities.MirrorLight;
-        yield return MotionSensor.StateChangesWithCurrent().IsOn().Subscribe(_ => Light.TurnOn());
-        yield return MotionSensor
+        yield return MotionAutomation
+            .GetMotionSensor()
+            .StateChangesWithCurrent()
+            .IsOn()
+            .Subscribe(_ => Light.TurnOn());
+        yield return MotionAutomation
+            .GetMotionSensor()
             .StateChangesWithCurrent()
             .IsOff()
             .Subscribe(_ =>

@@ -5,7 +5,7 @@ namespace HomeAutomation.apps.Area.Pantry;
 
 public class PantryApp(
     IPantryLightEntities motionEntities,
-    MotionSensor motionSensor,
+    Devices.MotionSensor motionSensor,
     ILoggerFactory loggerFactory
 ) : AppBase<PantryApp>()
 {
@@ -13,8 +13,15 @@ public class PantryApp(
     {
         yield return motionSensor;
 
+        var motionAutomation = new MotionAutomation(
+            motionSensor,
+            loggerFactory.CreateLogger<MotionAutomation>()
+        );
+        yield return motionAutomation;
+
         yield return new LightAutomation(
             motionEntities,
+            motionAutomation,
             loggerFactory.CreateLogger<LightAutomation>()
         );
     }

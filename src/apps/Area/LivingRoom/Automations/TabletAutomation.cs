@@ -1,12 +1,13 @@
 namespace HomeAutomation.apps.Area.LivingRoom.Automations;
 
-public class TabletAutomation(ITabletEntities entities, ILogger<TabletAutomation> logger)
-    : LightAutomationBase(entities, logger)
+public class TabletAutomation(
+    ITabletEntities entities,
+    MotionAutomationBase motionAutomation,
+    ILogger<TabletAutomation> logger
+) : LightAutomationBase(entities, motionAutomation, logger)
 {
-    protected override IEnumerable<IDisposable> GetSensorDelayAutomations() => [];
-
     protected override IEnumerable<IDisposable> GetLightAutomations() =>
-        [MotionSensor.StateChanges().Subscribe(ToggleLights)];
+        [MotionAutomation.GetMotionSensor().StateChanges().Subscribe(ToggleLights)];
 
     private void ToggleLights(StateChange e)
     {

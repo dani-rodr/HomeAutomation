@@ -1,5 +1,5 @@
-using HomeAutomation.apps.Area.Bathroom.Devices;
 using HomeAutomation.apps.Area.Bedroom.Automations;
+using HomeAutomation.apps.Area.Bedroom.Devices;
 
 namespace HomeAutomation.apps.Area.Bedroom;
 
@@ -9,15 +9,23 @@ public class BedroomApp(
     IBedroomFanEntities fanEntities,
     IClimateEntities climateEntities,
     IClimateScheduler climateScheduler,
-    MotionSensor motionSensor,
+    Devices.MotionSensor motionSensor,
     IScheduler scheduler
 ) : AppBase<BedroomApp>()
 {
     protected override IEnumerable<IAutomation> CreateAutomations()
     {
         yield return motionSensor;
+
+        var motionAutomation = new MotionAutomation(
+            motionSensor,
+            loggerFactory.CreateLogger<MotionAutomation>()
+        );
+        yield return motionAutomation;
+
         yield return new LightAutomation(
             motionEntities,
+            motionAutomation,
             scheduler,
             loggerFactory.CreateLogger<LightAutomation>()
         );

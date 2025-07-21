@@ -4,4 +4,4 @@ public class MotionSensor(
     ITypedEntityFactory factory,
     IMotionSensorRestartScheduler scheduler,
     ILogger<MotionSensor> logger
-) : MotionSensorBase(factory, scheduler, "pantry_motion_sensor", logger);
+) : Common.Base.MotionSensor(factory, scheduler, "pantry_motion_sensor", logger);

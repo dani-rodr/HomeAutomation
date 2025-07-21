@@ -9,7 +9,7 @@ public class DeskApp(
     ILgDisplay lgDisplay,
     IDesktop desktop,
     ILaptop laptop,
-    MotionSensor motionSensor,
+    Devices.MotionSensor motionSensor,
     ILoggerFactory loggerFactory
 ) : AppBase<DeskApp>()
 {
@@ -20,8 +20,15 @@ public class DeskApp(
         yield return lgDisplay;
         yield return motionSensor;
 
+        var motionAutomation = new MotionAutomation(
+            motionSensor,
+            loggerFactory.CreateLogger<MotionAutomation>()
+        );
+        yield return motionAutomation;
+
         yield return new LightAutomation(
             deskMotionEntities,
+            motionAutomation,
             lgDisplay,
             loggerFactory.CreateLogger<LightAutomation>()
         );

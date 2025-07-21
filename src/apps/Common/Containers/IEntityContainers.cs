@@ -3,18 +3,16 @@ namespace HomeAutomation.apps.Common.Containers;
 public interface IMotionBase
 {
     SwitchEntity MasterSwitch { get; }
-    BinarySensorEntity MotionSensor { get; }
 }
 
 public interface ILightAutomationEntities : IMotionBase
 {
-    NumberEntity SensorDelay { get; }
     LightEntity Light { get; }
-    ButtonEntity Restart { get; }
 }
 
 public interface IFanAutomationEntities : IMotionBase
 {
+    BinarySensorEntity MotionSensor { get; }
     IEnumerable<SwitchEntity> Fans { get; }
 }
 
@@ -76,6 +74,7 @@ public interface IClimateSchedulerEntities
 
 public interface IClimateEntities : IMotionBase
 {
+    BinarySensorEntity MotionSensor { get; }
     ClimateEntity AirConditioner { get; }
     BinarySensorEntity Door { get; }
     SwitchEntity FanAutomation { get; }
@@ -133,6 +132,7 @@ public interface IDesktopEntities
 
 public interface ILockingEntities : IMotionBase
 {
+    BinarySensorEntity MotionSensor { get; }
     LockEntity Lock { get; }
     BinarySensorEntity Door { get; }
     BinarySensorEntity HouseStatus { get; }

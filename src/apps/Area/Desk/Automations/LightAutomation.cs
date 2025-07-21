@@ -2,9 +2,10 @@ namespace HomeAutomation.apps.Area.Desk.Automations;
 
 public class LightAutomation(
     IDeskLightEntities entities,
+    MotionAutomationBase motionAutomation,
     ILgDisplay monitor,
     ILogger<LightAutomation> logger
-) : LightAutomationBase(entities, logger)
+) : LightAutomationBase(entities, motionAutomation, logger)
 {
     private const double LONG_SENSOR_DELAY = 60;
     private const double SHORT_SENSOR_DELAY = 20;
@@ -24,19 +25,20 @@ public class LightAutomation(
             });
     }
 
-    protected override IEnumerable<IDisposable> GetSensorDelayAutomations()
+    protected override IEnumerable<IDisposable> GetAdditionalSwitchableAutomations()
     {
         yield return monitor
             .OnSourceChange()
             .Subscribe(source =>
             {
                 var delay = monitor.IsShowingPc ? LONG_SENSOR_DELAY : SHORT_SENSOR_DELAY;
-                SensorDelay?.SetNumericValue(delay);
+                MotionAutomation.GetSensorDelay()?.SetNumericValue(delay);
             });
     }
 
     private IDisposable GetLightMotionAutomation() =>
-        MotionSensor
+        MotionAutomation
+            .GetMotionSensor()
             .StateChanges()
             .Subscribe(e =>
             {

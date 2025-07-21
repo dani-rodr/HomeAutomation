@@ -2,14 +2,19 @@ using System.Linq;
 
 namespace HomeAutomation.apps.Common.Base;
 
-public abstract class MotionSensorBase(
+public class MotionSensor(
     ITypedEntityFactory factory,
     IMotionSensorRestartScheduler scheduler,
     string deviceName,
     ILogger logger
 ) : AutomationBase(factory.Create<SwitchEntity>(deviceName, "auto_calibrate"), logger)
 {
-    private readonly BinarySensorEntity MotionSensor = factory.Create<BinarySensorEntity>(
+    /// <summary>
+    /// Provides access to the master switch for external automations
+    /// </summary>
+    public SwitchEntity GetMasterSwitch() => MasterSwitch;
+
+    public readonly BinarySensorEntity MotionSensorEntity = factory.Create<BinarySensorEntity>(
         deviceName,
         "smart_presence"
     );
@@ -17,11 +22,11 @@ public abstract class MotionSensorBase(
         deviceName,
         "engineering_mode"
     );
-    private readonly NumberEntity SensorDelay = factory.Create<NumberEntity>(
+    public readonly NumberEntity SensorDelay = factory.Create<NumberEntity>(
         deviceName,
         "still_target_delay"
     );
-    private readonly ButtonEntity Restart = factory.Create<ButtonEntity>(
+    public readonly ButtonEntity Restart = factory.Create<ButtonEntity>(
         deviceName,
         "restart_esp32"
     );
@@ -29,10 +34,6 @@ public abstract class MotionSensorBase(
     [
         .. InitializeZoneEntities(deviceName, factory),
     ];
-
-    // TODO: remove motion related entities from other class
-    // use this class instead
-    // implement sensor delay logic here
 
     protected override IEnumerable<IDisposable> GetPersistentAutomations() =>
         [
@@ -59,7 +60,7 @@ public abstract class MotionSensorBase(
 
     protected override IEnumerable<IDisposable> GetToggleableAutomations()
     {
-        yield return MotionSensor
+        yield return MotionSensorEntity
             .StateChangesWithCurrent()
             .IsOn()
             .Subscribe(_ => MotionCalibrator.LogMotionTrigger(Zones, Logger));
@@ -81,7 +82,7 @@ public abstract class MotionSensorBase(
     private IEnumerable<IDisposable> DailyRestart() =>
         scheduler.GetSchedules(() =>
         {
-            if (MotionSensor.IsClear())
+            if (MotionSensorEntity.IsClear())
             {
                 Logger.LogInformation(
                     "Scheduled restart: motion sensor is clear, pressing restart button."
@@ -93,9 +94,9 @@ public abstract class MotionSensorBase(
                 Logger.LogInformation(
                     "Scheduled restart: motion is active, waiting for it to clear."
                 );
-                MotionSensor
+                MotionSensorEntity
                     .StateChanges()
-                    .Where(e => MotionSensor.IsClear())
+                    .Where(e => MotionSensorEntity.IsClear())
                     .Take(1)
                     .Subscribe(_ =>
                     {

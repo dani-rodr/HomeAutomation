@@ -2,24 +2,27 @@ namespace HomeAutomation.apps.Area.Bathroom.Automations;
 
 public class LightAutomation(
     ILightAutomationEntities entities,
+    MotionAutomationBase motionAutomation,
     IDimmingLightController dimmingController,
     ILogger<LightAutomation> logger
-) : LightAutomationBase(entities, logger)
+) : LightAutomationBase(entities, motionAutomation, logger)
 {
     public override void StartAutomation()
     {
-        dimmingController.SetSensorActiveDelayValue(SensorActiveDelayValue);
+        dimmingController.SetSensorActiveDelayValue(MotionAutomation.SensorActiveDelayValue);
 
         base.StartAutomation();
     }
 
     protected override IEnumerable<IDisposable> GetLightAutomations()
     {
-        yield return MotionSensor
+        yield return MotionAutomation
+            .GetMotionSensor()
             .StateChangesWithCurrent()
             .IsOn()
             .Subscribe(e => dimmingController.OnMotionDetected(Light));
-        yield return MotionSensor
+        yield return MotionAutomation
+            .GetMotionSensor()
             .StateChangesWithCurrent()
             .IsOff(ignorePreviousUnavailable: false)
             .Subscribe(async _ => await dimmingController.OnMotionStoppedAsync(Light));

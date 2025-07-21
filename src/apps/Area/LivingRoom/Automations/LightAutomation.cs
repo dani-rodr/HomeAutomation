@@ -2,27 +2,29 @@ namespace HomeAutomation.apps.Area.LivingRoom.Automations;
 
 public class LightAutomation(
     ILivingRoomLightEntities entities,
+    MotionAutomationBase motionAutomation,
     IDimmingLightController dimmingController,
     ILogger<LightAutomation> logger
-) : LightAutomationBase(entities, logger)
+) : LightAutomationBase(entities, motionAutomation, logger)
 {
-    protected override int SensorWaitTime => 30;
-    protected override int SensorActiveDelayValue => 45;
-    protected override int SensorInactiveDelayValue => 1;
-
     public override void StartAutomation()
     {
         base.StartAutomation();
 
-        dimmingController.SetSensorActiveDelayValue(SensorActiveDelayValue);
+        dimmingController.SetSensorActiveDelayValue(MotionAutomation.SensorActiveDelayValue);
         dimmingController.SetDimParameters(brightnessPct: 80, delaySeconds: 15);
     }
 
     protected override IEnumerable<IDisposable> GetLightAutomations()
     {
         yield return entities.LivingRoomDoor.StateChanges().IsOpen().Subscribe(TurnOnLights);
-        yield return MotionSensor.StateChangesWithCurrent().IsOn().Subscribe(TurnOnLights);
-        yield return MotionSensor
+        yield return MotionAutomation
+            .GetMotionSensor()
+            .StateChangesWithCurrent()
+            .IsOn()
+            .Subscribe(TurnOnLights);
+        yield return MotionAutomation
+            .GetMotionSensor()
             .StateChangesWithCurrent()
             .IsOff()
             .Subscribe(async _ => await dimmingController.OnMotionStoppedAsync(Light));
@@ -44,7 +46,8 @@ public class LightAutomation(
 
     private IDisposable TurnOnMotionSensorAfterNoMotionAndRoomOccupied()
     {
-        return MotionSensor
+        return MotionAutomation
+            .GetMotionSensor()
             .StateChanges()
             .IsOffForMinutes(2)
             .Where(_ =>
@@ -55,7 +58,8 @@ public class LightAutomation(
 
     private IDisposable TurnOnMotionSensorOnTvOff()
     {
-        return MotionSensor
+        return MotionAutomation
+            .GetMotionSensor()
             .StateChanges()
             .IsOffForMinutes(30)
             .Where(_ => entities.TclTv.IsOff())
@@ -67,7 +71,11 @@ public class LightAutomation(
         return entities
             .KitchenMotionSensor.StateChanges()
             .IsOnForSeconds(10)
-            .Subscribe(_ => SensorDelay?.SetNumericValue(SensorActiveDelayValue));
+            .Subscribe(_ =>
+                MotionAutomation
+                    .GetSensorDelay()
+                    ?.SetNumericValue(MotionAutomation.SensorActiveDelayValue)
+            );
     }
 
     private IDisposable TurnOffPantryLights()

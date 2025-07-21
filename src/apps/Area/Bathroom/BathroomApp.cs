@@ -6,7 +6,7 @@ namespace HomeAutomation.apps.Area.Bathroom;
 public class BathroomApp(
     IBathroomLightEntities motionEntities,
     ILoggerFactory loggerFactory,
-    MotionSensor motionSensor,
+    Devices.MotionSensor motionSensor,
     IDimmingLightControllerFactory dimmingLightControllerFactory
 ) : AppBase<BathroomApp>()
 {
@@ -14,9 +14,16 @@ public class BathroomApp(
     {
         yield return motionSensor;
 
+        var motionAutomation = new MotionAutomation(
+            motionSensor,
+            loggerFactory.CreateLogger<MotionAutomation>()
+        );
+        yield return motionAutomation;
+
         yield return new LightAutomation(
             motionEntities,
-            dimmingLightControllerFactory.Create(motionEntities.SensorDelay),
+            motionAutomation,
+            dimmingLightControllerFactory.Create(motionSensor.SensorDelay),
             loggerFactory.CreateLogger<LightAutomation>()
         );
     }
