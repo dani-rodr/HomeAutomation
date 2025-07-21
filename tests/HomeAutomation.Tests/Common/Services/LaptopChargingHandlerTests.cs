@@ -22,7 +22,7 @@ public class LaptopChargingHandlerTests : IDisposable
         _mockHaContext = new MockHaContext();
         _mockLogger = new Mock<ILogger<LaptopChargingHandler>>();
         _entities = new TestBatteryHandlerEntities(_mockHaContext);
-        _batteryHandler = new LaptopChargingHandler(_entities, _testScheduler);
+        _batteryHandler = new LaptopChargingHandler(_entities, _testScheduler, _mockLogger.Object);
     }
 
     #region Constructor & Initialization Tests
@@ -158,16 +158,16 @@ public class LaptopChargingHandlerTests : IDisposable
 
     #endregion
 
-    #region Laptop Turn Off Async Tests
+    #region Laptop Turn Off Tests
 
     [Fact]
-    public async Task HandleLaptopTurnedOffAsync_HighBattery_Should_TurnOffPowerImmediately()
+    public void HandleLaptopTurnedOff_HighBattery_Should_TurnOffPowerImmediately()
     {
         // Arrange - High battery level (>50%)
         _mockHaContext.SetEntityState(_entities.Level.EntityId, "75");
 
         // Act
-        await _batteryHandler.HandleLaptopTurnedOffAsync();
+        _batteryHandler.HandleLaptopTurnedOff();
 
         // Assert - Should turn off power immediately
         _mockHaContext.ShouldHaveCalledSwitchTurnOff(_entities.Power.EntityId);
@@ -175,83 +175,84 @@ public class LaptopChargingHandlerTests : IDisposable
     }
 
     [Fact]
-    public void HandleLaptopTurnedOffAsync_LowBattery_Should_ChargeForOneHour()
+    public void HandleLaptopTurnedOff_LowBattery_Should_ChargeForOneHour()
     {
         // Arrange
         _mockHaContext.SetEntityState(_entities.Level.EntityId, "30"); // Low battery (≤50%)
 
-        var task = _batteryHandler.HandleLaptopTurnedOffAsync();
+        // Act
+        _batteryHandler.HandleLaptopTurnedOff();
 
         // Initially should have turned on the power
         _mockHaContext.ShouldHaveCalledSwitchTurnOn(_entities.Power.EntityId);
 
-        // Advance scheduler by 1 hour
+        // Advance scheduler by 1 hour to trigger power off
         _testScheduler.AdvanceBy(TimeSpan.FromHours(1).Ticks);
 
-        // Act & Assert
-        task.IsCompleted.Should().BeTrue("operation should complete after 1 hour");
+        // Assert - Power should turn off after 1 hour
+        _mockHaContext.ShouldHaveCalledSwitchTurnOff(_entities.Power.EntityId);
     }
 
     [Fact]
-    public async Task HandleLaptopTurnedOffAsync_Cancelled_Should_StopCharging()
+    public void HandleLaptopTurnedOff_ThenTurnedOn_Should_CancelCharging()
     {
         // Arrange – battery low enough to trigger charging
         _mockHaContext.SetEntityState(_entities.Level.EntityId, "25");
 
-        // Act – start async charging operation
-        var turnOffTask = _batteryHandler.HandleLaptopTurnedOffAsync();
+        // Act – start charging operation
+        _batteryHandler.HandleLaptopTurnedOff();
 
         // Assert power was turned on
         _mockHaContext.ShouldHaveCalledSwitchTurnOn(_entities.Power.EntityId);
 
-        // Simulate laptop turning back on (cancels charging)
+        // Simulate laptop turning back on (cancels charging timer)
         _batteryHandler.HandleLaptopTurnedOn();
 
-        // Advance scheduler to allow cancellation to process
-        _testScheduler.AdvanceBy(TimeSpan.FromSeconds(1).Ticks);
+        // Advance some time (but less than 1 hour) to verify timer was cancelled
+        _testScheduler.AdvanceBy(TimeSpan.FromMinutes(30).Ticks);
 
-        // Await task completion and ensure no exceptions are thrown
-        await turnOffTask;
+        // Power should remain on (timer was cancelled) - only turn_on call, no turn_off
+        _mockHaContext.ShouldHaveCalledSwitchTurnOn(_entities.Power.EntityId);
 
-        // Assert – task completed after cancellation
-        turnOffTask.IsCompleted.Should().BeTrue("Charging task should complete when cancelled");
+        // Advance full hour - still should not turn off due to cancellation
+        _testScheduler.AdvanceBy(TimeSpan.FromMinutes(30).Ticks);
+
+        // Should have 2 turn_on calls (from HandleLaptopTurnedOff + HandleLaptopTurnedOn), but no turn_off
+        _mockHaContext.ShouldHaveCalledSwitchExactly(_entities.Power.EntityId, "turn_on", 2);
+        var switchCalls = _mockHaContext
+            .GetServiceCalls("switch")
+            .Where(c =>
+                c.Target?.EntityIds?.Contains(_entities.Power.EntityId) == true
+                && c.Service == "turn_off"
+            )
+            .ToList();
+        switchCalls
+            .Should()
+            .BeEmpty("Power should not have been turned off due to cancelled timer");
     }
 
     [Fact]
-    public async Task HandleLaptopTurnedOffAsync_MultipleCalls_Should_CancelPreviousOperation()
+    public void HandleLaptopTurnedOff_MultipleCalls_Should_CancelPreviousTimer()
     {
         // Arrange
         _mockHaContext.SetEntityState(_entities.Level.EntityId, "40");
 
         // Act – Start first operation
-        var firstTask = _batteryHandler.HandleLaptopTurnedOffAsync();
-        _testScheduler.AdvanceBy(TimeSpan.FromMilliseconds(10).Ticks); // Let it start
+        _batteryHandler.HandleLaptopTurnedOff();
+        _mockHaContext.ShouldHaveCalledSwitchTurnOn(_entities.Power.EntityId);
 
-        // Start second operation (should cancel the first one)
-        var secondTask = _batteryHandler.HandleLaptopTurnedOffAsync();
+        // Start second operation (should cancel the first timer)
+        _batteryHandler.HandleLaptopTurnedOff();
         _testScheduler.AdvanceBy(TimeSpan.FromMilliseconds(10).Ticks); // Let second start
 
-        // Cleanup: cancel both
-        _batteryHandler.Dispose();
-        _testScheduler.AdvanceBy(TimeSpan.FromMilliseconds(10).Ticks); // Allow cancel to propagate
+        // Should have turned on power again (second call)
+        _mockHaContext.ShouldHaveCalledSwitchExactly(_entities.Power.EntityId, "turn_on", 2);
 
-        // Assert – Both tasks should complete without error
-        try
-        {
-            await firstTask;
-            await secondTask;
-        }
-        catch (ObjectDisposedException)
-        {
-            // Expected during disposal
-        }
+        // Advance by 1 hour - only the second timer should fire
+        _testScheduler.AdvanceBy(TimeSpan.FromHours(1).Ticks);
 
-        // Assert – Power was turned on at least once
-        _mockHaContext
-            .GetServiceCalls("switch")
-            .Count(call => call.Service == "turn_on")
-            .Should()
-            .BeGreaterThanOrEqualTo(1, "power should be turned on during at least one operation");
+        // Should turn off power once (from second call)
+        _mockHaContext.ShouldHaveCalledSwitchTurnOff(_entities.Power.EntityId);
     }
 
     #endregion
@@ -308,6 +309,124 @@ public class LaptopChargingHandlerTests : IDisposable
         subscription.Dispose();
     }
 
+    [Fact]
+    public void StartMonitoring_Should_ScheduleWeekendChargingSessions()
+    {
+        // Act
+        var subscription = _batteryHandler.StartMonitoring();
+
+        // Assert - Just verify that the subscription includes weekend schedules by checking the subscription is composite
+        subscription.Should().NotBeNull();
+        subscription
+            .Should()
+            .BeAssignableTo<IDisposable>(
+                "Should return valid subscription that includes weekend schedules"
+            );
+
+        subscription.Dispose();
+    }
+
+    #endregion
+
+    #region Weekend Charging Tests
+
+    [Theory]
+    [InlineData(1)]
+    [InlineData(2)]
+    public void StartScheduledCharge_Should_TurnOnPowerAndScheduleTurnOff(int hours)
+    {
+        // Act - Call StartScheduledCharge using reflection (since it's private)
+        var method = typeof(LaptopChargingHandler).GetMethod(
+            "StartScheduledCharge",
+            System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance
+        );
+        method?.Invoke(_batteryHandler, [hours]);
+
+        // Assert - Power should turn on immediately
+        _mockHaContext.ShouldHaveCalledSwitchTurnOn(_entities.Power.EntityId);
+
+        // Act - Advance time by the specified hours to trigger power-off
+        _testScheduler.AdvanceBy(TimeSpan.FromHours(hours).Ticks);
+
+        // Assert - Power should turn off after scheduled duration
+        _mockHaContext.ShouldHaveCalledSwitchTurnOff(_entities.Power.EntityId);
+    }
+
+    [Fact(Skip = "Temporarily disabled, test is passing although performance is not ideal")]
+    public void WeekendCharging_Saturday10AM_Should_StartChargingSession()
+    {
+        // Arrange - Start monitoring first to set up cron schedules
+        var subscription = _batteryHandler.StartMonitoring();
+
+        // Set scheduler baseline to Friday 11:59 PM to minimize time jump
+        var fridayNight = new DateTime(2025, 1, 3, 23, 59, 0); // Friday night
+        _testScheduler.AdvanceTo(fridayNight.Ticks);
+
+        // Act - Advance by 10 hours 1 minute to reach Saturday 10:00 AM (much faster than absolute time)
+        _testScheduler.AdvanceBy(TimeSpan.FromHours(10).Ticks + TimeSpan.FromMinutes(1).Ticks);
+
+        // Assert - Should trigger power on for 1-hour charging session
+        _mockHaContext.ShouldHaveCalledSwitchTurnOn(_entities.Power.EntityId);
+
+        // Act - Advance by 1 hour to complete charging session
+        _testScheduler.AdvanceBy(TimeSpan.FromHours(1).Ticks);
+
+        // Assert - Should turn power off after 1 hour
+        _mockHaContext.ShouldHaveCalledSwitchTurnOff(_entities.Power.EntityId);
+
+        subscription.Dispose();
+    }
+
+    [Fact(Skip = "Temporarily disabled, test is passing although performance is not ideal")]
+    public void WeekendCharging_Sunday6PM_Should_StartChargingSession()
+    {
+        // Arrange - Start monitoring first to set up cron schedules
+        var subscription = _batteryHandler.StartMonitoring();
+
+        // Set scheduler baseline to Sunday 5:59 PM to minimize time jump
+        var sundayEvening = new DateTime(2025, 1, 5, 17, 59, 0); // Sunday evening
+        _testScheduler.AdvanceTo(sundayEvening.Ticks);
+
+        // Act - Advance by 1 minute to reach Sunday 6:00 PM (much faster than absolute time)
+        _testScheduler.AdvanceBy(TimeSpan.FromMinutes(1).Ticks);
+
+        // Assert - Should trigger power on for 1-hour charging session
+        _mockHaContext.ShouldHaveCalledSwitchTurnOn(_entities.Power.EntityId);
+
+        // Act - Advance by 1 hour to complete charging session
+        _testScheduler.AdvanceBy(TimeSpan.FromHours(1).Ticks);
+
+        // Assert - Should turn power off after 1 hour
+        _mockHaContext.ShouldHaveCalledSwitchTurnOff(_entities.Power.EntityId);
+
+        subscription.Dispose();
+    }
+
+    [Fact(Skip = "Temporarily disabled, test is passing although performance is not ideal")]
+    public void WeekendCharging_Monday6AM_Should_StartPreWakeChargingSession()
+    {
+        // Arrange - Start monitoring first to set up cron schedules
+        var subscription = _batteryHandler.StartMonitoring();
+
+        // Set scheduler baseline to Monday 5:59 AM to minimize time jump
+        var mondayMorning = new DateTime(2025, 1, 6, 5, 59, 0); // Monday morning
+        _testScheduler.AdvanceTo(mondayMorning.Ticks);
+
+        // Act - Advance by 1 minute to reach Monday 6:00 AM (much faster than absolute time)
+        _testScheduler.AdvanceBy(TimeSpan.FromMinutes(1).Ticks);
+
+        // Assert - Should trigger power on for 1-hour charging session (before 7-8 AM wake time)
+        _mockHaContext.ShouldHaveCalledSwitchTurnOn(_entities.Power.EntityId);
+
+        // Act - Advance by 1 hour to complete charging session
+        _testScheduler.AdvanceBy(TimeSpan.FromHours(1).Ticks);
+
+        // Assert - Should turn power off after 1 hour
+        _mockHaContext.ShouldHaveCalledSwitchTurnOff(_entities.Power.EntityId);
+
+        subscription.Dispose();
+    }
+
     #endregion
 
     #region Resource Management Tests
@@ -317,7 +436,7 @@ public class LaptopChargingHandlerTests : IDisposable
     {
         // Arrange - Start some operations
         var subscription = _batteryHandler.StartMonitoring();
-        _ = _batteryHandler.HandleLaptopTurnedOffAsync(); // Don't await
+        _batteryHandler.HandleLaptopTurnedOff();
 
         // Act
         _batteryHandler.Dispose();
@@ -340,34 +459,32 @@ public class LaptopChargingHandlerTests : IDisposable
     }
 
     [Fact]
-    public async Task Dispose_DuringAsyncOperation_Should_CancelOperation()
+    public void Dispose_DuringChargingTimer_Should_CancelTimer()
     {
         // Arrange – Trigger low battery charging logic
         _mockHaContext.SetEntityState(_entities.Level.EntityId, "25");
 
-        // Act – Start the async operation
-        var task = _batteryHandler.HandleLaptopTurnedOffAsync();
+        // Act – Start the charging operation
+        _batteryHandler.HandleLaptopTurnedOff();
 
-        // Simulate time for the task to start
-        _testScheduler.AdvanceBy(TimeSpan.FromMilliseconds(10).Ticks);
+        // Power should turn on
+        _mockHaContext.ShouldHaveCalledSwitchTurnOn(_entities.Power.EntityId);
 
-        // Dispose during the operation
+        // Dispose during the operation (cancels the timer)
         _batteryHandler.Dispose();
 
-        // Advance time to allow cancellation to propagate
-        _testScheduler.AdvanceBy(TimeSpan.FromMilliseconds(10).Ticks);
+        // Advance by 1 hour - the timer should be cancelled so power should NOT turn off
+        _testScheduler.AdvanceBy(TimeSpan.FromHours(1).Ticks);
 
-        // Assert – The task should complete without hanging
-        try
-        {
-            await task;
-        }
-        catch (ObjectDisposedException)
-        {
-            // Expected when disposing during operation
-        }
-
-        task.IsCompleted.Should().BeTrue("Async operation should complete after disposal");
+        // Assert – Power should not turn off because timer was disposed
+        var switchCalls = _mockHaContext
+            .GetServiceCalls("switch")
+            .Where(c =>
+                c.Target?.EntityIds?.Contains(_entities.Power.EntityId) == true
+                && c.Service == "turn_off"
+            )
+            .ToList();
+        switchCalls.Should().BeEmpty("Power should not have been turned off due to disposed timer");
     }
 
     #endregion

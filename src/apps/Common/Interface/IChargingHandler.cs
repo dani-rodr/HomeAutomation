@@ -8,5 +8,5 @@ public interface IChargingHandler
 public interface ILaptopChargingHandler : IChargingHandler, IDisposable
 {
     void HandleLaptopTurnedOn();
-    Task HandleLaptopTurnedOffAsync();
+    void HandleLaptopTurnedOff();
 }

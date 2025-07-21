@@ -64,7 +64,7 @@ public class Laptop(
 
     public override void TurnOff()
     {
-        _ = batteryHandler.HandleLaptopTurnedOffAsync();
+        batteryHandler.HandleLaptopTurnedOff();
         entities.VirtualSwitch.TurnOff();
 
         if (entities.Session.State.IsUnlocked())

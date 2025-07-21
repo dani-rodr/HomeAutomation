@@ -56,7 +56,7 @@ public class DisplayAutomationTests : IDisposable
         _mockBatteryHandler = new Mock<ILaptopChargingHandler>();
         // Setup battery handler mocks to prevent unexpected service calls
         _mockBatteryHandler.Setup(x => x.HandleLaptopTurnedOn());
-        _mockBatteryHandler.Setup(x => x.HandleLaptopTurnedOffAsync()).Returns(Task.CompletedTask);
+        _mockBatteryHandler.Setup(x => x.HandleLaptopTurnedOff());
         _mockBatteryHandler.Setup(x => x.StartMonitoring()).Returns(Disposable.Empty);
         _mockNotificationServices = new Mock<INotificationServices>();
 

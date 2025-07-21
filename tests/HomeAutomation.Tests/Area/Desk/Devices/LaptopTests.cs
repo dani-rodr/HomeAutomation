@@ -29,7 +29,7 @@ public class LaptopTests : IDisposable
         _mockBatteryHandler = new Mock<ILaptopChargingHandler>();
         // Setup battery handler mocks to prevent unexpected service calls
         _mockBatteryHandler.Setup(x => x.HandleLaptopTurnedOn());
-        _mockBatteryHandler.Setup(x => x.HandleLaptopTurnedOffAsync()).Returns(Task.CompletedTask);
+        _mockBatteryHandler.Setup(x => x.HandleLaptopTurnedOff());
         _mockBatteryHandler.Setup(x => x.StartMonitoring()).Returns(Disposable.Empty);
         // Setup event handler mocks to return empty observables by default
         _mockEventHandler
@@ -254,9 +254,9 @@ public class LaptopTests : IDisposable
 
         // Assert - Should call battery handler turned off async
         _mockBatteryHandler.Verify(
-            x => x.HandleLaptopTurnedOffAsync(),
+            x => x.HandleLaptopTurnedOff(),
             Times.Once,
-            "Should call battery handler async method when laptop turns off"
+            "Should call battery handler method when laptop turns off"
         );
     }
 
@@ -292,9 +292,9 @@ public class LaptopTests : IDisposable
 
         // Assert - Should call battery handler turned off async
         _mockBatteryHandler.Verify(
-            x => x.HandleLaptopTurnedOffAsync(),
+            x => x.HandleLaptopTurnedOff(),
             Times.Once,
-            "Should call battery handler async method when virtual switch turns off"
+            "Should call battery handler method when virtual switch turns off"
         );
     }
 
@@ -705,7 +705,7 @@ public class LaptopTests : IDisposable
         scheduledActions[0]();
 
         // Assert: TurnOff should run immediately
-        _mockBatteryHandler.Verify(x => x.HandleLaptopTurnedOffAsync(), Times.Once);
+        _mockBatteryHandler.Verify(x => x.HandleLaptopTurnedOff(), Times.Once);
         _mockHaContext
             .ServiceCalls.Should()
             .ContainSingle(c =>
@@ -798,7 +798,7 @@ public class LaptopTests : IDisposable
         scheduledActions[0]();
 
         // Assert: no immediate service call
-        _mockBatteryHandler.Verify(x => x.HandleLaptopTurnedOffAsync(), Times.Never);
+        _mockBatteryHandler.Verify(x => x.HandleLaptopTurnedOff(), Times.Never);
         _mockHaContext
             .ServiceCalls.Should()
             .BeEmpty("Motion is still on, so TurnOff should not have been called");
