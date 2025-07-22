@@ -6,8 +6,8 @@ public abstract class AutomationBase(SwitchEntity masterSwitch, ILogger logger)
     : IAutomation,
         IDisposable
 {
-    protected SwitchEntity MasterSwitch => masterSwitch;
-    protected ILogger Logger => logger;
+    protected readonly SwitchEntity MasterSwitch = masterSwitch;
+    protected readonly ILogger Logger = logger;
     protected abstract IEnumerable<IDisposable> GetToggleableAutomations();
     protected abstract IEnumerable<IDisposable> GetPersistentAutomations();
 

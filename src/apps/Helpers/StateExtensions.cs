@@ -187,6 +187,10 @@ public static class StateExtensions
 
     public static bool IsOff(this string? state) => state.Is(HaEntityStates.OFF);
 
+    public static bool IsOccupied(this string? state) => state.IsOn();
+
+    public static bool IsCleared(this string? state) => state.IsOff();
+
     public static bool IsConnected(this string? state) => state.Is(HaEntityStates.CONNECTED);
 
     public static bool IsDisconnected(this string? state) => state.Is(HaEntityStates.DISCONNECTED);

@@ -9,9 +9,13 @@ public abstract class MotionSensorBase(
     ILogger logger
 ) : AutomationBase(factory.Create<SwitchEntity>(deviceName, "auto_calibrate"), logger)
 {
-    private readonly BinarySensorEntity MotionSensor = factory.Create<BinarySensorEntity>(
+    private readonly BinarySensorEntity SmartPresence = factory.Create<BinarySensorEntity>(
         deviceName,
         "smart_presence"
+    );
+    private readonly BinarySensorEntity Presence = factory.Create<BinarySensorEntity>(
+        deviceName,
+        "presence"
     );
     private readonly SwitchEntity EngineeringMode = factory.Create<SwitchEntity>(
         deviceName,
@@ -25,6 +29,7 @@ public abstract class MotionSensorBase(
         deviceName,
         "restart_esp32"
     );
+    private readonly ButtonEntity Clear = factory.Create<ButtonEntity>(deviceName, "manual_clear");
     private readonly IReadOnlyList<Ld2410ZoneData> Zones =
     [
         .. InitializeZoneEntities(deviceName, factory),
@@ -54,12 +59,13 @@ public abstract class MotionSensorBase(
                 .IsOffForSeconds(1)
                 .Where(_ => MasterSwitch.IsOn())
                 .Subscribe(_ => EngineeringMode.TurnOn()),
+            HandlePresenceRecoveryToClear(),
             .. DailyRestart(),
         ];
 
     protected override IEnumerable<IDisposable> GetToggleableAutomations()
     {
-        yield return MotionSensor
+        yield return SmartPresence
             .StateChangesWithCurrent()
             .IsOn()
             .Subscribe(_ => MotionCalibrator.LogMotionTrigger(Zones, Logger));
@@ -81,7 +87,7 @@ public abstract class MotionSensorBase(
     private IEnumerable<IDisposable> DailyRestart() =>
         scheduler.GetSchedules(() =>
         {
-            if (MotionSensor.IsClear())
+            if (SmartPresence.IsClear())
             {
                 Logger.LogInformation(
                     "Scheduled restart: motion sensor is clear, pressing restart button."
@@ -93,9 +99,9 @@ public abstract class MotionSensorBase(
                 Logger.LogInformation(
                     "Scheduled restart: motion is active, waiting for it to clear."
                 );
-                MotionSensor
+                SmartPresence
                     .StateChanges()
-                    .Where(e => MotionSensor.IsClear())
+                    .Where(e => SmartPresence.IsClear())
                     .Take(1)
                     .Subscribe(_ =>
                     {
@@ -106,6 +112,22 @@ public abstract class MotionSensorBase(
                     });
             }
         });
+
+    private IDisposable HandlePresenceRecoveryToClear() =>
+        SmartPresence
+            .StateChanges()
+            .Where(e =>
+                e.Old?.State.IsUnavailable() == true
+                && e.New?.State.IsAvailable() == true
+                && Presence.IsClear() == true
+            )
+            .Subscribe(_ =>
+            {
+                Logger.LogInformation(
+                    "SmartPresence recovered from unavailable to clear. Triggering Clear.Press()."
+                );
+                Clear.Press();
+            });
 }
 
 public static class MotionCalibrator
