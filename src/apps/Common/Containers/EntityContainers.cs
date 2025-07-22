@@ -63,7 +63,7 @@ public class AirQualityEntities(Devices devices) : IAirQualityEntities
     private readonly AirPurifierControl _control = devices.LivingRoom.AirPurifierControl!;
     public SwitchEntity MasterSwitch => _control.Automation;
     public BinarySensorEntity MotionSensor => _area.MotionControl;
-    public IEnumerable<SwitchEntity> Fans => [_control.Fan, _area.FanControl!];
+    public IEnumerable<SwitchEntity> Fans => [_control.Fan, _area.FanControl!.Fans["StandFan"]];
     public NumericSensorEntity Pm25Sensor => _control.Pm25Sensor;
     public SwitchEntity LedStatus => _control.LedStatus;
     public SwitchEntity LivingRoomFanAutomation => _area.FanControl!.Automation;
