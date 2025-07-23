@@ -46,6 +46,11 @@ public class Devices(Entities entities)
                 entities.Button.SalaMotionSensorRestartEsp32,
                 entities.Number.SalaMotionSensorStillTargetDelay
             ),
+            SecondaryMotionControl: new(
+                entities.BinarySensor.SalaMotionSensorSmartPresence,
+                entities.Button.SalaMotionSensorRestartEsp32,
+                entities.Number.SalaMotionSensorStillTargetDelay
+            ),
             LightControl: new(entities.Switch.SalaMotionSensor, entities.Light.SalaLightsGroup),
             FanControl: new(
                 entities.Switch.SalaFanAutomation,

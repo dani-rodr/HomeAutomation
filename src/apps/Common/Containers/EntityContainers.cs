@@ -155,7 +155,7 @@ public class LivingRoomFanEntities(Devices devices) : ILivingRoomFanEntities
 {
     private readonly Area _area = devices.LivingRoom;
     public SwitchEntity MasterSwitch => _area.FanControl!.Automation;
-    public BinarySensorEntity MotionSensor => _area.MotionControl;
+    public BinarySensorEntity MotionSensor => _area.SecondaryMotionControl!;
     public IEnumerable<SwitchEntity> Fans => _area.FanControl!.Fans.Values;
     public BinarySensorEntity BedroomMotionSensor => devices.Bedroom.MotionControl;
 }
