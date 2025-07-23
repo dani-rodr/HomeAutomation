@@ -213,9 +213,7 @@ public class ClimateAutomation(
 
     private void SetAcTemperatureAndMode(int temperature, string hvacMode)
     {
-        _ac.SetTemperature(temperature);
-        _ac.SetHvacMode(hvacMode);
-        _ac.SetFanMode(HaEntityStates.AUTO);
+        _ac.SetTemperature(temperature: temperature, hvacMode: hvacMode);
     }
 
     private void ConditionallyActivateFan(bool activateFan, int targetTemp)

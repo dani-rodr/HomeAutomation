@@ -431,6 +431,7 @@ public static class MockHaContextExtensions
     public static void ShouldHaveCalledClimateSetTemperature(
         this MockHaContext mock,
         string entityId,
+        string expectedMode = "",
         double? expectedTemperature = null
     )
     {
@@ -446,6 +447,7 @@ public static class MockHaContextExtensions
         if (expectedTemperature.HasValue)
         {
             double? actualTemp = null;
+            string actualMode = "";
 
             // Handle both dictionary format and ClimateSetTemperatureParameters
             if (
@@ -464,6 +466,14 @@ public static class MockHaContextExtensions
                 {
                     actualTemp = temp;
                 }
+                if (expectedMode != null)
+                {
+                    var hvacModeProp = setTempCall.Data.GetType().GetProperty("HvacMode");
+                    if (hvacModeProp?.GetValue(setTempCall.Data) is string mode)
+                    {
+                        actualMode = mode;
+                    }
+                }
             }
 
             actualTemp
@@ -471,6 +481,12 @@ public static class MockHaContextExtensions
                 .Be(
                     expectedTemperature.Value,
                     $"Expected temperature to be set to {expectedTemperature.Value}°C for entity '{entityId}', but got {(actualTemp.HasValue ? $"{actualTemp.Value}°C" : "null")}"
+                );
+            actualMode
+                .Should()
+                .Be(
+                    expectedMode,
+                    $"Expected hvac_mode to be set to {expectedMode} for entity '{entityId}', but got {actualMode}"
                 );
         }
     }

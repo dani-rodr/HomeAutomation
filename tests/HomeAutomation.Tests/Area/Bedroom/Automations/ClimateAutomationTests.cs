@@ -170,11 +170,8 @@ public class ClimateAutomationTests : IDisposable
 
         _mockHaContext.ShouldHaveCalledClimateSetTemperature(
             _entities.AirConditioner.EntityId,
+            "cool",
             23.0
-        );
-        _mockHaContext.ShouldHaveCalledClimateSetHvacMode(
-            _entities.AirConditioner.EntityId,
-            "cool"
         );
     }
 
@@ -189,6 +186,7 @@ public class ClimateAutomationTests : IDisposable
 
         _mockHaContext.ShouldHaveCalledClimateSetTemperature(
             _entities.AirConditioner.EntityId,
+            "cool",
             25.0
         );
     }
@@ -546,8 +544,6 @@ public class ClimateAutomationTests : IDisposable
 
         // Assert - Should apply new settings
         _mockHaContext.ShouldHaveCalledClimateSetTemperature(_entities.AirConditioner.EntityId);
-        _mockHaContext.ShouldHaveCalledClimateSetHvacMode(_entities.AirConditioner.EntityId);
-        _mockHaContext.ShouldHaveCalledClimateSetFanMode(_entities.AirConditioner.EntityId);
     }
 
     #endregion
@@ -755,11 +751,8 @@ public class ClimateAutomationTests : IDisposable
         // Assert - Verify correct temperature and mode were set
         _mockHaContext.ShouldHaveCalledClimateSetTemperature(
             _entities.AirConditioner.EntityId,
+            expectedMode,
             expectedTemp
-        );
-        _mockHaContext.ShouldHaveCalledClimateSetHvacMode(
-            _entities.AirConditioner.EntityId,
-            expectedMode
         );
 
         // Verify test scenario documentation
@@ -833,10 +826,9 @@ public class ClimateAutomationTests : IDisposable
         // Assert - Verify correct settings for the time block
         _mockHaContext.ShouldHaveCalledClimateSetTemperature(
             _entities.AirConditioner.EntityId,
+            mode,
             coolTemp
         );
-        _mockHaContext.ShouldHaveCalledClimateSetHvacMode(_entities.AirConditioner.EntityId, mode);
-
         // Verify test scenario documentation
         scenario.Should().NotBeEmpty("Test scenario should be documented");
     }
