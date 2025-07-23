@@ -471,6 +471,24 @@ public static class StateChangeObservableExtensions
         int time
     ) => source.ForEntityStateAndTime(HaEntityStates.OFF, time, TimeUnit.Hours);
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static IObservable<StateChange> IsUnavailableForSeconds(
+        this IObservable<StateChange> source,
+        int time
+    ) => source.ForEntityStateAndTime(HaEntityStates.UNAVAILABLE, time, TimeUnit.Seconds);
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static IObservable<StateChange> IsUnavailableForMinutes(
+        this IObservable<StateChange> source,
+        int time
+    ) => source.ForEntityStateAndTime(HaEntityStates.UNAVAILABLE, time, TimeUnit.Minutes);
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static IObservable<StateChange> IsUnavailableForHours(
+        this IObservable<StateChange> source,
+        int time
+    ) => source.ForEntityStateAndTime(HaEntityStates.UNAVAILABLE, time, TimeUnit.Hours);
+
     /// <summary>
     /// Emits state changes only when the entity remains "open" for the specified number of seconds.
     /// </summary>

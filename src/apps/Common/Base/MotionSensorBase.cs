@@ -1,4 +1,5 @@
 using System.Linq;
+using System.Reactive.Disposables;
 
 namespace HomeAutomation.apps.Common.Base;
 
@@ -41,26 +42,9 @@ public abstract class MotionSensorBase(
 
     protected override IEnumerable<IDisposable> GetPersistentAutomations() =>
         [
-            MasterSwitch
-                .StateChanges()
-                .Subscribe(s =>
-                {
-                    if (s.IsOn())
-                    {
-                        EngineeringMode.TurnOn();
-                    }
-                    else if (s.IsOff())
-                    {
-                        EngineeringMode.TurnOff();
-                    }
-                }),
-            EngineeringMode
-                .StateChanges()
-                .IsOffForSeconds(1)
-                .Where(_ => MasterSwitch.IsOn())
-                .Subscribe(_ => EngineeringMode.TurnOn()),
-            HandlePresenceRecoveryToClear(),
-            .. DailyRestart(),
+            .. HandleAutoCalibrateStateChange(),
+            .. HandlePresenceRecoveryToClear(),
+            .. HandleDailyRestart(),
         ];
 
     protected override IEnumerable<IDisposable> GetToggleableAutomations()
@@ -84,7 +68,29 @@ public abstract class MotionSensorBase(
                 factory.Create<NumericSensorEntity>(deviceName, $"g{i}_still_energy")
             ));
 
-    private IEnumerable<IDisposable> DailyRestart() =>
+    private IEnumerable<IDisposable> HandleAutoCalibrateStateChange()
+    {
+        yield return MasterSwitch
+            .StateChanges()
+            .Subscribe(s =>
+            {
+                if (s.IsOn())
+                {
+                    EngineeringMode.TurnOn();
+                }
+                else if (s.IsOff())
+                {
+                    EngineeringMode.TurnOff();
+                }
+            });
+        yield return EngineeringMode
+            .StateChanges()
+            .IsOffForSeconds(1)
+            .Where(_ => MasterSwitch.IsOn())
+            .Subscribe(_ => EngineeringMode.TurnOn());
+    }
+
+    private IEnumerable<IDisposable> HandleDailyRestart() =>
         scheduler.GetSchedules(() =>
         {
             if (SmartPresence.IsClear())
@@ -113,8 +119,9 @@ public abstract class MotionSensorBase(
             }
         });
 
-    private IDisposable HandlePresenceRecoveryToClear() =>
-        SmartPresence
+    private IEnumerable<IDisposable> HandlePresenceRecoveryToClear()
+    {
+        yield return SmartPresence
             .StateChanges()
             .Where(e =>
                 e.Old?.State.IsUnavailable() == true
@@ -128,6 +135,17 @@ public abstract class MotionSensorBase(
                 );
                 Clear.Press();
             });
+        yield return SmartPresence
+            .StateChanges()
+            .IsUnavailableForSeconds(90)
+            .Subscribe(_ =>
+            {
+                Logger.LogInformation(
+                    "SmartPresence unavailable for 90s. Triggering Clear.Press()."
+                );
+                Clear.Press();
+            });
+    }
 }
 
 public static class MotionCalibrator
