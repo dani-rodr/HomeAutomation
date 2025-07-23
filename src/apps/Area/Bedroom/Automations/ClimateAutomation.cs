@@ -56,8 +56,8 @@ public class ClimateAutomation(
     private void TurnOffMasterSwitchOnManualOperation(StateChange e)
     {
         var (oldTemp, newTemp) = e.GetAttributeChange<double?>("temperature");
-
-        if (oldTemp.HasValue && newTemp.HasValue && oldTemp != newTemp)
+        var stateChanged = e.New?.State != e.Old?.State;
+        if (stateChanged || (oldTemp.HasValue && newTemp.HasValue && oldTemp != newTemp))
         {
             MasterSwitch.TurnOff();
             Logger.LogDebug(
