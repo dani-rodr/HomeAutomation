@@ -10,41 +10,35 @@ public class MotionSensorBaseTests
     private readonly Mock<IMotionSensorRestartScheduler> _scheduler = new();
     private readonly Mock<ILogger> _logger = new();
     private readonly MockHaContext _mockHaContext = new();
-    private readonly Mock<BinarySensorEntity> _smartPresence;
-    private readonly Mock<BinarySensorEntity> _presence;
-    private readonly Mock<ButtonEntity> _clear;
-    private readonly Mock<ButtonEntity> _restart;
-    private readonly Mock<SwitchEntity> _masterSwitch;
-    private readonly Mock<SwitchEntity> _engineeringMode;
+    private readonly BinarySensorEntity _smartPresence;
+    private readonly BinarySensorEntity _presence;
+    private readonly ButtonEntity _clear;
+    private readonly ButtonEntity _restart;
+    private readonly SwitchEntity _masterSwitch;
+    private readonly SwitchEntity _engineeringMode;
     private TestMotionSensorBase _sut;
 
     public MotionSensorBaseTests()
     {
-        _smartPresence = new(_mockHaContext, "smart_presence");
-        _presence = new(_mockHaContext, "presence");
-        _clear = new(_mockHaContext, "manual_clear");
-        _restart = new(_mockHaContext, "restart_esp32");
-        _masterSwitch = new(_mockHaContext, "auto_calibrate");
-        _engineeringMode = new(_mockHaContext, "engineering_mode");
+        _smartPresence = new(_mockHaContext, "binary_sensor.device_smart_presence");
+        _presence = new(_mockHaContext, "binary_sensor.device_presence");
+        _clear = new(_mockHaContext, "button.device_manual_clear");
+        _restart = new(_mockHaContext, "button.device_restart_esp32");
+        _masterSwitch = new(_mockHaContext, "switch.device_auto_calibrate");
+        _engineeringMode = new(_mockHaContext, "switch.device_engineering_mode");
 
         _factory
             .Setup(f => f.Create<BinarySensorEntity>("device", "smart_presence"))
-            .Returns(_smartPresence.Object);
-        _factory
-            .Setup(f => f.Create<BinarySensorEntity>("device", "presence"))
-            .Returns(_presence.Object);
-        _factory
-            .Setup(f => f.Create<ButtonEntity>("device", "manual_clear"))
-            .Returns(_clear.Object);
-        _factory
-            .Setup(f => f.Create<ButtonEntity>("device", "restart_esp32"))
-            .Returns(_restart.Object);
+            .Returns(_smartPresence);
+        _factory.Setup(f => f.Create<BinarySensorEntity>("device", "presence")).Returns(_presence);
+        _factory.Setup(f => f.Create<ButtonEntity>("device", "manual_clear")).Returns(_clear);
+        _factory.Setup(f => f.Create<ButtonEntity>("device", "restart_esp32")).Returns(_restart);
         _factory
             .Setup(f => f.Create<SwitchEntity>("device", "auto_calibrate"))
-            .Returns(_masterSwitch.Object);
+            .Returns(_masterSwitch);
         _factory
             .Setup(f => f.Create<SwitchEntity>("device", "engineering_mode"))
-            .Returns(_masterSwitch.Object);
+            .Returns(_engineeringMode);
 
         _sut = new TestMotionSensorBase(
             _factory.Object,
@@ -54,38 +48,26 @@ public class MotionSensorBaseTests
         );
     }
 
-    [Fact(Skip = "To be fixed")]
+    [Fact]
     public void ShouldTriggerClearWhenRecoveredFromUnavailableAndPresenceIsClear()
     {
-        _smartPresence
-            .Setup(e => e.StateChanges())
-            .Returns(
-                Observable.Empty<
-                    StateChange<BinarySensorEntity, EntityState<BinarySensorAttributes>>
-                >()
-            );
+        // Arrange - Set up initial states
+        _mockHaContext.SetEntityState(_smartPresence.EntityId, "unavailable");
+        _mockHaContext.SetEntityState(_presence.EntityId, "off"); // Clear state
+        _mockHaContext.SetEntityState(_masterSwitch.EntityId, "on");
+        _mockHaContext.SetEntityState(_engineeringMode.EntityId, "off");
 
-        _presence
-            .Setup(e => e.StateChanges())
-            .Returns(
-                Observable.Empty<
-                    StateChange<BinarySensorEntity, EntityState<BinarySensorAttributes>>
-                >()
-            );
+        // Mock scheduler to return empty (no daily restart schedule for this test)
+        _scheduler.Setup(s => s.GetSchedules(It.IsAny<Action>())).Returns(new List<IDisposable>());
 
-        _clear
-            .Setup(e => e.StateChanges())
-            .Returns(Observable.Empty<StateChange<ButtonEntity, EntityState<ButtonAttributes>>>());
-
-        _restart
-            .Setup(e => e.StateChanges())
-            .Returns(Observable.Empty<StateChange<ButtonEntity, EntityState<ButtonAttributes>>>());
-
-        _masterSwitch
-            .Setup(e => e.StateChanges())
-            .Returns(Observable.Empty<StateChange<SwitchEntity, EntityState<SwitchAttributes>>>());
-
+        // Act - Start the automation to set up subscriptions
         _sut.StartAutomation();
+
+        // Simulate SmartPresence recovering from unavailable to clear (off)
+        _mockHaContext.SimulateStateChange(_smartPresence.EntityId, "unavailable", "off");
+
+        // Assert - Clear button should be pressed when SmartPresence recovers and Presence is clear
+        _mockHaContext.ShouldHaveCalledButtonPress(_clear.EntityId);
     }
 
     internal class TestMotionSensorBase(
