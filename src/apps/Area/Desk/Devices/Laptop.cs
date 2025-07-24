@@ -48,11 +48,7 @@ public class Laptop(
 
         var sessionLocked = entities
             .Session.StateChanges()
-            .Where(e =>
-                e.New?.State.IsAvailable() == true
-                && e.Old?.State.IsUnlocked() == true
-                && e.New?.State.IsLocked() == true
-            )
+            .IsLocked(ignorePreviousUnavailable: false)
             .Select(_ => false);
 
         // Emits true when switch turns on, false when switch turns off or session locks

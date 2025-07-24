@@ -5,8 +5,6 @@ using NetDaemon.Extensions.Scheduler;
 using NetDaemon.Extensions.Tts;
 using NetDaemon.Runtime;
 
-#pragma warning disable CA1812
-
 try
 {
     await Host.CreateDefaultBuilder(args)
