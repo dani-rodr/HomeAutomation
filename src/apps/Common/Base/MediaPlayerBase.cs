@@ -1,10 +1,9 @@
 using System.Linq;
-using System.Reactive.Disposables;
 
 namespace HomeAutomation.apps.Common.Base;
 
 public abstract class MediaPlayerBase(MediaPlayerEntity entity, ILogger logger)
-    : AutomationBase,
+    : AutomationBase(logger),
         IMediaPlayer
 {
     public string EntityId => Entity.EntityId;
@@ -19,7 +18,6 @@ public abstract class MediaPlayerBase(MediaPlayerEntity entity, ILogger logger)
     public string? MediaContentType => Entity.Attributes?.MediaContentType;
     protected abstract Dictionary<string, string> ExtendedSources { get; }
     protected MediaPlayerEntity Entity => entity;
-    protected ILogger Logger => logger;
     protected Dictionary<string, string> Sources { get; private set; } = [];
     private string _queuedSourceKey = string.Empty;
 

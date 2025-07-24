@@ -2,12 +2,12 @@ namespace HomeAutomation.apps.Common.Services;
 
 public interface IPersonController
 {
-    public void SetHome();
-    public void SetAway();
+    void SetHome();
+    void SetAway();
 }
 
-public class PersonController(IPersonEntities entities, IServices services)
-    : AutomationBase(),
+public class PersonController(IPersonEntities entities, IServices services, ILogger logger)
+    : AutomationBase(logger),
         IPersonController
 {
     private readonly PersonEntity _person = entities.Person;
@@ -18,6 +18,10 @@ public class PersonController(IPersonEntities entities, IServices services)
     {
         if (_person.IsAway())
         {
+            Logger.LogInformation(
+                "{PersonName} arrived home. Updating location and incrementing counter.",
+                _person.Attributes?.FriendlyName ?? "Unknown person"
+            );
             SetLocation(HaEntityStates.HOME);
             _counter.Increment();
         }
@@ -27,6 +31,10 @@ public class PersonController(IPersonEntities entities, IServices services)
     {
         if (_person.IsHome())
         {
+            Logger.LogInformation(
+                "{PersonName} left home. Updating location and decrementing counter.",
+                _person.Attributes?.FriendlyName ?? "Unknown person"
+            );
             SetLocation(HaEntityStates.AWAY);
             _counter.Decrement();
         }
@@ -37,6 +45,7 @@ public class PersonController(IPersonEntities entities, IServices services)
 
     private void ToggleLocation(StateChange e)
     {
+        Logger.LogInformation("Toggle button pressed. Current state: {State}", _person.State);
         if (_person.IsHome())
         {
             SetAway();

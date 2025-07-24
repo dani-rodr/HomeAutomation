@@ -7,21 +7,20 @@ public class PersonControllerTests : IDisposable
 {
     private readonly MockHaContext _mockHaContext;
     private readonly TestEntities _entities;
-    private readonly Mock<IServices> _mockServices;
     private readonly Mock<ILogger<PersonController>> _mockLogger;
     private readonly PersonController _controller;
 
     public PersonControllerTests()
     {
         _mockHaContext = new MockHaContext();
-        _mockServices = new Mock<IServices>();
         _mockLogger = new Mock<ILogger<PersonController>>();
 
         _entities = new TestEntities(_mockHaContext);
 
         _controller = new PersonController(
             _entities,
-            new HomeAssistantGenerated.Services(_mockHaContext)
+            new HomeAssistantGenerated.Services(_mockHaContext),
+            _mockLogger.Object
         );
         _controller.StartAutomation();
     }

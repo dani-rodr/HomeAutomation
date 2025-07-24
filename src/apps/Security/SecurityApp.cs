@@ -14,8 +14,9 @@ public class SecurityApp(
 {
     protected override IEnumerable<IAutomation> CreateAutomations()
     {
-        yield return new PersonController(danielEntities, services);
-        yield return new PersonController(athenaEntities, services);
+        var logger = loggerFactory.CreateLogger<SecurityApp>();
+        yield return new PersonController(danielEntities, services, logger);
+        yield return new PersonController(athenaEntities, services, logger);
         yield return new LockAutomation(
             lockEntities,
             notificationServices,
