@@ -8,7 +8,7 @@ public abstract class MotionSensorBase(
     IMotionSensorRestartScheduler scheduler,
     string deviceName,
     ILogger logger
-) : AutomationBase(factory.Create<SwitchEntity>(deviceName, "auto_calibrate"), logger)
+) : ToggleableAutomation(factory.Create<SwitchEntity>(deviceName, "auto_calibrate"), logger)
 {
     private readonly BinarySensorEntity SmartPresence = factory.Create<BinarySensorEntity>(
         deviceName,

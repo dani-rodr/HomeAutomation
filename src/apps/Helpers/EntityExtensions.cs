@@ -308,3 +308,10 @@ public static class SwitchEntityExtensions
             .Select(pair => pair.Select(x => x.Value).ToList());
     }
 }
+
+public static class PersonEntityExtensions
+{
+    public static bool IsHome(this PersonEntity person) => person.State.IsHome();
+
+    public static bool IsAway(this PersonEntity person) => person.State.IsAway();
+}

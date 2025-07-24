@@ -217,3 +217,17 @@ public class LaptopChargingHandlerEntities(Devices devices) : IChargingHandlerEn
     public NumericSensorEntity Level => _control.Level;
     public SwitchEntity Power => _control.PowerPlug;
 }
+
+public class DanielEntities(Devices devices) : IPersonEntities
+{
+    public PersonEntity Person => devices.Global.PeopleControl!.Daniel.Person;
+    public ButtonEntity ToggleLocation => devices.Global.PeopleControl!.Daniel.Toggle;
+    public CounterEntity Counter => devices.Global.PeopleControl!.Counter;
+}
+
+public class AthenaEntities(Devices devices) : IPersonEntities
+{
+    public PersonEntity Person => devices.Global.PeopleControl!.Athena.Person;
+    public ButtonEntity ToggleLocation => devices.Global.PeopleControl!.Athena.Toggle;
+    public CounterEntity Counter => devices.Global.PeopleControl!.Counter;
+}

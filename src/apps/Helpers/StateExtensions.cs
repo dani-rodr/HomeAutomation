@@ -183,6 +183,10 @@ public static class StateExtensions
 
     public static bool IsUnlocked(this string? state) => state.Is(HaEntityStates.UNLOCKED);
 
+    public static bool IsHome(this string? state) => state.Is(HaEntityStates.HOME);
+
+    public static bool IsAway(this string? state) => state.Is(HaEntityStates.AWAY);
+
     public static bool IsOn(this string? state) => state.Is(HaEntityStates.ON);
 
     public static bool IsOff(this string? state) => state.Is(HaEntityStates.OFF);

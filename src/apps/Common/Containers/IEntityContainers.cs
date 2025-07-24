@@ -1,5 +1,12 @@
 namespace HomeAutomation.apps.Common.Containers;
 
+public interface IPersonEntities
+{
+    PersonEntity Person { get; }
+    ButtonEntity ToggleLocation { get; }
+    CounterEntity Counter { get; }
+}
+
 public interface IMotionBase
 {
     SwitchEntity MasterSwitch { get; }

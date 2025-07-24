@@ -16,6 +16,8 @@ public static class HaEntityStates
     public const string DISCONNECTED = "disconnected";
     public const string UNLOCKED = "unlocked";
     public const string LOCKED = "locked";
+    public const string HOME = "home";
+    public const string AWAY = "not_home";
 
     // Weather states
     public const string SUNNY = "sunny";

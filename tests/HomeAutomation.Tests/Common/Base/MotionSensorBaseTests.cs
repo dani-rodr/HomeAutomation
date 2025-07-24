@@ -58,7 +58,7 @@ public class MotionSensorBaseTests
         _mockHaContext.SetEntityState(_engineeringMode.EntityId, "off");
 
         // Mock scheduler to return empty (no daily restart schedule for this test)
-        _scheduler.Setup(s => s.GetSchedules(It.IsAny<Action>())).Returns(new List<IDisposable>());
+        _scheduler.Setup(s => s.GetSchedules(It.IsAny<Action>())).Returns([]);
 
         // Act - Start the automation to set up subscriptions
         _sut.StartAutomation();

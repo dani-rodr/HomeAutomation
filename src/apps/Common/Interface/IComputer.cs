@@ -4,7 +4,7 @@ public interface ILaptop : IComputer;
 
 public interface IDesktop : IComputer;
 
-public interface IComputer : IAutomationDevice
+public interface IComputer : IAutomation
 {
     void TurnOn();
     void TurnOff();

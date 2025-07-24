@@ -21,6 +21,8 @@ public static class ServiceCollectionExtensions
             ))
             .AddTransient<IDimmingLightControllerFactory, DimmingLightControllerFactory>()
             .AddTransient<IMotionSensorRestartScheduler, MotionSensorRestartScheduler>()
+            .AddTransient<DanielEntities>()
+            .AddTransient<AthenaEntities>()
             .AddAreaEntities()
             .AddMotionSensors();
     }

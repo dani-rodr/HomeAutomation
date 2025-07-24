@@ -60,10 +60,7 @@ public class MockHaContext : IHaContext
     public EntityState? GetState(string entityId)
     {
         var state = _entityStates.GetValueOrDefault(entityId, "unknown");
-        var attributes = _entityAttributes.GetValueOrDefault(
-            entityId,
-            new Dictionary<string, object>()
-        );
+        var attributes = _entityAttributes.GetValueOrDefault(entityId, []);
 
         // Convert attributes dictionary to JsonElement for proper deserialization
         var attributesJson = JsonSerializer.SerializeToElement(attributes);

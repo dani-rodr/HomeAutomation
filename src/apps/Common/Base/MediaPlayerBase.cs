@@ -4,7 +4,7 @@ using System.Reactive.Disposables;
 namespace HomeAutomation.apps.Common.Base;
 
 public abstract class MediaPlayerBase(MediaPlayerEntity entity, ILogger logger)
-    : AutomationDeviceBase,
+    : AutomationBase,
         IMediaPlayer
 {
     public string EntityId => Entity.EntityId;

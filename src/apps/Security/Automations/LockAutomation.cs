@@ -7,7 +7,7 @@ public class LockAutomation(
     INotificationServices services,
     IEventHandler eventHandler,
     ILogger<LockAutomation> logger
-) : AutomationBase(entities.MasterSwitch, logger)
+) : ToggleableAutomation(entities.MasterSwitch, logger)
 {
     private const string LOCK_TAG = "lock";
     private const string LOCK_ACTION = "LOCK_ACTION";

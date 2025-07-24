@@ -16,6 +16,14 @@ public class Devices(Entities entities)
                 entities.Sensor.SunNextMidnight,
                 entities.Weather.Home,
                 entities.InputBoolean.AcPowerSavingMode
+            ),
+            PeopleControl: new(
+                Daniel: new(
+                    entities.Person.DanielRodriguez,
+                    entities.Button.ManualTrackerButtonDaniel
+                ),
+                Athena: new(entities.Person.AthenaBezos, entities.Button.ManualTrackerButtonAthena),
+                Counter: entities.Counter.People
             )
         );
     public Area Bedroom { get; } =

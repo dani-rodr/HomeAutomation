@@ -92,6 +92,12 @@ public static class MockHaContextExtensions
             );
     }
 
+    public static void ShouldHaveCalledCounterIncrement(this MockHaContext mock, string entityId) =>
+        ShouldHaveCalledService(mock, "counter", "increment", entityId);
+
+    public static void ShouldHaveCalledCounterDecrement(this MockHaContext mock, string entityId) =>
+        ShouldHaveCalledService(mock, "counter", "decrement", entityId);
+
     /// <summary>
     /// Verify a generic service call was made
     /// </summary>

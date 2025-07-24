@@ -17,7 +17,16 @@ public record Area(
     MotionLightControl? MotionLightControl = null,
     WeatherControl? WeatherControl = null,
     LockControl? LockControl = null,
+    PeopleControl? PeopleControl = null,
     ExtraControl? ExtraControl = null
+);
+
+public record PersonControlSet(PersonEntity Person, ButtonEntity Toggle);
+
+public record PeopleControl(
+    PersonControlSet Daniel,
+    PersonControlSet Athena,
+    CounterEntity Counter
 );
 
 public record MotionControl(BinarySensorEntity Sensor, ButtonEntity Restart, NumberEntity Timer)

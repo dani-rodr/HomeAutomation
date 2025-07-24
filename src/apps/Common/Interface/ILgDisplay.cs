@@ -1,6 +1,6 @@
 namespace HomeAutomation.apps.Common.Interface;
 
-public interface ILgDisplay : IMediaPlayer, IAutomationDevice
+public interface ILgDisplay : IMediaPlayer, IAutomation
 {
     void ShowPC();
     void ShowLaptop();

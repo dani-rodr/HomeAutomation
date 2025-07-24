@@ -1,7 +1,7 @@
 namespace HomeAutomation.apps.Common.Base;
 
 public abstract class LightAutomationBase(ILightAutomationEntities entities, ILogger logger)
-    : AutomationBase(entities.MasterSwitch, logger)
+    : ToggleableAutomation(entities.MasterSwitch, logger)
 {
     protected readonly BinarySensorEntity MotionSensor = entities.MotionSensor;
     protected readonly NumberEntity? SensorDelay = entities.SensorDelay;

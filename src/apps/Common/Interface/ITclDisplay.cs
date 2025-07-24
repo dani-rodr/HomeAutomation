@@ -1,3 +1,3 @@
 namespace HomeAutomation.apps.Common.Interface;
 
-public interface ITclDisplay : IMediaPlayer, IAutomationDevice;
+public interface ITclDisplay : IMediaPlayer, IAutomation;

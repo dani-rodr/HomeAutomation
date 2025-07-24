@@ -2,7 +2,7 @@ using System.Linq;
 
 namespace HomeAutomation.apps.Common.Base;
 
-public abstract class FanAutomationBase : AutomationBase
+public abstract class FanAutomationBase : ToggleableAutomation
 {
     protected readonly BinarySensorEntity MotionSensor;
     protected readonly IEnumerable<SwitchEntity> Fans;
