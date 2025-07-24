@@ -5,13 +5,13 @@ public class LightAutomation(IKitchenLightEntities entities, ILogger<LightAutoma
 {
     private readonly BinarySensorEntity _powerPlug = entities.PowerPlug;
 
-    protected override int SensorWaitTime => 30;
-    protected override int SensorActiveDelayValue => 60;
+    protected override int SensorWaitTime => 20;
+    protected override int SensorActiveDelayValue => 45;
     protected override int SensorInactiveDelayValue => 1;
 
     protected override IEnumerable<IDisposable> GetLightAutomations() =>
         [
-            MotionSensor.StateChangesWithCurrent().IsOnForSeconds(2).Subscribe(_ => Light.TurnOn()),
+            MotionSensor.StateChangesWithCurrent().IsOnForSeconds(1).Subscribe(_ => Light.TurnOn()),
             MotionSensor.StateChangesWithCurrent().IsOff().Subscribe(_ => Light.TurnOff()),
         ];
 
