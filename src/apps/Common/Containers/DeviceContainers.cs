@@ -5,7 +5,7 @@ public class Devices(Entities entities)
     public Area Global { get; } =
         new(
             MotionControl: new(
-                entities.BinarySensor.HouseOccupancy,
+                entities.BinarySensor.House,
                 entities.Button.RestartEsp32,
                 entities.Number.SalaMotionSensorStillTargetDelay
             ),

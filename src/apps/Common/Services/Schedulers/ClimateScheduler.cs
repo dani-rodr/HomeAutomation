@@ -123,7 +123,7 @@ public class ClimateScheduler : IClimateScheduler
                 PowerSavingTemp: 27,
                 CoolTemp: 24,
                 PassiveTemp: 27,
-                Mode: HaEntityStates.DRY,
+                Mode: HaEntityStates.COOL,
                 ActivateFan: true,
                 HourStart: _entities.SunRising.LocalHour(),
                 HourEnd: _entities.SunSetting.LocalHour()

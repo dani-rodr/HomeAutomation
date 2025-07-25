@@ -58,7 +58,7 @@ public class ClimateSchedulerTests : IDisposable
         // Assert
         success.Should().BeTrue("Sunrise time block should have valid settings");
         setting.Should().NotBeNull();
-        setting!.Mode.Should().Be("dry", "Sunrise period uses dry mode");
+        setting!.Mode.Should().Be("cool", "Sunrise period uses cool mode");
         setting.ActivateFan.Should().BeTrue("Sunrise period can activate fan");
         setting.NormalTemp.Should().Be(25, "Sunrise NormalTemp should be 25°C");
         setting.PowerSavingTemp.Should().Be(27, "Sunrise PowerSavingTemp should be 27°C");
