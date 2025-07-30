@@ -3,7 +3,8 @@ namespace HomeAutomation.apps.Area.Pantry.Automations;
 public class LightAutomation(IPantryLightEntities entities, ILogger<LightAutomation> logger)
     : LightAutomationBase(entities, logger)
 {
-    protected override int SensorWaitTime => 10;
+    protected override int SensorWaitTime => 5;
+    protected override int SensorActiveDelayValue => 15;
 
     protected override IEnumerable<IDisposable> GetAdditionalPersistentAutomations() =>
         [
