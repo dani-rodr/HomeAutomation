@@ -67,8 +67,8 @@ public class LgDisplay(ILgDisplayEntities entities, IServices services, ILogger<
         StateChange<MediaPlayerEntity, EntityState<MediaPlayerAttributes>>
     > StateChanges() => Entity.StateChanges();
 
-    public void ShowToast(string msg) =>
-        SendCommand("system.notifications/createToast", new { message = msg });
+    public void ShowToast(string msg, params object[] args) =>
+        SendCommand("system.notifications/createToast", new { message = string.Format(msg, args) });
 
     public void ShowPC() => ShowSource(DisplaySource.PC.ToString());
 

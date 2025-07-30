@@ -10,7 +10,7 @@ public class LightAutomation(
     private const double SHORT_SENSOR_DELAY = 20;
 
     protected override IEnumerable<IDisposable> GetLightAutomations() =>
-        [GetLightMotionAutomation(), GetSalaLightsAutomation()];
+        [GetLightMotionAutomation(), .. GetSalaLightsAutomation()];
 
     protected override IEnumerable<IDisposable> GetAdditionalPersistentAutomations()
     {
@@ -19,8 +19,7 @@ public class LightAutomation(
             .Where(_ => Light.IsOn() && monitor.IsOn())
             .Subscribe(e =>
             {
-                var status = e.IsOn() ? "ON" : "OFF";
-                monitor.ShowToast($"LG Display Automation is {status}");
+                monitor.ShowToast("LG Display Automation is {0}", e.IsOn() ? "ON" : "OFF");
             });
     }
 
@@ -54,22 +53,15 @@ public class LightAutomation(
                 }
             });
 
-    private IDisposable GetSalaLightsAutomation() =>
-        entities
-            .SalaLights.StateChanges()
-            .Subscribe(async e =>
-            {
-                if (e.Entity.State.IsUnavailable())
-                {
-                    return;
-                }
-                if (e.IsOn())
-                {
-                    await monitor.SetBrightnessHighAsync();
-                }
-                else if (e.IsOff())
-                {
-                    await monitor.SetBrightnessLowAsync();
-                }
-            });
+    private IEnumerable<IDisposable> GetSalaLightsAutomation() =>
+        [
+            entities
+                .SalaLights.StateChanges()
+                .IsOnForSeconds(1)
+                .Subscribe(async _ => await monitor.SetBrightnessHighAsync()),
+            entities
+                .SalaLights.StateChanges()
+                .IsOff()
+                .Subscribe(async _ => await monitor.SetBrightnessLowAsync()),
+        ];
 }
