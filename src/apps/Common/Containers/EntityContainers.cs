@@ -182,6 +182,8 @@ public class PantryLightEntities(Devices devices) : IPantryLightEntities
     public LightEntity MirrorLight => _area.MotionLightControl!;
     public ButtonEntity Restart => _area.MotionControl;
     public BinarySensorEntity BedroomDoor => devices.Bedroom.ContactSensor!;
+    public SwitchEntity BathroomMotionAutomation => devices.Bathroom.LightControl!.Automation;
+    public BinarySensorEntity BathroomMotionSensor => devices.Bathroom.MotionControl!;
 }
 
 public class KitchenLightEntities(Devices devices) : IKitchenLightEntities

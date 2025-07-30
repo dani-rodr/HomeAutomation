@@ -48,6 +48,8 @@ public interface IPantryLightEntities : ILightAutomationEntities
     BinarySensorEntity MiScalePresenceSensor { get; }
     LightEntity MirrorLight { get; }
     BinarySensorEntity BedroomDoor { get; }
+    SwitchEntity BathroomMotionAutomation { get; }
+    BinarySensorEntity BathroomMotionSensor { get; }
 }
 
 public interface IBathroomLightEntities : ILightAutomationEntities;

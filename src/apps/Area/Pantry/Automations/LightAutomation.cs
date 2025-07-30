@@ -6,7 +6,10 @@ public class LightAutomation(IPantryLightEntities entities, ILogger<LightAutomat
     protected override int SensorWaitTime => 10;
 
     protected override IEnumerable<IDisposable> GetAdditionalPersistentAutomations() =>
-        [entities.BedroomDoor.StateChanges().IsOff().Subscribe(_ => MasterSwitch.TurnOn())];
+        [
+            entities.BedroomDoor.StateChanges().IsOff().Subscribe(_ => MasterSwitch.TurnOn()),
+            .. AutoToggleBathroomMotionSensor(),
+        ];
 
     protected override IEnumerable<IDisposable> GetLightAutomations()
     {
@@ -24,5 +27,18 @@ public class LightAutomation(IPantryLightEntities entities, ILogger<LightAutomat
             .MiScalePresenceSensor.StateChanges()
             .IsOn()
             .Subscribe(_ => mirrorLight.TurnOn());
+    }
+
+    private IEnumerable<IDisposable> AutoToggleBathroomMotionSensor()
+    {
+        yield return MotionSensor
+            .StateChangesWithCurrent()
+            .IsOn()
+            .Subscribe(_ => entities.BathroomMotionAutomation.TurnOn());
+        yield return MotionSensor
+            .StateChangesWithCurrent()
+            .CombineLatest(entities.BathroomMotionSensor.StateChangesWithCurrent())
+            .Where(states => states.First.IsOff() && states.Second.IsOff())
+            .Subscribe(_ => entities.BathroomMotionAutomation.TurnOff());
     }
 }
