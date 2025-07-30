@@ -1,3 +1,4 @@
+using System.Reactive.Subjects;
 using System.Text.Json;
 
 namespace HomeAutomation.apps.Area.Desk.Devices;
@@ -22,6 +23,8 @@ public class LgDisplay(ILgDisplayEntities entities, IServices services, ILogger<
     private int _brightness = HIGH_BRIGHTNESS;
     public bool IsShowingPc => CurrentSource == Sources[DisplaySource.PC.ToString()];
     public bool IsShowingLaptop => CurrentSource == Sources[DisplaySource.Laptop.ToString()];
+    public IObservable<bool> ScreenChanges => _screenPowerState.DistinctUntilChanged();
+    private readonly BehaviorSubject<bool> _screenPowerState = new(false);
 
     protected override IEnumerable<IDisposable> GetAutomations() =>
         [
@@ -53,8 +56,8 @@ public class LgDisplay(ILgDisplayEntities entities, IServices services, ILogger<
                 "system.notifications/createAlert",
                 CreateBrightnessPayload(value)
             );
-
             SendButtonCommand("ENTER");
+            _screenPowerState.OnNext(true);
         }
         catch (Exception ex)
         {
@@ -77,6 +80,13 @@ public class LgDisplay(ILgDisplayEntities entities, IServices services, ILogger<
     public void ShowScreenSaver() => ShowSource(DisplaySource.ScreenSaver.ToString());
 
     public override void TurnOn() => _wolServices.SendMagicPacket(MAC_ADDRESS);
+
+    public override void TurnOff()
+    {
+        Logger.LogDebug("Turning off LG display.");
+        _screenPowerState.OnNext(false);
+        base.TurnOff();
+    }
 
     protected override Dictionary<string, string> ExtendedSources =>
         new()
@@ -149,6 +159,7 @@ public class LgDisplay(ILgDisplayEntities entities, IServices services, ILogger<
         try
         {
             await SendCommandAsync(command);
+            _screenPowerState.OnNext(on);
         }
         catch (Exception ex)
         {

@@ -16,6 +16,7 @@ public class LightAutomation(
     {
         yield return MasterSwitch!
             .StateChanges()
+            .DistinctUntilChanged()
             .Where(_ => Light.IsOn() && monitor.IsOn())
             .Subscribe(e =>
             {
@@ -53,15 +54,31 @@ public class LightAutomation(
                 }
             });
 
-    private IEnumerable<IDisposable> GetSalaLightsAutomation() =>
-        [
-            entities
-                .SalaLights.StateChanges()
-                .IsOnForSeconds(1)
-                .Subscribe(async _ => await monitor.SetBrightnessHighAsync()),
-            entities
-                .SalaLights.StateChanges()
-                .IsOff()
-                .Subscribe(async _ => await monitor.SetBrightnessLowAsync()),
-        ];
+    private IEnumerable<IDisposable> GetSalaLightsAutomation()
+    {
+        var salaLights = entities.SalaLights;
+        yield return monitor.ScreenChanges.Subscribe(async screenOn =>
+        {
+            if (!screenOn)
+            {
+                return;
+            }
+            if (entities.SalaLights.IsOn())
+            {
+                await monitor.SetBrightnessHighAsync();
+            }
+            else
+            {
+                await monitor.SetBrightnessLowAsync();
+            }
+        });
+        yield return salaLights
+            .StateChanges()
+            .IsOnForSeconds(1)
+            .Subscribe(async _ => await monitor.SetBrightnessHighAsync());
+        yield return salaLights
+            .StateChanges()
+            .IsOff()
+            .Subscribe(async _ => await monitor.SetBrightnessLowAsync());
+    }
 }
