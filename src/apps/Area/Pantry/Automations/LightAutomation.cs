@@ -34,11 +34,41 @@ public class LightAutomation(IPantryLightEntities entities, ILogger<LightAutomat
         yield return MotionSensor
             .StateChangesWithCurrent()
             .IsOn()
-            .Subscribe(_ => entities.BathroomMotionAutomation.TurnOn());
+            .Subscribe(_ =>
+            {
+                Logger.LogDebug(
+                    "Pantry motion detected - activating bathroom automation {EntityId}",
+                    entities.BathroomMotionAutomation.EntityId
+                );
+                entities.BathroomMotionAutomation.TurnOn();
+            });
         yield return MotionSensor
             .StateChangesWithCurrent()
             .CombineLatest(entities.BathroomMotionSensor.StateChangesWithCurrent())
             .Where(states => states.First.IsOff() && states.Second.IsOff())
-            .Subscribe(_ => entities.BathroomMotionAutomation.TurnOff());
+            .Subscribe(_ =>
+            {
+                Logger.LogDebug(
+                    "Both sensors off (Pantry: {PantryState}, Bathroom: {BathroomState}) - starting 1-minute delay before deactivating bathroom automation {EntityId}",
+                    MotionSensor.State,
+                    entities.BathroomMotionSensor.State,
+                    entities.BathroomMotionAutomation.EntityId
+                );
+            });
+
+        yield return MotionSensor
+            .StateChangesWithCurrent()
+            .IsOffForMinutes(1)
+            .CombineLatest(
+                entities.BathroomMotionSensor.StateChangesWithCurrent().IsOffForMinutes(1)
+            )
+            .Subscribe(_ =>
+            {
+                Logger.LogDebug(
+                    "1-minute delay completed - deactivating bathroom automation {EntityId}",
+                    entities.BathroomMotionAutomation.EntityId
+                );
+                entities.BathroomMotionAutomation.TurnOff();
+            });
     }
 }

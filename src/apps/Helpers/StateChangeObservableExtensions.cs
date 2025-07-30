@@ -253,7 +253,7 @@ public static class StateChangeObservableExtensions
         return source.WhenStateIsFor(
             s => string.Equals(s?.State, desiredState, StringComparison.OrdinalIgnoreCase),
             timeSpan,
-            Scheduler.Default
+            SchedulerProvider.Current
         );
     }
 
@@ -306,7 +306,7 @@ public static class StateChangeObservableExtensions
             _ => throw new ArgumentOutOfRangeException(nameof(timeUnit)),
         };
 
-        return source.WhenStateIsFor(predicate, timeSpan, Scheduler.Default);
+        return source.WhenStateIsFor(predicate, timeSpan, SchedulerProvider.Current);
     }
 
     /// <summary>
@@ -621,7 +621,7 @@ public static class StateChangeObservableExtensions
         source
             .Where(e => e.New?.State != null)
             .DistinctUntilChanged(e => e.New?.State)
-            .Buffer(TimeSpan.FromMilliseconds(timeWindowMs), scheduler ?? Scheduler.Default)
+            .Buffer(TimeSpan.FromMilliseconds(timeWindowMs), scheduler ?? SchedulerProvider.Current)
             .Where(events => events.Count >= minimumFlips);
 
     /// <summary>
