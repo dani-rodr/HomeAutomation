@@ -20,18 +20,22 @@ public class LaptopChargingHandler(
         Power.TurnOff();
 
         var baseMonitoring = base.StartMonitoring();
-
+        var inactiveSchedules = Power
+            .StateChangesWithCurrent()
+            .IsOffForHours(12)
+            .Subscribe(_ => StartScheduledCharge(hours: 1));
         logger.LogInformation("Setting up weekend and Monday morning charging schedules.");
-        var weekendCharging = new CompositeDisposable(
-            scheduler.ScheduleCron("0 22 * * 5", () => StartScheduledCharge(1)), // Friday 10 PM
-            scheduler.ScheduleCron("0 10 * * 6", () => StartScheduledCharge(1)), // Saturday 10 AM
-            scheduler.ScheduleCron("0 18 * * 6", () => StartScheduledCharge(1)), // Saturday 6 PM
-            scheduler.ScheduleCron("0 10 * * 0", () => StartScheduledCharge(1)), // Sunday 10 AM
-            scheduler.ScheduleCron("0 18 * * 0", () => StartScheduledCharge(1)), // Sunday 6 PM
-            scheduler.ScheduleCron("0 06 * * 1", () => StartScheduledCharge(1)) // Monday 6 AM
+        var weekendChargingSchedules = new CompositeDisposable(
+            scheduler.ScheduleCron("0 22 * * 5", () => StartScheduledCharge(1)), // Fri 22:00
+            scheduler.ScheduleCron("0 8 * * 6", () => StartScheduledCharge(1)), // Sat 08:00
+            scheduler.ScheduleCron("0 18 * * 6", () => StartScheduledCharge(1)), // Sat 18:00
+            scheduler.ScheduleCron("0 4 * * 0", () => StartScheduledCharge(1)), // Sun 04:00
+            scheduler.ScheduleCron("0 14 * * 0", () => StartScheduledCharge(1)), // Sun 14:00
+            scheduler.ScheduleCron("0 0 * * 1", () => StartScheduledCharge(1)), // Mon 00:00
+            scheduler.ScheduleCron("0 6 * * 1", () => StartScheduledCharge(1)) // Mon 06:00
         );
 
-        return new CompositeDisposable(baseMonitoring, weekendCharging);
+        return new CompositeDisposable(baseMonitoring, weekendChargingSchedules, inactiveSchedules);
     }
 
     public void HandleLaptopTurnedOn()
