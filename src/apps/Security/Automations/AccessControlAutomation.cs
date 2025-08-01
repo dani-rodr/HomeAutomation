@@ -23,36 +23,21 @@ public class AccessControlAutomation(
 
         foreach (var person in _personControllers)
         {
-            foreach (var homeTrigger in person.HomeTriggers)
+            yield return person.ArrivedHome.Subscribe(triggerId =>
+                OnHomeTriggerActivated(person, triggerId)
+            );
+            yield return person.LeftHome.Subscribe(triggerId =>
+                OnAwayTriggerActivated(person, triggerId)
+            );
+            yield return person.DirectUnlock.Subscribe(triggerId =>
             {
-                yield return homeTrigger
-                    .StateChanges()
-                    .IsOn()
-                    .Subscribe(e => OnHomeTriggerActivated(person, homeTrigger.EntityId));
-            }
-
-            foreach (var awayTrigger in person.AwayTriggers)
-            {
-                yield return awayTrigger
-                    .StateChanges()
-                    .IsOffForSeconds(LOCK_ON_AWAY_DELAY)
-                    .Subscribe(e => OnAwayTriggerActivated(person, awayTrigger.EntityId));
-            }
-            foreach (var directUnlockTrigger in person.DirectUnlockTriggers)
-            {
-                yield return directUnlockTrigger
-                    .StateChanges()
-                    .IsOn()
-                    .Subscribe(e =>
-                    {
-                        Logger.LogInformation(
-                            "{PersonName} direct unlock trigger activated: {TriggerEntity}",
-                            person.Name,
-                            directUnlockTrigger.EntityId
-                        );
-                        _lock.Unlock();
-                    });
-            }
+                Logger.LogInformation(
+                    "{PersonName} direct unlock trigger activated: {TriggerEntity}",
+                    person.Name,
+                    triggerId
+                );
+                _lock.Unlock();
+            });
         }
         yield return _door.StateChanges().IsClosed().Subscribe(_ => _doorRecentlyClosed = true);
         yield return _door
@@ -79,11 +64,6 @@ public class AccessControlAutomation(
             triggerEntityId
         );
 
-        if (person.IsHome)
-        {
-            Logger.LogDebug("{PersonName} is already home, ignoring trigger", person.Name);
-            return;
-        }
         person.SetHome();
         Logger.LogInformation("{PersonName} is now home", person.Name);
 
@@ -127,11 +107,6 @@ public class AccessControlAutomation(
             triggerEntityId
         );
 
-        if (person.IsAway)
-        {
-            Logger.LogDebug("{PersonName} is already away, ignoring trigger", person.Name);
-            return;
-        }
         if (!_doorRecentlyClosed)
         {
             Logger.LogInformation(

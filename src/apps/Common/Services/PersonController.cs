@@ -1,3 +1,6 @@
+using System.Linq;
+using System.Reactive.Subjects;
+
 namespace HomeAutomation.apps.Common.Services;
 
 public interface IPersonController : IAutomation
@@ -5,11 +8,9 @@ public interface IPersonController : IAutomation
     void SetHome();
     void SetAway();
     string Name { get; }
-    IEnumerable<BinarySensorEntity> HomeTriggers { get; }
-    IEnumerable<BinarySensorEntity> AwayTriggers { get; }
-    IEnumerable<BinarySensorEntity> DirectUnlockTriggers { get; }
-    bool IsHome { get; }
-    bool IsAway { get; }
+    IObservable<string> ArrivedHome { get; }
+    IObservable<string> LeftHome { get; }
+    IObservable<string> DirectUnlock { get; }
 }
 
 public class PersonController(IPersonEntities entities, IServices services, ILogger logger)
@@ -19,12 +20,33 @@ public class PersonController(IPersonEntities entities, IServices services, ILog
     private readonly PersonEntity _person = entities.Person;
     private readonly CounterEntity _counter = entities.Counter;
     private readonly ButtonEntity _toggle = entities.ToggleLocation;
-    public IEnumerable<BinarySensorEntity> HomeTriggers => entities.HomeTriggers;
-    public IEnumerable<BinarySensorEntity> AwayTriggers => entities.AwayTriggers;
-    public IEnumerable<BinarySensorEntity> DirectUnlockTriggers => entities.DirectUnlockTriggers;
+    private readonly Subject<string> _arrivedHomeSubject = new();
+    private readonly Subject<string> _leftHomeSubject = new();
+    private const int AWAY_DELAY = 60;
+
+    public IObservable<string> ArrivedHome =>
+        entities
+            .HomeTriggers.StateChanges()
+            .IsOn()
+            .Where(_ => _person.IsAway())
+            .Select(trigger => trigger.Entity.EntityId)
+            .Merge(_arrivedHomeSubject);
+
+    public IObservable<string> LeftHome =>
+        entities
+            .AwayTriggers.StateChanges()
+            .IsOffForSeconds(AWAY_DELAY)
+            .Where(_ => _person.IsHome())
+            .Select(trigger => trigger.Entity.EntityId)
+            .Merge(_leftHomeSubject);
+
+    public IObservable<string> DirectUnlock =>
+        entities
+            .DirectUnlockTriggers.StateChanges()
+            .IsOn()
+            .Select(trigger => trigger.Entity.EntityId);
+
     public string Name => _person.Attributes?.FriendlyName ?? "Unknown";
-    public bool IsHome => _person.IsHome();
-    public bool IsAway => _person.IsAway();
 
     public void SetHome()
     {
@@ -61,10 +83,12 @@ public class PersonController(IPersonEntities entities, IServices services, ILog
         if (_person.IsHome())
         {
             SetAway();
+            _leftHomeSubject.OnNext(_person.EntityId);
         }
         else
         {
             SetHome();
+            _arrivedHomeSubject.OnNext(_person.EntityId);
         }
     }
 
