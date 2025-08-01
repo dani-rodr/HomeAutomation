@@ -62,7 +62,9 @@ public class HelpersTests : IDisposable
     {
         // Arrange
         var results = new List<StateChange>();
-        _stateChangeSubject.IsAnyOfStates(states: ["on"]).Subscribe(results.Add);
+        _stateChangeSubject
+            .IsAnyOfStates(states: ["on"], ignorePreviousUnavailable: false)
+            .Subscribe(results.Add);
 
         // Create change with unavailable old state
         var change = new StateChange(
@@ -83,7 +85,9 @@ public class HelpersTests : IDisposable
     {
         // Arrange
         var results = new List<StateChange>();
-        _stateChangeSubject.IsAnyOfStates(states: ["on"]).Subscribe(results.Add);
+        _stateChangeSubject
+            .IsAnyOfStates(states: ["on"], ignorePreviousUnavailable: false)
+            .Subscribe(results.Add);
 
         var changeWithNullOld = new StateChange(
             (Entity)_light,

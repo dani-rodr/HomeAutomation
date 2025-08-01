@@ -135,16 +135,6 @@ public abstract class MotionSensorBase(
                 );
                 Clear.Press();
             });
-        yield return SmartPresence
-            .StateChanges()
-            .IsUnavailableForSeconds(90)
-            .Subscribe(_ =>
-            {
-                Logger.LogInformation(
-                    "SmartPresence unavailable for 90s. Triggering Clear.Press()."
-                );
-                Clear.Press();
-            });
     }
 }
 

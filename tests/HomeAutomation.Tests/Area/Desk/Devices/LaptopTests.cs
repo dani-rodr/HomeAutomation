@@ -386,6 +386,40 @@ public class LaptopTests : IDisposable
     }
 
     [Fact]
+    public void StateChanges_Should_NotEmitInitialValues_WhenUnavailableToLocked()
+    {
+        // Arrange
+
+        var results = new List<bool>();
+        _laptop.StateChanges().Subscribe(results.Add);
+
+        // Act
+        _mockHaContext.StateChangeSubject.OnNext(
+            StateChangeHelpers.CreateStateChange(_entities.Session, "unavailable", "locked")
+        );
+
+        // Assert - StateChanges should not emit anything on subscription
+        results.Should().BeEmpty("no initial value should be emitted without state changes");
+    }
+
+    [Fact]
+    public void StateChanges_Should_EmitFalse_WhenSessionUnlockedToLocked()
+    {
+        // Arrange
+        var results = new List<bool>();
+        _laptop.StateChanges().Subscribe(results.Add);
+
+        // Act
+        _mockHaContext.StateChangeSubject.OnNext(
+            StateChangeHelpers.CreateStateChange(_entities.Session, "unlocked", "locked")
+        );
+
+        // Assert
+        results.Should().NotBeEmpty("should emit a value when session locks");
+        results.FirstOrDefault().Should().BeFalse("should emit false when session locks");
+    }
+
+    [Fact]
     public void StateChanges_SwitchChangeOnly_Should_EmitNewState()
     {
         // Arrange

@@ -53,7 +53,10 @@ public static class StateChangeObservableExtensions
         source.Where(e =>
             (e.New?.State.IsAvailable() ?? false)
             && (
-                !ignorePreviousUnavailable || (e.Old?.State != null && !e.Old.State.IsUnavailable())
+                ignorePreviousUnavailable
+                || (
+                    e.Old?.State != null && !e.Old.State.IsUnavailable() && !e.Old.State.IsUnknown()
+                )
             )
             && states.Any(s => string.Equals(s, e.New.State, StringComparison.OrdinalIgnoreCase))
         );
