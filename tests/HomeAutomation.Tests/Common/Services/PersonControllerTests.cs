@@ -77,17 +77,15 @@ public class PersonControllerTests : IDisposable
         _mockHaContext.Dispose();
     }
 
-    private class TestEntities : IPersonEntities
+    private class TestEntities(IHaContext context) : IPersonEntities
     {
-        public PersonEntity Person { get; }
-        public CounterEntity Counter { get; }
-        public ButtonEntity ToggleLocation { get; }
+        public PersonEntity Person { get; } = new PersonEntity(context, "person.test_person");
+        public CounterEntity Counter { get; } =
+            new CounterEntity(context, "counter.test_home_counter");
+        public ButtonEntity ToggleLocation { get; } =
+            new ButtonEntity(context, "button.test_toggle");
 
-        public TestEntities(IHaContext context)
-        {
-            Person = new PersonEntity(context, "person.test_person");
-            Counter = new CounterEntity(context, "counter.test_home_counter");
-            ToggleLocation = new ButtonEntity(context, "button.test_toggle");
-        }
+        public IEnumerable<BinarySensorEntity> HomeTriggers => [];
+        public IEnumerable<BinarySensorEntity> AwayTriggers => [];
     }
 }

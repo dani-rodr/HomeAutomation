@@ -1,9 +1,14 @@
 namespace HomeAutomation.apps.Common.Services;
 
-public interface IPersonController
+public interface IPersonController : IAutomation
 {
     void SetHome();
     void SetAway();
+    string Name { get; }
+    IEnumerable<BinarySensorEntity> HomeTriggers { get; }
+    IEnumerable<BinarySensorEntity> AwayTriggers { get; }
+    bool IsHome { get; }
+    bool IsAway { get; }
 }
 
 public class PersonController(IPersonEntities entities, IServices services, ILogger logger)
@@ -13,6 +18,11 @@ public class PersonController(IPersonEntities entities, IServices services, ILog
     private readonly PersonEntity _person = entities.Person;
     private readonly CounterEntity _counter = entities.Counter;
     private readonly ButtonEntity _toggle = entities.ToggleLocation;
+    public IEnumerable<BinarySensorEntity> HomeTriggers => entities.HomeTriggers;
+    public IEnumerable<BinarySensorEntity> AwayTriggers => entities.AwayTriggers;
+    public string Name => _person.Attributes?.FriendlyName ?? "Unknown";
+    public bool IsHome => _person.IsHome();
+    public bool IsAway => _person.IsAway();
 
     public void SetHome()
     {

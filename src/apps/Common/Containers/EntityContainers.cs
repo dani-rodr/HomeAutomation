@@ -220,16 +220,39 @@ public class LaptopChargingHandlerEntities(Devices devices) : IChargingHandlerEn
     public SwitchEntity Power => _control.PowerPlug;
 }
 
-public class DanielEntities(Devices devices) : IPersonEntities
+public class DanielEntities(Devices devices, Entities entities) : IPersonEntities
 {
     public PersonEntity Person => devices.Global.PeopleControl!.Daniel.Person;
     public ButtonEntity ToggleLocation => devices.Global.PeopleControl!.Daniel.Toggle;
     public CounterEntity Counter => devices.Global.PeopleControl!.Counter;
+
+    public IEnumerable<BinarySensorEntity> HomeTriggers =>
+        [
+            entities.BinarySensor.PocoF4GtBle,
+            entities.BinarySensor.RedmiWatch5Ble,
+            entities.BinarySensor.BaseusTagBle,
+            entities.BinarySensor._1921680152,
+        ];
+
+    public IEnumerable<BinarySensorEntity> AwayTriggers => [entities.BinarySensor.PocoF4GtBle];
 }
 
-public class AthenaEntities(Devices devices) : IPersonEntities
+public class AthenaEntities(Devices devices, Entities entities) : IPersonEntities
 {
     public PersonEntity Person => devices.Global.PeopleControl!.Athena.Person;
     public ButtonEntity ToggleLocation => devices.Global.PeopleControl!.Athena.Toggle;
     public CounterEntity Counter => devices.Global.PeopleControl!.Counter;
+
+    public IEnumerable<BinarySensorEntity> HomeTriggers =>
+        [entities.BinarySensor.MiWatchBle, entities.BinarySensor.Iphone];
+
+    public IEnumerable<BinarySensorEntity> AwayTriggers => [entities.BinarySensor.MiWatchBle];
+}
+
+public class AccessControlAutomationEntities(Devices devices) : IAccessControlAutomationEntities
+{
+    private readonly LockControl _lockControl = devices.LivingRoom.LockControl!;
+    public BinarySensorEntity Door => _lockControl.Door;
+    public LockEntity Lock => _lockControl.Lock;
+    public BinarySensorEntity House => _lockControl.HouseStatus;
 }

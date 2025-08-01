@@ -357,7 +357,7 @@
         },
         {
           "id": "media_player.xiaomi_tv_box",
-          "friendlyName": "Xiaomi TV Box",
+          "friendlyName": null,
           "cSharpName": "XiaomiTvBox"
         },
         {
@@ -835,6 +835,21 @@
           "cSharpName": "FrontDoorDoor"
         },
         {
+          "id": "binary_sensor.garbage_lid_moving_target",
+          "friendlyName": "Garbage Lid Moving Target",
+          "cSharpName": "GarbageLidMovingTarget"
+        },
+        {
+          "id": "binary_sensor.garbage_lid_presence",
+          "friendlyName": "Garbage Lid Presence",
+          "cSharpName": "GarbageLidPresence"
+        },
+        {
+          "id": "binary_sensor.garbage_lid_still_target",
+          "friendlyName": "Garbage Lid Still Target",
+          "cSharpName": "GarbageLidStillTarget"
+        },
+        {
           "id": "binary_sensor.homeassistant_client",
           "friendlyName": "homeassistant Client",
           "cSharpName": "HomeassistantClient"
@@ -893,6 +908,11 @@
           "id": "binary_sensor.ipad_focus",
           "friendlyName": "iPad Focus",
           "cSharpName": "IpadFocus"
+        },
+        {
+          "id": "binary_sensor.iphone",
+          "friendlyName": "IPhone",
+          "cSharpName": "Iphone"
         },
         {
           "id": "binary_sensor.iphone_focus",
@@ -1060,9 +1080,9 @@
           "cSharpName": "SalaMovingPresence"
         },
         {
-          "id": "binary_sensor.sala_presence_1",
-          "friendlyName": "Sala Presence - 1",
-          "cSharpName": "SalaPresence1"
+          "id": "binary_sensor.sala_presence",
+          "friendlyName": "Sala Presence",
+          "cSharpName": "SalaPresence"
         },
         {
           "id": "binary_sensor.sala_static_presence",
@@ -1225,6 +1245,11 @@
           "jsonName": "data",
           "cSharpName": "Data",
           "clrType": "System.String"
+        },
+        {
+          "jsonName": "activityType",
+          "cSharpName": "ActivityType",
+          "clrType": "System.String"
         }
       ]
     },
@@ -1240,6 +1265,11 @@
           "id": "button.ac_fan_mode_toggle",
           "friendlyName": "AC Fan Mode Toggle",
           "cSharpName": "AcFanModeToggle"
+        },
+        {
+          "id": "button.ac_fan_mode_toggle_1",
+          "friendlyName": "AC Fan Mode Toggle",
+          "cSharpName": "AcFanModeToggle1"
         },
         {
           "id": "button.air_fryer_pause_resume",
@@ -1262,11 +1292,6 @@
           "cSharpName": "BathroomLightsRestart"
         },
         {
-          "id": "button.bathroom_motion_sensor_factory_reset",
-          "friendlyName": "Bathroom Motion Sensor factory reset",
-          "cSharpName": "BathroomMotionSensorFactoryReset"
-        },
-        {
           "id": "button.bathroom_motion_sensor_manual_clear",
           "friendlyName": "Bathroom Motion Sensor Manual Clear",
           "cSharpName": "BathroomMotionSensorManualClear"
@@ -1285,11 +1310,6 @@
           "id": "button.bathroom_motion_sensor_restart_esp32",
           "friendlyName": "Bathroom Motion Sensor Restart ESP32",
           "cSharpName": "BathroomMotionSensorRestartEsp32"
-        },
-        {
-          "id": "button.bedroom_motion_sensor_enroll",
-          "friendlyName": "Bedroom Motion Sensor Enroll",
-          "cSharpName": "BedroomMotionSensorEnroll"
         },
         {
           "id": "button.bedroom_motion_sensor_factory_reset",
@@ -1427,6 +1447,16 @@
           "cSharpName": "FrontDoorWake"
         },
         {
+          "id": "button.garbage_lid_ld2450_factory_reset",
+          "friendlyName": "Garbage Lid LD2450 Factory Reset",
+          "cSharpName": "GarbageLidLd2450FactoryReset"
+        },
+        {
+          "id": "button.garbage_lid_ld2450_restart",
+          "friendlyName": "Garbage Lid LD2450 Restart",
+          "cSharpName": "GarbageLidLd2450Restart"
+        },
+        {
           "id": "button.google_assistant_synchronize_devices",
           "friendlyName": "Google Assistant Synchronize devices",
           "cSharpName": "GoogleAssistantSynchronizeDevices"
@@ -1455,11 +1485,6 @@
           "id": "button.induction_cooker_power",
           "friendlyName": "Induction",
           "cSharpName": "InductionCookerPower"
-        },
-        {
-          "id": "button.kitchen_motion_sensor_factory_reset",
-          "friendlyName": "Kitchen Motion Sensor factory reset",
-          "cSharpName": "KitchenMotionSensorFactoryReset"
         },
         {
           "id": "button.kitchen_motion_sensor_manual_clear",
@@ -1497,9 +1522,19 @@
           "cSharpName": "ManualTrackerButtonAthena"
         },
         {
+          "id": "button.manual_tracker_button_athena_1",
+          "friendlyName": "Manual Tracker Button Athena",
+          "cSharpName": "ManualTrackerButtonAthena1"
+        },
+        {
           "id": "button.manual_tracker_button_daniel",
           "friendlyName": "Manual Tracker Button Daniel",
           "cSharpName": "ManualTrackerButtonDaniel"
+        },
+        {
+          "id": "button.manual_tracker_button_daniel_1",
+          "friendlyName": "Manual Tracker Button Daniel",
+          "cSharpName": "ManualTrackerButtonDaniel1"
         },
         {
           "id": "button.nodered_e44494a60e30483b",
@@ -1545,11 +1580,6 @@
           "id": "button.rgb_light_strip_restart",
           "friendlyName": "RGB Light Strip Restart",
           "cSharpName": "RgbLightStripRestart"
-        },
-        {
-          "id": "button.sala_motion_sensor_factory_reset",
-          "friendlyName": "Sala Motion Sensor factory reset",
-          "cSharpName": "SalaMotionSensorFactoryReset"
         },
         {
           "id": "button.sala_motion_sensor_manual_clear",
@@ -2115,6 +2145,11 @@
     {
       "domain": "input_boolean",
       "entities": [
+        {
+          "id": "input_boolean.ac_beeper",
+          "friendlyName": "ac_beeper",
+          "cSharpName": "AcBeeper"
+        },
         {
           "id": "input_boolean.ac_light",
           "friendlyName": "AC Light",
@@ -2823,6 +2858,36 @@
           "id": "number.flytrap_turn_off_in",
           "friendlyName": "Flytrap Turn off in",
           "cSharpName": "FlytrapTurnOffIn"
+        },
+        {
+          "id": "number.garbage_lid_servo_control",
+          "friendlyName": "Garbage Lid Servo Control",
+          "cSharpName": "GarbageLidServoControl"
+        },
+        {
+          "id": "number.garbage_lid_timeout",
+          "friendlyName": "Garbage Lid Timeout",
+          "cSharpName": "GarbageLidTimeout"
+        },
+        {
+          "id": "number.garbage_lid_zone_1_x1",
+          "friendlyName": "Garbage Lid Zone-1 X1",
+          "cSharpName": "GarbageLidZone1X1"
+        },
+        {
+          "id": "number.garbage_lid_zone_1_x2",
+          "friendlyName": "Garbage Lid Zone-1 X2",
+          "cSharpName": "GarbageLidZone1X2"
+        },
+        {
+          "id": "number.garbage_lid_zone_1_y1",
+          "friendlyName": "Garbage Lid Zone-1 Y1",
+          "cSharpName": "GarbageLidZone1Y1"
+        },
+        {
+          "id": "number.garbage_lid_zone_1_y2",
+          "friendlyName": "Garbage Lid Zone-1 Y2",
+          "cSharpName": "GarbageLidZone1Y2"
         },
         {
           "id": "number.kitchen_motion_sensor_g0_move_threshold",
@@ -3585,6 +3650,16 @@
           "cSharpName": "DeskMotionSensorOutPinLevel"
         },
         {
+          "id": "select.garbage_lid_baud_rate",
+          "friendlyName": "Garbage Lid Baud rate",
+          "cSharpName": "GarbageLidBaudRate"
+        },
+        {
+          "id": "select.garbage_lid_zone_type",
+          "friendlyName": "Garbage Lid Zone Type",
+          "cSharpName": "GarbageLidZoneType"
+        },
+        {
           "id": "select.kitchen_motion_sensor_baud_rate",
           "friendlyName": "Kitchen Motion Sensor baud rate",
           "cSharpName": "KitchenMotionSensorBaudRate"
@@ -4037,6 +4112,51 @@
           "cSharpName": "FrontDoorOperator"
         },
         {
+          "id": "sensor.garbage_lid_ld2450_bt_mac",
+          "friendlyName": "Garbage Lid LD2450 BT MAC",
+          "cSharpName": "GarbageLidLd2450BtMac"
+        },
+        {
+          "id": "sensor.garbage_lid_ld2450_firmware",
+          "friendlyName": "Garbage Lid LD2450 Firmware",
+          "cSharpName": "GarbageLidLd2450Firmware"
+        },
+        {
+          "id": "sensor.garbage_lid_moving_target_count",
+          "friendlyName": "Garbage Lid Moving Target Count",
+          "cSharpName": "GarbageLidMovingTargetCount"
+        },
+        {
+          "id": "sensor.garbage_lid_presence_target_count",
+          "friendlyName": "Garbage Lid Presence Target Count",
+          "cSharpName": "GarbageLidPresenceTargetCount"
+        },
+        {
+          "id": "sensor.garbage_lid_still_target_count",
+          "friendlyName": "Garbage Lid Still Target Count",
+          "cSharpName": "GarbageLidStillTargetCount"
+        },
+        {
+          "id": "sensor.garbage_lid_target_1_direction",
+          "friendlyName": "Garbage Lid Target-1 Direction",
+          "cSharpName": "GarbageLidTarget1Direction"
+        },
+        {
+          "id": "sensor.garbage_lid_zone_1_all_target_count",
+          "friendlyName": "Garbage Lid Zone-1 All Target Count",
+          "cSharpName": "GarbageLidZone1AllTargetCount"
+        },
+        {
+          "id": "sensor.garbage_lid_zone_1_moving_target_count",
+          "friendlyName": "Garbage Lid Zone-1 Moving Target Count",
+          "cSharpName": "GarbageLidZone1MovingTargetCount"
+        },
+        {
+          "id": "sensor.garbage_lid_zone_1_still_target_count",
+          "friendlyName": "Garbage Lid Zone-1 Still Target Count",
+          "cSharpName": "GarbageLidZone1StillTargetCount"
+        },
+        {
           "id": "sensor.govee_to_mqtt_version",
           "friendlyName": "Govee to MQTT Version",
           "cSharpName": "GoveeToMqttVersion"
@@ -4320,6 +4440,16 @@
           "id": "sensor.poco_f4_gt_last_update_trigger",
           "friendlyName": "POCO F4 GT Last update trigger",
           "cSharpName": "PocoF4GtLastUpdateTrigger"
+        },
+        {
+          "id": "sensor.real_debrid_download_link",
+          "friendlyName": "Real Debrid Download Link",
+          "cSharpName": "RealDebridDownloadLink"
+        },
+        {
+          "id": "sensor.real_debrid_expiration",
+          "friendlyName": "Real Debrid Expiration",
+          "cSharpName": "RealDebridExpiration"
         },
         {
           "id": "sensor.remotes",
@@ -5690,6 +5820,36 @@
           "cSharpName": "FrontDoorBatteryVoltage"
         },
         {
+          "id": "sensor.garbage_lid_target_1_angle",
+          "friendlyName": "Garbage Lid Target-1 Angle",
+          "cSharpName": "GarbageLidTarget1Angle"
+        },
+        {
+          "id": "sensor.garbage_lid_target_1_distance",
+          "friendlyName": "Garbage Lid Target-1 Distance",
+          "cSharpName": "GarbageLidTarget1Distance"
+        },
+        {
+          "id": "sensor.garbage_lid_target_1_resolution",
+          "friendlyName": "Garbage Lid Target-1 Resolution",
+          "cSharpName": "GarbageLidTarget1Resolution"
+        },
+        {
+          "id": "sensor.garbage_lid_target_1_speed",
+          "friendlyName": "Garbage Lid Target-1 Speed",
+          "cSharpName": "GarbageLidTarget1Speed"
+        },
+        {
+          "id": "sensor.garbage_lid_target_1_x",
+          "friendlyName": "Garbage Lid Target-1 X",
+          "cSharpName": "GarbageLidTarget1X"
+        },
+        {
+          "id": "sensor.garbage_lid_target_1_y",
+          "friendlyName": "Garbage Lid Target-1 Y",
+          "cSharpName": "GarbageLidTarget1Y"
+        },
+        {
           "id": "sensor.ignored_issues",
           "friendlyName": "Repairs Ignored",
           "cSharpName": "IgnoredIssues"
@@ -5988,6 +6148,11 @@
           "id": "sensor.poco_f4_gt_sleep_confidence",
           "friendlyName": "POCO F4 GT Sleep confidence",
           "cSharpName": "PocoF4GtSleepConfidence"
+        },
+        {
+          "id": "sensor.real_debrid_remaining_days",
+          "friendlyName": "Real Debrid Remaining Days",
+          "cSharpName": "RealDebridRemainingDays"
         },
         {
           "id": "sensor.rice_cooker_current",
@@ -7684,29 +7849,14 @@
           "cSharpName": "AcAutomation"
         },
         {
-          "id": "switch.ac_fresh_air",
-          "friendlyName": "Fresh air",
-          "cSharpName": "AcFreshAir"
-        },
-        {
-          "id": "switch.ac_panel_light",
-          "friendlyName": "Panel light",
-          "cSharpName": "AcPanelLight"
-        },
-        {
-          "id": "switch.ac_quiet",
-          "friendlyName": "Quiet mode",
-          "cSharpName": "AcQuiet"
+          "id": "switch.ac_automation_1",
+          "friendlyName": "AC Automation",
+          "cSharpName": "AcAutomation1"
         },
         {
           "id": "switch.ac_swing_mode",
           "friendlyName": "AC Swing Mode",
           "cSharpName": "AcSwingMode"
-        },
-        {
-          "id": "switch.ac_xfan",
-          "friendlyName": "Xtra fan",
-          "cSharpName": "AcXfan"
         },
         {
           "id": "switch.auto_calibrate",
@@ -7897,6 +8047,16 @@
           "id": "switch.flytrap_led",
           "friendlyName": "Flytrap LED",
           "cSharpName": "FlytrapLed"
+        },
+        {
+          "id": "switch.garbage_lid_bluetooth",
+          "friendlyName": "Garbage Lid Bluetooth",
+          "cSharpName": "GarbageLidBluetooth"
+        },
+        {
+          "id": "switch.garbage_lid_multi_target_tracking",
+          "friendlyName": "Garbage Lid Multi Target Tracking\u0022",
+          "cSharpName": "GarbageLidMultiTargetTracking"
         },
         {
           "id": "switch.gree_a_c_pre_release",
@@ -8530,6 +8690,11 @@
           "id": "update.filebrowser_update",
           "friendlyName": "Filebrowser Update",
           "cSharpName": "FilebrowserUpdate"
+        },
+        {
+          "id": "update.garbage_lid_firmware",
+          "friendlyName": "Garbage Lid Firmware",
+          "cSharpName": "GarbageLidFirmware"
         },
         {
           "id": "update.govee_to_mqtt_bridge_update",

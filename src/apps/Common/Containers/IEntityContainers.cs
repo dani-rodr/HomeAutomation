@@ -5,6 +5,8 @@ public interface IPersonEntities
     PersonEntity Person { get; }
     ButtonEntity ToggleLocation { get; }
     CounterEntity Counter { get; }
+    IEnumerable<BinarySensorEntity> HomeTriggers { get; }
+    IEnumerable<BinarySensorEntity> AwayTriggers { get; }
 }
 
 public interface IMotionBase
@@ -157,4 +159,11 @@ public interface IChargingHandlerEntities
 {
     NumericSensorEntity Level { get; }
     SwitchEntity Power { get; }
+}
+
+public interface IAccessControlAutomationEntities
+{
+    BinarySensorEntity Door { get; }
+    BinarySensorEntity House { get; }
+    LockEntity Lock { get; }
 }
