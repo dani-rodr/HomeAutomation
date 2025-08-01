@@ -87,5 +87,6 @@ public class PersonControllerTests : IDisposable
 
         public IEnumerable<BinarySensorEntity> HomeTriggers => [];
         public IEnumerable<BinarySensorEntity> AwayTriggers => [];
+        public IEnumerable<BinarySensorEntity> DirectUnlockTriggers => [];
     }
 }

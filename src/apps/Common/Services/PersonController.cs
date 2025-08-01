@@ -7,6 +7,7 @@ public interface IPersonController : IAutomation
     string Name { get; }
     IEnumerable<BinarySensorEntity> HomeTriggers { get; }
     IEnumerable<BinarySensorEntity> AwayTriggers { get; }
+    IEnumerable<BinarySensorEntity> DirectUnlockTriggers { get; }
     bool IsHome { get; }
     bool IsAway { get; }
 }
@@ -20,6 +21,7 @@ public class PersonController(IPersonEntities entities, IServices services, ILog
     private readonly ButtonEntity _toggle = entities.ToggleLocation;
     public IEnumerable<BinarySensorEntity> HomeTriggers => entities.HomeTriggers;
     public IEnumerable<BinarySensorEntity> AwayTriggers => entities.AwayTriggers;
+    public IEnumerable<BinarySensorEntity> DirectUnlockTriggers => entities.DirectUnlockTriggers;
     public string Name => _person.Attributes?.FriendlyName ?? "Unknown";
     public bool IsHome => _person.IsHome();
     public bool IsAway => _person.IsAway();

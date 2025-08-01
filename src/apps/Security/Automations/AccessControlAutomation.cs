@@ -38,6 +38,21 @@ public class AccessControlAutomation(
                     .IsOffForSeconds(LOCK_ON_AWAY_DELAY)
                     .Subscribe(e => OnAwayTriggerActivated(person, awayTrigger.EntityId));
             }
+            foreach (var directUnlockTrigger in person.DirectUnlockTriggers)
+            {
+                yield return directUnlockTrigger
+                    .StateChanges()
+                    .IsOn()
+                    .Subscribe(e =>
+                    {
+                        Logger.LogInformation(
+                            "{PersonName} direct unlock trigger activated: {TriggerEntity}",
+                            person.Name,
+                            directUnlockTrigger.EntityId
+                        );
+                        _lock.Unlock();
+                    });
+            }
         }
         yield return _door.StateChanges().IsClosed().Subscribe(_ => _doorRecentlyClosed = true);
         yield return _door

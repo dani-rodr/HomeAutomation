@@ -7,6 +7,7 @@ public interface IPersonEntities
     CounterEntity Counter { get; }
     IEnumerable<BinarySensorEntity> HomeTriggers { get; }
     IEnumerable<BinarySensorEntity> AwayTriggers { get; }
+    IEnumerable<BinarySensorEntity> DirectUnlockTriggers { get; }
 }
 
 public interface IMotionBase

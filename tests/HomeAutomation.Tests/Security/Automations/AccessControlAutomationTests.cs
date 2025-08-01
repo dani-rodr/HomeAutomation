@@ -912,23 +912,38 @@ public class AccessControlAutomationTests : IDisposable
 
     #endregion
 
+    [Fact]
+    public void DirectUnlockTriggers_ShouldUnlockDoor()
+    {
+        var stateChange = StateChangeHelpers.CreateStateChange(
+            _entities.Person1DirectUnlockTrigger,
+            "off",
+            "on"
+        );
+        _mockHaContext.StateChangeSubject.OnNext(stateChange);
+        _mockHaContext.ShouldHaveCalledLockUnlock(_entities.Lock.EntityId);
+    }
+
     #region Helper Methods
 
-    private Mock<IPersonController> CreateMockPersonController(int personNumber)
+    private Mock<IPersonController> CreateMockPersonController(int index)
     {
         var mock = new Mock<IPersonController>();
-        mock.SetupGet(p => p.Name).Returns($"Person{personNumber}");
+        mock.SetupGet(p => p.Name).Returns($"Person{index}");
 
         // Setup triggers based on person number
-        if (personNumber == 1)
+        if (index == 1)
         {
             mock.SetupGet(p => p.HomeTriggers).Returns([_entities.Person1HomeTrigger]);
             mock.SetupGet(p => p.AwayTriggers).Returns([_entities.Person1AwayTrigger]);
+            mock.SetupGet(p => p.DirectUnlockTriggers)
+                .Returns([_entities.Person1DirectUnlockTrigger]);
         }
         else
         {
             mock.SetupGet(p => p.HomeTriggers).Returns([_entities.Person2HomeTrigger]);
             mock.SetupGet(p => p.AwayTriggers).Returns([_entities.Person2AwayTrigger]);
+            mock.SetupGet(p => p.DirectUnlockTriggers).Returns([]);
         }
 
         return mock;
@@ -961,6 +976,8 @@ public class AccessControlAutomationTests : IDisposable
             new BinarySensorEntity(haContext, "binary_sensor.person1_home_trigger");
         public BinarySensorEntity Person1AwayTrigger { get; } =
             new BinarySensorEntity(haContext, "binary_sensor.person1_away_trigger");
+        public BinarySensorEntity Person1DirectUnlockTrigger { get; } =
+            new BinarySensorEntity(haContext, "binary_sensor.person1_direct_unlock_trigger");
         public BinarySensorEntity Person2HomeTrigger { get; } =
             new BinarySensorEntity(haContext, "binary_sensor.person2_home_trigger");
         public BinarySensorEntity Person2AwayTrigger { get; } =

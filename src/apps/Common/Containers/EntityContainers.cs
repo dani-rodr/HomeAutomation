@@ -230,11 +230,12 @@ public class DanielEntities(Devices devices, Entities entities) : IPersonEntitie
         [
             entities.BinarySensor.PocoF4GtBle,
             entities.BinarySensor.RedmiWatch5Ble,
-            entities.BinarySensor.BaseusTagBle,
             entities.BinarySensor._1921680152,
         ];
 
     public IEnumerable<BinarySensorEntity> AwayTriggers => [entities.BinarySensor.PocoF4GtBle];
+
+    public IEnumerable<BinarySensorEntity> DirectUnlockTriggers => [];
 }
 
 public class AthenaEntities(Devices devices, Entities entities) : IPersonEntities
@@ -248,6 +249,9 @@ public class AthenaEntities(Devices devices, Entities entities) : IPersonEntitie
 
     public IEnumerable<BinarySensorEntity> AwayTriggers =>
         [entities.BinarySensor.MiWatchBle, entities.BinarySensor.Iphone];
+
+    public IEnumerable<BinarySensorEntity> DirectUnlockTriggers =>
+        [entities.BinarySensor.BaseusTagBle];
 }
 
 public class AccessControlAutomationEntities(Devices devices) : IAccessControlAutomationEntities
