@@ -80,7 +80,7 @@ public class AccessControlAutomation(
             _wasHouseEmpty = false;
 
             _suppressUnlocks = Observable
-                .Timer(TimeSpan.FromMinutes(UNLOCK_SUPPRESION_DELAY))
+                .Timer(TimeSpan.FromMinutes(UNLOCK_SUPPRESION_DELAY), SchedulerProvider.Current)
                 .Subscribe(_ =>
                 {
                     Logger.LogInformation("Unlock suppression window ended.");
