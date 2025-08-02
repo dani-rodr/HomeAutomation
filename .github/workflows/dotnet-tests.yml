@@ -13,10 +13,13 @@ on:
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
-
+    permissions:
+      contents: write # required for tag + release
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # needed for tag history
 
       - name: Setup .NET 9
         uses: actions/setup-dotnet@v4
@@ -31,3 +34,33 @@ jobs:
 
       - name: Run tests
         run: dotnet test --no-build --configuration Release --verbosity normal
+
+      - name: Publish project
+        run: dotnet publish src/HomeAutomation.csproj --configuration Release -o publish_output
+
+      - name: Create ZIP of published files
+        run: |
+          cd publish_output
+          zip -r ../netdaemon.zip .
+
+      - name: Bump version and push tag
+        uses: anothrNick/github-tag-action@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          DEFAULT_BUMP: patch         # or 'minor' / 'major'
+          WITH_V: true                # tags will be like v1.0.2
+
+      - name: Get latest tag
+        id: get_tag
+        run: |
+          tag=$(git describe --tags --abbrev=0)
+          echo "tag=$tag" >> $GITHUB_OUTPUT
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.get_tag.outputs.tag }}
+          name: Release ${{ steps.get_tag.outputs.tag }}
+          files: netdaemon.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
