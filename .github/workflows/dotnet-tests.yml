@@ -5,7 +5,6 @@ on:
     branches:
       - main
       - master
-      - dev
   pull_request:
     branches:
       - '*'
@@ -20,7 +19,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0 # Required for tags
+          fetch-depth: 0
 
       - name: Setup .NET 9
         uses: actions/setup-dotnet@v4
@@ -54,8 +53,7 @@ jobs:
 
       - name: Get latest tag
         id: get_tag
-        run: |
-          echo "tag=$(git describe --tags --abbrev=0)" >> $GITHUB_OUTPUT
+        run: echo "tag=$(git describe --tags --abbrev=0)" >> $GITHUB_OUTPUT
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
@@ -80,7 +78,7 @@ jobs:
           mkdir -p ~/.ssh
           echo "${{ secrets.CI_SSH_KEY }}" > ~/.ssh/id_ed25519
           chmod 600 ~/.ssh/id_ed25519
-          ssh-keyscan ${{ secrets.HA_IP }} >> ~/.ssh/known_hosts
+          ssh-keyscan -H ${{ secrets.HA_IP }} >> ~/.ssh/known_hosts
 
       - name: Stop NetDaemon addon
         run: |
@@ -95,9 +93,14 @@ jobs:
           ssh -o StrictHostKeyChecking=no root@${{ secrets.HA_IP }} \
             "rm -rf /config/${{ secrets.HA_VERSION }}/*"
 
-      - name: Copy published files via SCP
+      - name: Copy ZIP file via SCP
         run: |
-          scp -r publish_output/* root@${{ secrets.HA_IP }}:/config/${{ secrets.HA_VERSION }}/
+          scp netdaemon.zip root@${{ secrets.HA_IP }}:/config/${{ secrets.HA_VERSION }}/
+
+      - name: Unzip on target
+        run: |
+          ssh root@${{ secrets.HA_IP }} \
+            "unzip -o /config/${{ secrets.HA_VERSION }}/netdaemon.zip -d /config/${{ secrets.HA_VERSION }}/ && rm /config/${{ secrets.HA_VERSION }}/netdaemon.zip"
 
       - name: Start NetDaemon addon
         run: |
