@@ -26,22 +26,37 @@ jobs:
         with:
           dotnet-version: '9.x'
 
+      - name: Cache NuGet packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.nuget/packages
+          key: nuget-${{ runner.os }}-${{ hashFiles('**/*.csproj') }}
+          restore-keys: nuget-${{ runner.os }}-
+
+      - name: Cache build outputs
+        uses: actions/cache@v4
+        with:
+          path: |
+            **/bin
+            **/obj
+          key: build-${{ runner.os }}-${{ hashFiles('**/*.csproj') }}-${{ hashFiles('**/*.cs') }}
+          restore-keys: |
+            build-${{ runner.os }}-
+
       - name: Restore dependencies
         run: dotnet restore
 
       - name: Build
-        run: dotnet build --no-restore --configuration Release
+        run: dotnet build --no-restore --configuration Release -m
 
       - name: Run tests
         run: dotnet test --no-build --configuration Release --verbosity normal
 
       - name: Publish project
-        run: dotnet publish src/HomeAutomation.csproj --configuration Release -o publish_output
+        run: dotnet publish src/HomeAutomation.csproj --configuration Release -o publish_output -m
 
-      - name: Create ZIP of published files
-        run: |
-          cd publish_output
-          zip -r ../netdaemon.zip .
+      - name: Shutdown build server
+        run: dotnet build-server shutdown
 
       # --- Tag and Release ---
       - name: Bump version tag
@@ -55,7 +70,12 @@ jobs:
         id: get_tag
         run: echo "tag=$(git describe --tags --abbrev=0)" >> $GITHUB_OUTPUT
 
-      - name: Create GitHub Release
+      - name: Create ZIP for GitHub Release
+        run: |
+          cd publish_output
+          zip -r ../netdaemon.zip .
+
+      - name: Upload release
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ steps.get_tag.outputs.tag }}
@@ -88,19 +108,10 @@ jobs:
             -d '{"addon": "${{ secrets.HA_SLUG }}"}' \
             http://${{ secrets.HA_IP }}:${{ secrets.HA_PORT }}/api/services/hassio/addon_stop
 
-      - name: Remove old files via SSH
+      - name: Deploy via rsync over SSH
         run: |
-          ssh -o StrictHostKeyChecking=no root@${{ secrets.HA_IP }} \
-            "rm -rf /config/${{ secrets.HA_VERSION }}/*"
-
-      - name: Copy ZIP file via SCP
-        run: |
-          scp netdaemon.zip root@${{ secrets.HA_IP }}:/config/${{ secrets.HA_VERSION }}/
-
-      - name: Unzip on target
-        run: |
-          ssh root@${{ secrets.HA_IP }} \
-            "unzip -o /config/${{ secrets.HA_VERSION }}/netdaemon.zip -d /config/${{ secrets.HA_VERSION }}/ && rm /config/${{ secrets.HA_VERSION }}/netdaemon.zip"
+          rsync -az --delete -e "ssh -o StrictHostKeyChecking=no" \
+            publish_output/ root@${{ secrets.HA_IP }}:/config/${{ secrets.HA_VERSION }}/
 
       - name: Start NetDaemon addon
         run: |
