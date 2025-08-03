@@ -100,23 +100,19 @@ jobs:
           chmod 600 ~/.ssh/id_ed25519
           ssh-keyscan -H ${{ secrets.HA_IP }} >> ~/.ssh/known_hosts
 
-      - name: Stop NetDaemon addon
-        run: |
-          curl -s -X POST \
-            -H "Authorization: Bearer ${{ secrets.HA_TOKEN }}" \
-            -H "Content-Type: application/json" \
-            -d '{"addon": "${{ secrets.HA_SLUG }}"}' \
-            http://${{ secrets.HA_IP }}:${{ secrets.HA_PORT }}/api/services/hassio/addon_stop
-
       - name: Deploy via rsync over SSH
+        id: deploy
         run: |
-          rsync -az --delete -e "ssh -o StrictHostKeyChecking=no" \
-            publish_output/ root@${{ secrets.HA_IP }}:/config/${{ secrets.HA_VERSION }}/
+          set -e
+          CHANGES=$(rsync -az --delete --itemize-changes -e "ssh -o StrictHostKeyChecking=no" \
+            publish_output/ root@${{ secrets.HA_IP }}:/config/${{ secrets.HA_VERSION }}/ | tee /dev/stderr)
+          echo "changed=$([[ -n \"$CHANGES\" ]] && echo true || echo false)" >> $GITHUB_OUTPUT
 
-      - name: Start NetDaemon addon
+      - name: Restart NetDaemon addon
+        if: steps.deploy.outputs.changed == 'true'
         run: |
           curl -s -X POST \
             -H "Authorization: Bearer ${{ secrets.HA_TOKEN }}" \
             -H "Content-Type: application/json" \
             -d '{"addon": "${{ secrets.HA_SLUG }}"}' \
-            http://${{ secrets.HA_IP }}:${{ secrets.HA_PORT }}/api/services/hassio/addon_start
+            http://${{ secrets.HA_IP }}:${{ secrets.HA_PORT }}/api/services/hassio/addon_restart
