@@ -17,9 +17,7 @@ Import-Module .\src\Home-Assistant
 
 New-HomeAssistantSession -ip  $ip -port $port -token $token
 
-Invoke-HomeAssistantService -service hassio.addon_stop -json $json
-
 Remove-Item -Recurse -Force \\$ip\config\$version\*
 dotnet publish -c Release src/HomeAutomation.csproj -o \\$ip\config\$version
 
-Invoke-HomeAssistantService -service hassio.addon_start -json $json
+Invoke-HomeAssistantService -service hassio.addon_restart -json $json

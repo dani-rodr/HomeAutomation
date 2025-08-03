@@ -36,16 +36,15 @@ ha_call() {
 dotnet publish -c Release src/HomeAutomation.csproj
 publish_dir=$(find src/bin/Release -type d -path "*/net*/publish" | head -n 1)
 
-# Stop the addon
-ha_call "hassio/addon_stop" "$addon_json"
+# Rsync with change detection
+echo "Deploying via rsync..."
+CHANGES=$(rsync -az --delete --itemize-changes -e "ssh -o StrictHostKeyChecking=no" \
+  "$publish_dir"/ root@"$ip":/config/"$version"/ | tee /dev/stderr)
 
-# Remove old files via SSH
-ssh root@"$ip" "rm -rf /config/$version/*"
-echo "Old files at /config/$version removed"
+if [ -n "$CHANGES" ]; then
+  echo "Changes detected. Restarting addon..."
 
-# Copy files via SCP
-scp -r "$publish_dir"/* root@"$ip":/config/"$version"/
-echo "Files copied from $publish_dir to /config/$version on Home Assistant"
-
-# Start the addon
-ha_call "hassio/addon_start" "$addon_json"
+  ha_call "hassio/addon_restart" "$addon_json"
+else
+  echo "No changes detected. Skipping addon restart."
+fi
