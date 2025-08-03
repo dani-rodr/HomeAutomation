@@ -1,4 +1,4 @@
-name: .NET Tests
+name: .NET Tests and Deploy
 
 on:
   push:
@@ -11,15 +11,16 @@ on:
       - '*'
 
 jobs:
-  build-and-test:
+  build-and-deploy:
     runs-on: ubuntu-latest
     permissions:
-      contents: write # required for tag + release
+      contents: write
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0 # needed for tag history
+          fetch-depth: 0 # Required for tags
 
       - name: Setup .NET 9
         uses: actions/setup-dotnet@v4
@@ -43,18 +44,18 @@ jobs:
           cd publish_output
           zip -r ../netdaemon.zip .
 
-      - name: Bump version and push tag
-        uses: anothrNick/github-tag-action@v1
-        env:
+      # --- Tag and Release ---
+      - name: Bump version tag
+        uses: mathieudutour/github-tag-action@v6.2
+        with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          DEFAULT_BUMP: patch         # or 'minor' / 'major'
-          WITH_V: true                # tags will be like v1.0.2
+          DEFAULT_BUMP: patch
+          tag_prefix: v
 
       - name: Get latest tag
         id: get_tag
         run: |
-          tag=$(git describe --tags --abbrev=0)
-          echo "tag=$tag" >> $GITHUB_OUTPUT
+          echo "tag=$(git describe --tags --abbrev=0)" >> $GITHUB_OUTPUT
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
@@ -65,12 +66,14 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      # --- Deploy to Home Assistant ---
       - name: Authenticate with Tailscale
         uses: tailscale/github-action@v3
         with:
           oauth-client-id: ${{ secrets.TS_OAUTH_CLIENT_ID }}
           oauth-secret: ${{ secrets.TS_OAUTH_SECRET }}
           tags: tag:ci
+          use-cache: true
 
       - name: Set up SSH key
         run: |
@@ -88,10 +91,13 @@ jobs:
             http://${{ secrets.HA_IP }}:${{ secrets.HA_PORT }}/api/services/hassio/addon_stop
 
       - name: Remove old files via SSH
-        run: ssh -o StrictHostKeyChecking=no root@${{ secrets.HA_IP }} "rm -rf /config/${{ secrets.HA_VERSION }}/*"
+        run: |
+          ssh -o StrictHostKeyChecking=no root@${{ secrets.HA_IP }} \
+            "rm -rf /config/${{ secrets.HA_VERSION }}/*"
 
       - name: Copy published files via SCP
-        run: scp -r publish_output/* root@${{ secrets.HA_IP }}:/config/${{ secrets.HA_VERSION }}/
+        run: |
+          scp -r publish_output/* root@${{ secrets.HA_IP }}:/config/${{ secrets.HA_VERSION }}/
 
       - name: Start NetDaemon addon
         run: |
