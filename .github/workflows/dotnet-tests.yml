@@ -64,3 +64,39 @@ jobs:
           files: netdaemon.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Authenticate with Tailscale
+        uses: tailscale/github-action@v3
+        with:
+          oauth-client-id: ${{ secrets.TS_OAUTH_CLIENT_ID }}
+          oauth-secret: ${{ secrets.TS_OAUTH_SECRET }}
+          tags: tag:ci
+
+      - name: Set up SSH key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.CI_SSH_KEY }}" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ssh-keyscan ${{ secrets.HA_IP }} >> ~/.ssh/known_hosts
+
+      - name: Stop NetDaemon addon
+        run: |
+          curl -s -X POST \
+            -H "Authorization: Bearer ${{ secrets.HA_TOKEN }}" \
+            -H "Content-Type: application/json" \
+            -d '{"addon": "${{ secrets.HA_SLUG }}"}' \
+            http://${{ secrets.HA_IP }}:${{ secrets.HA_PORT }}/api/services/hassio/addon_stop
+
+      - name: Remove old files via SSH
+        run: ssh -o StrictHostKeyChecking=no root@${{ secrets.HA_IP }} "rm -rf /config/${{ secrets.HA_VERSION }}/*"
+
+      - name: Copy published files via SCP
+        run: scp -r publish_output/* root@${{ secrets.HA_IP }}:/config/${{ secrets.HA_VERSION }}/
+
+      - name: Start NetDaemon addon
+        run: |
+          curl -s -X POST \
+            -H "Authorization: Bearer ${{ secrets.HA_TOKEN }}" \
+            -H "Content-Type: application/json" \
+            -d '{"addon": "${{ secrets.HA_SLUG }}"}' \
+            http://${{ secrets.HA_IP }}:${{ secrets.HA_PORT }}/api/services/hassio/addon_start
