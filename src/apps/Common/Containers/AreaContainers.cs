@@ -59,6 +59,7 @@ public record LaptopControl(
     SensorEntity Session,
     SwitchEntity VirtualSwitch,
     ButtonEntity Lock,
+    ButtonEntity Sleep,
     InputBooleanEntity ProjectNationWeek
 )
 {

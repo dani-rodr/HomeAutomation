@@ -13,17 +13,14 @@ public class Laptop(
     protected override string ShowEvent { get; } = "show_laptop";
     protected override string HideEvent { get; } = "hide_laptop";
 
-    protected override IEnumerable<IDisposable> GetAutomations()
-    {
-        yield return GetSwitchToggleAutomations();
-        yield return GetSessionLockSwitchAutomation();
-        yield return GetSessionUnlockSwitchAutomation();
-        yield return batteryHandler.StartMonitoring();
-        foreach (var automation in GetLogoffAutomations(scheduler))
-        {
-            yield return automation;
-        }
-    }
+    protected override IEnumerable<IDisposable> GetAutomations() =>
+        [
+            GetSwitchToggleAutomations(),
+            .. GetSessionLockSwitchAutomation(),
+            GetSessionUnlockSwitchAutomation(),
+            batteryHandler.StartMonitoring(),
+            .. GetLogoffAutomations(scheduler),
+        ];
 
     public override bool IsOn()
     {
@@ -129,17 +126,29 @@ public class Laptop(
         return disposables;
     }
 
-    private IDisposable GetSessionLockSwitchAutomation() =>
-        entities
-            .Session.StateChanges()
-            .Where(e => e.Old?.State.IsUnlocked() == true && e.New?.State.IsLocked() == true)
-            .Subscribe(_ =>
-            {
-                Logger.LogInformation(
-                    "Session locked. Automatically turning off laptop virtual switch."
-                );
-                entities.VirtualSwitch.TurnOff();
-            });
+    private IEnumerable<IDisposable> GetSessionLockSwitchAutomation() =>
+        [
+            entities
+                .Session.StateChanges()
+                .Where(e => e.Old?.State.IsUnlocked() == true && e.New?.State.IsLocked() == true)
+                .Subscribe(_ =>
+                {
+                    Logger.LogInformation(
+                        "Session locked. Automatically turning off laptop virtual switch."
+                    );
+                    entities.VirtualSwitch.TurnOff();
+                }),
+            entities
+                .VirtualSwitch.StateChanges()
+                .IsOffForMinutes(5)
+                .Subscribe(_ =>
+                {
+                    Logger.LogInformation(
+                        "Virtual switch is off for 5 minutes. Automatically putting laptop to sleep."
+                    );
+                    entities.Sleep?.Press();
+                }),
+        ];
 
     private IDisposable GetSessionUnlockSwitchAutomation() =>
         entities

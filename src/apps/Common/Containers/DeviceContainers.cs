@@ -153,6 +153,7 @@ public class Devices(Entities entities)
                 entities.Sensor.Thinkpadt14Sessionstate,
                 entities.Switch.Laptop,
                 entities.Button.Thinkpadt14Lock,
+                entities.Button.Thinkpadt14Sleep,
                 entities.InputBoolean.ProjectNationWeek
             ),
             PcControl: new(entities.Switch.DanielPc, entities.InputButton.RemotePc)

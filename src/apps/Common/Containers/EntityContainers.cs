@@ -129,6 +129,7 @@ public class LaptopEntities(Devices devices) : ILaptopEntities
     public NumericSensorEntity BatteryLevel => _area.LaptopControl!;
 
     public ButtonEntity Lock => _area.LaptopControl!.Lock;
+    public ButtonEntity Sleep => _area.LaptopControl!.Sleep;
 
     public BinarySensorEntity MotionSensor => _area.MotionControl;
 }

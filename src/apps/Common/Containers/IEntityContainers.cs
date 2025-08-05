@@ -103,6 +103,7 @@ public interface ILaptopEntities
     SensorEntity Session { get; }
     NumericSensorEntity BatteryLevel { get; }
     ButtonEntity Lock { get; }
+    ButtonEntity Sleep { get; }
     BinarySensorEntity MotionSensor { get; }
 }
 

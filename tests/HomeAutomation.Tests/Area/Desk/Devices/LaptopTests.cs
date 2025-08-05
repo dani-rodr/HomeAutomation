@@ -895,7 +895,7 @@ public class LaptopTests : IDisposable
         public NumericSensorEntity BatteryLevel { get; } =
             new NumericSensorEntity(haContext, "sensor.thinkpadt14_battery_level");
         public ButtonEntity Lock { get; } = new ButtonEntity(haContext, "button.thinkpadt14_lock");
-
+        public ButtonEntity Sleep { get; } = new ButtonEntity(haContext, "button.laptop_sleep");
         public BinarySensorEntity MotionSensor { get; } =
             new(haContext, "binary_sensor.desk_smart_presence");
     }

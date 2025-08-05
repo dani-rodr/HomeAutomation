@@ -681,6 +681,8 @@ public class DisplayAutomationTests : IDisposable
 
         public BinarySensorEntity MotionSensor { get; } =
             new BinarySensorEntity(haContext, "binary_sensor.desk_smart_presence");
+
+        public ButtonEntity Sleep { get; } = new ButtonEntity(haContext, "button.laptop_sleep");
     }
 
     private class TestLgDisplayEntities(IHaContext haContext) : ILgDisplayEntities
