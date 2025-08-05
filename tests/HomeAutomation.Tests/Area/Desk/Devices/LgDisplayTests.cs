@@ -29,6 +29,17 @@ public class LgDisplayTests : IDisposable
             new { source_list = attributes, source = "HDMI 1" }
         );
 
+        // Set up mock response for power state check
+        _mockHaContext.SetServiceResponse(
+            "webostv",
+            "command",
+            "com.webos.service.tvpower/power/getPowerState",
+            new Dictionary<string, object>
+            {
+                [_entities.MediaPlayer.EntityId] = new { state = "Active" },
+            }
+        );
+
         _lgDisplay = new LgDisplay(_entities, new Services(_mockHaContext), _mockLogger.Object);
         _lgDisplay.StartAutomation();
         // Set initial state
@@ -553,27 +564,36 @@ public class LgDisplayTests : IDisposable
         // Assert - Should invoke SetBrightnessAsync with correct value
         var calls = _mockHaContext.ServiceCalls;
 
-        calls.Count.Should().Be(3);
+        calls.Count.Should().Be(4);
 
-        var firstCall = calls[0];
-        firstCall.Should().NotBeNull();
-        firstCall!.Domain.Should().Be("webostv");
-        firstCall.Service.Should().Be("command");
+        // First call should be power state check
+        var powerStateCall = calls[0];
+        powerStateCall.Should().NotBeNull();
+        powerStateCall!.Domain.Should().Be("webostv");
+        powerStateCall.Service.Should().Be("command");
 
-        var nextCall = calls[1];
-        nextCall.Should().NotBeNull();
-        nextCall!.Domain.Should().Be("webostv");
-        nextCall.Service.Should().Be("button");
+        // Second call should be brightness command
+        var brightnessCall = calls[1];
+        brightnessCall.Should().NotBeNull();
+        brightnessCall!.Domain.Should().Be("webostv");
+        brightnessCall.Service.Should().Be("command");
 
-        var lastCall = calls[2];
-        lastCall.Should().NotBeNull();
-        lastCall!.Domain.Should().Be("light");
-        lastCall.Service.Should().Be("turn_on");
+        // Third call should be button press
+        var buttonCall = calls[2];
+        buttonCall.Should().NotBeNull();
+        buttonCall!.Domain.Should().Be("webostv");
+        buttonCall.Service.Should().Be("button");
 
-        var brightnessDataJson = JsonSerializer.Serialize(firstCall.Data);
+        // Fourth call should be light update
+        var lightCall = calls[3];
+        lightCall.Should().NotBeNull();
+        lightCall!.Domain.Should().Be("light");
+        lightCall.Service.Should().Be("turn_on");
+
+        var brightnessDataJson = JsonSerializer.Serialize(brightnessCall.Data);
         brightnessDataJson.Should().Contain($"{newBrightnessPct}");
 
-        var buttonDataJson = JsonSerializer.Serialize(nextCall.Data);
+        var buttonDataJson = JsonSerializer.Serialize(buttonCall.Data);
         buttonDataJson.Should().Contain(buttonEnterPressed);
     }
 
@@ -628,77 +648,5 @@ public class LgDisplayTests : IDisposable
     {
         public MediaPlayerEntity MediaPlayer => new(haContext, "media_player.lg_webos_smart_tv");
         public LightEntity Display => new(haContext, "light.lgdisplay");
-    }
-
-    /// <summary>
-    /// Test implementation of Services containing WebOS TV and Wake on LAN services
-    /// Provides access to webostv commands and wake_on_lan functionality for testing
-    /// </summary>
-    private class TestLgDisplayServices(IHaContext haContext)
-    {
-        public TestWebostvServices Webostv { get; } = new(haContext);
-        public TestWakeOnLanServices WakeOnLan { get; } = new(haContext);
-    }
-
-    /// <summary>
-    /// Test implementation of WebostvServices for testing WebOS TV commands
-    /// Simulates the webostv service calls used by LgDisplay
-    /// </summary>
-    private class TestWebostvServices(IHaContext haContext)
-    {
-        private readonly IHaContext _haContext = haContext;
-
-        public void Command(string entityId, string command, object? payload = null)
-        {
-            _haContext.CallService(
-                "webostv",
-                "command",
-                null,
-                new
-                {
-                    entity_id = entityId,
-                    command = command,
-                    payload = payload,
-                }
-            );
-        }
-
-        public void Button(string entityId, string button)
-        {
-            _haContext.CallService(
-                "webostv",
-                "button",
-                null,
-                new { entity_id = entityId, button = button }
-            );
-        }
-    }
-
-    /// <summary>
-    /// Test implementation of WakeOnLanServices for testing WOL functionality
-    /// Simulates the wake_on_lan service calls used by LgDisplay
-    /// </summary>
-    private class TestWakeOnLanServices(IHaContext haContext)
-    {
-        private readonly IHaContext _haContext = haContext;
-
-        public void SendMagicPacket(
-            string mac,
-            string? broadcastAddress = null,
-            double? broadcastPort = null
-        )
-        {
-            _haContext.CallService(
-                "wake_on_lan",
-                "send_magic_packet",
-                null,
-                new
-                {
-                    mac = mac,
-                    broadcast_address = broadcastAddress,
-                    broadcast_port = broadcastPort,
-                }
-            );
-        }
     }
 }

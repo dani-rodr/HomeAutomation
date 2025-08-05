@@ -8,7 +8,6 @@ public interface ILgDisplay : IMediaPlayer, IAutomation
     void ShowToast(string message, params object[] args);
     bool IsShowingPc { get; }
     bool IsShowingLaptop { get; }
-    public IObservable<bool> ScreenChanges { get; }
     Task SetBrightnessAsync(int value);
     Task SetBrightnessHighAsync();
     Task SetBrightnessLowAsync();

@@ -22,6 +22,20 @@ public class LightAutomation(
             {
                 monitor.ShowToast("LG Display Automation is {0}", e.IsOn() ? "ON" : "OFF");
             });
+        yield return Light
+            .StateChanges()
+            .IsOn()
+            .Subscribe(async _ =>
+            {
+                if (entities.SalaLights.IsOn())
+                {
+                    await monitor.SetBrightnessHighAsync();
+                }
+                else
+                {
+                    await monitor.SetBrightnessLowAsync();
+                }
+            });
     }
 
     protected override IEnumerable<IDisposable> GetSensorDelayAutomations()
@@ -57,24 +71,10 @@ public class LightAutomation(
     private IEnumerable<IDisposable> GetSalaLightsAutomation()
     {
         var salaLights = entities.SalaLights;
-        yield return monitor.ScreenChanges.Subscribe(async screenOn =>
-        {
-            if (!screenOn)
-            {
-                return;
-            }
-            if (entities.SalaLights.IsOn())
-            {
-                await monitor.SetBrightnessHighAsync();
-            }
-            else
-            {
-                await monitor.SetBrightnessLowAsync();
-            }
-        });
+
         yield return salaLights
             .StateChanges()
-            .IsOnForSeconds(1)
+            .IsOn()
             .Subscribe(async _ => await monitor.SetBrightnessHighAsync());
         yield return salaLights
             .StateChanges()

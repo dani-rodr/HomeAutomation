@@ -32,12 +32,17 @@ public class MockHaContext : IHaContext
     /// <summary>
     /// Dictionary to track entity states for GetState() calls
     /// </summary>
-    private readonly Dictionary<string, string> _entityStates = new();
+    private readonly Dictionary<string, string> _entityStates = [];
 
     /// <summary>
     /// Dictionary to track entity attributes for testing
     /// </summary>
-    private readonly Dictionary<string, Dictionary<string, object>> _entityAttributes = new();
+    private readonly Dictionary<string, Dictionary<string, object>> _entityAttributes = [];
+
+    /// <summary>
+    /// Dictionary to track custom service responses for CallServiceWithResponseAsync
+    /// </summary>
+    private readonly Dictionary<string, JsonElement?> _serviceResponses = [];
 
     // Core testing methods
     public void CallService(
@@ -87,6 +92,24 @@ public class MockHaContext : IHaContext
     {
         // For testing, just record the call and return empty result
         CallService(domain, service, target, data);
+
+        // Check if we have a custom response for this service call
+        var key = $"{domain}.{service}";
+        if (data != null)
+        {
+            // For webostv commands, include the command in the key for specific responses
+            var commandProperty = data.GetType().GetProperty("Command");
+            if (commandProperty != null && commandProperty.GetValue(data) is string command)
+            {
+                key = $"{domain}.{service}.{command}";
+            }
+        }
+
+        if (_serviceResponses.TryGetValue(key, out var response))
+        {
+            return Task.FromResult(response);
+        }
+
         return Task.FromResult<JsonElement?>(null);
     }
 
@@ -190,6 +213,15 @@ public class MockHaContext : IHaContext
     /// Helper method to get the most recent service call
     /// </summary>
     public ServiceCall? GetLastServiceCall() => ServiceCalls.LastOrDefault();
+
+    /// <summary>
+    /// Helper method to set up custom responses for service calls
+    /// </summary>
+    public void SetServiceResponse(string domain, string service, string? command, object response)
+    {
+        var key = command != null ? $"{domain}.{service}.{command}" : $"{domain}.{service}";
+        _serviceResponses[key] = JsonSerializer.SerializeToElement(response);
+    }
 
     /// <summary>
     /// Dispose resources
