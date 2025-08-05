@@ -138,16 +138,6 @@ public class Laptop(
                     );
                     entities.VirtualSwitch.TurnOff();
                 }),
-            entities
-                .VirtualSwitch.StateChanges()
-                .IsOffForMinutes(5)
-                .Subscribe(_ =>
-                {
-                    Logger.LogInformation(
-                        "Virtual switch is off for 5 minutes. Automatically putting laptop to sleep."
-                    );
-                    entities.Sleep?.Press();
-                }),
         ];
 
     private IDisposable GetSessionUnlockSwitchAutomation() =>
