@@ -4,7 +4,7 @@ public class LightAutomation(IPantryLightEntities entities, ILogger<LightAutomat
     : LightAutomationBase(entities, logger)
 {
     protected override int SensorWaitTime => 5;
-    protected override int SensorActiveDelayValue => 15;
+    protected override int SensorActiveDelayValue => 5;
 
     protected override IEnumerable<IDisposable> GetAdditionalPersistentAutomations() =>
         [
