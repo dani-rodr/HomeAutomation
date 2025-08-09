@@ -78,6 +78,7 @@ public class KitchenCookingEntities(Devices devices) : ICookingEntities
     public ButtonEntity InductionTurnOff => _control.InductionTurnOff;
     public NumericSensorEntity InductionPower => _control.InductionPower;
     public SwitchEntity MasterSwitch => _control.Automation;
+    public TimerEntity AirFryerTimer => _control.AirFryerTimer;
 }
 
 public class BedroomClimateEntities(Devices devices) : IClimateEntities

@@ -440,5 +440,7 @@ public class CookingAutomationTests : IDisposable
 
         public SwitchEntity MasterSwitch { get; } =
             new SwitchEntity(haContext, "binary_sensor.master_switch");
+
+        public TimerEntity AirFryerTimer { get; } = new TimerEntity(haContext, "timer.air_fryer");
     }
 }

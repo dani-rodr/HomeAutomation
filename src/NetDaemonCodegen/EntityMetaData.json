@@ -332,12 +332,12 @@
         },
         {
           "id": "media_player.projector",
-          "friendlyName": "Projector",
+          "friendlyName": null,
           "cSharpName": "Projector"
         },
         {
           "id": "media_player.projector_2",
-          "friendlyName": "Projector",
+          "friendlyName": null,
           "cSharpName": "Projector2"
         },
         {
@@ -675,11 +675,6 @@
           "cSharpName": "BedLightsOverheated"
         },
         {
-          "id": "binary_sensor.bedroom_motion_sensor_connectivity",
-          "friendlyName": "Bedroom Motion Sensor Connectivity",
-          "cSharpName": "BedroomMotionSensorConnectivity"
-        },
-        {
           "id": "binary_sensor.bedroom_motion_sensor_mi_scale_presence",
           "friendlyName": "Bedroom Motion Sensor Mi Scale Presence",
           "cSharpName": "BedroomMotionSensorMiScalePresence"
@@ -845,49 +840,139 @@
           "cSharpName": "GarbageLidPresence"
         },
         {
+          "id": "binary_sensor.garbage_lid_smart_presence",
+          "friendlyName": "Garbage Lid Smart Presence",
+          "cSharpName": "GarbageLidSmartPresence"
+        },
+        {
+          "id": "binary_sensor.garbage_lid_smart_presence_unfiltered",
+          "friendlyName": "Garbage Lid Smart Presence Unfiltered",
+          "cSharpName": "GarbageLidSmartPresenceUnfiltered"
+        },
+        {
           "id": "binary_sensor.garbage_lid_still_target",
           "friendlyName": "Garbage Lid Still Target",
           "cSharpName": "GarbageLidStillTarget"
         },
         {
+          "id": "binary_sensor.github_pkrvmjbmru5nbw0_client",
+          "friendlyName": "github-pkrvmjbmru5nbw0 Client",
+          "cSharpName": "GithubPkrvmjbmru5nbw0Client"
+        },
+        {
+          "id": "binary_sensor.github_pkrvmjbmru5nbw0_key_expiry_disabled",
+          "friendlyName": "github-pkrvmjbmru5nbw0 Key expiry disabled",
+          "cSharpName": "GithubPkrvmjbmru5nbw0KeyExpiryDisabled"
+        },
+        {
+          "id": "binary_sensor.github_pkrvmjbmru5nbw0_supports_hairpinning",
+          "friendlyName": "github-pkrvmjbmru5nbw0 Supports hairpinning",
+          "cSharpName": "GithubPkrvmjbmru5nbw0SupportsHairpinning"
+        },
+        {
+          "id": "binary_sensor.github_pkrvmjbmru5nbw0_supports_ipv6",
+          "friendlyName": "github-pkrvmjbmru5nbw0 Supports IPv6",
+          "cSharpName": "GithubPkrvmjbmru5nbw0SupportsIpv6"
+        },
+        {
+          "id": "binary_sensor.github_pkrvmjbmru5nbw0_supports_nat_pmp",
+          "friendlyName": "github-pkrvmjbmru5nbw0 Supports NAT-PMP",
+          "cSharpName": "GithubPkrvmjbmru5nbw0SupportsNatPmp"
+        },
+        {
+          "id": "binary_sensor.github_pkrvmjbmru5nbw0_supports_pcp",
+          "friendlyName": "github-pkrvmjbmru5nbw0 Supports PCP",
+          "cSharpName": "GithubPkrvmjbmru5nbw0SupportsPcp"
+        },
+        {
+          "id": "binary_sensor.github_pkrvmjbmru5nbw0_supports_udp",
+          "friendlyName": "github-pkrvmjbmru5nbw0 Supports UDP",
+          "cSharpName": "GithubPkrvmjbmru5nbw0SupportsUdp"
+        },
+        {
+          "id": "binary_sensor.github_pkrvmjbmru5nbw0_supports_upnp",
+          "friendlyName": "github-pkrvmjbmru5nbw0 Supports UPnP",
+          "cSharpName": "GithubPkrvmjbmru5nbw0SupportsUpnp"
+        },
+        {
           "id": "binary_sensor.homeassistant_client",
-          "friendlyName": "homeassistant Client",
+          "friendlyName": "Client",
           "cSharpName": "HomeassistantClient"
         },
         {
+          "id": "binary_sensor.homeassistant_client_2",
+          "friendlyName": "homeassistant Client",
+          "cSharpName": "HomeassistantClient2"
+        },
+        {
           "id": "binary_sensor.homeassistant_key_expiry_disabled",
-          "friendlyName": "homeassistant Key expiry disabled",
+          "friendlyName": "Key expiry disabled",
           "cSharpName": "HomeassistantKeyExpiryDisabled"
         },
         {
+          "id": "binary_sensor.homeassistant_key_expiry_disabled_2",
+          "friendlyName": "homeassistant Key expiry disabled",
+          "cSharpName": "HomeassistantKeyExpiryDisabled2"
+        },
+        {
           "id": "binary_sensor.homeassistant_supports_hairpinning",
-          "friendlyName": "homeassistant Supports hairpinning",
+          "friendlyName": "Supports hairpinning",
           "cSharpName": "HomeassistantSupportsHairpinning"
         },
         {
+          "id": "binary_sensor.homeassistant_supports_hairpinning_2",
+          "friendlyName": "homeassistant Supports hairpinning",
+          "cSharpName": "HomeassistantSupportsHairpinning2"
+        },
+        {
           "id": "binary_sensor.homeassistant_supports_ipv6",
-          "friendlyName": "homeassistant Supports IPv6",
+          "friendlyName": "Supports IPv6",
           "cSharpName": "HomeassistantSupportsIpv6"
         },
         {
+          "id": "binary_sensor.homeassistant_supports_ipv6_2",
+          "friendlyName": "homeassistant Supports IPv6",
+          "cSharpName": "HomeassistantSupportsIpv62"
+        },
+        {
           "id": "binary_sensor.homeassistant_supports_nat_pmp",
-          "friendlyName": "homeassistant Supports NAT-PMP",
+          "friendlyName": "Supports NAT-PMP",
           "cSharpName": "HomeassistantSupportsNatPmp"
         },
         {
+          "id": "binary_sensor.homeassistant_supports_nat_pmp_2",
+          "friendlyName": "homeassistant Supports NAT-PMP",
+          "cSharpName": "HomeassistantSupportsNatPmp2"
+        },
+        {
           "id": "binary_sensor.homeassistant_supports_pcp",
-          "friendlyName": "homeassistant Supports PCP",
+          "friendlyName": "Supports PCP",
           "cSharpName": "HomeassistantSupportsPcp"
         },
         {
+          "id": "binary_sensor.homeassistant_supports_pcp_2",
+          "friendlyName": "homeassistant Supports PCP",
+          "cSharpName": "HomeassistantSupportsPcp2"
+        },
+        {
           "id": "binary_sensor.homeassistant_supports_udp",
-          "friendlyName": "homeassistant Supports UDP",
+          "friendlyName": "Supports UDP",
           "cSharpName": "HomeassistantSupportsUdp"
         },
         {
+          "id": "binary_sensor.homeassistant_supports_udp_2",
+          "friendlyName": "homeassistant Supports UDP",
+          "cSharpName": "HomeassistantSupportsUdp2"
+        },
+        {
           "id": "binary_sensor.homeassistant_supports_upnp",
-          "friendlyName": "homeassistant Supports UPnP",
+          "friendlyName": "Supports UPnP",
           "cSharpName": "HomeassistantSupportsUpnp"
+        },
+        {
+          "id": "binary_sensor.homeassistant_supports_upnp_2",
+          "friendlyName": "homeassistant Supports UPnP",
+          "cSharpName": "HomeassistantSupportsUpnp2"
         },
         {
           "id": "binary_sensor.house",
@@ -1267,16 +1352,6 @@
           "cSharpName": "AcFanModeToggle"
         },
         {
-          "id": "button.ac_fan_mode_toggle_1",
-          "friendlyName": "AC Fan Mode Toggle",
-          "cSharpName": "AcFanModeToggle1"
-        },
-        {
-          "id": "button.air_fryer_pause_resume",
-          "friendlyName": "Air Fryer Pause/Resume",
-          "cSharpName": "AirFryerPauseResume"
-        },
-        {
           "id": "button.air_fryer_time_decrease",
           "friendlyName": "Air Fryer Time Decrease",
           "cSharpName": "AirFryerTimeDecrease"
@@ -1332,39 +1407,9 @@
           "cSharpName": "BedroomMotionSensorRestart"
         },
         {
-          "id": "button.bedroom_motion_sensor_restart_2",
-          "friendlyName": "Bedroom Motion Sensor Restart",
-          "cSharpName": "BedroomMotionSensorRestart2"
-        },
-        {
           "id": "button.bedroom_motion_sensor_restart_esp32",
           "friendlyName": "Bedroom Motion Sensor Restart ESP32",
           "cSharpName": "BedroomMotionSensorRestartEsp32"
-        },
-        {
-          "id": "button.bedroom_motion_sensor_update",
-          "friendlyName": "Bedroom Motion Sensor Update",
-          "cSharpName": "BedroomMotionSensorUpdate"
-        },
-        {
-          "id": "button.careli_sg_593061393_maf05a_cancel_cooking_a_2_2",
-          "friendlyName": "Xiaomi Smart Air Fryer Pro 4L  Air Fryer Stop Program",
-          "cSharpName": "CareliSg593061393Maf05aCancelCookingA22"
-        },
-        {
-          "id": "button.careli_sg_593061393_maf05a_pause_a_2_3",
-          "friendlyName": "Xiaomi Smart Air Fryer Pro 4L  Air Fryer Pause",
-          "cSharpName": "CareliSg593061393Maf05aPauseA23"
-        },
-        {
-          "id": "button.careli_sg_593061393_maf05a_resume_cook_a_3_2",
-          "friendlyName": "Xiaomi Smart Air Fryer Pro 4L * Custom Service Continue Program",
-          "cSharpName": "CareliSg593061393Maf05aResumeCookA32"
-        },
-        {
-          "id": "button.careli_sg_593061393_maf05a_start_cook_a_2_1",
-          "friendlyName": "Xiaomi Smart Air Fryer Pro 4L  Air Fryer Start Program",
-          "cSharpName": "CareliSg593061393Maf05aStartCookA21"
         },
         {
           "id": "button.ceiling_fan_restart",
@@ -1447,14 +1492,24 @@
           "cSharpName": "FrontDoorWake"
         },
         {
-          "id": "button.garbage_lid_ld2450_factory_reset",
-          "friendlyName": "Garbage Lid LD2450 Factory Reset",
-          "cSharpName": "GarbageLidLd2450FactoryReset"
+          "id": "button.garbage_lid_manual_clear",
+          "friendlyName": "Garbage Lid Manual Clear",
+          "cSharpName": "GarbageLidManualClear"
         },
         {
-          "id": "button.garbage_lid_ld2450_restart",
-          "friendlyName": "Garbage Lid LD2450 Restart",
-          "cSharpName": "GarbageLidLd2450Restart"
+          "id": "button.garbage_lid_query_params",
+          "friendlyName": "Garbage Lid query params",
+          "cSharpName": "GarbageLidQueryParams"
+        },
+        {
+          "id": "button.garbage_lid_restart",
+          "friendlyName": "Garbage Lid restart",
+          "cSharpName": "GarbageLidRestart"
+        },
+        {
+          "id": "button.garbage_lid_restart_esp32",
+          "friendlyName": "Garbage Lid Restart ESP32",
+          "cSharpName": "GarbageLidRestartEsp32"
         },
         {
           "id": "button.google_assistant_synchronize_devices",
@@ -1522,24 +1577,9 @@
           "cSharpName": "ManualTrackerButtonAthena"
         },
         {
-          "id": "button.manual_tracker_button_athena_1",
-          "friendlyName": "Manual Tracker Button Athena",
-          "cSharpName": "ManualTrackerButtonAthena1"
-        },
-        {
           "id": "button.manual_tracker_button_daniel",
           "friendlyName": "Manual Tracker Button Daniel",
           "cSharpName": "ManualTrackerButtonDaniel"
-        },
-        {
-          "id": "button.manual_tracker_button_daniel_1",
-          "friendlyName": "Manual Tracker Button Daniel",
-          "cSharpName": "ManualTrackerButtonDaniel1"
-        },
-        {
-          "id": "button.nodered_e44494a60e30483b",
-          "friendlyName": "Lock Toggle",
-          "cSharpName": "NoderedE44494a60e30483b"
         },
         {
           "id": "button.pantry_motion_sensor_factory_reset",
@@ -1570,11 +1610,6 @@
           "id": "button.restart_esp32",
           "friendlyName": "Restart Esp32",
           "cSharpName": "RestartEsp32"
-        },
-        {
-          "id": "button.restart_fast_timer_notification",
-          "friendlyName": "Restart Fast Timer Notification",
-          "cSharpName": "RestartFastTimerNotification"
         },
         {
           "id": "button.rgb_light_strip_restart",
@@ -1655,6 +1690,26 @@
           "id": "button.xiaomi_sg_753990712_cpa4_toggle_mode_a_9_1",
           "friendlyName": "Xiaomi Smart Air Purifier 4 Compact * custom-service toggle-mode",
           "cSharpName": "XiaomiSg753990712Cpa4ToggleModeA91"
+        },
+        {
+          "id": "button.xiaomi_smart_air_fryer_pro_4l_air_fryer_pause",
+          "friendlyName": "Xiaomi Smart Air Fryer Pro 4L  Air Fryer Pause",
+          "cSharpName": "XiaomiSmartAirFryerPro4lAirFryerPause"
+        },
+        {
+          "id": "button.xiaomi_smart_air_fryer_pro_4l_air_fryer_start_program",
+          "friendlyName": "Xiaomi Smart Air Fryer Pro 4L  Air Fryer Start Program",
+          "cSharpName": "XiaomiSmartAirFryerPro4lAirFryerStartProgram"
+        },
+        {
+          "id": "button.xiaomi_smart_air_fryer_pro_4l_air_fryer_stop_program",
+          "friendlyName": "Xiaomi Smart Air Fryer Pro 4L  Air Fryer Stop Program",
+          "cSharpName": "XiaomiSmartAirFryerPro4lAirFryerStopProgram"
+        },
+        {
+          "id": "button.xiaomi_smart_air_fryer_pro_4l_custom_service_continue_program",
+          "friendlyName": "Xiaomi Smart Air Fryer Pro 4L * Custom Service Continue Program",
+          "cSharpName": "XiaomiSmartAirFryerPro4lCustomServiceContinueProgram"
         }
       ],
       "attributes": [
@@ -2022,16 +2077,6 @@
           "cSharpName": "BackupAutomaticBackup"
         },
         {
-          "id": "event.careli_sg_593061393_maf05a_cooking_finished_e_2_1",
-          "friendlyName": "Xiaomi Smart Air Fryer Pro 4L  Air Fryer Completed",
-          "cSharpName": "CareliSg593061393Maf05aCookingFinishedE21"
-        },
-        {
-          "id": "event.careli_sg_593061393_maf05a_cooking_start_e_3_1",
-          "friendlyName": "Xiaomi Smart Air Fryer Pro 4L * Custom Service Program Is Starting",
-          "cSharpName": "CareliSg593061393Maf05aCookingStartE31"
-        },
-        {
           "id": "event.repair",
           "friendlyName": "Repairs",
           "cSharpName": "Repair"
@@ -2050,6 +2095,16 @@
           "id": "event.xiaomi_sg_753990712_cpa4_filter_exhausted_e_9_3",
           "friendlyName": "Xiaomi Smart Air Purifier 4 Compact * custom-service filter-exhausted",
           "cSharpName": "XiaomiSg753990712Cpa4FilterExhaustedE93"
+        },
+        {
+          "id": "event.xiaomi_smart_air_fryer_pro_4l_air_fryer_completed",
+          "friendlyName": "Xiaomi Smart Air Fryer Pro 4L  Air Fryer Completed",
+          "cSharpName": "XiaomiSmartAirFryerPro4lAirFryerCompleted"
+        },
+        {
+          "id": "event.xiaomi_smart_air_fryer_pro_4l_custom_service_program_is_starting",
+          "friendlyName": "Xiaomi Smart Air Fryer Pro 4L * Custom Service Program Is Starting",
+          "cSharpName": "XiaomiSmartAirFryerPro4lCustomServiceProgramIsStarting"
         }
       ],
       "attributes": [
@@ -2159,6 +2214,46 @@
           "id": "input_boolean.ac_power_saving_mode",
           "friendlyName": "AC Power Saving Mode",
           "cSharpName": "AcPowerSavingMode"
+        },
+        {
+          "id": "input_boolean.dev_netdaemon_home_automation_apps_area_bathroom_bathroom_app",
+          "friendlyName": "dev_netdaemon_home_automation_apps_area_bathroom_bathroom_app",
+          "cSharpName": "DevNetdaemonHomeAutomationAppsAreaBathroomBathroomApp"
+        },
+        {
+          "id": "input_boolean.dev_netdaemon_home_automation_apps_area_bedroom_bedroom_app",
+          "friendlyName": "dev_netdaemon_home_automation_apps_area_bedroom_bedroom_app",
+          "cSharpName": "DevNetdaemonHomeAutomationAppsAreaBedroomBedroomApp"
+        },
+        {
+          "id": "input_boolean.dev_netdaemon_home_automation_apps_area_desk_desk_app",
+          "friendlyName": "dev_netdaemon_home_automation_apps_area_desk_desk_app",
+          "cSharpName": "DevNetdaemonHomeAutomationAppsAreaDeskDeskApp"
+        },
+        {
+          "id": "input_boolean.dev_netdaemon_home_automation_apps_area_kitchen_kitchen_app",
+          "friendlyName": "dev_netdaemon_home_automation_apps_area_kitchen_kitchen_app",
+          "cSharpName": "DevNetdaemonHomeAutomationAppsAreaKitchenKitchenApp"
+        },
+        {
+          "id": "input_boolean.dev_netdaemon_home_automation_apps_area_living_room_living_room_app",
+          "friendlyName": "dev_netdaemon_home_automation_apps_area_living_room_living_room_app",
+          "cSharpName": "DevNetdaemonHomeAutomationAppsAreaLivingRoomLivingRoomApp"
+        },
+        {
+          "id": "input_boolean.dev_netdaemon_home_automation_apps_area_pantry_pantry_app",
+          "friendlyName": "dev_netdaemon_home_automation_apps_area_pantry_pantry_app",
+          "cSharpName": "DevNetdaemonHomeAutomationAppsAreaPantryPantryApp"
+        },
+        {
+          "id": "input_boolean.dev_netdaemon_home_automation_apps_common_security_security_app",
+          "friendlyName": "dev_netdaemon_home_automation_apps_common_security_security_app",
+          "cSharpName": "DevNetdaemonHomeAutomationAppsCommonSecuritySecurityApp"
+        },
+        {
+          "id": "input_boolean.dev_netdaemon_home_automation_apps_common_startup_app",
+          "friendlyName": "dev_netdaemon_home_automation_apps_common_startup_app",
+          "cSharpName": "DevNetdaemonHomeAutomationAppsCommonStartupApp"
         },
         {
           "id": "input_boolean.netdaemon_home_automation_apps_area_bathroom_bathroom_app",
@@ -2417,9 +2512,9 @@
       "domain": "notify",
       "entities": [
         {
-          "id": "notify.careli_sg_593061393_maf05a_start_cook_a_3_1",
+          "id": "notify.xiaomi_smart_air_fryer_pro_4l_custom_service_start_custom_program",
           "friendlyName": "Xiaomi Smart Air Fryer Pro 4L * Custom Service Start Custom Program",
-          "cSharpName": "CareliSg593061393Maf05aStartCookA31"
+          "cSharpName": "XiaomiSmartAirFryerPro4lCustomServiceStartCustomProgram"
         }
       ],
       "attributes": [
@@ -2680,11 +2775,6 @@
           "cSharpName": "BedroomMotionSensorLightThreshold"
         },
         {
-          "id": "number.bedroom_motion_sensor_max_distance",
-          "friendlyName": "Bedroom Motion Sensor Max Distance",
-          "cSharpName": "BedroomMotionSensorMaxDistance"
-        },
-        {
           "id": "number.bedroom_motion_sensor_max_move_distance_gate",
           "friendlyName": "Bedroom Motion Sensor max move distance gate",
           "cSharpName": "BedroomMotionSensorMaxMoveDistanceGate"
@@ -2703,31 +2793,6 @@
           "id": "number.bedroom_motion_sensor_timeout",
           "friendlyName": "Bedroom Motion Sensor timeout",
           "cSharpName": "BedroomMotionSensorTimeout"
-        },
-        {
-          "id": "number.careli_sg_593061393_maf05a_appoint_time_p_3_5",
-          "friendlyName": "Xiaomi Smart Air Fryer Pro 4L * Custom Service Scheduled Time",
-          "cSharpName": "CareliSg593061393Maf05aAppointTimeP35"
-        },
-        {
-          "id": "number.careli_sg_593061393_maf05a_target_temperature_p_2_4",
-          "friendlyName": "Xiaomi Smart Air Fryer Pro 4L  Air Fryer Operating Temperature",
-          "cSharpName": "CareliSg593061393Maf05aTargetTemperatureP24"
-        },
-        {
-          "id": "number.careli_sg_593061393_maf05a_target_time_p_2_3",
-          "friendlyName": "Xiaomi Smart Air Fryer Pro 4L  Air Fryer Operating Time",
-          "cSharpName": "CareliSg593061393Maf05aTargetTimeP23"
-        },
-        {
-          "id": "number.careli_sg_593061393_maf05a_work_temp_p_3_4",
-          "friendlyName": "Xiaomi Smart Air Fryer Pro 4L * Custom Service Operating Temperature",
-          "cSharpName": "CareliSg593061393Maf05aWorkTempP34"
-        },
-        {
-          "id": "number.careli_sg_593061393_maf05a_work_time_p_3_3",
-          "friendlyName": "Xiaomi Smart Air Fryer Pro 4L * Custom Service Operating Time",
-          "cSharpName": "CareliSg593061393Maf05aWorkTimeP33"
         },
         {
           "id": "number.ceiling_fan_turn_off_in",
@@ -2860,34 +2925,124 @@
           "cSharpName": "FlytrapTurnOffIn"
         },
         {
+          "id": "number.garbage_lid_g0_move_threshold",
+          "friendlyName": "Garbage Lid g0 move threshold",
+          "cSharpName": "GarbageLidG0MoveThreshold"
+        },
+        {
+          "id": "number.garbage_lid_g0_still_threshold",
+          "friendlyName": "Garbage Lid g0 still threshold",
+          "cSharpName": "GarbageLidG0StillThreshold"
+        },
+        {
+          "id": "number.garbage_lid_g1_move_threshold",
+          "friendlyName": "Garbage Lid g1 move threshold",
+          "cSharpName": "GarbageLidG1MoveThreshold"
+        },
+        {
+          "id": "number.garbage_lid_g1_still_threshold",
+          "friendlyName": "Garbage Lid g1 still threshold",
+          "cSharpName": "GarbageLidG1StillThreshold"
+        },
+        {
+          "id": "number.garbage_lid_g2_move_threshold",
+          "friendlyName": "Garbage Lid g2 move threshold",
+          "cSharpName": "GarbageLidG2MoveThreshold"
+        },
+        {
+          "id": "number.garbage_lid_g2_still_threshold",
+          "friendlyName": "Garbage Lid g2 still threshold",
+          "cSharpName": "GarbageLidG2StillThreshold"
+        },
+        {
+          "id": "number.garbage_lid_g3_move_threshold",
+          "friendlyName": "Garbage Lid g3 move threshold",
+          "cSharpName": "GarbageLidG3MoveThreshold"
+        },
+        {
+          "id": "number.garbage_lid_g3_still_threshold",
+          "friendlyName": "Garbage Lid g3 still threshold",
+          "cSharpName": "GarbageLidG3StillThreshold"
+        },
+        {
+          "id": "number.garbage_lid_g4_move_threshold",
+          "friendlyName": "Garbage Lid g4 move threshold",
+          "cSharpName": "GarbageLidG4MoveThreshold"
+        },
+        {
+          "id": "number.garbage_lid_g4_still_threshold",
+          "friendlyName": "Garbage Lid g4 still threshold",
+          "cSharpName": "GarbageLidG4StillThreshold"
+        },
+        {
+          "id": "number.garbage_lid_g5_move_threshold",
+          "friendlyName": "Garbage Lid g5 move threshold",
+          "cSharpName": "GarbageLidG5MoveThreshold"
+        },
+        {
+          "id": "number.garbage_lid_g5_still_threshold",
+          "friendlyName": "Garbage Lid g5 still threshold",
+          "cSharpName": "GarbageLidG5StillThreshold"
+        },
+        {
+          "id": "number.garbage_lid_g6_move_threshold",
+          "friendlyName": "Garbage Lid g6 move threshold",
+          "cSharpName": "GarbageLidG6MoveThreshold"
+        },
+        {
+          "id": "number.garbage_lid_g6_still_threshold",
+          "friendlyName": "Garbage Lid g6 still threshold",
+          "cSharpName": "GarbageLidG6StillThreshold"
+        },
+        {
+          "id": "number.garbage_lid_g7_move_threshold",
+          "friendlyName": "Garbage Lid g7 move threshold",
+          "cSharpName": "GarbageLidG7MoveThreshold"
+        },
+        {
+          "id": "number.garbage_lid_g7_still_threshold",
+          "friendlyName": "Garbage Lid g7 still threshold",
+          "cSharpName": "GarbageLidG7StillThreshold"
+        },
+        {
+          "id": "number.garbage_lid_g8_move_threshold",
+          "friendlyName": "Garbage Lid g8 move threshold",
+          "cSharpName": "GarbageLidG8MoveThreshold"
+        },
+        {
+          "id": "number.garbage_lid_g8_still_threshold",
+          "friendlyName": "Garbage Lid g8 still threshold",
+          "cSharpName": "GarbageLidG8StillThreshold"
+        },
+        {
+          "id": "number.garbage_lid_light_threshold",
+          "friendlyName": "Garbage Lid light threshold",
+          "cSharpName": "GarbageLidLightThreshold"
+        },
+        {
+          "id": "number.garbage_lid_max_move_distance_gate",
+          "friendlyName": "Garbage Lid max move distance gate",
+          "cSharpName": "GarbageLidMaxMoveDistanceGate"
+        },
+        {
+          "id": "number.garbage_lid_max_still_distance_gate",
+          "friendlyName": "Garbage Lid max still distance gate",
+          "cSharpName": "GarbageLidMaxStillDistanceGate"
+        },
+        {
           "id": "number.garbage_lid_servo_control",
           "friendlyName": "Garbage Lid Servo Control",
           "cSharpName": "GarbageLidServoControl"
         },
         {
+          "id": "number.garbage_lid_still_target_delay",
+          "friendlyName": "Garbage Lid Still Target Delay",
+          "cSharpName": "GarbageLidStillTargetDelay"
+        },
+        {
           "id": "number.garbage_lid_timeout",
-          "friendlyName": "Garbage Lid Timeout",
+          "friendlyName": "Garbage Lid timeout",
           "cSharpName": "GarbageLidTimeout"
-        },
-        {
-          "id": "number.garbage_lid_zone_1_x1",
-          "friendlyName": "Garbage Lid Zone-1 X1",
-          "cSharpName": "GarbageLidZone1X1"
-        },
-        {
-          "id": "number.garbage_lid_zone_1_x2",
-          "friendlyName": "Garbage Lid Zone-1 X2",
-          "cSharpName": "GarbageLidZone1X2"
-        },
-        {
-          "id": "number.garbage_lid_zone_1_y1",
-          "friendlyName": "Garbage Lid Zone-1 Y1",
-          "cSharpName": "GarbageLidZone1Y1"
-        },
-        {
-          "id": "number.garbage_lid_zone_1_y2",
-          "friendlyName": "Garbage Lid Zone-1 Y2",
-          "cSharpName": "GarbageLidZone1Y2"
         },
         {
           "id": "number.kitchen_motion_sensor_g0_move_threshold",
@@ -3313,6 +3468,31 @@
           "id": "number.xiaomi_sg_753990712_cpa4_filter_used_time_dbg_p_9_12",
           "friendlyName": "Xiaomi Smart Air Purifier 4 Compact * custom-service filter-used-time-dbg",
           "cSharpName": "XiaomiSg753990712Cpa4FilterUsedTimeDbgP912"
+        },
+        {
+          "id": "number.xiaomi_smart_air_fryer_pro_4l_air_fryer_operating_temperature",
+          "friendlyName": "Xiaomi Smart Air Fryer Pro 4L  Air Fryer Operating Temperature",
+          "cSharpName": "XiaomiSmartAirFryerPro4lAirFryerOperatingTemperature"
+        },
+        {
+          "id": "number.xiaomi_smart_air_fryer_pro_4l_air_fryer_operating_time",
+          "friendlyName": "Xiaomi Smart Air Fryer Pro 4L  Air Fryer Operating Time",
+          "cSharpName": "XiaomiSmartAirFryerPro4lAirFryerOperatingTime"
+        },
+        {
+          "id": "number.xiaomi_smart_air_fryer_pro_4l_custom_service_operating_temperature",
+          "friendlyName": "Xiaomi Smart Air Fryer Pro 4L * Custom Service Operating Temperature",
+          "cSharpName": "XiaomiSmartAirFryerPro4lCustomServiceOperatingTemperature"
+        },
+        {
+          "id": "number.xiaomi_smart_air_fryer_pro_4l_custom_service_operating_time",
+          "friendlyName": "Xiaomi Smart Air Fryer Pro 4L * Custom Service Operating Time",
+          "cSharpName": "XiaomiSmartAirFryerPro4lCustomServiceOperatingTime"
+        },
+        {
+          "id": "number.xiaomi_smart_air_fryer_pro_4l_custom_service_scheduled_time",
+          "friendlyName": "Xiaomi Smart Air Fryer Pro 4L * Custom Service Scheduled Time",
+          "cSharpName": "XiaomiSmartAirFryerPro4lCustomServiceScheduledTime"
         }
       ],
       "attributes": [
@@ -3375,11 +3555,6 @@
           "id": "person.daniel_rodriguez",
           "friendlyName": "Daniel Rodriguez",
           "cSharpName": "DanielRodriguez"
-        },
-        {
-          "id": "person.home_tracker",
-          "friendlyName": "Home Tracker",
-          "cSharpName": "HomeTracker"
         }
       ],
       "attributes": [
@@ -3440,7 +3615,7 @@
         },
         {
           "id": "remote.projector",
-          "friendlyName": "Projector",
+          "friendlyName": null,
           "cSharpName": "Projector"
         },
         {
@@ -3600,26 +3775,6 @@
           "cSharpName": "BedroomMotionSensorOutPinLevel"
         },
         {
-          "id": "select.careli_sg_593061393_maf05a_food_quanty_p_3_6",
-          "friendlyName": "Xiaomi Smart Air Fryer Pro 4L * Custom Service Quantity Of Ingredients",
-          "cSharpName": "CareliSg593061393Maf05aFoodQuantyP36"
-        },
-        {
-          "id": "select.careli_sg_593061393_maf05a_preheat_switch_p_3_7",
-          "friendlyName": "Xiaomi Smart Air Fryer Pro 4L * Custom Service Preheating Button",
-          "cSharpName": "CareliSg593061393Maf05aPreheatSwitchP37"
-        },
-        {
-          "id": "select.careli_sg_593061393_maf05a_turn_pot_cfg_p_3_11",
-          "friendlyName": "Xiaomi Smart Air Fryer Pro 4L * Custom Service turn-pot-cfg",
-          "cSharpName": "CareliSg593061393Maf05aTurnPotCfgP311"
-        },
-        {
-          "id": "select.careli_sg_593061393_maf05a_turn_pot_p_3_10",
-          "friendlyName": "Xiaomi Smart Air Fryer Pro 4L * Custom Service Turn Over Notification",
-          "cSharpName": "CareliSg593061393Maf05aTurnPotP310"
-        },
-        {
           "id": "select.controller_rgb_df1c0d_remote_config",
           "friendlyName": "Controller RGB DF1C0D Remote config",
           "cSharpName": "ControllerRgbDf1c0dRemoteConfig"
@@ -3651,13 +3806,23 @@
         },
         {
           "id": "select.garbage_lid_baud_rate",
-          "friendlyName": "Garbage Lid Baud rate",
+          "friendlyName": "Garbage Lid baud rate",
           "cSharpName": "GarbageLidBaudRate"
         },
         {
-          "id": "select.garbage_lid_zone_type",
-          "friendlyName": "Garbage Lid Zone Type",
-          "cSharpName": "GarbageLidZoneType"
+          "id": "select.garbage_lid_distance_resolution",
+          "friendlyName": "Garbage Lid distance resolution",
+          "cSharpName": "GarbageLidDistanceResolution"
+        },
+        {
+          "id": "select.garbage_lid_light_function",
+          "friendlyName": "Garbage Lid light function",
+          "cSharpName": "GarbageLidLightFunction"
+        },
+        {
+          "id": "select.garbage_lid_out_pin_level",
+          "friendlyName": "Garbage Lid out pin level",
+          "cSharpName": "GarbageLidOutPinLevel"
         },
         {
           "id": "select.kitchen_motion_sensor_baud_rate",
@@ -3783,6 +3948,26 @@
           "id": "select.xiaomi_sg_753990712_cpa4_mode_p_2_4",
           "friendlyName": "Xiaomi Smart Air Purifier 4 Compact  Air Purifier Mode",
           "cSharpName": "XiaomiSg753990712Cpa4ModeP24"
+        },
+        {
+          "id": "select.xiaomi_smart_air_fryer_pro_4l_custom_service_preheating_button",
+          "friendlyName": "Xiaomi Smart Air Fryer Pro 4L * Custom Service Preheating Button",
+          "cSharpName": "XiaomiSmartAirFryerPro4lCustomServicePreheatingButton"
+        },
+        {
+          "id": "select.xiaomi_smart_air_fryer_pro_4l_custom_service_quantity_of_ingredients",
+          "friendlyName": "Xiaomi Smart Air Fryer Pro 4L * Custom Service Quantity Of Ingredients",
+          "cSharpName": "XiaomiSmartAirFryerPro4lCustomServiceQuantityOfIngredients"
+        },
+        {
+          "id": "select.xiaomi_smart_air_fryer_pro_4l_custom_service_turn_over_notification",
+          "friendlyName": "Xiaomi Smart Air Fryer Pro 4L * Custom Service Turn Over Notification",
+          "cSharpName": "XiaomiSmartAirFryerPro4lCustomServiceTurnOverNotification"
+        },
+        {
+          "id": "select.xiaomi_smart_air_fryer_pro_4l_custom_service_turn_pot_cfg",
+          "friendlyName": "Xiaomi Smart Air Fryer Pro 4L * Custom Service turn-pot-cfg",
+          "cSharpName": "XiaomiSmartAirFryerPro4lCustomServiceTurnPotCfg"
         }
       ],
       "attributes": [
@@ -3835,16 +4020,6 @@
           "id": "sensor.887216f5_c9c0_4901_bf59_51c6e940bf11_100_40004_vendor",
           "friendlyName": "887216f5-c9c0-4901-bf59-51c6e940bf11_100_40004 Vendor",
           "cSharpName": "_887216f5C9c04901Bf5951c6e940bf1110040004Vendor"
-        },
-        {
-          "id": "sensor.air_fryer_level",
-          "friendlyName": "Air Fryer Level",
-          "cSharpName": "AirFryerLevel"
-        },
-        {
-          "id": "sensor.air_fryer_status",
-          "friendlyName": "Air Fryer Status",
-          "cSharpName": "AirFryerStatus"
         },
         {
           "id": "sensor.air_quality",
@@ -3970,16 +4145,6 @@
           "id": "sensor.cameras",
           "friendlyName": "Home Assistant Cameras",
           "cSharpName": "Cameras"
-        },
-        {
-          "id": "sensor.careli_sg_593061393_maf05a_fault_p_2_2",
-          "friendlyName": "Xiaomi Smart Air Fryer Pro 4L  Air Fryer Error",
-          "cSharpName": "CareliSg593061393Maf05aFaultP22"
-        },
-        {
-          "id": "sensor.careli_sg_593061393_maf05a_status_p_2_1",
-          "friendlyName": "Xiaomi Smart Air Fryer Pro 4L  Air Fryer Operating Status",
-          "cSharpName": "CareliSg593061393Maf05aStatusP21"
         },
         {
           "id": "sensor.ceiling_fan_auto_off_at",
@@ -4112,49 +4277,34 @@
           "cSharpName": "FrontDoorOperator"
         },
         {
-          "id": "sensor.garbage_lid_ld2450_bt_mac",
-          "friendlyName": "Garbage Lid LD2450 BT MAC",
-          "cSharpName": "GarbageLidLd2450BtMac"
+          "id": "sensor.garbage_lid_light",
+          "friendlyName": "Garbage Lid light",
+          "cSharpName": "GarbageLidLight"
         },
         {
-          "id": "sensor.garbage_lid_ld2450_firmware",
-          "friendlyName": "Garbage Lid LD2450 Firmware",
-          "cSharpName": "GarbageLidLd2450Firmware"
+          "id": "sensor.garbage_lid_presence_sensor_mac_address",
+          "friendlyName": "Garbage Lid Presence sensor mac address",
+          "cSharpName": "GarbageLidPresenceSensorMacAddress"
         },
         {
-          "id": "sensor.garbage_lid_moving_target_count",
-          "friendlyName": "Garbage Lid Moving Target Count",
-          "cSharpName": "GarbageLidMovingTargetCount"
+          "id": "sensor.garbage_lid_presence_sensor_version",
+          "friendlyName": "Garbage Lid Presence sensor version",
+          "cSharpName": "GarbageLidPresenceSensorVersion"
         },
         {
-          "id": "sensor.garbage_lid_presence_target_count",
-          "friendlyName": "Garbage Lid Presence Target Count",
-          "cSharpName": "GarbageLidPresenceTargetCount"
+          "id": "sensor.github_pkrvmjbmru5nbw0_expires",
+          "friendlyName": "github-pkrvmjbmru5nbw0 Expires",
+          "cSharpName": "GithubPkrvmjbmru5nbw0Expires"
         },
         {
-          "id": "sensor.garbage_lid_still_target_count",
-          "friendlyName": "Garbage Lid Still Target Count",
-          "cSharpName": "GarbageLidStillTargetCount"
+          "id": "sensor.github_pkrvmjbmru5nbw0_ip_address",
+          "friendlyName": "github-pkrvmjbmru5nbw0 IP address",
+          "cSharpName": "GithubPkrvmjbmru5nbw0IpAddress"
         },
         {
-          "id": "sensor.garbage_lid_target_1_direction",
-          "friendlyName": "Garbage Lid Target-1 Direction",
-          "cSharpName": "GarbageLidTarget1Direction"
-        },
-        {
-          "id": "sensor.garbage_lid_zone_1_all_target_count",
-          "friendlyName": "Garbage Lid Zone-1 All Target Count",
-          "cSharpName": "GarbageLidZone1AllTargetCount"
-        },
-        {
-          "id": "sensor.garbage_lid_zone_1_moving_target_count",
-          "friendlyName": "Garbage Lid Zone-1 Moving Target Count",
-          "cSharpName": "GarbageLidZone1MovingTargetCount"
-        },
-        {
-          "id": "sensor.garbage_lid_zone_1_still_target_count",
-          "friendlyName": "Garbage Lid Zone-1 Still Target Count",
-          "cSharpName": "GarbageLidZone1StillTargetCount"
+          "id": "sensor.github_pkrvmjbmru5nbw0_last_seen",
+          "friendlyName": "github-pkrvmjbmru5nbw0 Last seen",
+          "cSharpName": "GithubPkrvmjbmru5nbw0LastSeen"
         },
         {
           "id": "sensor.govee_to_mqtt_version",
@@ -4163,18 +4313,33 @@
         },
         {
           "id": "sensor.homeassistant_expires",
-          "friendlyName": "homeassistant Expires",
+          "friendlyName": "Expires",
           "cSharpName": "HomeassistantExpires"
         },
         {
+          "id": "sensor.homeassistant_expires_2",
+          "friendlyName": "homeassistant Expires",
+          "cSharpName": "HomeassistantExpires2"
+        },
+        {
           "id": "sensor.homeassistant_ip_address",
-          "friendlyName": "homeassistant IP address",
+          "friendlyName": "IP address",
           "cSharpName": "HomeassistantIpAddress"
         },
         {
+          "id": "sensor.homeassistant_ip_address_2",
+          "friendlyName": "homeassistant IP address",
+          "cSharpName": "HomeassistantIpAddress2"
+        },
+        {
           "id": "sensor.homeassistant_last_seen",
-          "friendlyName": "homeassistant Last seen",
+          "friendlyName": "Last seen",
           "cSharpName": "HomeassistantLastSeen"
+        },
+        {
+          "id": "sensor.homeassistant_last_seen_2",
+          "friendlyName": "homeassistant Last seen",
+          "cSharpName": "HomeassistantLastSeen2"
         },
         {
           "id": "sensor.humidifiers",
@@ -4435,6 +4600,11 @@
           "id": "sensor.poco_f4_gt_detected_activity",
           "friendlyName": "POCO F4 GT Detected activity",
           "cSharpName": "PocoF4GtDetectedActivity"
+        },
+        {
+          "id": "sensor.poco_f4_gt_geocoded_location",
+          "friendlyName": "POCO F4 GT Geocoded location",
+          "cSharpName": "PocoF4GtGeocodedLocation"
         },
         {
           "id": "sensor.poco_f4_gt_last_update_trigger",
@@ -4707,6 +4877,16 @@
           "cSharpName": "XiaomiSg753990712Cpa4MotorSpeedRpmP91"
         },
         {
+          "id": "sensor.xiaomi_smart_air_fryer_pro_4l_air_fryer_error",
+          "friendlyName": "Xiaomi Smart Air Fryer Pro 4L  Air Fryer Error",
+          "cSharpName": "XiaomiSmartAirFryerPro4lAirFryerError"
+        },
+        {
+          "id": "sensor.xiaomi_smart_air_fryer_pro_4l_air_fryer_operating_status",
+          "friendlyName": "Xiaomi Smart Air Fryer Pro 4L  Air Fryer Operating Status",
+          "cSharpName": "XiaomiSmartAirFryerPro4lAirFryerOperatingStatus"
+        },
+        {
           "id": "sensor.zones",
           "friendlyName": "Home Assistant Zones",
           "cSharpName": "Zones"
@@ -4805,7 +4985,12 @@
         },
         {
           "jsonName": "Administrative Area",
-          "cSharpName": "AdministrativeArea",
+          "cSharpName": "AdministrativeArea_0",
+          "clrType": "System.String"
+        },
+        {
+          "jsonName": "administrative_area",
+          "cSharpName": "AdministrativeArea_1",
           "clrType": "System.String"
         },
         {
@@ -4815,7 +5000,12 @@
         },
         {
           "jsonName": "Country",
-          "cSharpName": "Country",
+          "cSharpName": "Country_0",
+          "clrType": "System.String"
+        },
+        {
+          "jsonName": "country",
+          "cSharpName": "Country_1",
           "clrType": "System.String"
         },
         {
@@ -4825,17 +5015,32 @@
         },
         {
           "jsonName": "Locality",
-          "cSharpName": "Locality",
+          "cSharpName": "Locality_0",
+          "clrType": "System.String"
+        },
+        {
+          "jsonName": "locality",
+          "cSharpName": "Locality_1",
           "clrType": "System.String"
         },
         {
           "jsonName": "Location",
-          "cSharpName": "Location",
+          "cSharpName": "Location_0",
+          "clrType": "System.Collections.Generic.IReadOnlyList\u00601[System.Double]"
+        },
+        {
+          "jsonName": "location",
+          "cSharpName": "Location_1",
           "clrType": "System.Collections.Generic.IReadOnlyList\u00601[System.Double]"
         },
         {
           "jsonName": "Name",
-          "cSharpName": "Name",
+          "cSharpName": "Name_0",
+          "clrType": "System.String"
+        },
+        {
+          "jsonName": "name",
+          "cSharpName": "Name_1",
           "clrType": "System.String"
         },
         {
@@ -4845,27 +5050,52 @@
         },
         {
           "jsonName": "Postal Code",
-          "cSharpName": "PostalCode",
+          "cSharpName": "PostalCode_0",
+          "clrType": "System.String"
+        },
+        {
+          "jsonName": "postal_code",
+          "cSharpName": "PostalCode_1",
           "clrType": "System.String"
         },
         {
           "jsonName": "Sub Administrative Area",
-          "cSharpName": "SubAdministrativeArea",
+          "cSharpName": "SubAdministrativeArea_0",
+          "clrType": "System.String"
+        },
+        {
+          "jsonName": "sub_administrative_area",
+          "cSharpName": "SubAdministrativeArea_1",
           "clrType": "System.String"
         },
         {
           "jsonName": "Sub Locality",
-          "cSharpName": "SubLocality",
+          "cSharpName": "SubLocality_0",
+          "clrType": "System.String"
+        },
+        {
+          "jsonName": "sub_locality",
+          "cSharpName": "SubLocality_1",
           "clrType": "System.String"
         },
         {
           "jsonName": "Sub Thoroughfare",
-          "cSharpName": "SubThoroughfare",
+          "cSharpName": "SubThoroughfare_0",
+          "clrType": "System.String"
+        },
+        {
+          "jsonName": "sub_thoroughfare",
+          "cSharpName": "SubThoroughfare_1",
           "clrType": "System.String"
         },
         {
           "jsonName": "Thoroughfare",
-          "cSharpName": "Thoroughfare",
+          "cSharpName": "Thoroughfare_0",
+          "clrType": "System.String"
+        },
+        {
+          "jsonName": "thoroughfare",
+          "cSharpName": "Thoroughfare_1",
           "clrType": "System.String"
         },
         {
@@ -5197,6 +5427,41 @@
           "jsonName": "on_bicycle",
           "cSharpName": "OnBicycle",
           "clrType": "System.Double"
+        },
+        {
+          "jsonName": "iso_country_code",
+          "cSharpName": "IsoCountryCode",
+          "clrType": "System.String"
+        },
+        {
+          "jsonName": "phone",
+          "cSharpName": "Phone",
+          "clrType": "System.String"
+        },
+        {
+          "jsonName": "premises",
+          "cSharpName": "Premises",
+          "clrType": "System.String"
+        },
+        {
+          "jsonName": "url",
+          "cSharpName": "Url",
+          "clrType": "System.String"
+        },
+        {
+          "jsonName": "floor_id",
+          "cSharpName": "FloorId",
+          "clrType": null
+        },
+        {
+          "jsonName": "floor_name",
+          "cSharpName": "FloorName",
+          "clrType": null
+        },
+        {
+          "jsonName": "floor_level",
+          "cSharpName": "FloorLevel",
+          "clrType": null
         }
       ]
     },
@@ -5340,11 +5605,6 @@
           "cSharpName": "BatteryRechargable"
         },
         {
-          "id": "sensor.bedroom_motion_sensor_free_mem",
-          "friendlyName": "Bedroom Motion Sensor Free Mem",
-          "cSharpName": "BedroomMotionSensorFreeMem"
-        },
-        {
           "id": "sensor.bedroom_motion_sensor_g0_move_energy",
           "friendlyName": "Bedroom Motion Sensor g0 move energy",
           "cSharpName": "BedroomMotionSensorG0MoveEnergy"
@@ -5440,11 +5700,6 @@
           "cSharpName": "BedroomMotionSensorOccupancyTimeout"
         },
         {
-          "id": "sensor.bedroom_motion_sensor_uptime",
-          "friendlyName": "Bedroom Motion Sensor Uptime",
-          "cSharpName": "BedroomMotionSensorUptime"
-        },
-        {
           "id": "sensor.bedroom_motion_sensor_uptime_sensor",
           "friendlyName": "Bedroom Motion Sensor Uptime Sensor",
           "cSharpName": "BedroomMotionSensorUptimeSensor"
@@ -5458,16 +5713,6 @@
           "id": "sensor.bedroom_motion_sensor_xiaomi_mi_scale_weight",
           "friendlyName": "Bedroom Motion Sensor Xiaomi Mi Scale Weight",
           "cSharpName": "BedroomMotionSensorXiaomiMiScaleWeight"
-        },
-        {
-          "id": "sensor.careli_sg_593061393_maf05a_appoint_time_left_p_3_8",
-          "friendlyName": "Xiaomi Smart Air Fryer Pro 4L * Custom Service Schedule Remaining Time",
-          "cSharpName": "CareliSg593061393Maf05aAppointTimeLeftP38"
-        },
-        {
-          "id": "sensor.careli_sg_593061393_maf05a_left_time_p_2_5",
-          "friendlyName": "Xiaomi Smart Air Fryer Pro 4L  Air Fryer Time Remaining",
-          "cSharpName": "CareliSg593061393Maf05aLeftTimeP25"
         },
         {
           "id": "sensor.contact_sensor_battery",
@@ -5820,34 +6065,104 @@
           "cSharpName": "FrontDoorBatteryVoltage"
         },
         {
-          "id": "sensor.garbage_lid_target_1_angle",
-          "friendlyName": "Garbage Lid Target-1 Angle",
-          "cSharpName": "GarbageLidTarget1Angle"
+          "id": "sensor.garbage_lid_g0_move_energy",
+          "friendlyName": "Garbage Lid g0 move energy",
+          "cSharpName": "GarbageLidG0MoveEnergy"
         },
         {
-          "id": "sensor.garbage_lid_target_1_distance",
-          "friendlyName": "Garbage Lid Target-1 Distance",
-          "cSharpName": "GarbageLidTarget1Distance"
+          "id": "sensor.garbage_lid_g0_still_energy",
+          "friendlyName": "Garbage Lid g0 still energy",
+          "cSharpName": "GarbageLidG0StillEnergy"
         },
         {
-          "id": "sensor.garbage_lid_target_1_resolution",
-          "friendlyName": "Garbage Lid Target-1 Resolution",
-          "cSharpName": "GarbageLidTarget1Resolution"
+          "id": "sensor.garbage_lid_g1_move_energy",
+          "friendlyName": "Garbage Lid g1 move energy",
+          "cSharpName": "GarbageLidG1MoveEnergy"
         },
         {
-          "id": "sensor.garbage_lid_target_1_speed",
-          "friendlyName": "Garbage Lid Target-1 Speed",
-          "cSharpName": "GarbageLidTarget1Speed"
+          "id": "sensor.garbage_lid_g1_still_energy",
+          "friendlyName": "Garbage Lid g1 still energy",
+          "cSharpName": "GarbageLidG1StillEnergy"
         },
         {
-          "id": "sensor.garbage_lid_target_1_x",
-          "friendlyName": "Garbage Lid Target-1 X",
-          "cSharpName": "GarbageLidTarget1X"
+          "id": "sensor.garbage_lid_g2_move_energy",
+          "friendlyName": "Garbage Lid g2 move energy",
+          "cSharpName": "GarbageLidG2MoveEnergy"
         },
         {
-          "id": "sensor.garbage_lid_target_1_y",
-          "friendlyName": "Garbage Lid Target-1 Y",
-          "cSharpName": "GarbageLidTarget1Y"
+          "id": "sensor.garbage_lid_g2_still_energy",
+          "friendlyName": "Garbage Lid g2 still energy",
+          "cSharpName": "GarbageLidG2StillEnergy"
+        },
+        {
+          "id": "sensor.garbage_lid_g3_move_energy",
+          "friendlyName": "Garbage Lid g3 move energy",
+          "cSharpName": "GarbageLidG3MoveEnergy"
+        },
+        {
+          "id": "sensor.garbage_lid_g3_still_energy",
+          "friendlyName": "Garbage Lid g3 still energy",
+          "cSharpName": "GarbageLidG3StillEnergy"
+        },
+        {
+          "id": "sensor.garbage_lid_g4_move_energy",
+          "friendlyName": "Garbage Lid g4 move energy",
+          "cSharpName": "GarbageLidG4MoveEnergy"
+        },
+        {
+          "id": "sensor.garbage_lid_g4_still_energy",
+          "friendlyName": "Garbage Lid g4 still energy",
+          "cSharpName": "GarbageLidG4StillEnergy"
+        },
+        {
+          "id": "sensor.garbage_lid_g5_move_energy",
+          "friendlyName": "Garbage Lid g5 move energy",
+          "cSharpName": "GarbageLidG5MoveEnergy"
+        },
+        {
+          "id": "sensor.garbage_lid_g5_still_energy",
+          "friendlyName": "Garbage Lid g5 still energy",
+          "cSharpName": "GarbageLidG5StillEnergy"
+        },
+        {
+          "id": "sensor.garbage_lid_g6_move_energy",
+          "friendlyName": "Garbage Lid g6 move energy",
+          "cSharpName": "GarbageLidG6MoveEnergy"
+        },
+        {
+          "id": "sensor.garbage_lid_g6_still_energy",
+          "friendlyName": "Garbage Lid g6 still energy",
+          "cSharpName": "GarbageLidG6StillEnergy"
+        },
+        {
+          "id": "sensor.garbage_lid_g7_move_energy",
+          "friendlyName": "Garbage Lid g7 move energy",
+          "cSharpName": "GarbageLidG7MoveEnergy"
+        },
+        {
+          "id": "sensor.garbage_lid_g7_still_energy",
+          "friendlyName": "Garbage Lid g7 still energy",
+          "cSharpName": "GarbageLidG7StillEnergy"
+        },
+        {
+          "id": "sensor.garbage_lid_g8_move_energy",
+          "friendlyName": "Garbage Lid g8 move energy",
+          "cSharpName": "GarbageLidG8MoveEnergy"
+        },
+        {
+          "id": "sensor.garbage_lid_g8_still_energy",
+          "friendlyName": "Garbage Lid g8 still energy",
+          "cSharpName": "GarbageLidG8StillEnergy"
+        },
+        {
+          "id": "sensor.garbage_lid_occupancy_timeout",
+          "friendlyName": "Garbage Lid Occupancy Timeout",
+          "cSharpName": "GarbageLidOccupancyTimeout"
+        },
+        {
+          "id": "sensor.garbage_lid_uptime_sensor",
+          "friendlyName": "Garbage Lid Uptime Sensor",
+          "cSharpName": "GarbageLidUptimeSensor"
         },
         {
           "id": "sensor.ignored_issues",
@@ -6395,6 +6710,11 @@
           "cSharpName": "WaterDispenserPower"
         },
         {
+          "id": "sensor.water_dispenser_wattage",
+          "friendlyName": "Water Dispenser Wattage",
+          "cSharpName": "WaterDispenserWattage"
+        },
+        {
           "id": "sensor.wattage",
           "friendlyName": "Wattage (Sala Lights Group)",
           "cSharpName": "Wattage"
@@ -6498,6 +6818,16 @@
           "id": "sensor.xiaomi_sg_753990712_cpa4_pm2_5_density_p_3_4",
           "friendlyName": "Xiaomi Smart Air Purifier 4 Compact  Environment PM2.5",
           "cSharpName": "XiaomiSg753990712Cpa4Pm25DensityP34"
+        },
+        {
+          "id": "sensor.xiaomi_smart_air_fryer_pro_4l_air_fryer_time_remaining",
+          "friendlyName": "Xiaomi Smart Air Fryer Pro 4L  Air Fryer Time Remaining",
+          "cSharpName": "XiaomiSmartAirFryerPro4lAirFryerTimeRemaining"
+        },
+        {
+          "id": "sensor.xiaomi_smart_air_fryer_pro_4l_custom_service_schedule_remaining_time",
+          "friendlyName": "Xiaomi Smart Air Fryer Pro 4L * Custom Service Schedule Remaining Time",
+          "cSharpName": "XiaomiSmartAirFryerPro4lCustomServiceScheduleRemainingTime"
         }
       ],
       "attributes": [
@@ -6569,7 +6899,7 @@
         {
           "jsonName": "connected_paired_devices",
           "cSharpName": "ConnectedPairedDevices",
-          "clrType": "System.Collections.Generic.IReadOnlyList\u00601[System.String]"
+          "clrType": "System.Object"
         },
         {
           "jsonName": "paired_devices",
@@ -7849,11 +8179,6 @@
           "cSharpName": "AcAutomation"
         },
         {
-          "id": "switch.ac_automation_1",
-          "friendlyName": "AC Automation",
-          "cSharpName": "AcAutomation1"
-        },
-        {
           "id": "switch.ac_swing_mode",
           "friendlyName": "AC Swing Mode",
           "cSharpName": "AcSwingMode"
@@ -7872,6 +8197,11 @@
           "id": "switch.bathroom_motion_sensor",
           "friendlyName": "Bathroom Motion Sensor",
           "cSharpName": "BathroomMotionSensor"
+        },
+        {
+          "id": "switch.bathroom_motion_sensor_1",
+          "friendlyName": "Bathroom Motion Sensor",
+          "cSharpName": "BathroomMotionSensor1"
         },
         {
           "id": "switch.bathroom_motion_sensor_auto_calibrate",
@@ -7904,6 +8234,11 @@
           "cSharpName": "BedroomMotionSensor"
         },
         {
+          "id": "switch.bedroom_motion_sensor_1",
+          "friendlyName": "Bedroom Motion Sensor",
+          "cSharpName": "BedroomMotionSensor1"
+        },
+        {
           "id": "switch.bedroom_motion_sensor_auto_calibrate",
           "friendlyName": "Bedroom Motion Sensor Auto Calibrate",
           "cSharpName": "BedroomMotionSensorAutoCalibrate"
@@ -7917,11 +8252,6 @@
           "id": "switch.bedroom_motion_sensor_engineering_mode",
           "friendlyName": "Bedroom Motion Sensor engineering mode",
           "cSharpName": "BedroomMotionSensorEngineeringMode"
-        },
-        {
-          "id": "switch.bedroom_motion_sensor_prerelease",
-          "friendlyName": "Bedroom Motion Sensor Prerelease",
-          "cSharpName": "BedroomMotionSensorPrerelease"
         },
         {
           "id": "switch.ceiling_fan",
@@ -7947,6 +8277,11 @@
           "id": "switch.clean_air",
           "friendlyName": "Clean Air",
           "cSharpName": "CleanAir"
+        },
+        {
+          "id": "switch.clean_air_1",
+          "friendlyName": "Clean Air",
+          "cSharpName": "CleanAir1"
         },
         {
           "id": "switch.cloud_alexa",
@@ -7985,7 +8320,7 @@
         },
         {
           "id": "switch.cozylife_2ac9",
-          "friendlyName": "Mi Pad Charger",
+          "friendlyName": "Soundbar",
           "cSharpName": "Cozylife2ac9"
         },
         {
@@ -8049,14 +8384,19 @@
           "cSharpName": "FlytrapLed"
         },
         {
-          "id": "switch.garbage_lid_bluetooth",
-          "friendlyName": "Garbage Lid Bluetooth",
-          "cSharpName": "GarbageLidBluetooth"
+          "id": "switch.garbage_lid_auto_calibrate",
+          "friendlyName": "Garbage Lid Auto Calibrate",
+          "cSharpName": "GarbageLidAutoCalibrate"
         },
         {
-          "id": "switch.garbage_lid_multi_target_tracking",
-          "friendlyName": "Garbage Lid Multi Target Tracking\u0022",
-          "cSharpName": "GarbageLidMultiTargetTracking"
+          "id": "switch.garbage_lid_control_bluetooth",
+          "friendlyName": "Garbage Lid control Bluetooth",
+          "cSharpName": "GarbageLidControlBluetooth"
+        },
+        {
+          "id": "switch.garbage_lid_engineering_mode",
+          "friendlyName": "Garbage Lid engineering mode",
+          "cSharpName": "GarbageLidEngineeringMode"
         },
         {
           "id": "switch.gree_a_c_pre_release",
@@ -8064,14 +8404,14 @@
           "cSharpName": "GreeACPreRelease"
         },
         {
-          "id": "switch.induction",
-          "friendlyName": "Induction",
-          "cSharpName": "Induction"
-        },
-        {
           "id": "switch.kitchen_motion_sensor",
           "friendlyName": "Kitchen Motion Sensor",
           "cSharpName": "KitchenMotionSensor"
+        },
+        {
+          "id": "switch.kitchen_motion_sensor_1",
+          "friendlyName": "Kitchen Motion Sensor",
+          "cSharpName": "KitchenMotionSensor1"
         },
         {
           "id": "switch.kitchen_motion_sensor_auto_calibrate",
@@ -8094,11 +8434,6 @@
           "cSharpName": "Laptop"
         },
         {
-          "id": "switch.laptop_3",
-          "friendlyName": "Laptop",
-          "cSharpName": "Laptop3"
-        },
-        {
           "id": "switch.laptop_charger_child_lock",
           "friendlyName": "Mipad Charger Child lock",
           "cSharpName": "LaptopChargerChildLock"
@@ -8107,11 +8442,6 @@
           "id": "switch.lg_screen",
           "friendlyName": "Lg Screen",
           "cSharpName": "LgScreen"
-        },
-        {
-          "id": "switch.lg_screen_1",
-          "friendlyName": "LG Screen",
-          "cSharpName": "LgScreen1"
         },
         {
           "id": "switch.lg_screensaver",
@@ -8129,9 +8459,9 @@
           "cSharpName": "LgTvMotionSensor"
         },
         {
-          "id": "switch.lg_tv_motion_sensor_3",
+          "id": "switch.lg_tv_motion_sensor_2",
           "friendlyName": "LG TV Motion Sensor",
-          "cSharpName": "LgTvMotionSensor3"
+          "cSharpName": "LgTvMotionSensor2"
         },
         {
           "id": "switch.lg_webos_tv_fe94_mute",
@@ -8149,11 +8479,6 @@
           "cSharpName": "LockAutomation"
         },
         {
-          "id": "switch.mi_pad_5_screensaver",
-          "friendlyName": "Mi Pad 5 Screensaver",
-          "cSharpName": "MiPad5Screensaver"
-        },
-        {
           "id": "switch.mipad_charger_socket_1",
           "friendlyName": "Mipad Charger Socket 1",
           "cSharpName": "MipadChargerSocket1"
@@ -8169,16 +8494,6 @@
           "cSharpName": "MotionSensors"
         },
         {
-          "id": "switch.nodered_093beef3e4230f12",
-          "friendlyName": "Laptop Auto Charge",
-          "cSharpName": "Nodered093beef3e4230f12"
-        },
-        {
-          "id": "switch.nodered_90e90b1bf1d27e84",
-          "friendlyName": "tv-automation",
-          "cSharpName": "Nodered90e90b1bf1d27e84"
-        },
-        {
           "id": "switch.pantry_lights_auto_update_enabled",
           "friendlyName": "Pantry Lights Auto-update enabled",
           "cSharpName": "PantryLightsAutoUpdateEnabled"
@@ -8187,6 +8502,11 @@
           "id": "switch.pantry_motion_sensor",
           "friendlyName": "Pantry Motion Sensor",
           "cSharpName": "PantryMotionSensor"
+        },
+        {
+          "id": "switch.pantry_motion_sensor_1",
+          "friendlyName": "Pantry Motion Sensor",
+          "cSharpName": "PantryMotionSensor1"
         },
         {
           "id": "switch.pantry_motion_sensor_auto_calibrate",
@@ -8247,6 +8567,11 @@
           "id": "switch.sala_motion_sensor",
           "friendlyName": "Sala Motion Sensor",
           "cSharpName": "SalaMotionSensor"
+        },
+        {
+          "id": "switch.sala_motion_sensor_1",
+          "friendlyName": "Sala Motion Sensor",
+          "cSharpName": "SalaMotionSensor1"
         },
         {
           "id": "switch.sala_motion_sensor_auto_calibrate",
@@ -8354,11 +8679,6 @@
           "cSharpName": "Sonoff100238104eLed"
         },
         {
-          "id": "switch.switch",
-          "friendlyName": "Sala Stand Fan",
-          "cSharpName": "Switch"
-        },
-        {
           "id": "switch.tablet_automation",
           "friendlyName": "Tablet Automation",
           "cSharpName": "TabletAutomation"
@@ -8370,8 +8690,13 @@
         },
         {
           "id": "switch.tv_automation",
-          "friendlyName": "TV Automation",
+          "friendlyName": "tv-automation",
           "cSharpName": "TvAutomation"
+        },
+        {
+          "id": "switch.tv_automation_3",
+          "friendlyName": "TV Automation",
+          "cSharpName": "TvAutomation3"
         },
         {
           "id": "switch.tv_backlight_3_lite_gradient_toggle",
@@ -8538,24 +8863,24 @@
       "domain": "text",
       "entities": [
         {
-          "id": "text.careli_sg_593061393_maf05a_recipe_id_p_3_1",
+          "id": "text.xiaomi_smart_air_fryer_pro_4l_custom_service_recipe_id",
           "friendlyName": "Xiaomi Smart Air Fryer Pro 4L * Custom Service Recipe ID",
-          "cSharpName": "CareliSg593061393Maf05aRecipeIdP31"
+          "cSharpName": "XiaomiSmartAirFryerPro4lCustomServiceRecipeId"
         },
         {
-          "id": "text.careli_sg_593061393_maf05a_recipe_name_p_3_2",
+          "id": "text.xiaomi_smart_air_fryer_pro_4l_custom_service_recipe_name",
           "friendlyName": "Xiaomi Smart Air Fryer Pro 4L * Custom Service recipe-name",
-          "cSharpName": "CareliSg593061393Maf05aRecipeNameP32"
+          "cSharpName": "XiaomiSmartAirFryerPro4lCustomServiceRecipeName"
         },
         {
-          "id": "text.careli_sg_593061393_maf05a_recipe_sync_p_3_9",
+          "id": "text.xiaomi_smart_air_fryer_pro_4l_custom_service_recipe_sync",
           "friendlyName": "Xiaomi Smart Air Fryer Pro 4L * Custom Service recipe-sync",
-          "cSharpName": "CareliSg593061393Maf05aRecipeSyncP39"
+          "cSharpName": "XiaomiSmartAirFryerPro4lCustomServiceRecipeSync"
         },
         {
-          "id": "text.careli_sg_593061393_maf05a_start_cook_a_3_1",
+          "id": "text.xiaomi_smart_air_fryer_pro_4l_custom_service_start_custom_program",
           "friendlyName": "Xiaomi Smart Air Fryer Pro 4L * Custom Service Start Custom Program",
-          "cSharpName": "CareliSg593061393Maf05aStartCookA31"
+          "cSharpName": "XiaomiSmartAirFryerPro4lCustomServiceStartCustomProgram"
         }
       ],
       "attributes": [
@@ -8595,19 +8920,9 @@
       "domain": "timer",
       "entities": [
         {
-          "id": "timer.eating_window",
-          "friendlyName": "Eating Window",
-          "cSharpName": "EatingWindow"
-        },
-        {
-          "id": "timer.fasting_window",
-          "friendlyName": "Fasting Window",
-          "cSharpName": "FastingWindow"
-        },
-        {
-          "id": "timer.fasting_window_2",
-          "friendlyName": "Fasting Window 2",
-          "cSharpName": "FastingWindow2"
+          "id": "timer.air_fryer",
+          "friendlyName": "Air Fryer",
+          "cSharpName": "AirFryer"
         }
       ],
       "attributes": [
@@ -8687,13 +9002,8 @@
           "cSharpName": "EsphomeUpdate"
         },
         {
-          "id": "update.filebrowser_update",
-          "friendlyName": "Filebrowser Update",
-          "cSharpName": "FilebrowserUpdate"
-        },
-        {
           "id": "update.garbage_lid_firmware",
-          "friendlyName": "Garbage Lid Firmware",
+          "friendlyName": "Firmware",
           "cSharpName": "GarbageLidFirmware"
         },
         {
@@ -8770,6 +9080,11 @@
           "id": "update.netdaemon_v5_net_9_update",
           "friendlyName": "NetDaemon V5 (.NET 9) Update",
           "cSharpName": "NetdaemonV5Net9Update"
+        },
+        {
+          "id": "update.nginx_proxy_manager_update",
+          "friendlyName": "Nginx Proxy Manager Update",
+          "cSharpName": "NginxProxyManagerUpdate"
         },
         {
           "id": "update.node_red_companion_update",
@@ -9076,6 +9391,11 @@
           "id": "zone.home",
           "friendlyName": "Home",
           "cSharpName": "Home"
+        },
+        {
+          "id": "zone.near_home",
+          "friendlyName": "Near Home",
+          "cSharpName": "NearHome"
         }
       ],
       "attributes": [
@@ -9128,6 +9448,45 @@
           "id": "tts.google_ai_tts",
           "friendlyName": "Google AI TTS",
           "cSharpName": "GoogleAiTts"
+        }
+      ],
+      "attributes": [
+        {
+          "jsonName": "friendly_name",
+          "cSharpName": "FriendlyName",
+          "clrType": "System.String"
+        }
+      ]
+    },
+    {
+      "domain": "ai_task",
+      "entities": [
+        {
+          "id": "ai_task.google_ai_task",
+          "friendlyName": "Google AI Task",
+          "cSharpName": "GoogleAiTask"
+        }
+      ],
+      "attributes": [
+        {
+          "jsonName": "friendly_name",
+          "cSharpName": "FriendlyName",
+          "clrType": "System.String"
+        },
+        {
+          "jsonName": "supported_features",
+          "cSharpName": "SupportedFeatures",
+          "clrType": "System.Double"
+        }
+      ]
+    },
+    {
+      "domain": "stt",
+      "entities": [
+        {
+          "id": "stt.google_ai_stt",
+          "friendlyName": "Google AI STT",
+          "cSharpName": "GoogleAiStt"
         }
       ],
       "attributes": [

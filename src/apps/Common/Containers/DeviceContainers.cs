@@ -102,10 +102,11 @@ public class Devices(Entities entities)
             CookingControl: new(
                 entities.Sensor.RiceCookerPower,
                 entities.Switch.RiceCookerSocket1,
-                entities.Sensor.CareliSg593061393Maf05aStatusP21,
+                entities.Sensor.XiaomiSmartAirFryerPro4lAirFryerOperatingStatus,
                 entities.Button.InductionCookerPower,
                 entities.Sensor.SmartPlug3SonoffS31Power,
-                entities.Switch.CookingAutomation
+                entities.Switch.CookingAutomation,
+                entities.Timer.AirFryer
             ),
             ExtraControl: new(PowerPlug: entities.BinarySensor.SmartPlug3PowerExceedsThreshold)
         );

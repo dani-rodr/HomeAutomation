@@ -73,6 +73,7 @@ public interface ICookingEntities
     NumericSensorEntity RiceCookerPower { get; }
     SwitchEntity RiceCookerSwitch { get; }
     SensorEntity AirFryerStatus { get; }
+    TimerEntity AirFryerTimer { get; }
     ButtonEntity InductionTurnOff { get; }
     NumericSensorEntity InductionPower { get; }
 }

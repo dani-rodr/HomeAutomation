@@ -101,7 +101,8 @@ public record CookingControl(
     SensorEntity AirFryerStatus,
     ButtonEntity InductionTurnOff,
     NumericSensorEntity InductionPower,
-    SwitchEntity Automation
+    SwitchEntity Automation,
+    TimerEntity AirFryerTimer
 )
 {
     public static implicit operator SwitchEntity(CookingControl control) => control.Automation;
