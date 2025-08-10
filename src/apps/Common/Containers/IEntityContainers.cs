@@ -78,6 +78,18 @@ public interface ICookingEntities
     NumericSensorEntity InductionPower { get; }
 }
 
+public interface IAirFryerEntities
+{
+    NumberEntity CookingTime { get; }
+    NumberEntity Temperature { get; }
+    ButtonEntity Start { get; }
+    ButtonEntity Stop { get; }
+    ButtonEntity Pause { get; }
+    SensorEntity Status { get; }
+    NumericSensorEntity RemainingTime { get; }
+    TimerEntity Timer { get; }
+}
+
 public interface IClimateSchedulerEntities
 {
     SensorEntity SunRising { get; }

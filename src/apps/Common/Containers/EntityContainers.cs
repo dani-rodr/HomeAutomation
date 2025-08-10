@@ -81,6 +81,28 @@ public class KitchenCookingEntities(Devices devices) : ICookingEntities
     public TimerEntity AirFryerTimer => _control.AirFryerTimer;
 }
 
+public class AirFryerEntities(Devices devices, Entities entities) : IAirFryerEntities
+{
+    public NumberEntity CookingTime =>
+        entities.Number.XiaomiSmartAirFryerPro4lAirFryerOperatingTime;
+
+    public NumberEntity Temperature =>
+        entities.Number.XiaomiSmartAirFryerPro4lAirFryerOperatingTemperature;
+
+    public ButtonEntity Start => entities.Button.XiaomiSmartAirFryerPro4lAirFryerStartProgram;
+
+    public ButtonEntity Stop => entities.Button.XiaomiSmartAirFryerPro4lAirFryerStopProgram;
+
+    public ButtonEntity Pause => entities.Button.XiaomiSmartAirFryerPro4lAirFryerPause;
+
+    public SensorEntity Status => entities.Sensor.XiaomiSmartAirFryerPro4lAirFryerOperatingStatus;
+
+    public NumericSensorEntity RemainingTime =>
+        entities.Sensor.XiaomiSmartAirFryerPro4lAirFryerTimeRemaining;
+
+    public TimerEntity Timer => entities.Timer.AirFryer;
+}
+
 public class BedroomClimateEntities(Devices devices) : IClimateEntities
 {
     private readonly Area _area = devices.Bedroom;

@@ -7,12 +7,14 @@ public class KitchenApp(
     IKitchenLightEntities motionEntities,
     ICookingEntities cookingEntities,
     MotionSensor motionSensor,
+    IAirFryer airFryer,
     ILoggerFactory loggerFactory
 ) : AppBase<KitchenApp>()
 {
     protected override IEnumerable<IAutomation> CreateAutomations()
     {
         yield return motionSensor;
+        yield return airFryer;
         yield return new LightAutomation(
             motionEntities,
             loggerFactory.CreateLogger<LightAutomation>()

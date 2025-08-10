@@ -315,3 +315,33 @@ public static class PersonEntityExtensions
 
     public static bool IsAway(this PersonEntity person) => person.State.IsAway();
 }
+
+public static class TimerEntityExtensions
+{
+    private static string GetDuration(double minutes) =>
+        TimeSpan.FromMinutes(minutes).ToString(@"hh\:mm\:ss");
+    public static int GetDurationInSeconds(this TimerEntity timer)
+    {
+        var duration = timer?.Attributes?.Duration;
+        if (TimeSpan.TryParse(duration, out var ts))
+        {
+             return (int)ts.TotalSeconds;
+        }
+        return 0;
+    }
+    public static void SetDuration(this TimerEntity timer, double minutes)
+    {
+        timer.Finish();
+        timer.SetDuration(GetDuration(minutes));
+    }
+
+    public static void Start(this TimerEntity timer, double minutes)
+    {
+        timer.Start(GetDuration(minutes));
+    }
+    public static void Restart(this TimerEntity timer, double minutes)
+    {
+        timer.Finish();
+        timer.Start(minutes);
+    }
+}
