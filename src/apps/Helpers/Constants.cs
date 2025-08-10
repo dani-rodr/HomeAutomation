@@ -18,6 +18,8 @@ public static class HaEntityStates
     public const string LOCKED = "locked";
     public const string HOME = "home";
     public const string AWAY = "not_home";
+    public const string ACTIVE = "active";
+    public const string IDLE = "idle";
 
     // Weather states
     public const string SUNNY = "sunny";

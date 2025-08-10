@@ -320,28 +320,50 @@ public static class TimerEntityExtensions
 {
     private static string GetDuration(double minutes) =>
         TimeSpan.FromMinutes(minutes).ToString(@"hh\:mm\:ss");
-    public static int GetDurationInSeconds(this TimerEntity timer)
+
+    private static int GetRemainingSeconds(this TimerEntity timer)
     {
-        var duration = timer?.Attributes?.Duration;
-        if (TimeSpan.TryParse(duration, out var ts))
+        if (TimeSpan.TryParse(timer?.Attributes?.Remaining, out var ts))
         {
-             return (int)ts.TotalSeconds;
+            return (int)ts.TotalSeconds;
         }
         return 0;
     }
-    public static void SetDuration(this TimerEntity timer, double minutes)
+
+    private static int GetDurationInSeconds(this TimerEntity timer)
     {
-        timer.Finish();
-        timer.SetDuration(GetDuration(minutes));
+        if (TimeSpan.TryParse(timer?.Attributes?.Duration, out var ts))
+        {
+            return (int)ts.TotalSeconds;
+        }
+        return 0;
     }
 
-    public static void Start(this TimerEntity timer, double minutes)
+    public static void SetDuration(this TimerEntity timer, double minutes)
     {
-        timer.Start(GetDuration(minutes));
+        string duration = GetDuration(minutes);
+        timer.SetDuration(duration);
     }
-    public static void Restart(this TimerEntity timer, double minutes)
+
+    public static void Reset(this TimerEntity timer, double minutes)
     {
         timer.Finish();
-        timer.Start(minutes);
+        timer.SetDuration(minutes);
+    }
+
+    /// <summary>
+    /// Stops the timer, restarts it with the specified duration, and returns the actual duration used.
+    /// </summary>
+    public static int Restart(this TimerEntity timer, double minutes)
+    {
+        timer.Reset(minutes);
+        timer.Start();
+        return timer.GetDurationInSeconds();
+    }
+
+    public static int Resume(this TimerEntity timer)
+    {
+        timer.Start();
+        return timer.GetRemainingSeconds();
     }
 }

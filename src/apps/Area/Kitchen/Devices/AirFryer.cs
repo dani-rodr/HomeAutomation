@@ -28,14 +28,26 @@ public class AirFryer(
                 .CookingTime.StateChangesWithCurrent()
                 .Subscribe(state =>
                 {
-                    var time = state?.New?.State ?? 0;
+                    var time = (state?.New?.State ?? 0) * 60;
                     if (_status.State == AirFryerStatus.Running)
                     {
-                        _timer.Restart(time);
+                        var duration = _timer.Restart(time);
+                        _service.NotifyPocoF4(
+                            title: "Home Assistant",
+                            message: "Air Fryer is running 1",
+                            data: new
+                            {
+                                chronometer = true,
+                                when_relative = true,
+                                timeout = time,
+                                when = time,
+                                tag = AirFryerNotificationAction.Tag,
+                            }
+                        );
                     }
                     else
                     {
-                        _timer.SetDuration(time);
+                        _timer.Reset(time);
                     }
                 }),
             _handler.OnMobileEvent(AirFryerNotificationAction.Start).Subscribe(),
@@ -83,22 +95,20 @@ public class AirFryer(
             (oldStatus == AirFryerStatus.Standby || oldStatus == AirFryerStatus.Pause)
             && newStatus == AirFryerStatus.Running; // Simulating Actual Behavior
 
-        int currentTimerDuration = _timer.GetDurationInSeconds();
-
         if (isRestarted)
         {
             var time = _entities.CookingTime.State ?? 0;
 
-            _timer.Restart(time);
+            var duration = _timer.Restart(time);
             _service.NotifyPocoF4(
                 title: "Home Assistant",
-                message: "Air Fryer is running",
+                message: "Air Fryer is running 2",
                 data: new
                 {
                     chronometer = true,
                     when_relative = true,
-                    timeout = currentTimerDuration,
-                    when = currentTimerDuration,
+                    timeout = duration,
+                    when = duration,
                     tag = AirFryerNotificationAction.Tag,
                 }
             );
@@ -108,26 +118,33 @@ public class AirFryer(
         switch (newStatus)
         {
             case AirFryerStatus.Pause:
+                _timer.Reset(_entities.CookingTime.State ?? 0); // Actual behavior resets the timer when paused
+                _service.NotifyPocoF4(
+                    title: "Home Assistant",
+                    message: "Air Fryer is paused 1",
+                    data: new { tag = AirFryerNotificationAction.Tag }
+                );
+                break;
             case AirFryerStatus.OnHold:
                 _timer.Pause();
                 _service.NotifyPocoF4(
                     title: "Home Assistant",
-                    message: "Air Fryer is paused",
+                    message: "Air Fryer is paused 2",
                     data: new { tag = AirFryerNotificationAction.Tag }
                 );
                 break;
 
             case AirFryerStatus.Running:
-                _timer.Start();
+                var duration = _timer.Resume();
                 _service.NotifyPocoF4(
                     title: "Home Assistant",
-                    message: "Air Fryer is running",
+                    message: "Air Fryer is running 3",
                     data: new
                     {
                         chronometer = true,
                         when_relative = true,
-                        timeout = currentTimerDuration,
-                        when = currentTimerDuration,
+                        timeout = duration,
+                        when = duration,
                         tag = AirFryerNotificationAction.Tag,
                     }
                 );

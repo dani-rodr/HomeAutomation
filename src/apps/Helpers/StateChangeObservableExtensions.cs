@@ -124,6 +124,16 @@ public static class StateChangeObservableExtensions
         bool ignorePreviousUnavailable = true
     ) => source.IsAnyOfStates(ignorePreviousUnavailable, HaEntityStates.LOCKED);
 
+    public static IObservable<StateChange> IsActive(
+        this IObservable<StateChange> source,
+        bool ignorePreviousUnavailable = true
+    ) => source.IsAnyOfStates(ignorePreviousUnavailable, HaEntityStates.ACTIVE);
+
+    public static IObservable<StateChange> IsIdle(
+        this IObservable<StateChange> source,
+        bool ignorePreviousUnavailable = true
+    ) => source.IsAnyOfStates(ignorePreviousUnavailable, HaEntityStates.IDLE);
+
     /// <summary>
     /// Filters state changes to only emit when the entity becomes unlocked.
     /// </summary>
