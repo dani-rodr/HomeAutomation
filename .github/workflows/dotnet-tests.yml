@@ -116,3 +116,12 @@ jobs:
             -H "Content-Type: application/json" \
             -d '{"addon": "${{ secrets.HA_SLUG }}"}' \
             http://${{ secrets.HA_IP }}:${{ secrets.HA_PORT }}/api/services/hassio/addon_restart
+
+      - name: Notify mobile app of deployment
+        if: steps.deploy.outputs.changed == 'true'
+        run: |
+          curl -s -X POST \
+            -H "Authorization: Bearer ${{ secrets.HA_TOKEN }}" \
+            -H "Content-Type: application/json" \
+            -d '{"title":"✅ Deployment Success","message":"NetDaemon updated from main branch via GitHub Actions","data":{"notification_icon":"mdi:source-branch-check","tag":"github-action"}}' \
+            http://${{ secrets.HA_IP }}:${{ secrets.HA_PORT }}/api/services/notify/mobile_app_poco_f4_gt
