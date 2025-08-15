@@ -50,7 +50,9 @@ public class LightAutomation(IPantryLightEntities entities, ILogger<LightAutomat
             .Subscribe(_ =>
             {
                 Logger.LogDebug(
-                    "Both sensors off (Pantry: {PantryState}, Bathroom: {BathroomState}) - starting 1-minute delay before deactivating bathroom automation {EntityId}",
+                    "Both sensors off ({Pantry}: {PantryState}, {Bathroom}: {BathroomState}) - starting 1-minute delay before deactivating bathroom automation {EntityId}",
+                    MotionSensor.EntityId,
+                    entities.BathroomMotionSensor.EntityId,
                     MotionSensor.State,
                     entities.BathroomMotionSensor.State,
                     entities.BathroomMotionAutomation.EntityId
