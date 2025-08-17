@@ -44,6 +44,7 @@ public static class HaIdentity
     public const string MIPAD5 = "b02831abf0e44536ad8fc552aede48c4";
     public const string SUPERVISOR = "f389ce79e38841e4bfd26c9685ffa784";
     public const string NODERED = "880cfaa866264c9aaa59fa1f0f0949b9";
+    public const string TCLTV = "4deb37910a204309943396a42a591bfe";
     public const string MANUAL = "";
 
     // Mapping of userId to readable names
@@ -57,6 +58,7 @@ public static class HaIdentity
         [SUPERVISOR] = "Supervisor",
         [NODERED] = "Node-RED",
         [MANUAL] = "Manual",
+        [TCLTV] = "TCLTV",
     };
 
     // List of manually operated users
@@ -66,6 +68,7 @@ public static class HaIdentity
         ATHENA_BEZOS,
         MIPAD5,
         MANUAL,
+        TCLTV,
     ];
 
     public static string GetName(string? userId)
