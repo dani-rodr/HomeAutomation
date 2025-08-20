@@ -584,16 +584,12 @@ public class LockAutomationTests : IDisposable
 
     private class TestEntities(IHaContext haContext) : ILockingEntities
     {
-        public SwitchEntity MasterSwitch { get; } =
-            new SwitchEntity(haContext, "switch.security_automation_master");
-        public BinarySensorEntity MotionSensor { get; } =
-            new BinarySensorEntity(haContext, "binary_sensor.front_door_motion");
-        public LockEntity Lock { get; } = new LockEntity(haContext, "lock.front_door_2");
-        public BinarySensorEntity Door { get; } =
-            new BinarySensorEntity(haContext, "binary_sensor.front_door_contact");
-        public BinarySensorEntity HouseStatus { get; } =
-            new BinarySensorEntity(haContext, "binary_sensor.house_occupied");
-        public SwitchEntity Flytrap { get; } = new SwitchEntity(haContext, "switch.flytrap_outlet");
+        public SwitchEntity MasterSwitch => new(haContext, "switch.security_automation_master");
+        public BinarySensorEntity MotionSensor => new(haContext, "binary_sensor.front_door_motion");
+        public LockEntity Lock => new(haContext, "lock.front_door_2");
+        public BinarySensorEntity Door => new(haContext, "binary_sensor.front_door_contact");
+        public BinarySensorEntity HouseStatus => new(haContext, "binary_sensor.house_occupied");
+        public SwitchEntity Flytrap => new(haContext, "switch.flytrap_outlet");
     }
 
     #endregion

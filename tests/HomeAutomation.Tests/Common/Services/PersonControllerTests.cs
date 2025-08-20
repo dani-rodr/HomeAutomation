@@ -567,25 +567,19 @@ public class PersonControllerTests : IDisposable
 
     private class TestEntities(IHaContext context) : IPersonEntities
     {
-        public PersonEntity Person { get; } = new PersonEntity(context, "person.test_person");
-        public CounterEntity Counter { get; } =
-            new CounterEntity(context, "counter.test_home_counter");
-        public ButtonEntity ToggleLocation { get; } =
-            new ButtonEntity(context, "button.test_toggle");
+        public PersonEntity Person => new(context, "person.test_person");
+        public CounterEntity Counter => new(context, "counter.test_home_counter");
+        public ButtonEntity ToggleLocation => new(context, "button.test_toggle");
 
         // Multiple triggers for comprehensive testing
-        public BinarySensorEntity HomeTrigger1 { get; } =
-            new BinarySensorEntity(context, "binary_sensor.home_trigger_1");
-        public BinarySensorEntity HomeTrigger2 { get; } =
-            new BinarySensorEntity(context, "binary_sensor.home_trigger_2");
-        public BinarySensorEntity AwayTrigger1 { get; } =
-            new BinarySensorEntity(context, "binary_sensor.away_trigger_1");
-        public BinarySensorEntity AwayTrigger2 { get; } =
-            new BinarySensorEntity(context, "binary_sensor.away_trigger_2");
-        public BinarySensorEntity DirectUnlockTrigger1 { get; } =
-            new BinarySensorEntity(context, "binary_sensor.direct_unlock_1");
-        public BinarySensorEntity DirectUnlockTrigger2 { get; } =
-            new BinarySensorEntity(context, "binary_sensor.direct_unlock_2");
+        public BinarySensorEntity HomeTrigger1 => new(context, "binary_sensor.home_trigger_1");
+        public BinarySensorEntity HomeTrigger2 => new(context, "binary_sensor.home_trigger_2");
+        public BinarySensorEntity AwayTrigger1 => new(context, "binary_sensor.away_trigger_1");
+        public BinarySensorEntity AwayTrigger2 => new(context, "binary_sensor.away_trigger_2");
+        public BinarySensorEntity DirectUnlockTrigger1 =>
+            new(context, "binary_sensor.direct_unlock_1");
+        public BinarySensorEntity DirectUnlockTrigger2 =>
+            new(context, "binary_sensor.direct_unlock_2");
 
         public IEnumerable<BinarySensorEntity> HomeTriggers => [HomeTrigger1, HomeTrigger2];
         public IEnumerable<BinarySensorEntity> AwayTriggers => [AwayTrigger1, AwayTrigger2];

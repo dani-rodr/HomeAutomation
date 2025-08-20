@@ -634,17 +634,13 @@ public class AirQualityAutomationTests : IDisposable
     /// </summary>
     private class TestEntities(IHaContext haContext) : IAirQualityEntities
     {
-        public SwitchEntity MasterSwitch { get; } =
-            new SwitchEntity(haContext, "switch.living_room_air_quality_master");
-        public BinarySensorEntity MotionSensor { get; } =
-            new BinarySensorEntity(haContext, "binary_sensor.living_room_presence_sensors");
-        public NumericSensorEntity Pm25Sensor { get; } =
-            new NumericSensorEntity(haContext, "sensor.air_quality_pm2_5");
-        public SwitchEntity LedStatus { get; } =
-            new SwitchEntity(haContext, "switch.air_purifier_led");
+        public SwitchEntity MasterSwitch => new(haContext, "switch.living_room_air_quality_master");
+        public BinarySensorEntity MotionSensor =>
+            new(haContext, "binary_sensor.living_room_presence_sensors");
+        public NumericSensorEntity Pm25Sensor => new(haContext, "sensor.air_quality_pm2_5");
+        public SwitchEntity LedStatus => new(haContext, "switch.air_purifier_led");
 
-        public SwitchEntity LivingRoomFanAutomation { get; } =
-            new SwitchEntity(haContext, "switch.sala_fan_automation");
+        public SwitchEntity LivingRoomFanAutomation => new(haContext, "switch.sala_fan_automation");
         public IEnumerable<SwitchEntity> Fans =>
             [
                 new SwitchEntity(haContext, "switch.air_purifier"),

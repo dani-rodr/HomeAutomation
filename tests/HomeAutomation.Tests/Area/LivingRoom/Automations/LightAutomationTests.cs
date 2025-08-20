@@ -598,38 +598,32 @@ public class LightAutomationTests : IDisposable
     private class TestEntities(IHaContext haContext) : ILivingRoomLightEntities
     {
         // Base motion automation entities
-        public SwitchEntity MasterSwitch { get; } =
-            new SwitchEntity(haContext, "switch.living_room_motion_sensor");
-        public BinarySensorEntity MotionSensor { get; } =
-            new BinarySensorEntity(haContext, "binary_sensor.living_room_motion_sensors");
-        public LightEntity Light { get; } = new LightEntity(haContext, "light.living_room_lights");
-        public NumberEntity SensorDelay { get; } =
-            new NumberEntity(haContext, "number.z_esp32_c6_1_still_target_delay");
+        public SwitchEntity MasterSwitch => new(haContext, "switch.living_room_motion_sensor");
+        public BinarySensorEntity MotionSensor =>
+            new(haContext, "binary_sensor.living_room_motion_sensors");
+        public LightEntity Light => new(haContext, "light.living_room_lights");
+        public NumberEntity SensorDelay => new(haContext, "number.z_esp32_c6_1_still_target_delay");
 
         // Cross-area bedroom dependencies
-        public BinarySensorEntity BedroomDoor { get; } =
-            new BinarySensorEntity(haContext, "binary_sensor.contact_sensor_door");
-        public BinarySensorEntity BedroomMotionSensor { get; } =
-            new BinarySensorEntity(haContext, "binary_sensor.bedroom_motion_sensors");
+        public BinarySensorEntity BedroomDoor =>
+            new(haContext, "binary_sensor.contact_sensor_door");
+        public BinarySensorEntity BedroomMotionSensor =>
+            new(haContext, "binary_sensor.bedroom_motion_sensors");
 
         // TV integration
-        public MediaPlayerEntity TclTv { get; } =
-            new MediaPlayerEntity(haContext, "media_player.tcl_android_tv");
+        public MediaPlayerEntity TclTv => new(haContext, "media_player.tcl_android_tv");
 
         // Cross-area kitchen dependencies
-        public BinarySensorEntity KitchenMotionSensor { get; } =
-            new BinarySensorEntity(haContext, "binary_sensor.kitchen_motion_sensors");
+        public BinarySensorEntity KitchenMotionSensor =>
+            new(haContext, "binary_sensor.kitchen_motion_sensors");
 
         // Cross-area pantry dependencies
-        public LightEntity PantryLights { get; } =
-            new LightEntity(haContext, "light.pantry_lights");
-        public SwitchEntity PantryMotionAutomation { get; } =
-            new SwitchEntity(haContext, "switch.pantry_motion_sensor");
-        public BinarySensorEntity PantryMotionSensor { get; } =
-            new BinarySensorEntity(haContext, "binary_sensor.pantry_motion_sensors");
-        public ButtonEntity Restart { get; } = new ButtonEntity(haContext, "button.restart");
+        public LightEntity PantryLights => new(haContext, "light.pantry_lights");
+        public SwitchEntity PantryMotionAutomation => new(haContext, "switch.pantry_motion_sensor");
+        public BinarySensorEntity PantryMotionSensor =>
+            new(haContext, "binary_sensor.pantry_motion_sensors");
+        public ButtonEntity Restart => new(haContext, "button.restart");
 
-        public BinarySensorEntity LivingRoomDoor { get; } =
-            new BinarySensorEntity(haContext, "binary_sensor.door_wrapper");
+        public BinarySensorEntity LivingRoomDoor => new(haContext, "binary_sensor.door_wrapper");
     }
 }

@@ -739,23 +739,21 @@ public class AccessControlAutomationTests : IDisposable
 
     private class TestEntities(IHaContext haContext) : IAccessControlAutomationEntities
     {
-        public BinarySensorEntity Door { get; } =
-            new BinarySensorEntity(haContext, "binary_sensor.front_door_contact");
-        public BinarySensorEntity House { get; } =
-            new BinarySensorEntity(haContext, "binary_sensor.house_occupied");
-        public LockEntity Lock { get; } = new LockEntity(haContext, "lock.front_door");
+        public BinarySensorEntity Door => new(haContext, "binary_sensor.front_door_contact");
+        public BinarySensorEntity House => new(haContext, "binary_sensor.house_occupied");
+        public LockEntity Lock => new(haContext, "lock.front_door");
 
         // Test trigger entities for testing person controllers
-        public BinarySensorEntity Person1HomeTrigger { get; } =
-            new BinarySensorEntity(haContext, "binary_sensor.person1_home_trigger");
-        public BinarySensorEntity Person1AwayTrigger { get; } =
-            new BinarySensorEntity(haContext, "binary_sensor.person1_away_trigger");
-        public BinarySensorEntity Person1DirectUnlockTrigger { get; } =
-            new BinarySensorEntity(haContext, "binary_sensor.person1_direct_unlock_trigger");
-        public BinarySensorEntity Person2HomeTrigger { get; } =
-            new BinarySensorEntity(haContext, "binary_sensor.person2_home_trigger");
-        public BinarySensorEntity Person2AwayTrigger { get; } =
-            new BinarySensorEntity(haContext, "binary_sensor.person2_away_trigger");
+        public BinarySensorEntity Person1HomeTrigger =>
+            new(haContext, "binary_sensor.person1_home_trigger");
+        public BinarySensorEntity Person1AwayTrigger =>
+            new(haContext, "binary_sensor.person1_away_trigger");
+        public BinarySensorEntity Person1DirectUnlockTrigger =>
+            new(haContext, "binary_sensor.person1_direct_unlock_trigger");
+        public BinarySensorEntity Person2HomeTrigger =>
+            new(haContext, "binary_sensor.person2_home_trigger");
+        public BinarySensorEntity Person2AwayTrigger =>
+            new(haContext, "binary_sensor.person2_away_trigger");
     }
 
     #endregion

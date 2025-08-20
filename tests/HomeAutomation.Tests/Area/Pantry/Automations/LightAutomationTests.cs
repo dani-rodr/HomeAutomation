@@ -526,28 +526,22 @@ public class LightAutomationTests : IDisposable
     /// </summary>
     private class TestEntities(IHaContext haContext) : IPantryLightEntities
     {
-        public SwitchEntity MasterSwitch { get; } =
-            new SwitchEntity(haContext, "switch.pantry_motion_sensor");
-        public BinarySensorEntity MotionSensor { get; } =
-            new BinarySensorEntity(haContext, "binary_sensor.pantry_motion_sensors");
-        public LightEntity Light { get; } = new LightEntity(haContext, "light.pantry_lights");
-        public NumberEntity SensorDelay { get; } =
-            new NumberEntity(haContext, "number.z_esp32_c6_3_still_target_delay");
-        public BinarySensorEntity MiScalePresenceSensor { get; } =
-            new BinarySensorEntity(
-                haContext,
-                "binary_sensor.esp32_presence_bedroom_mi_scale_presence"
-            );
-        public LightEntity MirrorLight { get; } =
-            new LightEntity(haContext, "light.controller_rgb_df1c0d");
-        public BinarySensorEntity BedroomDoor { get; } =
-            new BinarySensorEntity(haContext, "binary_sensor.contact_sensor_door");
-        public ButtonEntity Restart { get; } = new ButtonEntity(haContext, "button.restart");
+        public SwitchEntity MasterSwitch => new(haContext, "switch.pantry_motion_sensor");
+        public BinarySensorEntity MotionSensor =>
+            new(haContext, "binary_sensor.pantry_motion_sensors");
+        public LightEntity Light => new(haContext, "light.pantry_lights");
+        public NumberEntity SensorDelay => new(haContext, "number.z_esp32_c6_3_still_target_delay");
+        public BinarySensorEntity MiScalePresenceSensor =>
+            new(haContext, "binary_sensor.esp32_presence_bedroom_mi_scale_presence");
+        public LightEntity MirrorLight => new(haContext, "light.controller_rgb_df1c0d");
+        public BinarySensorEntity BedroomDoor =>
+            new(haContext, "binary_sensor.contact_sensor_door");
+        public ButtonEntity Restart => new(haContext, "button.restart");
 
-        public SwitchEntity BathroomMotionAutomation { get; } =
-            new SwitchEntity(haContext, "switch.bathroom_motion_sensor");
+        public SwitchEntity BathroomMotionAutomation =>
+            new(haContext, "switch.bathroom_motion_sensor");
 
-        public BinarySensorEntity BathroomMotionSensor { get; } =
-            new BinarySensorEntity(haContext, "binary_sensor.bathroom_motion_sensor");
+        public BinarySensorEntity BathroomMotionSensor =>
+            new(haContext, "binary_sensor.bathroom_motion_sensor");
     }
 }

@@ -82,16 +82,15 @@ public class LightAutomationTests : IDisposable
     /// </summary>
     private class TestEntities(IHaContext haContext) : IDeskLightEntities
     {
-        public SwitchEntity MasterSwitch { get; } =
-            new SwitchEntity(haContext, "switch.motion_sensors");
-        public BinarySensorEntity MotionSensor { get; } =
-            new BinarySensorEntity(haContext, "binary_sensor.desk_smart_presence");
-        public LightEntity Light { get; } = new LightEntity(haContext, "light.lg_display");
-        public NumberEntity SensorDelay { get; } =
-            new NumberEntity(haContext, "number.z_esp32_c6_1_still_target_delay_2");
+        public SwitchEntity MasterSwitch => new(haContext, "switch.motion_sensors");
+        public BinarySensorEntity MotionSensor =>
+            new(haContext, "binary_sensor.desk_smart_presence");
+        public LightEntity Light => new(haContext, "light.lg_display");
+        public NumberEntity SensorDelay =>
+            new(haContext, "number.z_esp32_c6_1_still_target_delay_2");
 
-        public LightEntity SalaLights { get; } = new LightEntity(haContext, "light.sala_lights");
+        public LightEntity SalaLights => new(haContext, "light.sala_lights");
 
-        public ButtonEntity Restart { get; } = new ButtonEntity(haContext, "button.restart");
+        public ButtonEntity Restart => new(haContext, "button.restart");
     }
 }

@@ -302,11 +302,10 @@ public class FanAutomationTests : IDisposable
     /// </summary>
     private class TestEntities(IHaContext haContext) : IBedroomFanEntities
     {
-        public SwitchEntity MasterSwitch { get; } =
-            new SwitchEntity(haContext, "switch.bedroom_motion_sensor");
-        public BinarySensorEntity MotionSensor { get; } =
-            new BinarySensorEntity(haContext, "binary_sensor.bedroom_presence_sensors");
-        public IEnumerable<SwitchEntity> Fans { get; } =
+        public SwitchEntity MasterSwitch => new(haContext, "switch.bedroom_motion_sensor");
+        public BinarySensorEntity MotionSensor =>
+            new(haContext, "binary_sensor.bedroom_presence_sensors");
+        public IEnumerable<SwitchEntity> Fans =>
             [new SwitchEntity(haContext, "switch.sonoff_100238104e1")];
 
         // Convenience property for single fan access (following base class pattern)

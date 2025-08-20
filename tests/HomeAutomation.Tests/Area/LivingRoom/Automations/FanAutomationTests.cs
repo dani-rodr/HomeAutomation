@@ -370,18 +370,17 @@ public class FanAutomationTests : IDisposable
     /// </summary>
     private class TestEntities(IHaContext haContext) : ILivingRoomFanEntities
     {
-        public SwitchEntity MasterSwitch { get; } =
-            new SwitchEntity(haContext, "switch.sala_motion_sensor");
-        public BinarySensorEntity MotionSensor { get; } =
-            new BinarySensorEntity(haContext, "binary_sensor.living_room_presence_sensors");
-        public IEnumerable<SwitchEntity> Fans { get; } =
+        public SwitchEntity MasterSwitch => new(haContext, "switch.sala_motion_sensor");
+        public BinarySensorEntity MotionSensor =>
+            new(haContext, "binary_sensor.living_room_presence_sensors");
+        public IEnumerable<SwitchEntity> Fans =>
             [
                 new SwitchEntity(haContext, "switch.ceiling_fan"),
                 new SwitchEntity(haContext, "switch.sonoff_10023810231"),
                 new SwitchEntity(haContext, "switch.cozylife_955f"),
             ];
-        public BinarySensorEntity BedroomMotionSensor { get; } =
-            new BinarySensorEntity(haContext, "binary_sensor.bedroom_presence_sensors");
+        public BinarySensorEntity BedroomMotionSensor =>
+            new(haContext, "binary_sensor.bedroom_presence_sensors");
 
         // Convenience properties for accessing specific fans
         public SwitchEntity CeilingFan => Fans.First(); // switch.ceiling_fan

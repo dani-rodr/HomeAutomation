@@ -903,20 +903,15 @@ public class ClimateAutomationTests : IDisposable
     /// </summary>
     private class TestEntities(IHaContext haContext) : IClimateEntities
     {
-        public SwitchEntity MasterSwitch { get; } =
-            new SwitchEntity(haContext, "switch.bedroom_climate_master");
-        public BinarySensorEntity MotionSensor { get; } =
-            new BinarySensorEntity(haContext, "binary_sensor.bedroom_motion_sensors");
-        public ClimateEntity AirConditioner { get; } =
-            new ClimateEntity(haContext, "climate.bedroom_ac");
-        public BinarySensorEntity Door { get; } =
-            new BinarySensorEntity(haContext, "binary_sensor.bedroom_door");
-        public SwitchEntity FanAutomation { get; } =
-            new SwitchEntity(haContext, "switch.bedroom_fan_automation");
-        public BinarySensorEntity HouseMotionSensor { get; } =
-            new BinarySensorEntity(haContext, "binary_sensor.house_motion_sensors");
-        public ButtonEntity AcFanModeToggle { get; } =
-            new ButtonEntity(haContext, "button.bedroom_ac_fan_mode_toggle");
-        public SwitchEntity Fan { get; } = new SwitchEntity(haContext, "switch.bedroom_fan");
+        public SwitchEntity MasterSwitch => new(haContext, "switch.bedroom_climate_master");
+        public BinarySensorEntity MotionSensor =>
+            new(haContext, "binary_sensor.bedroom_motion_sensors");
+        public ClimateEntity AirConditioner => new(haContext, "climate.bedroom_ac");
+        public BinarySensorEntity Door => new(haContext, "binary_sensor.bedroom_door");
+        public SwitchEntity FanAutomation => new(haContext, "switch.bedroom_fan_automation");
+        public BinarySensorEntity HouseMotionSensor =>
+            new(haContext, "binary_sensor.house_motion_sensors");
+        public ButtonEntity AcFanModeToggle => new(haContext, "button.bedroom_ac_fan_mode_toggle");
+        public SwitchEntity Fan => new(haContext, "switch.bedroom_fan");
     }
 }

@@ -438,15 +438,12 @@ public class LightAutomationTests : IDisposable
     /// </summary>
     private class TestEntities(IHaContext haContext) : IKitchenLightEntities
     {
-        public SwitchEntity MasterSwitch { get; } =
-            new SwitchEntity(haContext, "switch.kitchen_motion_sensor");
-        public BinarySensorEntity MotionSensor { get; } =
-            new BinarySensorEntity(haContext, "binary_sensor.kitchen_motion_sensors");
-        public LightEntity Light { get; } = new LightEntity(haContext, "light.kitchen_lights");
-        public NumberEntity SensorDelay { get; } =
-            new NumberEntity(haContext, "number.z_esp32_c6_4_still_target_delay");
-        public BinarySensorEntity PowerPlug { get; } =
-            new BinarySensorEntity(haContext, "binary_sensor.kitchen_power_plug");
-        public ButtonEntity Restart { get; } = new ButtonEntity(haContext, "button.restart");
+        public SwitchEntity MasterSwitch => new(haContext, "switch.kitchen_motion_sensor");
+        public BinarySensorEntity MotionSensor =>
+            new(haContext, "binary_sensor.kitchen_motion_sensors");
+        public LightEntity Light => new(haContext, "light.kitchen_lights");
+        public NumberEntity SensorDelay => new(haContext, "number.z_esp32_c6_4_still_target_delay");
+        public BinarySensorEntity PowerPlug => new(haContext, "binary_sensor.kitchen_power_plug");
+        public ButtonEntity Restart => new(haContext, "button.restart");
     }
 }
