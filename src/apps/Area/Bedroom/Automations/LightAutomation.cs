@@ -15,7 +15,7 @@ public class LightAutomation(
     protected override int SensorActiveDelayValue => 45;
 
     protected override IEnumerable<IDisposable> GetAdditionalPersistentAutomations() =>
-        [.. GetLightSwitchAutomations(), .. GetSensorDelayAutomations()];
+        [.. GetLightSwitchAutomations(), .. GetSensorDelayAutomations(), GetPantryAutomation()];
 
     protected override IEnumerable<IDisposable> GetLightAutomations()
     {
@@ -33,6 +33,9 @@ public class LightAutomation(
                 }
             });
     }
+
+    private IDisposable GetPantryAutomation() =>
+        MotionSensor.StateChanges().IsOff().Subscribe(_ => entities.PantryAutomation.TurnOn());
 
     private IEnumerable<IDisposable> GetLightSwitchAutomations()
     {

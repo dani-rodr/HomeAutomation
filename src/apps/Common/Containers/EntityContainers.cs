@@ -12,6 +12,7 @@ public class BedroomLightEntities(Devices devices) : IBedroomLightEntities
     public SwitchEntity RightSideEmptySwitch => _area.ExtraControl!.RightSideEmptySwitch!;
     public SwitchEntity LeftSideFanSwitch => _area.FanControl!;
     public ButtonEntity Restart => _area.MotionControl;
+    public SwitchEntity PantryAutomation => devices.Pantry.LightControl!.Automation;
 }
 
 public class LivingRoomLightEntities(Devices devices) : ILivingRoomLightEntities

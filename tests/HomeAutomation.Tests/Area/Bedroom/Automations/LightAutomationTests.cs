@@ -78,7 +78,12 @@ public class LightAutomationTests : IDisposable
         // Assert - Verify exact call counts for the sequence
         _mockHaContext.ShouldHaveCalledLightExactly(_entities.Light.EntityId, "turn_on", 2);
         _mockHaContext.ShouldHaveCalledLightExactly(_entities.Light.EntityId, "turn_off", 1);
-        _mockHaContext.ShouldHaveServiceCallCount(3); // on, off, on
+        _mockHaContext.ShouldHaveCalledSwitchExactly(
+            _entities.PantryAutomation.EntityId,
+            "turn_on",
+            1
+        );
+        _mockHaContext.ShouldHaveServiceCallCount(4); // on, off, on
     }
 
     #endregion
@@ -561,17 +566,15 @@ public class LightAutomationTests : IDisposable
     /// </summary>
     private class TestEntities(IHaContext haContext) : IBedroomLightEntities
     {
-        public SwitchEntity MasterSwitch { get; } =
-            new SwitchEntity(haContext, "switch.bedroom_motion_sensor");
-        public BinarySensorEntity MotionSensor { get; } =
-            new BinarySensorEntity(haContext, "binary_sensor.bedroom_motion_sensors");
-        public LightEntity Light { get; } = new LightEntity(haContext, "light.bedroom_lights");
-        public NumberEntity SensorDelay { get; } =
-            new NumberEntity(haContext, "number.z_esp32_c6_1_still_target_delay");
-        public SwitchEntity RightSideEmptySwitch { get; } =
-            new SwitchEntity(haContext, "switch.right_side_empty_switch");
-        public SwitchEntity LeftSideFanSwitch { get; } =
-            new SwitchEntity(haContext, "switch.left_side_fan_switch");
-        public ButtonEntity Restart { get; } = new ButtonEntity(haContext, "button.restart");
+        public SwitchEntity MasterSwitch => new(haContext, "switch.bedroom_motion_sensor");
+        public BinarySensorEntity MotionSensor =>
+            new(haContext, "binary_sensor.bedroom_motion_sensors");
+        public LightEntity Light => new(haContext, "light.bedroom_lights");
+        public NumberEntity SensorDelay => new(haContext, "number.z_esp32_c6_1_still_target_delay");
+        public SwitchEntity RightSideEmptySwitch =>
+            new(haContext, "switch.right_side_empty_switch");
+        public SwitchEntity LeftSideFanSwitch => new(haContext, "switch.left_side_fan_switch");
+        public ButtonEntity Restart => new(haContext, "button.restart");
+        public SwitchEntity PantryAutomation => new(haContext, "switch.pantry_automation");
     }
 }
