@@ -8,7 +8,18 @@ public class LightAutomation(IPantryLightEntities entities, ILogger<LightAutomat
 
     protected override IEnumerable<IDisposable> GetAdditionalPersistentAutomations() =>
         [
-            entities.BedroomDoor.StateChanges().IsOff().Subscribe(_ => MasterSwitch.TurnOn()),
+            entities
+                .BedroomDoor.StateChanges()
+                .Subscribe(e =>
+                {
+                    if (e.IsOpen())
+                    {
+                        MasterSwitch.TurnOff();
+                        Light.TurnOn();
+                        return;
+                    }
+                    MasterSwitch.TurnOn();
+                }),
             .. AutoToggleBathroomMotionSensor(),
         ];
 

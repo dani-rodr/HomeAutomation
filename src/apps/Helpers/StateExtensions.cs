@@ -90,6 +90,27 @@ public static class StateExtensions
         return e.New != null && e.New.State.IsUnlocked();
     }
 
+    public static bool IsOpen<T, TState>(this StateChange<T, TState> e)
+        where T : Entity
+        where TState : EntityState
+    {
+        return e.New != null && e.New.State.IsOpen();
+    }
+
+    /// <summary>
+    /// Determines if the entity state change represents an "unlocked" state.
+    /// </summary>
+    /// <typeparam name="T">The entity type.</typeparam>
+    /// <typeparam name="TState">The entity state type.</typeparam>
+    /// <param name="e">The state change event.</param>
+    /// <returns>True if the new state is "unlocked", otherwise false.</returns>
+    public static bool IsClosed<T, TState>(this StateChange<T, TState> e)
+        where T : Entity
+        where TState : EntityState
+    {
+        return e.New != null && e.New.State.IsClosed();
+    }
+
     /// <summary>
     /// Determines if the entity state change represents an "unavailable" state.
     /// </summary>
