@@ -131,6 +131,7 @@ public interface IBedroomFanEntities : IFanAutomationEntities;
 public interface ILivingRoomFanEntities : IFanAutomationEntities
 {
     BinarySensorEntity BedroomMotionSensor { get; }
+    SwitchEntity ExhaustFan { get; }
 }
 
 public interface IAirQualityEntities : IFanAutomationEntities
@@ -138,6 +139,7 @@ public interface IAirQualityEntities : IFanAutomationEntities
     NumericSensorEntity Pm25Sensor { get; }
     SwitchEntity LedStatus { get; }
     SwitchEntity LivingRoomFanAutomation { get; }
+    SwitchEntity SupportingFan { get; }
 }
 
 public interface IDesktopEntities

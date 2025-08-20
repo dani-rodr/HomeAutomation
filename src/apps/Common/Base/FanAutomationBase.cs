@@ -45,12 +45,11 @@ public abstract class FanAutomationBase : ToggleableAutomation
             evt.Entity?.EntityId ?? "unknown"
         );
 
-        Fans.ToList()
-            .ForEach(fan =>
-            {
-                Logger.LogDebug("Activating fan {EntityId}", fan.EntityId);
-                fan.TurnOn();
-            });
+        foreach (var fan in Fans)
+        {
+            Logger.LogDebug("Activating fan {EntityId}", fan.EntityId);
+            fan.TurnOn();
+        }
     }
 
     protected virtual void TurnOffFans(StateChange? evt = null)
@@ -63,12 +62,11 @@ public abstract class FanAutomationBase : ToggleableAutomation
             evt?.Entity?.EntityId ?? "unknown"
         );
 
-        Fans.ToList()
-            .ForEach(fan =>
-            {
-                Logger.LogDebug("Deactivating fan {EntityId}", fan.EntityId);
-                fan.TurnOff();
-            });
+        foreach (var fan in Fans)
+        {
+            Logger.LogDebug("Deactivating fan {EntityId}", fan.EntityId);
+            fan.TurnOff();
+        }
     }
 
     protected virtual IDisposable GetFanManualOperationAutomations() =>

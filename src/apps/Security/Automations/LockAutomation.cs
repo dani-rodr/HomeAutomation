@@ -46,7 +46,7 @@ public class LockAutomation(
         {
             entities.Lock.Lock();
         }
-        if (entities.Lock.IsLocked())
+        else if (entities.Lock.IsLocked())
         {
             entities.Lock.Unlock();
         }

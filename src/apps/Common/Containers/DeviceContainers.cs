@@ -66,8 +66,8 @@ public class Devices(Entities entities)
                 {
                     ["CeilingFan"] = entities.Switch.CeilingFan,
                     ["StandFan"] = entities.Switch.Sonoff10023810231,
-                    ["ExhaustFan"] = entities.Switch.Cozylife955f,
-                }
+                },
+                ExhaustFan: entities.Switch.Cozylife955f
             ),
             MediaControl: new(
                 entities.MediaPlayer.Tcl65c755,
@@ -79,7 +79,8 @@ public class Devices(Entities entities)
                 entities.Switch.CleanAir,
                 entities.Switch.XiaomiSmartAirPurifier4CompactAirPurifierFanSwitch,
                 entities.Sensor.XiaomiSg753990712Cpa4Pm25DensityP34,
-                entities.Switch.XiaomiSmartAirPurifier4CompactAirPurifierLedStatus
+                entities.Switch.XiaomiSmartAirPurifier4CompactAirPurifierLedStatus,
+                SupportingFan: entities.Switch.Sonoff10023810231
             ),
             MotionLightControl: new(entities.BinarySensor.Mipad, entities.Light.MipadScreen),
             LockControl: new(

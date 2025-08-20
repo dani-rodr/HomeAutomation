@@ -66,7 +66,7 @@ public class AirQualityAutomationTests : IDisposable
         _mockHaContext.SimulateStateChange(_entities.MasterSwitch.EntityId, "off", "on");
 
         // Assert: Supporting fan should turn on immediately due to poor air quality
-        _mockHaContext.ShouldHaveCalledSwitchTurnOn(_entities.Fans.Last().EntityId);
+        _mockHaContext.ShouldHaveCalledSwitchTurnOn(_entities.SupportingFan.EntityId);
     }
 
     [Fact(Skip = "Temporarily disabled - air quality automation logic under review")]
@@ -646,5 +646,6 @@ public class AirQualityAutomationTests : IDisposable
                 new SwitchEntity(haContext, "switch.air_purifier"),
                 new SwitchEntity(haContext, "switch.living_room_ceiling_fan"),
             ];
+        public SwitchEntity SupportingFan => new(haContext, "switch.sonoff_10023810231");
     }
 }

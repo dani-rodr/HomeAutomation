@@ -181,7 +181,7 @@ public static class StateExtensions
     /// </summary>
     /// <param name="e">The state change event.</param>
     /// <returns>True if the new state is "off", otherwise returns true by default for null states.</returns>
-    public static bool IsOff(this StateChange e) => e?.New?.State?.IsOff() ?? true;
+    public static bool IsOff(this StateChange e) => e?.New?.State?.IsOff() ?? false;
 
     /// <summary>
     /// Determines if the state string represents an "open" state (alias for IsOn).

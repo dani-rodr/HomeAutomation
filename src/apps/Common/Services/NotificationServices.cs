@@ -19,7 +19,7 @@ public class NotificationServices(IServices services, ILogger<NotificationServic
 
     public void NotifyMiPad(string message, object data, string? title = null)
     {
-        _notifyServices.MobileApp21051182c(
+        _notifyServices.MobileAppMipad5(
             new()
             {
                 Title = title,
@@ -44,6 +44,6 @@ public class NotificationServices(IServices services, ILogger<NotificationServic
             "Sending 'command_launch_app' to MiPad for package: {PackageName}",
             packageName
         );
-        NotifyPocoF4("command_launch_app", new { package_name = packageName });
+        NotifyMiPad("command_launch_app", new { package_name = packageName });
     }
 }

@@ -835,7 +835,7 @@ public class HelpersTests : IDisposable
     {
         // Act & Assert
         StateChange? nullChange = null;
-        nullChange!.IsOff().Should().BeTrue();
+        nullChange!.IsOff().Should().BeFalse();
     }
 
     #endregion

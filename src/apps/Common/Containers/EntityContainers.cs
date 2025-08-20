@@ -68,6 +68,7 @@ public class AirQualityEntities(Devices devices) : IAirQualityEntities
     public NumericSensorEntity Pm25Sensor => _control.Pm25Sensor;
     public SwitchEntity LedStatus => _control.LedStatus;
     public SwitchEntity LivingRoomFanAutomation => _area.FanControl!.Automation;
+    public SwitchEntity SupportingFan => _control.SupportingFan!;
 }
 
 public class KitchenCookingEntities(Devices devices) : ICookingEntities
@@ -117,7 +118,7 @@ public class BedroomFanEntities(Devices devices) : IBedroomFanEntities
     private readonly Area _area = devices.Bedroom;
     public SwitchEntity MasterSwitch => _area.FanControl!.Automation;
     public BinarySensorEntity MotionSensor => _area.MotionControl;
-    public IEnumerable<SwitchEntity> Fans => [_area.FanControl!];
+    public IEnumerable<SwitchEntity> Fans => _area.FanControl!.Fans.Values;
 }
 
 public class LaptopEntities(Devices devices) : ILaptopEntities
@@ -161,6 +162,7 @@ public class LivingRoomFanEntities(Devices devices) : ILivingRoomFanEntities
     public BinarySensorEntity MotionSensor => _area.SecondaryMotionControl!;
     public IEnumerable<SwitchEntity> Fans => _area.FanControl!.Fans.Values;
     public BinarySensorEntity BedroomMotionSensor => devices.Bedroom.MotionControl;
+    public SwitchEntity ExhaustFan => _area.FanControl!.ExhaustFan!;
 }
 
 public class LivingRoomTabletEntities(Devices devices) : ITabletEntities

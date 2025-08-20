@@ -332,12 +332,12 @@
         },
         {
           "id": "media_player.projector",
-          "friendlyName": null,
+          "friendlyName": "Projector",
           "cSharpName": "Projector"
         },
         {
           "id": "media_player.projector_2",
-          "friendlyName": null,
+          "friendlyName": "Projector",
           "cSharpName": "Projector2"
         },
         {
@@ -545,12 +545,12 @@
         {
           "jsonName": "video_interaction_required",
           "cSharpName": "VideoInteractionRequired",
-          "clrType": "System.Boolean"
+          "clrType": "System.Object"
         },
         {
           "jsonName": "audio_interaction_required",
           "cSharpName": "AudioInteractionRequired",
-          "clrType": "System.Boolean"
+          "clrType": "System.Object"
         }
       ]
     },
@@ -598,16 +598,6 @@
           "id": "binary_sensor.192_168_0_152",
           "friendlyName": "Poco F4 GT Ping",
           "cSharpName": "_1921680152"
-        },
-        {
-          "id": "binary_sensor.21051182c_bluetooth_state",
-          "friendlyName": "21051182C Bluetooth state",
-          "cSharpName": "_21051182cBluetoothState"
-        },
-        {
-          "id": "binary_sensor.21051182c_is_charging",
-          "friendlyName": "21051182C Is charging",
-          "cSharpName": "_21051182cIsCharging"
         },
         {
           "id": "binary_sensor.8_8_8_8",
@@ -725,16 +715,6 @@
           "cSharpName": "ContactSensorDoor"
         },
         {
-          "id": "binary_sensor.daniel_pc_client",
-          "friendlyName": "daniel-pc Client",
-          "cSharpName": "DanielPcClient"
-        },
-        {
-          "id": "binary_sensor.daniel_pc_key_expiry_disabled",
-          "friendlyName": "daniel-pc Key expiry disabled",
-          "cSharpName": "DanielPcKeyExpiryDisabled"
-        },
-        {
           "id": "binary_sensor.daniel_pc_network_status",
           "friendlyName": "DANIEL-PC Network status",
           "cSharpName": "DanielPcNetworkStatus"
@@ -743,36 +723,6 @@
           "id": "binary_sensor.daniel_pc_ssh_status",
           "friendlyName": "DANIEL-PC SSH status",
           "cSharpName": "DanielPcSshStatus"
-        },
-        {
-          "id": "binary_sensor.daniel_pc_supports_hairpinning",
-          "friendlyName": "daniel-pc Supports hairpinning",
-          "cSharpName": "DanielPcSupportsHairpinning"
-        },
-        {
-          "id": "binary_sensor.daniel_pc_supports_ipv6",
-          "friendlyName": "daniel-pc Supports IPv6",
-          "cSharpName": "DanielPcSupportsIpv6"
-        },
-        {
-          "id": "binary_sensor.daniel_pc_supports_nat_pmp",
-          "friendlyName": "daniel-pc Supports NAT-PMP",
-          "cSharpName": "DanielPcSupportsNatPmp"
-        },
-        {
-          "id": "binary_sensor.daniel_pc_supports_pcp",
-          "friendlyName": "daniel-pc Supports PCP",
-          "cSharpName": "DanielPcSupportsPcp"
-        },
-        {
-          "id": "binary_sensor.daniel_pc_supports_udp",
-          "friendlyName": "daniel-pc Supports UDP",
-          "cSharpName": "DanielPcSupportsUdp"
-        },
-        {
-          "id": "binary_sensor.daniel_pc_supports_upnp",
-          "friendlyName": "daniel-pc Supports UPnP",
-          "cSharpName": "DanielPcSupportsUpnp"
         },
         {
           "id": "binary_sensor.desk_motion_sensor_moving_target",
@@ -808,6 +758,11 @@
           "id": "binary_sensor.esphome_running",
           "friendlyName": "ESPHome Device Builder Running",
           "cSharpName": "EsphomeRunning"
+        },
+        {
+          "id": "binary_sensor.file_editor_running",
+          "friendlyName": "File editor Running",
+          "cSharpName": "FileEditorRunning"
         },
         {
           "id": "binary_sensor.flytrap_cloud_connection",
@@ -853,126 +808,6 @@
           "id": "binary_sensor.garbage_lid_still_target",
           "friendlyName": "Garbage Lid Still Target",
           "cSharpName": "GarbageLidStillTarget"
-        },
-        {
-          "id": "binary_sensor.github_pkrvmjbmru5nbw0_client",
-          "friendlyName": "github-pkrvmjbmru5nbw0 Client",
-          "cSharpName": "GithubPkrvmjbmru5nbw0Client"
-        },
-        {
-          "id": "binary_sensor.github_pkrvmjbmru5nbw0_key_expiry_disabled",
-          "friendlyName": "github-pkrvmjbmru5nbw0 Key expiry disabled",
-          "cSharpName": "GithubPkrvmjbmru5nbw0KeyExpiryDisabled"
-        },
-        {
-          "id": "binary_sensor.github_pkrvmjbmru5nbw0_supports_hairpinning",
-          "friendlyName": "github-pkrvmjbmru5nbw0 Supports hairpinning",
-          "cSharpName": "GithubPkrvmjbmru5nbw0SupportsHairpinning"
-        },
-        {
-          "id": "binary_sensor.github_pkrvmjbmru5nbw0_supports_ipv6",
-          "friendlyName": "github-pkrvmjbmru5nbw0 Supports IPv6",
-          "cSharpName": "GithubPkrvmjbmru5nbw0SupportsIpv6"
-        },
-        {
-          "id": "binary_sensor.github_pkrvmjbmru5nbw0_supports_nat_pmp",
-          "friendlyName": "github-pkrvmjbmru5nbw0 Supports NAT-PMP",
-          "cSharpName": "GithubPkrvmjbmru5nbw0SupportsNatPmp"
-        },
-        {
-          "id": "binary_sensor.github_pkrvmjbmru5nbw0_supports_pcp",
-          "friendlyName": "github-pkrvmjbmru5nbw0 Supports PCP",
-          "cSharpName": "GithubPkrvmjbmru5nbw0SupportsPcp"
-        },
-        {
-          "id": "binary_sensor.github_pkrvmjbmru5nbw0_supports_udp",
-          "friendlyName": "github-pkrvmjbmru5nbw0 Supports UDP",
-          "cSharpName": "GithubPkrvmjbmru5nbw0SupportsUdp"
-        },
-        {
-          "id": "binary_sensor.github_pkrvmjbmru5nbw0_supports_upnp",
-          "friendlyName": "github-pkrvmjbmru5nbw0 Supports UPnP",
-          "cSharpName": "GithubPkrvmjbmru5nbw0SupportsUpnp"
-        },
-        {
-          "id": "binary_sensor.homeassistant_client",
-          "friendlyName": "Client",
-          "cSharpName": "HomeassistantClient"
-        },
-        {
-          "id": "binary_sensor.homeassistant_client_2",
-          "friendlyName": "homeassistant Client",
-          "cSharpName": "HomeassistantClient2"
-        },
-        {
-          "id": "binary_sensor.homeassistant_key_expiry_disabled",
-          "friendlyName": "Key expiry disabled",
-          "cSharpName": "HomeassistantKeyExpiryDisabled"
-        },
-        {
-          "id": "binary_sensor.homeassistant_key_expiry_disabled_2",
-          "friendlyName": "homeassistant Key expiry disabled",
-          "cSharpName": "HomeassistantKeyExpiryDisabled2"
-        },
-        {
-          "id": "binary_sensor.homeassistant_supports_hairpinning",
-          "friendlyName": "Supports hairpinning",
-          "cSharpName": "HomeassistantSupportsHairpinning"
-        },
-        {
-          "id": "binary_sensor.homeassistant_supports_hairpinning_2",
-          "friendlyName": "homeassistant Supports hairpinning",
-          "cSharpName": "HomeassistantSupportsHairpinning2"
-        },
-        {
-          "id": "binary_sensor.homeassistant_supports_ipv6",
-          "friendlyName": "Supports IPv6",
-          "cSharpName": "HomeassistantSupportsIpv6"
-        },
-        {
-          "id": "binary_sensor.homeassistant_supports_ipv6_2",
-          "friendlyName": "homeassistant Supports IPv6",
-          "cSharpName": "HomeassistantSupportsIpv62"
-        },
-        {
-          "id": "binary_sensor.homeassistant_supports_nat_pmp",
-          "friendlyName": "Supports NAT-PMP",
-          "cSharpName": "HomeassistantSupportsNatPmp"
-        },
-        {
-          "id": "binary_sensor.homeassistant_supports_nat_pmp_2",
-          "friendlyName": "homeassistant Supports NAT-PMP",
-          "cSharpName": "HomeassistantSupportsNatPmp2"
-        },
-        {
-          "id": "binary_sensor.homeassistant_supports_pcp",
-          "friendlyName": "Supports PCP",
-          "cSharpName": "HomeassistantSupportsPcp"
-        },
-        {
-          "id": "binary_sensor.homeassistant_supports_pcp_2",
-          "friendlyName": "homeassistant Supports PCP",
-          "cSharpName": "HomeassistantSupportsPcp2"
-        },
-        {
-          "id": "binary_sensor.homeassistant_supports_udp",
-          "friendlyName": "Supports UDP",
-          "cSharpName": "HomeassistantSupportsUdp"
-        },
-        {
-          "id": "binary_sensor.homeassistant_supports_udp_2",
-          "friendlyName": "homeassistant Supports UDP",
-          "cSharpName": "HomeassistantSupportsUdp2"
-        },
-        {
-          "id": "binary_sensor.homeassistant_supports_upnp",
-          "friendlyName": "Supports UPnP",
-          "cSharpName": "HomeassistantSupportsUpnp"
-        },
-        {
-          "id": "binary_sensor.homeassistant_supports_upnp_2",
-          "friendlyName": "homeassistant Supports UPnP",
-          "cSharpName": "HomeassistantSupportsUpnp2"
         },
         {
           "id": "binary_sensor.house",
@@ -1243,46 +1078,6 @@
           "id": "binary_sensor.wifi_temperature_humidity_tamper",
           "friendlyName": "WiFi Temperature \u0026 Humidity Tamper",
           "cSharpName": "WifiTemperatureHumidityTamper"
-        },
-        {
-          "id": "binary_sensor.xiaomi_21121210g_client",
-          "friendlyName": "xiaomi-21121210g Client",
-          "cSharpName": "Xiaomi21121210gClient"
-        },
-        {
-          "id": "binary_sensor.xiaomi_21121210g_key_expiry_disabled",
-          "friendlyName": "xiaomi-21121210g Key expiry disabled",
-          "cSharpName": "Xiaomi21121210gKeyExpiryDisabled"
-        },
-        {
-          "id": "binary_sensor.xiaomi_21121210g_supports_hairpinning",
-          "friendlyName": "xiaomi-21121210g Supports hairpinning",
-          "cSharpName": "Xiaomi21121210gSupportsHairpinning"
-        },
-        {
-          "id": "binary_sensor.xiaomi_21121210g_supports_ipv6",
-          "friendlyName": "xiaomi-21121210g Supports IPv6",
-          "cSharpName": "Xiaomi21121210gSupportsIpv6"
-        },
-        {
-          "id": "binary_sensor.xiaomi_21121210g_supports_nat_pmp",
-          "friendlyName": "xiaomi-21121210g Supports NAT-PMP",
-          "cSharpName": "Xiaomi21121210gSupportsNatPmp"
-        },
-        {
-          "id": "binary_sensor.xiaomi_21121210g_supports_pcp",
-          "friendlyName": "xiaomi-21121210g Supports PCP",
-          "cSharpName": "Xiaomi21121210gSupportsPcp"
-        },
-        {
-          "id": "binary_sensor.xiaomi_21121210g_supports_udp",
-          "friendlyName": "xiaomi-21121210g Supports UDP",
-          "cSharpName": "Xiaomi21121210gSupportsUdp"
-        },
-        {
-          "id": "binary_sensor.xiaomi_21121210g_supports_upnp",
-          "friendlyName": "xiaomi-21121210g Supports UPnP",
-          "cSharpName": "Xiaomi21121210gSupportsUpnp"
         }
       ],
       "attributes": [
@@ -1687,11 +1482,6 @@
           "cSharpName": "XiaomiSg753990712Cpa4ToggleA21"
         },
         {
-          "id": "button.xiaomi_sg_753990712_cpa4_toggle_mode_a_9_1",
-          "friendlyName": "Xiaomi Smart Air Purifier 4 Compact * custom-service toggle-mode",
-          "cSharpName": "XiaomiSg753990712Cpa4ToggleModeA91"
-        },
-        {
           "id": "button.xiaomi_smart_air_fryer_pro_4l_air_fryer_pause",
           "friendlyName": "Xiaomi Smart Air Fryer Pro 4L  Air Fryer Pause",
           "cSharpName": "XiaomiSmartAirFryerPro4lAirFryerPause"
@@ -1705,11 +1495,6 @@
           "id": "button.xiaomi_smart_air_fryer_pro_4l_air_fryer_stop_program",
           "friendlyName": "Xiaomi Smart Air Fryer Pro 4L  Air Fryer Stop Program",
           "cSharpName": "XiaomiSmartAirFryerPro4lAirFryerStopProgram"
-        },
-        {
-          "id": "button.xiaomi_smart_air_fryer_pro_4l_custom_service_continue_program",
-          "friendlyName": "Xiaomi Smart Air Fryer Pro 4L * Custom Service Continue Program",
-          "cSharpName": "XiaomiSmartAirFryerPro4lCustomServiceContinueProgram"
         }
       ],
       "attributes": [
@@ -1916,7 +1701,7 @@
       "entities": [
         {
           "id": "device_tracker.21051182c",
-          "friendlyName": "21051182C",
+          "friendlyName": "MiPad5",
           "cSharpName": "_21051182c"
         },
         {
@@ -2082,29 +1867,9 @@
           "cSharpName": "Repair"
         },
         {
-          "id": "event.xiaomi_sg_753990712_cpa4_childlock_trigger_e_9_2",
-          "friendlyName": "Xiaomi Smart Air Purifier 4 Compact * custom-service childlock-trigger",
-          "cSharpName": "XiaomiSg753990712Cpa4ChildlockTriggerE92"
-        },
-        {
-          "id": "event.xiaomi_sg_753990712_cpa4_fault_motor_stuck_e_9_1",
-          "friendlyName": "Xiaomi Smart Air Purifier 4 Compact * custom-service fault-motor-stuck",
-          "cSharpName": "XiaomiSg753990712Cpa4FaultMotorStuckE91"
-        },
-        {
-          "id": "event.xiaomi_sg_753990712_cpa4_filter_exhausted_e_9_3",
-          "friendlyName": "Xiaomi Smart Air Purifier 4 Compact * custom-service filter-exhausted",
-          "cSharpName": "XiaomiSg753990712Cpa4FilterExhaustedE93"
-        },
-        {
           "id": "event.xiaomi_smart_air_fryer_pro_4l_air_fryer_completed",
           "friendlyName": "Xiaomi Smart Air Fryer Pro 4L  Air Fryer Completed",
           "cSharpName": "XiaomiSmartAirFryerPro4lAirFryerCompleted"
-        },
-        {
-          "id": "event.xiaomi_smart_air_fryer_pro_4l_custom_service_program_is_starting",
-          "friendlyName": "Xiaomi Smart Air Fryer Pro 4L * Custom Service Program Is Starting",
-          "cSharpName": "XiaomiSmartAirFryerPro4lCustomServiceProgramIsStarting"
         }
       ],
       "attributes": [
@@ -2214,46 +1979,6 @@
           "id": "input_boolean.ac_power_saving_mode",
           "friendlyName": "AC Power Saving Mode",
           "cSharpName": "AcPowerSavingMode"
-        },
-        {
-          "id": "input_boolean.dev_netdaemon_home_automation_apps_area_bathroom_bathroom_app",
-          "friendlyName": "dev_netdaemon_home_automation_apps_area_bathroom_bathroom_app",
-          "cSharpName": "DevNetdaemonHomeAutomationAppsAreaBathroomBathroomApp"
-        },
-        {
-          "id": "input_boolean.dev_netdaemon_home_automation_apps_area_bedroom_bedroom_app",
-          "friendlyName": "dev_netdaemon_home_automation_apps_area_bedroom_bedroom_app",
-          "cSharpName": "DevNetdaemonHomeAutomationAppsAreaBedroomBedroomApp"
-        },
-        {
-          "id": "input_boolean.dev_netdaemon_home_automation_apps_area_desk_desk_app",
-          "friendlyName": "dev_netdaemon_home_automation_apps_area_desk_desk_app",
-          "cSharpName": "DevNetdaemonHomeAutomationAppsAreaDeskDeskApp"
-        },
-        {
-          "id": "input_boolean.dev_netdaemon_home_automation_apps_area_kitchen_kitchen_app",
-          "friendlyName": "dev_netdaemon_home_automation_apps_area_kitchen_kitchen_app",
-          "cSharpName": "DevNetdaemonHomeAutomationAppsAreaKitchenKitchenApp"
-        },
-        {
-          "id": "input_boolean.dev_netdaemon_home_automation_apps_area_living_room_living_room_app",
-          "friendlyName": "dev_netdaemon_home_automation_apps_area_living_room_living_room_app",
-          "cSharpName": "DevNetdaemonHomeAutomationAppsAreaLivingRoomLivingRoomApp"
-        },
-        {
-          "id": "input_boolean.dev_netdaemon_home_automation_apps_area_pantry_pantry_app",
-          "friendlyName": "dev_netdaemon_home_automation_apps_area_pantry_pantry_app",
-          "cSharpName": "DevNetdaemonHomeAutomationAppsAreaPantryPantryApp"
-        },
-        {
-          "id": "input_boolean.dev_netdaemon_home_automation_apps_common_security_security_app",
-          "friendlyName": "dev_netdaemon_home_automation_apps_common_security_security_app",
-          "cSharpName": "DevNetdaemonHomeAutomationAppsCommonSecuritySecurityApp"
-        },
-        {
-          "id": "input_boolean.dev_netdaemon_home_automation_apps_common_startup_app",
-          "friendlyName": "dev_netdaemon_home_automation_apps_common_startup_app",
-          "cSharpName": "DevNetdaemonHomeAutomationAppsCommonStartupApp"
         },
         {
           "id": "input_boolean.netdaemon_home_automation_apps_area_bathroom_bathroom_app",
@@ -3455,21 +3180,6 @@
           "cSharpName": "SmartPlug4PowerOnThreshold"
         },
         {
-          "id": "number.xiaomi_sg_753990712_cpa4_aqi_updata_heartbeat_p_11_4",
-          "friendlyName": "Xiaomi Smart Air Purifier 4 Compact * aqi aqi-updata-heartbeat",
-          "cSharpName": "XiaomiSg753990712Cpa4AqiUpdataHeartbeatP114"
-        },
-        {
-          "id": "number.xiaomi_sg_753990712_cpa4_favorite_level_p_9_11",
-          "friendlyName": "Xiaomi Smart Air Purifier 4 Compact * custom-service favorite-level",
-          "cSharpName": "XiaomiSg753990712Cpa4FavoriteLevelP911"
-        },
-        {
-          "id": "number.xiaomi_sg_753990712_cpa4_filter_used_time_dbg_p_9_12",
-          "friendlyName": "Xiaomi Smart Air Purifier 4 Compact * custom-service filter-used-time-dbg",
-          "cSharpName": "XiaomiSg753990712Cpa4FilterUsedTimeDbgP912"
-        },
-        {
           "id": "number.xiaomi_smart_air_fryer_pro_4l_air_fryer_operating_temperature",
           "friendlyName": "Xiaomi Smart Air Fryer Pro 4L  Air Fryer Operating Temperature",
           "cSharpName": "XiaomiSmartAirFryerPro4lAirFryerOperatingTemperature"
@@ -3478,21 +3188,6 @@
           "id": "number.xiaomi_smart_air_fryer_pro_4l_air_fryer_operating_time",
           "friendlyName": "Xiaomi Smart Air Fryer Pro 4L  Air Fryer Operating Time",
           "cSharpName": "XiaomiSmartAirFryerPro4lAirFryerOperatingTime"
-        },
-        {
-          "id": "number.xiaomi_smart_air_fryer_pro_4l_custom_service_operating_temperature",
-          "friendlyName": "Xiaomi Smart Air Fryer Pro 4L * Custom Service Operating Temperature",
-          "cSharpName": "XiaomiSmartAirFryerPro4lCustomServiceOperatingTemperature"
-        },
-        {
-          "id": "number.xiaomi_smart_air_fryer_pro_4l_custom_service_operating_time",
-          "friendlyName": "Xiaomi Smart Air Fryer Pro 4L * Custom Service Operating Time",
-          "cSharpName": "XiaomiSmartAirFryerPro4lCustomServiceOperatingTime"
-        },
-        {
-          "id": "number.xiaomi_smart_air_fryer_pro_4l_custom_service_scheduled_time",
-          "friendlyName": "Xiaomi Smart Air Fryer Pro 4L * Custom Service Scheduled Time",
-          "cSharpName": "XiaomiSmartAirFryerPro4lCustomServiceScheduledTime"
         }
       ],
       "attributes": [
@@ -3615,7 +3310,7 @@
         },
         {
           "id": "remote.projector",
-          "friendlyName": null,
+          "friendlyName": "Projector",
           "cSharpName": "Projector"
         },
         {
@@ -3925,6 +3620,26 @@
           "cSharpName": "SalaMotionSensorOutPinLevel"
         },
         {
+          "id": "select.sonoff_1002352c40_1",
+          "friendlyName": "Bed Plug 2",
+          "cSharpName": "Sonoff1002352c401"
+        },
+        {
+          "id": "select.sonoff_1002380fe5_1",
+          "friendlyName": "Laptop Plug",
+          "cSharpName": "Sonoff1002380fe51"
+        },
+        {
+          "id": "select.sonoff_1002381023_1",
+          "friendlyName": "Sala Stand Fan",
+          "cSharpName": "Sonoff10023810231"
+        },
+        {
+          "id": "select.sonoff_100238104e_1",
+          "friendlyName": "Bed Plug 1",
+          "cSharpName": "Sonoff100238104e1"
+        },
+        {
           "id": "select.water_dispenser_indicator_light_mode",
           "friendlyName": "Water Dispenser Indicator light mode",
           "cSharpName": "WaterDispenserIndicatorLightMode"
@@ -3940,34 +3655,9 @@
           "cSharpName": "XiaomiSg753990712Cpa4BrightnessP132"
         },
         {
-          "id": "select.xiaomi_sg_753990712_cpa4_country_code_p_9_10",
-          "friendlyName": "Xiaomi Smart Air Purifier 4 Compact * custom-service country-code",
-          "cSharpName": "XiaomiSg753990712Cpa4CountryCodeP910"
-        },
-        {
           "id": "select.xiaomi_sg_753990712_cpa4_mode_p_2_4",
           "friendlyName": "Xiaomi Smart Air Purifier 4 Compact  Air Purifier Mode",
           "cSharpName": "XiaomiSg753990712Cpa4ModeP24"
-        },
-        {
-          "id": "select.xiaomi_smart_air_fryer_pro_4l_custom_service_preheating_button",
-          "friendlyName": "Xiaomi Smart Air Fryer Pro 4L * Custom Service Preheating Button",
-          "cSharpName": "XiaomiSmartAirFryerPro4lCustomServicePreheatingButton"
-        },
-        {
-          "id": "select.xiaomi_smart_air_fryer_pro_4l_custom_service_quantity_of_ingredients",
-          "friendlyName": "Xiaomi Smart Air Fryer Pro 4L * Custom Service Quantity Of Ingredients",
-          "cSharpName": "XiaomiSmartAirFryerPro4lCustomServiceQuantityOfIngredients"
-        },
-        {
-          "id": "select.xiaomi_smart_air_fryer_pro_4l_custom_service_turn_over_notification",
-          "friendlyName": "Xiaomi Smart Air Fryer Pro 4L * Custom Service Turn Over Notification",
-          "cSharpName": "XiaomiSmartAirFryerPro4lCustomServiceTurnOverNotification"
-        },
-        {
-          "id": "select.xiaomi_smart_air_fryer_pro_4l_custom_service_turn_pot_cfg",
-          "friendlyName": "Xiaomi Smart Air Fryer Pro 4L * Custom Service turn-pot-cfg",
-          "cSharpName": "XiaomiSmartAirFryerPro4lCustomServiceTurnPotCfg"
         }
       ],
       "attributes": [
@@ -3996,26 +3686,6 @@
     {
       "domain": "sensor",
       "entities": [
-        {
-          "id": "sensor.21051182c_battery_state",
-          "friendlyName": "21051182C Battery state",
-          "cSharpName": "_21051182cBatteryState"
-        },
-        {
-          "id": "sensor.21051182c_beacon_monitor",
-          "friendlyName": "21051182C Beacon monitor",
-          "cSharpName": "_21051182cBeaconMonitor"
-        },
-        {
-          "id": "sensor.21051182c_charger_type",
-          "friendlyName": "21051182C Charger type",
-          "cSharpName": "_21051182cChargerType"
-        },
-        {
-          "id": "sensor.21051182c_wifi_connection",
-          "friendlyName": "21051182C Wi-Fi connection",
-          "cSharpName": "_21051182cWifiConnection"
-        },
         {
           "id": "sensor.887216f5_c9c0_4901_bf59_51c6e940bf11_100_40004_vendor",
           "friendlyName": "887216f5-c9c0-4901-bf59-51c6e940bf11_100_40004 Vendor",
@@ -4152,6 +3822,11 @@
           "cSharpName": "CeilingFanAutoOffAt"
         },
         {
+          "id": "sensor.claude_status",
+          "friendlyName": "Claude Status",
+          "cSharpName": "ClaudeStatus"
+        },
+        {
           "id": "sensor.climate",
           "friendlyName": "Home Assistant Climate",
           "cSharpName": "Climate"
@@ -4172,11 +3847,6 @@
           "cSharpName": "CustomIntegrations"
         },
         {
-          "id": "sensor.daniel_pc_expires",
-          "friendlyName": "daniel-pc Expires",
-          "cSharpName": "DanielPcExpires"
-        },
-        {
           "id": "sensor.daniel_pc_hass_agent_daniel_pc_hass_agent_activewindow",
           "friendlyName": "DANIEL-PC_hass-agent DANIEL-PC_hass-agent_activewindow",
           "cSharpName": "DanielPcHassAgentDanielPcHassAgentActivewindow"
@@ -4185,16 +3855,6 @@
           "id": "sensor.daniel_pc_hass_agent_daniel_pc_hass_agent_incognito",
           "friendlyName": "DANIEL-PC_hass-agent DANIEL-PC_hass-agent_incognito",
           "cSharpName": "DanielPcHassAgentDanielPcHassAgentIncognito"
-        },
-        {
-          "id": "sensor.daniel_pc_ip_address",
-          "friendlyName": "daniel-pc IP address",
-          "cSharpName": "DanielPcIpAddress"
-        },
-        {
-          "id": "sensor.daniel_pc_last_seen",
-          "friendlyName": "daniel-pc Last seen",
-          "cSharpName": "DanielPcLastSeen"
         },
         {
           "id": "sensor.daniel_pc_network_interface",
@@ -4262,6 +3922,16 @@
           "cSharpName": "Fans"
         },
         {
+          "id": "sensor.file_editor_newest_version",
+          "friendlyName": "File editor Newest version",
+          "cSharpName": "FileEditorNewestVersion"
+        },
+        {
+          "id": "sensor.file_editor_version",
+          "friendlyName": "File editor Version",
+          "cSharpName": "FileEditorVersion"
+        },
+        {
           "id": "sensor.flytrap_auto_off_at",
           "friendlyName": "Flytrap Auto-off at",
           "cSharpName": "FlytrapAutoOffAt"
@@ -4292,54 +3962,9 @@
           "cSharpName": "GarbageLidPresenceSensorVersion"
         },
         {
-          "id": "sensor.github_pkrvmjbmru5nbw0_expires",
-          "friendlyName": "github-pkrvmjbmru5nbw0 Expires",
-          "cSharpName": "GithubPkrvmjbmru5nbw0Expires"
-        },
-        {
-          "id": "sensor.github_pkrvmjbmru5nbw0_ip_address",
-          "friendlyName": "github-pkrvmjbmru5nbw0 IP address",
-          "cSharpName": "GithubPkrvmjbmru5nbw0IpAddress"
-        },
-        {
-          "id": "sensor.github_pkrvmjbmru5nbw0_last_seen",
-          "friendlyName": "github-pkrvmjbmru5nbw0 Last seen",
-          "cSharpName": "GithubPkrvmjbmru5nbw0LastSeen"
-        },
-        {
           "id": "sensor.govee_to_mqtt_version",
           "friendlyName": "Govee to MQTT Version",
           "cSharpName": "GoveeToMqttVersion"
-        },
-        {
-          "id": "sensor.homeassistant_expires",
-          "friendlyName": "Expires",
-          "cSharpName": "HomeassistantExpires"
-        },
-        {
-          "id": "sensor.homeassistant_expires_2",
-          "friendlyName": "homeassistant Expires",
-          "cSharpName": "HomeassistantExpires2"
-        },
-        {
-          "id": "sensor.homeassistant_ip_address",
-          "friendlyName": "IP address",
-          "cSharpName": "HomeassistantIpAddress"
-        },
-        {
-          "id": "sensor.homeassistant_ip_address_2",
-          "friendlyName": "homeassistant IP address",
-          "cSharpName": "HomeassistantIpAddress2"
-        },
-        {
-          "id": "sensor.homeassistant_last_seen",
-          "friendlyName": "Last seen",
-          "cSharpName": "HomeassistantLastSeen"
-        },
-        {
-          "id": "sensor.homeassistant_last_seen_2",
-          "friendlyName": "homeassistant Last seen",
-          "cSharpName": "HomeassistantLastSeen2"
         },
         {
           "id": "sensor.humidifiers",
@@ -4552,6 +4177,16 @@
           "cSharpName": "MipadBrowserVisibility"
         },
         {
+          "id": "sensor.mipad5_battery_state",
+          "friendlyName": "MiPad5 Battery state",
+          "cSharpName": "Mipad5BatteryState"
+        },
+        {
+          "id": "sensor.mipad5_charger_type",
+          "friendlyName": "MiPad5 Charger type",
+          "cSharpName": "Mipad5ChargerType"
+        },
+        {
           "id": "sensor.numbers",
           "friendlyName": "Home Assistant Numbers",
           "cSharpName": "Numbers"
@@ -4600,11 +4235,6 @@
           "id": "sensor.poco_f4_gt_detected_activity",
           "friendlyName": "POCO F4 GT Detected activity",
           "cSharpName": "PocoF4GtDetectedActivity"
-        },
-        {
-          "id": "sensor.poco_f4_gt_geocoded_location",
-          "friendlyName": "POCO F4 GT Geocoded location",
-          "cSharpName": "PocoF4GtGeocodedLocation"
         },
         {
           "id": "sensor.poco_f4_gt_last_update_trigger",
@@ -4852,29 +4482,9 @@
           "cSharpName": "Weather"
         },
         {
-          "id": "sensor.xiaomi_21121210g_expires",
-          "friendlyName": "xiaomi-21121210g Expires",
-          "cSharpName": "Xiaomi21121210gExpires"
-        },
-        {
-          "id": "sensor.xiaomi_21121210g_ip_address",
-          "friendlyName": "xiaomi-21121210g IP address",
-          "cSharpName": "Xiaomi21121210gIpAddress"
-        },
-        {
-          "id": "sensor.xiaomi_21121210g_last_seen",
-          "friendlyName": "xiaomi-21121210g Last seen",
-          "cSharpName": "Xiaomi21121210gLastSeen"
-        },
-        {
           "id": "sensor.xiaomi_sg_753990712_cpa4_fault_p_2_2",
           "friendlyName": "Xiaomi Smart Air Purifier 4 Compact  Air Purifier Device Fault",
           "cSharpName": "XiaomiSg753990712Cpa4FaultP22"
-        },
-        {
-          "id": "sensor.xiaomi_sg_753990712_cpa4_motor_speed_rpm_p_9_1",
-          "friendlyName": "Xiaomi Smart Air Purifier 4 Compact * custom-service motor-speed-rpm",
-          "cSharpName": "XiaomiSg753990712Cpa4MotorSpeedRpmP91"
         },
         {
           "id": "sensor.xiaomi_smart_air_fryer_pro_4l_air_fryer_error",
@@ -5470,16 +5080,6 @@
       "isNumeric": true,
       "entities": [
         {
-          "id": "sensor.21051182c_battery_level",
-          "friendlyName": "21051182C Battery level",
-          "cSharpName": "_21051182cBatteryLevel"
-        },
-        {
-          "id": "sensor.21051182c_bluetooth_connection",
-          "friendlyName": "21051182C Bluetooth connection",
-          "cSharpName": "_21051182cBluetoothConnection"
-        },
-        {
           "id": "sensor.887216f5_c9c0_4901_bf59_51c6e940bf11_100_40004_estimated_distance",
           "friendlyName": "887216f5-c9c0-4901-bf59-51c6e940bf11_100_40004 Estimated distance",
           "cSharpName": "_887216f5C9c04901Bf5951c6e940bf1110040004EstimatedDistance"
@@ -6050,6 +5650,16 @@
           "cSharpName": "EstimatedMonthlyEnergyReading"
         },
         {
+          "id": "sensor.file_editor_cpu_percent",
+          "friendlyName": "File editor CPU percent",
+          "cSharpName": "FileEditorCpuPercent"
+        },
+        {
+          "id": "sensor.file_editor_memory_percent",
+          "friendlyName": "File editor Memory percent",
+          "cSharpName": "FileEditorMemoryPercent"
+        },
+        {
           "id": "sensor.front_door_battery",
           "friendlyName": "Front Door Battery",
           "cSharpName": "FrontDoorBattery"
@@ -6355,6 +5965,11 @@
           "cSharpName": "MipadBrowserWidth"
         },
         {
+          "id": "sensor.mipad5_battery_level",
+          "friendlyName": "MiPad5 Battery level",
+          "cSharpName": "Mipad5BatteryLevel"
+        },
+        {
           "id": "sensor.pantry_motion_sensor_g0_move_energy",
           "friendlyName": "Pantry Motion Sensor g0 move energy",
           "cSharpName": "PantryMotionSensorG0MoveEnergy"
@@ -6595,11 +6210,6 @@
           "cSharpName": "SmartPlug1SonoffS31Power"
         },
         {
-          "id": "sensor.smart_plug_2_sonoff_s31_energy",
-          "friendlyName": "Smart Plug 2 Sonoff S31 Energy",
-          "cSharpName": "SmartPlug2SonoffS31Energy"
-        },
-        {
           "id": "sensor.smart_plug_2_sonoff_s31_power",
           "friendlyName": "Smart Plug 2 Sonoff S31 Power",
           "cSharpName": "SmartPlug2SonoffS31Power"
@@ -6608,11 +6218,6 @@
           "id": "sensor.smart_plug_3_sonoff_s31_power",
           "friendlyName": "Smart Plug 3 Sonoff S31 Power",
           "cSharpName": "SmartPlug3SonoffS31Power"
-        },
-        {
-          "id": "sensor.smart_plug_4_sonoff_s31_current",
-          "friendlyName": "Smart Plug 4 Sonoff S31 Current",
-          "cSharpName": "SmartPlug4SonoffS31Current"
         },
         {
           "id": "sensor.smart_plug_4_sonoff_s31_power",
@@ -6628,11 +6233,6 @@
           "id": "sensor.smart_plug_power_meter_cost",
           "friendlyName": "sensor Cost",
           "cSharpName": "SmartPlugPowerMeterCost"
-        },
-        {
-          "id": "sensor.sonoff_1002163cb5_energy",
-          "friendlyName": "S31 Plug 1 (Fridge) Energy",
-          "cSharpName": "Sonoff1002163cb5Energy"
         },
         {
           "id": "sensor.sonoff_1002163cb5_power",
@@ -6823,11 +6423,6 @@
           "id": "sensor.xiaomi_smart_air_fryer_pro_4l_air_fryer_time_remaining",
           "friendlyName": "Xiaomi Smart Air Fryer Pro 4L  Air Fryer Time Remaining",
           "cSharpName": "XiaomiSmartAirFryerPro4lAirFryerTimeRemaining"
-        },
-        {
-          "id": "sensor.xiaomi_smart_air_fryer_pro_4l_custom_service_schedule_remaining_time",
-          "friendlyName": "Xiaomi Smart Air Fryer Pro 4L * Custom Service Schedule Remaining Time",
-          "cSharpName": "XiaomiSmartAirFryerPro4lCustomServiceScheduleRemainingTime"
         }
       ],
       "attributes": [
@@ -8684,6 +8279,11 @@
           "cSharpName": "TabletAutomation"
         },
         {
+          "id": "switch.tablet_light",
+          "friendlyName": "Tablet Light",
+          "cSharpName": "TabletLight"
+        },
+        {
           "id": "switch.tp_link_integration",
           "friendlyName": "TP Link Integration",
           "cSharpName": "TpLinkIntegration"
@@ -9002,9 +8602,19 @@
           "cSharpName": "EsphomeUpdate"
         },
         {
+          "id": "update.file_editor_update",
+          "friendlyName": "File editor Update",
+          "cSharpName": "FileEditorUpdate"
+        },
+        {
           "id": "update.garbage_lid_firmware",
           "friendlyName": "Firmware",
           "cSharpName": "GarbageLidFirmware"
+        },
+        {
+          "id": "update.git_pull_update",
+          "friendlyName": "Git pull Update",
+          "cSharpName": "GitPullUpdate"
         },
         {
           "id": "update.govee_to_mqtt_bridge_update",

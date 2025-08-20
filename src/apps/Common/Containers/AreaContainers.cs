@@ -45,7 +45,11 @@ public record LightControl(SwitchEntity Automation, LightEntity Light)
     public static implicit operator LightEntity(LightControl control) => control.Light;
 }
 
-public record FanControl(SwitchEntity Automation, Dictionary<string, SwitchEntity> Fans)
+public record FanControl(
+    SwitchEntity Automation,
+    Dictionary<string, SwitchEntity> Fans,
+    SwitchEntity? ExhaustFan = null
+)
 {
     public SwitchEntity this[string key] => Fans[key];
 
@@ -72,7 +76,8 @@ public record AirPurifierControl(
     SwitchEntity Automation,
     SwitchEntity Fan,
     NumericSensorEntity Pm25Sensor,
-    SwitchEntity LedStatus
+    SwitchEntity LedStatus,
+    SwitchEntity? SupportingFan = null
 );
 
 public record MediaControl(

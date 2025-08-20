@@ -9,7 +9,7 @@ public class AirQualityAutomation(
 {
     private readonly NumericSensorEntity _airQuality = entities.Pm25Sensor;
     private readonly SwitchEntity _ledStatus = entities.LedStatus;
-    private SwitchEntity _supportingFan => Fans.Last();
+    private readonly SwitchEntity _supportingFan = entities.SupportingFan;
     private bool _activateSupportingFan = false;
     private bool _isCleaningAir = false;
 
