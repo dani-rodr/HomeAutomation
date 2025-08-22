@@ -1,0 +1,72 @@
+name: Deploy to Home Assistant
+
+on:
+  workflow_run:
+    workflows: [".NET Tests and Deploy"]
+    types:
+      - completed
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    needs: release   # make sure it waits for the release job
+    steps:
+      - name: Download publish artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: publish_output
+          path: publish_output
+
+      - name: Authenticate with Tailscale
+        uses: tailscale/github-action@v3
+        with:
+          oauth-client-id: ${{ secrets.TS_OAUTH_CLIENT_ID }}
+          oauth-secret: ${{ secrets.TS_OAUTH_SECRET }}
+          tags: tag:ci
+          use-cache: true
+
+      - name: Set up SSH key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.CI_SSH_KEY }}" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ssh-keyscan -H ${{ secrets.HA_IP }} >> ~/.ssh/known_hosts
+
+      - name: Deploy via rsync over SSH
+        id: deploy
+        run: |
+          set -e
+          CHANGES=$(rsync -az --delete --itemize-changes -e "ssh -o StrictHostKeyChecking=no" \
+            publish_output/ root@${{ secrets.HA_IP }}:/config/${{ secrets.HA_VERSION }}/ | tee /dev/stderr)
+          if [ -n "$CHANGES" ]; then
+            echo "changed=true" >> $GITHUB_OUTPUT
+          else
+            echo "changed=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Restart NetDaemon addon
+        if: steps.deploy.outputs.changed == 'true'
+        run: |
+          curl -s -X POST \
+            -H "Authorization: Bearer ${{ secrets.HA_TOKEN }}" \
+            -H "Content-Type: application/json" \
+            -d '{"addon": "${{ secrets.HA_SLUG }}"}' \
+            http://${{ secrets.HA_IP }}:${{ secrets.HA_PORT }}/api/services/hassio/addon_restart
+
+      - name: Notify mobile app of deployment
+        if: steps.deploy.outputs.changed == 'true'
+        run: |
+          curl -s -X POST \
+            -H "Authorization: Bearer ${{ secrets.HA_TOKEN }}" \
+            -H "Content-Type: application/json" \
+            -d '{"title":"✅ Deployment Success","message":"NetDaemon updated from main branch via GitHub Actions","data":{"notification_icon":"mdi:source-branch-check","tag":"github-action"}}' \
+            http://${{ secrets.HA_IP }}:${{ secrets.HA_PORT }}/api/services/notify/mobile_app_poco_f4_gt
+
+      - name: Notify mobile app of deployment
+        if: steps.deploy.outputs.changed == 'false'
+        run: |
+          curl -s -X POST \
+            -H "Authorization: Bearer ${{ secrets.HA_TOKEN }}" \
+            -H "Content-Type: application/json" \
+            -d '{"title":"✅ GitHub Actions Success: Deployment Skipped - No Changes Detected","data":{"notification_icon":"mdi:source-branch-check","tag":"github-action"}}' \
+            http://${{ secrets.HA_IP }}:${{ secrets.HA_PORT }}/api/services/notify/mobile_app_poco_f4_gt
