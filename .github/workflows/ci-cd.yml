@@ -10,7 +10,7 @@ on:
       - '*'
 
 jobs:
-  build-and-deploy:
+  build-test-release:
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -26,34 +26,23 @@ jobs:
         with:
           dotnet-version: '9.x'
 
-      - name: Cache NuGet packages
-        uses: actions/cache@v4
+      - uses: qoomon/actions--parallel-steps@v1
+        id: test-and-prepare-tailscale
         with:
-          path: ~/.nuget/packages
-          key: nuget-${{ runner.os }}-${{ hashFiles('**/*.csproj') }}
-          restore-keys: nuget-${{ runner.os }}-
+          steps: |
+            - name: Run tests
+              run: dotnet test --configuration Release --verbosity normal
 
-      - name: Cache build outputs
-        uses: actions/cache@v4
-        with:
-          path: |
-            **/bin
-            **/obj
-          key: build-${{ runner.os }}-${{ hashFiles('**/*.csproj') }}-${{ hashFiles('**/*.cs') }}
-          restore-keys: |
-            build-${{ runner.os }}-
-
-      - name: Restore dependencies
-        run: dotnet restore
-
-      - name: Build
-        run: dotnet build --no-restore --configuration Release -m
-
-      - name: Run tests
-        run: dotnet test --no-build --configuration Release --verbosity normal
+            - name: Authenticate with Tailscale
+              uses: tailscale/github-action@v3
+              with:
+                oauth-client-id: ${{ secrets.TS_OAUTH_CLIENT_ID }}
+                oauth-secret: ${{ secrets.TS_OAUTH_SECRET }}
+                tags: tag:ci
+                use-cache: true
 
       - name: Publish project
-        run: dotnet publish src/HomeAutomation/HomeAutomation.csproj --configuration Release -o publish_output -m
+        run: dotnet publish src/HomeAutomation/HomeAutomation.csproj --configuration Release -o publish_output -m --no-build
 
       - name: Shutdown build server
         run: dotnet build-server shutdown
@@ -85,13 +74,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       # --- Deploy to Home Assistant ---
-      - name: Authenticate with Tailscale
-        uses: tailscale/github-action@v3
-        with:
-          oauth-client-id: ${{ secrets.TS_OAUTH_CLIENT_ID }}
-          oauth-secret: ${{ secrets.TS_OAUTH_SECRET }}
-          tags: tag:ci
-          use-cache: true
+
 
       - name: Set up SSH key
         run: |
@@ -106,7 +89,11 @@ jobs:
           set -e
           CHANGES=$(rsync -az --delete --itemize-changes -e "ssh -o StrictHostKeyChecking=no" \
             publish_output/ root@${{ secrets.HA_IP }}:/config/${{ secrets.HA_VERSION }}/ | tee /dev/stderr)
-          echo "changed=$([[ -n \"$CHANGES\" ]] && echo true || echo false)" >> $GITHUB_OUTPUT
+          if [ -n "$CHANGES" ]; then
+            echo "changed=true" >> $GITHUB_OUTPUT
+          else
+            echo "changed=false" >> $GITHUB_OUTPUT
+          fi
 
       - name: Restart NetDaemon addon
         if: steps.deploy.outputs.changed == 'true'
@@ -125,3 +112,13 @@ jobs:
             -H "Content-Type: application/json" \
             -d '{"title":"✅ Deployment Success","message":"NetDaemon updated from main branch via GitHub Actions","data":{"notification_icon":"mdi:source-branch-check","tag":"github-action"}}' \
             http://${{ secrets.HA_IP }}:${{ secrets.HA_PORT }}/api/services/notify/mobile_app_poco_f4_gt
+
+      - name: Notify mobile app of deployment
+        if: steps.deploy.outputs.changed == 'false'
+        run: |
+          curl -s -X POST \
+            -H "Authorization: Bearer ${{ secrets.HA_TOKEN }}" \
+            -H "Content-Type: application/json" \
+            -d '{"title":"✅ GitHub Actions Success: Deployment Skipped - No Changes Detected","data":{"notification_icon":"mdi:source-branch-check","tag":"github-action"}}' \
+            http://${{ secrets.HA_IP }}:${{ secrets.HA_PORT }}/api/services/notify/mobile_app_poco_f4_gt
+
