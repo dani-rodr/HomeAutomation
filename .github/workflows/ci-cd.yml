@@ -10,7 +10,7 @@ on:
       - '*'
 
 jobs:
-  build-and-deploy:
+  build-test-release:
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -26,23 +26,6 @@ jobs:
         with:
           dotnet-version: '9.x'
 
-      - name: Cache NuGet packages
-        uses: actions/cache@v4
-        with:
-          path: ~/.nuget/packages
-          key: nuget-${{ runner.os }}-${{ hashFiles('**/*.csproj') }}
-          restore-keys: nuget-${{ runner.os }}-
-
-      - name: Cache build outputs
-        uses: actions/cache@v4
-        with:
-          path: |
-            **/bin
-            **/obj
-          key: build-${{ runner.os }}-${{ hashFiles('**/*.csproj') }}-${{ hashFiles('**/*.cs') }}
-          restore-keys: |
-            build-${{ runner.os }}-
-
       - name: Restore dependencies
         run: dotnet restore
 
@@ -53,10 +36,14 @@ jobs:
         run: dotnet test --no-build --configuration Release --verbosity normal
 
       - name: Publish project
-        run: dotnet publish src/HomeAutomation/HomeAutomation.csproj --configuration Release -o publish_output -m
+        run: dotnet  publish src/HomeAutomation/HomeAutomation.csproj --configuration Release -o publish_output -m --no-build
 
-      - name: Shutdown build server
-        run: dotnet build-server shutdown
+      - name: Upload publish artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: publish_output
+          path: publish_output
+          retention-days: 7
 
       # --- Tag and Release ---
       - name: Bump version tag
@@ -84,7 +71,12 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      # --- Deploy to Home Assistant ---
+      - name: Shutdown build server
+        run: dotnet build-server shutdown
+
+  deploy-setup:
+    runs-on: ubuntu-latest
+    steps:
       - name: Authenticate with Tailscale
         uses: tailscale/github-action@v3
         with:
@@ -100,13 +92,27 @@ jobs:
           chmod 600 ~/.ssh/id_ed25519
           ssh-keyscan -H ${{ secrets.HA_IP }} >> ~/.ssh/known_hosts
 
+  deploy:
+    needs: [build-test-release, deploy-setup]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download publish artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: publish_output
+          path: publish_output
+
       - name: Deploy via rsync over SSH
         id: deploy
         run: |
           set -e
           CHANGES=$(rsync -az --delete --itemize-changes -e "ssh -o StrictHostKeyChecking=no" \
             publish_output/ root@${{ secrets.HA_IP }}:/config/${{ secrets.HA_VERSION }}/ | tee /dev/stderr)
-          echo "changed=$([[ -n \"$CHANGES\" ]] && echo true || echo false)" >> $GITHUB_OUTPUT
+          if [ -n "$CHANGES" ]; then
+            echo "changed=true" >> $GITHUB_OUTPUT
+          else
+            echo "changed=false" >> $GITHUB_OUTPUT
+          fi
 
       - name: Restart NetDaemon addon
         if: steps.deploy.outputs.changed == 'true'
@@ -125,3 +131,13 @@ jobs:
             -H "Content-Type: application/json" \
             -d '{"title":"✅ Deployment Success","message":"NetDaemon updated from main branch via GitHub Actions","data":{"notification_icon":"mdi:source-branch-check","tag":"github-action"}}' \
             http://${{ secrets.HA_IP }}:${{ secrets.HA_PORT }}/api/services/notify/mobile_app_poco_f4_gt
+
+      - name: Notify mobile app of deployment
+        if: steps.deploy.outputs.changed == 'false'
+        run: |
+          curl -s -X POST \
+            -H "Authorization: Bearer ${{ secrets.HA_TOKEN }}" \
+            -H "Content-Type: application/json" \
+            -d '{"title":"✅ GitHub Actions Success: Deployment Skipped - No Changes Detected","data":{"notification_icon":"mdi:source-branch-check","tag":"github-action"}}' \
+            http://${{ secrets.HA_IP }}:${{ secrets.HA_PORT }}/api/services/notify/mobile_app_poco_f4_gt
+
