@@ -98,7 +98,10 @@ public class ClimateAutomation(
     private IEnumerable<IDisposable> GetHousePresenceAutomations()
     {
         var houseOccupancy = entities.HouseMotionSensor;
-        yield return houseOccupancy.StateChanges().IsOffForHours(1).Subscribe(_ => _ac.TurnOff());
+        yield return houseOccupancy
+            .StateChanges()
+            .IsOffForMinutes(30)
+            .Subscribe(_ => _ac.TurnOff());
         yield return houseOccupancy
             .StateChanges()
             .IsOn()
