@@ -41,7 +41,14 @@ jobs:
             build-${{ runner.os }}-
 
       - name: Run tests
-        run: dotnet test --configuration Release --verbosity normal
+        run: dotnet test --configuration Release --verbosity normal --collect:"XPlat Code Coverage" --settings build/coverlet.runsettings
+
+      - name: Upload coverage report
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: build/TestResults/**/coverage.cobertura.xml
+          if-no-files-found: warn
 
       - name: Publish project
         run: dotnet publish src/HomeAutomation/HomeAutomation.csproj --configuration Release -o publish_output -m --no-build
@@ -168,3 +175,95 @@ jobs:
             -d '{"title":"✅ Deployment Success","message":"NetDaemon updated from main branch via GitHub Actions","data":{"notification_icon":"mdi:source-branch-check","tag":"github-action"}}' \
             http://${{ secrets.HA_IP }}:${{ secrets.HA_PORT }}/api/services/notify/mobile_app_poco_f4_gt
 
+  coverage:
+    runs-on: ubuntu-latest
+    needs: build-test
+    permissions:
+    contents: read
+    id-token: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Download coverage XML from build-test
+      - name: Download coverage artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: coverage-report
+          path: build/TestResults
+
+      # Install ReportGenerator
+      - name: Install ReportGenerator
+        run: dotnet tool install -g dotnet-reportgenerator-globaltool
+
+      # Generate HTML report
+      - name: Generate HTML coverage report
+        run: |
+          reportgenerator \
+            -reports:"build/TestResults/**/coverage.cobertura.xml" \
+            -targetdir:"build/TestResults/CoverageReport" \
+            -reporttypes:"Html,HtmlSummary,TextSummary" \
+            -verbosity:Info
+
+      # Download previous coverage artifact (optional, first run may not exist)
+      - name: Download previous coverage
+        uses: actions/download-artifact@v4
+        with:
+          name: previous-coverage
+          path: build/TestResults/PreviousCoverage
+        continue-on-error: true
+
+      # Get current coverage from the Cobertura XML
+      - name: Get current coverage
+        id: coverage
+        run: |
+          CUR_COVERAGE=$(grep -Po '(?<=line-rate=")[0-9.]+' build/TestResults/**/coverage.cobertura.xml | head -n 1)
+          echo "current=$CUR_COVERAGE" >> $GITHUB_OUTPUT
+
+      # Fail if coverage decreased
+      - name: Compare coverage with previous run
+        run: |
+          PREV_FILE="build/TestResults/PreviousCoverage/previous_coverage.txt"
+          CUR=${{ steps.coverage.outputs.current }}
+
+          if [ -f "$PREV_FILE" ]; then
+            PREV=$(cat "$PREV_FILE")
+            echo "Previous coverage: $PREV%, Current coverage: $CUR%"
+            awk "BEGIN {exit !($CUR < $PREV)}"
+            if [ $? -eq 0 ]; then
+              echo "❌ Coverage decreased from $PREV% to $CUR%!"
+              exit 1
+            fi
+          else
+            echo "No previous coverage found; skipping comparison."
+          fi
+
+      # Save current coverage for next run
+      - name: Save current coverage
+        run: |
+          mkdir -p build/TestResults/PreviousCoverage
+          echo ${{ steps.coverage.outputs.current }} > build/TestResults/PreviousCoverage/previous_coverage.txt
+
+      # Upload current coverage for next run
+      - name: Upload current coverage artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: previous-coverage
+          path: build/TestResults/PreviousCoverage/previous_coverage.txt
+
+      # Upload HTML report to GitHub Pages
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: build/TestResults/CoverageReport
+
+      - name: Deploy Pages
+        uses: actions/deploy-pages@v4
+
+      # Add coverage summary and link to HTML report in workflow summary
+      - name: Add coverage summary
+        run: |
+          echo "### Code Coverage" >> $GITHUB_STEP_SUMMARY
+          echo "- Current coverage: ${{ steps.coverage.outputs.current }}" >> $GITHUB_STEP_SUMMARY
+          echo "- [View HTML report](${{ steps.deployment.outputs.page_url }})" >> $GITHUB_STEP_SUMMARY
+          echo "::notice title=Code Coverage::Current coverage: ${{ steps.coverage.outputs.current }}%"
