@@ -6,7 +6,7 @@
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
-            "program": "${workspaceFolder}/bin/Debug/net9.0/HomeAutomation.dll",
+            "program": "${workspaceFolder}/src/HomeAutomation/bin/Debug/net9.0/HomeAutomation.dll",
             "args": [],
             "cwd": "${workspaceFolder}",
             "env": {
@@ -24,5 +24,6 @@
             "request": "attach",
             "processId": "${command:pickProcess}"
         }
-    ]
+    ],
+    "preLaunchTask": "codegen"
 }

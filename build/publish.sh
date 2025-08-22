@@ -1,11 +1,19 @@
 #!/bin/bash
-set -e
+set -euo pipefail
+
+# Script root
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_DIR="$SCRIPT_DIR/../src/HomeAutomation"
+PROJECT_PATH="$PROJECT_DIR/HomeAutomation.csproj"
+
+APPSETTINGS="$PROJECT_DIR/appsettings.json"
+APPSETTINGS_DEV="$PROJECT_DIR/appsettings.Development.json"
 
 # Load settings from JSON
 ip="192.168.0.134"
-# ip=$(jq -r '.HomeAssistant.Host' src/appsettings.json)
-port=$(jq -r '.HomeAssistant.Port' src/appsettings.json)
-token=$(jq -r '.HomeAssistant.Token' src/appsettings.Development.json)
+# ip=$(jq -r '.HomeAssistant.Host' "$APPSETTINGS")
+port=$(jq -r '.HomeAssistant.Port' "$APPSETTINGS")
+token=$(jq -r '.HomeAssistant.Token' "$APPSETTINGS_DEV")
 
 # CHANGE ME
 slug='c6a2317c_netdaemon5'
@@ -33,8 +41,8 @@ ha_call() {
 }
 
 # ha_call "light/toggle" "{\"entity_id\": \"light.sala_lights_group\"}"
-dotnet publish -c Release src/HomeAutomation.csproj
-publish_dir=$(find src/bin/Release -type d -path "*/net*/publish" | head -n 1)
+dotnet publish -c Release "$PROJECT_PATH"
+publish_dir=$(find "$PROJECT_DIR/bin/Release" -type d -path "*/net*/publish" | head -n 1)
 
 # Rsync with change detection
 echo "Deploying via rsync..."

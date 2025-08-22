@@ -53,7 +53,7 @@ jobs:
         run: dotnet test --no-build --configuration Release --verbosity normal
 
       - name: Publish project
-        run: dotnet publish src/HomeAutomation.csproj --configuration Release -o publish_output -m
+        run: dotnet publish src/HomeAutomation/HomeAutomation.csproj --configuration Release -o publish_output -m
 
       - name: Shutdown build server
         run: dotnet build-server shutdown

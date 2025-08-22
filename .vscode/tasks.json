@@ -7,11 +7,32 @@
             "type": "process",
             "args": [
                 "build",
-                "${workspaceFolder}/HomeAutomation.csproj",
+                "${workspaceFolder}/src/HomeAutomation/HomeAutomation.csproj",
                 "/property:GenerateFullPaths=true",
                 "/consoleloggerparameters:NoSummary"
             ],
             "problemMatcher": "$msCompile"
+        },
+        {
+            "label": "test",
+            "command": "dotnet",
+            "type": "process",
+            "args": [
+                "test",
+                "${workspaceFolder}/tests/HomeAutomation.Tests/HomeAutomation.Tests.csproj",
+                "/property:GenerateFullPaths=true",
+                "/consoleloggerparameters:NoSummary"
+            ],
+            "problemMatcher": "$msCompile"
+        },
+        {
+            "label": "codegen",
+            "command": "nd-codegen",
+            "type": "process",
+            "options": {
+                "cwd": "${workspaceFolder}/src/HomeAutomation"
+            },
+            "problemMatcher": []
         },
         {
             "label": "publish",
@@ -19,7 +40,7 @@
             "type": "process",
             "args": [
                 "publish",
-                "${workspaceFolder}/HomeAutomation.csproj",
+                "${workspaceFolder}/src/HomeAutomation/HomeAutomation.csproj",
                 "/property:GenerateFullPaths=true",
                 "/consoleloggerparameters:NoSummary"
             ],
@@ -34,7 +55,7 @@
                 "-ExecutionPolicy",
                 "Bypass",
                 "-File",
-                "${workspaceFolder}/publish.ps1"
+                "${workspaceFolder}/build/publish.ps1"
             ],
             "group": {
                 "kind": "build",
