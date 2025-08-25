@@ -1,23 +1,9 @@
-using System.Diagnostics.CodeAnalysis;
 using HomeAutomation.apps.Area.Bedroom.Automations;
 using HomeAutomation.apps.Common.Containers;
 using HomeAutomation.apps.Common.Interface;
-using HomeAutomation.apps.Common.Services;
 
 namespace HomeAutomation.Tests.Area.Bedroom.Automations;
 
-/// <summary>
-/// Comprehensive behavioral tests for Bedroom ClimateAutomation using clean assertion syntax
-/// Tests complex scheduling logic, temperature management, occupancy behavior, weather conditions,
-/// power saving modes, and thread-safe state management with enhanced readability
-/// This is the most complex automation - requires thorough test coverage due to:
-/// - Time-based AC scheduling with dynamic sun sensor values
-/// - Multi-state temperature logic (occupancy, door, weather, power saving)
-/// - House presence automations with time thresholds
-/// - Manual operation detection and master switch control
-/// - Cron-based cache invalidation
-/// - Fan mode cycling automation
-/// </summary>
 public class ClimateAutomationTests : IDisposable
 {
     private readonly MockHaContext _mockHaContext;
