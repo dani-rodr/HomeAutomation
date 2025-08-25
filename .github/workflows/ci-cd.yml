@@ -102,12 +102,19 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 2
+          fetch-depth: 0
 
       - name: Check for source changes
         id: changes
         run: |
-          if git diff --quiet $GITHUB_SHA^ -- src/HomeAutomation; then
+          # Get the commit before this push (what remote branch was pointing to)
+          before_sha="${{ github.event.before }}"
+          after_sha="${{ github.sha }}"
+
+          echo "Before: $before_sha"
+          echo "After:  $after_sha"
+
+          if git diff --quiet $before_sha $after_sha -- src/HomeAutomation; then
             echo "changed=false" >> $GITHUB_OUTPUT
           else
             echo "changed=true" >> $GITHUB_OUTPUT
