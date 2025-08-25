@@ -102,12 +102,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 2
+          fetch-depth: 0
 
       - name: Check for source changes
         id: changes
         run: |
-          if git diff --quiet $GITHUB_SHA^ -- src/HomeAutomation; then
+          git fetch origin $GITHUB_REF --depth=1
+          if git diff --quiet origin/${GITHUB_REF_NAME} HEAD -- src/HomeAutomation; then
             echo "changed=false" >> $GITHUB_OUTPUT
           else
             echo "changed=true" >> $GITHUB_OUTPUT

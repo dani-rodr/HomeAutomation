@@ -29,7 +29,7 @@ public class StartupApp : AppBase<StartupApp>
         HomeAssistantGenerated.Services services
     )
     {
-        await Task.Delay(TimeSpan.FromSeconds(10));
+        await Task.Delay(TimeSpan.FromSeconds(15));
         services.PersistentNotification.Dismiss(
             new PersistentNotificationDismissParameters { NotificationId = "netdaemon_start" }
         );
