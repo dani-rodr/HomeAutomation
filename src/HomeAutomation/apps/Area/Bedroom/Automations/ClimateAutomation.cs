@@ -23,6 +23,10 @@ public class ClimateAutomation(
             .IsOffForHours(1)
             .Where(_ => MasterSwitch.IsOff())
             .Subscribe(_ => MasterSwitch.TurnOn());
+        yield return MasterSwitch
+            .StateChangesWithCurrent()
+            .IsOffForHours(12)
+            .Subscribe(_ => MasterSwitch.TurnOn());
         yield return _doorSensor
             .StateChanges()
             .IsClosed()
@@ -30,7 +34,6 @@ public class ClimateAutomation(
             {
                 if (MasterSwitch.IsOff())
                 {
-                    MasterSwitch.TurnOn();
                     return;
                 }
                 ApplyTimeBasedAcSetting(e);
