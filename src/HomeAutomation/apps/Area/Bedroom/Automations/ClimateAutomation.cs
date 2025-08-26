@@ -25,7 +25,7 @@ public class ClimateAutomation(
             .Subscribe(_ => MasterSwitch.TurnOn());
         yield return MasterSwitch
             .StateChangesWithCurrent()
-            .IsOffForHours(12)
+            .IsOffForHours(8)
             .Subscribe(_ => MasterSwitch.TurnOn());
         yield return _doorSensor
             .StateChanges()
