@@ -34,7 +34,7 @@ public class TabletAutomationTests : IDisposable
         _mockHaContext.ClearServiceCalls();
     }
 
-    [Fact]
+    [Fact(Skip = "Removed Tablet Handling for now")]
     public void MotionDetected_Should_TurnOnTabletScreen()
     {
         // Act - Simulate motion sensor turning on
@@ -45,7 +45,7 @@ public class TabletAutomationTests : IDisposable
         _mockHaContext.ShouldHaveCalledLightTurnOn(_entities.Light.EntityId);
     }
 
-    [Fact]
+    [Fact(Skip = "Removed Tablet Handling for now")]
     public void MotionCleared_Should_TurnOffTabletScreen()
     {
         // Act - Simulate motion sensor turning off
@@ -84,7 +84,7 @@ public class TabletAutomationTests : IDisposable
         _mockHaContext.ShouldHaveCalledLightTurnOff(_entities.Light.EntityId);
     }
 
-    [Fact]
+    [Fact(Skip = "Removed Tablet Handling for now")]
     public void TabletScreenControl_Should_FollowMotionSensorChanges()
     {
         // This test verifies the core functionality: tablet screen follows motion sensor state
@@ -107,7 +107,7 @@ public class TabletAutomationTests : IDisposable
         _mockHaContext.ShouldHaveCalledLightTurnOff(_entities.Light.EntityId);
     }
 
-    [Fact]
+    [Fact(Skip = "Removed Tablet Handling for now")]
     public void MultipleMotionEvents_Should_HandleCorrectSequence()
     {
         // Act - Motion on, off, on again
@@ -127,7 +127,7 @@ public class TabletAutomationTests : IDisposable
         _mockHaContext.ShouldHaveServiceCallCount(3); // on, off, on
     }
 
-    [Fact]
+    [Fact(Skip = "Removed Tablet Handling for now")]
     public void SensorDelayAutomations_Should_ReturnEmpty()
     {
         // This verifies the overridden behavior that returns empty sensor delay automations
@@ -153,7 +153,7 @@ public class TabletAutomationTests : IDisposable
         _mockHaContext.ShouldHaveNoServiceCalls();
     }
 
-    [Fact]
+    [Fact(Skip = "Removed Tablet Handling for now")]
     public void ComplexScenario_With_MotionSequenceHandling()
     {
         // Act - Complex motion sequence: on -> off -> on -> off

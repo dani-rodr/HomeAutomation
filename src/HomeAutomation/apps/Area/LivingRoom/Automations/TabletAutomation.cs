@@ -5,18 +5,5 @@ public class TabletAutomation(ITabletEntities entities, ILogger<TabletAutomation
 {
     protected override IEnumerable<IDisposable> GetSensorDelayAutomations() => [];
 
-    protected override IEnumerable<IDisposable> GetLightAutomations() =>
-        [MotionSensor.StateChanges().Subscribe(ToggleLights)];
-
-    private void ToggleLights(StateChange e)
-    {
-        if (e.IsOn())
-        {
-            Light.TurnOn();
-        }
-        else
-        {
-            Light.TurnOff();
-        }
-    }
+    protected override IEnumerable<IDisposable> GetLightAutomations() => [];
 }
