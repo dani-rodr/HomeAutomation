@@ -7,7 +7,6 @@ public class LivingRoomApp(
     ILivingRoomLightEntities motionEntities,
     ILivingRoomFanEntities fanEntities,
     IAirQualityEntities airQualityEntities,
-    ITabletEntities tabletEntities,
     ITclDisplay tclDisplay,
     IDimmingLightControllerFactory dimmingLightControllerFactory,
     MotionSensor motionSensor,
@@ -22,10 +21,10 @@ public class LivingRoomApp(
             airQualityEntities,
             loggerFactory.CreateLogger<AirQualityAutomation>()
         );
-        yield return new TabletAutomation(
-            tabletEntities,
-            loggerFactory.CreateLogger<TabletAutomation>()
-        );
+        // yield return new TabletAutomation(
+        //     tabletEntities,
+        //     loggerFactory.CreateLogger<TabletAutomation>()
+        // );
         yield return motionSensor;
 
         yield return new LightAutomation(
