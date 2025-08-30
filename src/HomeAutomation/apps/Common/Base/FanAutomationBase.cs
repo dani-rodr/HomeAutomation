@@ -18,21 +18,11 @@ public abstract class FanAutomationBase : ToggleableAutomation
 
     protected override IEnumerable<IDisposable> GetPersistentAutomations()
     {
-        yield return GetFanManualOperationAutomations();
+        var manualOperation = MainFan.StateChanges().IsManuallyOperated();
+        yield return manualOperation.WasOff().IsOn().Subscribe(_ => MasterSwitch.TurnOn());
+        yield return manualOperation.WasOn().IsOff().Subscribe(_ => MasterSwitch.TurnOff());
         yield return GetMasterSwitchAutomations();
         yield return GetIdleOperationAutomations();
-    }
-
-    protected virtual void HandleMotionDetection(StateChange evt)
-    {
-        if (evt.IsOn())
-        {
-            TurnOnFans(evt);
-        }
-        else if (evt.IsOff())
-        {
-            TurnOffFans(evt);
-        }
     }
 
     protected virtual void TurnOnFans(StateChange evt)
@@ -68,22 +58,6 @@ public abstract class FanAutomationBase : ToggleableAutomation
             fan.TurnOff();
         }
     }
-
-    protected virtual IDisposable GetFanManualOperationAutomations() =>
-        MainFan
-            .StateChanges()
-            .IsManuallyOperated()
-            .Subscribe(e =>
-            {
-                if (e.IsOn())
-                {
-                    MasterSwitch.TurnOn();
-                }
-                else if (e.IsOff())
-                {
-                    MasterSwitch.TurnOff();
-                }
-            });
 
     protected virtual IDisposable GetIdleOperationAutomations() =>
         MotionSensor

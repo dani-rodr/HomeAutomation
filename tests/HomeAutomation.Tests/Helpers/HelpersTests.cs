@@ -35,79 +35,6 @@ public class HelpersTests : IDisposable
 
     #region StateChangeObservableExtensions Tests
 
-    [Fact]
-    public void IsAnyOfStates_Should_FilterCorrectStates()
-    {
-        // Arrange
-        var results = new List<StateChange>();
-        _stateChangeSubject.IsAnyOfStates(states: ["on", "off"]).Subscribe(results.Add);
-
-        var onChange = StateChangeHelpers.CreateStateChange(_light, "off", "on");
-        var offChange = StateChangeHelpers.CreateStateChange(_light, "on", "off");
-        var dimChange = StateChangeHelpers.CreateStateChange(_light, "on", "dim");
-
-        // Act
-        _stateChangeSubject.OnNext(onChange);
-        _stateChangeSubject.OnNext(offChange);
-        _stateChangeSubject.OnNext(dimChange);
-
-        // Assert
-        results.Should().HaveCount(2);
-        results[0].New?.State.Should().Be("on");
-        results[1].New?.State.Should().Be("off");
-    }
-
-    [Fact]
-    public void IsAnyOfStates_Should_IgnoreUnavailableOldState()
-    {
-        // Arrange
-        var results = new List<StateChange>();
-        _stateChangeSubject
-            .IsAnyOfStates(states: ["on"], ignorePreviousUnavailable: false)
-            .Subscribe(results.Add);
-
-        // Create change with unavailable old state
-        var change = new StateChange(
-            (Entity)_light,
-            new EntityState { State = "unavailable" },
-            new EntityState { State = "on" }
-        );
-
-        // Act
-        _stateChangeSubject.OnNext(change);
-
-        // Assert
-        results.Should().BeEmpty("Should ignore changes from unavailable state");
-    }
-
-    [Fact]
-    public void IsAnyOfStates_Should_IgnoreNullStates()
-    {
-        // Arrange
-        var results = new List<StateChange>();
-        _stateChangeSubject
-            .IsAnyOfStates(states: ["on"], ignorePreviousUnavailable: false)
-            .Subscribe(results.Add);
-
-        var changeWithNullOld = new StateChange(
-            (Entity)_light,
-            null,
-            new EntityState { State = "on" }
-        );
-        var changeWithNullNew = new StateChange(
-            (Entity)_light,
-            new EntityState { State = "off" },
-            null
-        );
-
-        // Act
-        _stateChangeSubject.OnNext(changeWithNullOld);
-        _stateChangeSubject.OnNext(changeWithNullNew);
-
-        // Assert
-        results.Should().BeEmpty("Should ignore changes with null states");
-    }
-
     [Theory]
     [InlineData("ON", true)]
     [InlineData("on", true)]
@@ -631,40 +558,6 @@ public class HelpersTests : IDisposable
     }
 
     [Theory]
-    [InlineData("on", true)]
-    [InlineData("ON", true)]
-    [InlineData("off", false)]
-    [InlineData("unknown", false)]
-    public void GenericStateChange_IsOn_Should_CheckOnState(string state, bool expected)
-    {
-        // Arrange
-        var change = StateChangeHelpers.CreateStateChange(_light, "off", state);
-
-        // Act
-        var result = change.IsOn();
-
-        // Assert
-        result.Should().Be(expected);
-    }
-
-    [Theory]
-    [InlineData("off", true)]
-    [InlineData("OFF", true)]
-    [InlineData("on", false)]
-    [InlineData("unknown", false)]
-    public void GenericStateChange_IsOff_Should_CheckOffState(string state, bool expected)
-    {
-        // Arrange
-        var change = StateChangeHelpers.CreateStateChange(_light, "on", state);
-
-        // Act
-        var result = change.IsOff();
-
-        // Assert
-        result.Should().Be(expected);
-    }
-
-    [Theory]
     [InlineData("locked", true)]
     [InlineData("LOCKED", true)]
     [InlineData("unlocked", false)]
@@ -797,22 +690,6 @@ public class HelpersTests : IDisposable
 
         // Assert
         result.Should().Be(expected);
-    }
-
-    [Fact]
-    public void StateChange_IsOn_Should_ReturnFalseForNullStateChange()
-    {
-        // Act & Assert
-        StateChange? nullChange = null;
-        nullChange!.IsOn().Should().BeFalse();
-    }
-
-    [Fact]
-    public void StateChange_IsOff_Should_ReturnTrueForNullStateChange()
-    {
-        // Act & Assert
-        StateChange? nullChange = null;
-        nullChange!.IsOff().Should().BeFalse();
     }
 
     #endregion

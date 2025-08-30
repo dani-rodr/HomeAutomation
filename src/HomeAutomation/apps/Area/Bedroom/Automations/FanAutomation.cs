@@ -23,8 +23,9 @@ public class FanAutomation(IBedroomFanEntities entities, ILogger<FanAutomation> 
             });
     }
 
-    protected override IEnumerable<IDisposable> GetToggleableAutomations()
-    {
-        yield return MotionSensor.StateChanges().Subscribe(HandleMotionDetection);
-    }
+    protected override IEnumerable<IDisposable> GetToggleableAutomations() =>
+        [
+            MotionSensor.StateChanges().IsOccupied().Subscribe(e => TurnOnFans(e)),
+            MotionSensor.StateChanges().IsClear().Subscribe(e => TurnOffFans(e)),
+        ];
 }

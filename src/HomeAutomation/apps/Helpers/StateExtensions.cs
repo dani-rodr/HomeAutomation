@@ -2,8 +2,43 @@ using System.Text.Json;
 
 namespace HomeAutomation.apps.Helpers;
 
+public readonly struct StateChangeFluent<T, TState>(StateChange<T, TState> source, bool useNewState)
+    where T : Entity
+    where TState : EntityState
+{
+    private readonly StateChange<T, TState> _source = source;
+    private readonly bool _useNewState = useNewState;
+
+    private string? GetState() => _useNewState ? _source.New?.State : _source.Old?.State;
+
+    public bool State(string expectedState) =>
+        string.Equals(GetState(), expectedState, StringComparison.OrdinalIgnoreCase);
+
+    public bool On() => State(HaEntityStates.ON);
+
+    public bool Off() => State(HaEntityStates.OFF);
+
+    public bool Locked() => State(HaEntityStates.LOCKED);
+
+    public bool Unlocked() => State(HaEntityStates.UNLOCKED);
+
+    public bool Open() => On();
+
+    public bool Closed() => Off();
+
+    public bool Unavailable() => State(HaEntityStates.UNAVAILABLE);
+}
+
 public static class StateChangeExtensions
 {
+    public static StateChangeFluent<T, TState> Is<T, TState>(this StateChange<T, TState> e)
+        where T : Entity
+        where TState : EntityState => new(e, useNewState: true);
+
+    public static StateChangeFluent<T, TState> Was<T, TState>(this StateChange<T, TState> e)
+        where T : Entity
+        where TState : EntityState => new(e, useNewState: false);
+
     public static string UserId<T, TState>(this StateChange<T, TState> e)
         where T : Entity
         where TState : EntityState => e.New?.Context?.UserId ?? string.Empty;
@@ -14,31 +49,31 @@ public static class StateChangeExtensions
 
     public static bool IsOn<T, TState>(this StateChange<T, TState> e)
         where T : Entity
-        where TState : EntityState => e.New != null && e.New.State.IsOn();
+        where TState : EntityState => e.Is().On();
 
     public static bool IsOff<T, TState>(this StateChange<T, TState> e)
         where T : Entity
-        where TState : EntityState => e.New != null && e.New.State.IsOff();
+        where TState : EntityState => e.Is().Off();
 
     public static bool IsLocked<T, TState>(this StateChange<T, TState> e)
         where T : Entity
-        where TState : EntityState => e.New != null && e.New.State.IsLocked();
+        where TState : EntityState => e.Is().Locked();
 
     public static bool IsUnlocked<T, TState>(this StateChange<T, TState> e)
         where T : Entity
-        where TState : EntityState => e.New != null && e.New.State.IsUnlocked();
+        where TState : EntityState => e.Is().Unlocked();
 
     public static bool IsOpen<T, TState>(this StateChange<T, TState> e)
         where T : Entity
-        where TState : EntityState => e.New != null && e.New.State.IsOpen();
+        where TState : EntityState => e.Is().Open();
 
     public static bool IsClosed<T, TState>(this StateChange<T, TState> e)
         where T : Entity
-        where TState : EntityState => e.New != null && e.New.State.IsClosed();
+        where TState : EntityState => e.Is().Closed();
 
     public static bool IsUnavailable<T, TState>(this StateChange<T, TState> e)
         where T : Entity
-        where TState : EntityState => e.New != null && e.New.State.IsUnavailable();
+        where TState : EntityState => e.Is().Unavailable();
 
     public static string UserId(this StateChange e) => e.New?.Context?.UserId ?? string.Empty;
 
@@ -54,10 +89,6 @@ public static class StateChangeExtensions
         HaIdentity.IsPhysicallyOperated(e.UserId());
 
     public static bool IsAutomated(this StateChange e) => HaIdentity.IsAutomated(e.UserId());
-
-    public static bool IsOn(this StateChange e) => e?.New?.State?.IsOn() ?? false;
-
-    public static bool IsOff(this StateChange e) => e?.New?.State?.IsOff() ?? false;
 
     public static (T? Old, T? New) GetAttributeChange<T>(
         this StateChange change,

@@ -9,85 +9,86 @@ public enum TimeUnit
     Hours,
 }
 
+public readonly struct StateChangeFilter(IObservable<StateChange> source, bool useNewState)
+{
+    private readonly IObservable<StateChange> _source = source;
+    private readonly bool _useNewState = useNewState;
+
+    public IObservable<StateChange> State(string expectedState)
+    {
+        var src = _source;
+        var useNew = _useNewState;
+
+        return src.Where(e =>
+        {
+            var state = useNew ? e.New?.State : e.Old?.State;
+            return string.Equals(state, expectedState, StringComparison.OrdinalIgnoreCase);
+        });
+    }
+
+    public IObservable<StateChange> On() => State(HaEntityStates.ON);
+
+    public IObservable<StateChange> Off() => State(HaEntityStates.OFF);
+
+    public IObservable<StateChange> Open() => On();
+
+    public IObservable<StateChange> Closed() => Off();
+
+    public IObservable<StateChange> Locked() => State(HaEntityStates.LOCKED);
+
+    public IObservable<StateChange> Unlocked() => State(HaEntityStates.UNLOCKED);
+
+    public IObservable<StateChange> Unknown() => State(HaEntityStates.UNKNOWN);
+
+    public IObservable<StateChange> Unavailable() => State(HaEntityStates.UNAVAILABLE);
+}
+
 public static class StateChangeObservableExtensions
 {
-    public static IObservable<StateChange> IsAnyOfStates(
-        this IObservable<StateChange> source,
-        bool ignorePreviousUnavailable = true,
-        params string[] states
-    ) =>
-        source.Where(e =>
-            (e.New?.State.IsAvailable() ?? false)
-            && (
-                ignorePreviousUnavailable
-                || (
-                    e.Old?.State != null && !e.Old.State.IsUnavailable() && !e.Old.State.IsUnknown()
-                )
-            )
-            && states.Any(s => string.Equals(s, e.New.State, StringComparison.OrdinalIgnoreCase))
-        );
+    public static StateChangeFilter Is(this IObservable<StateChange> source) =>
+        new(source, useNewState: true);
+
+    public static StateChangeFilter Was(this IObservable<StateChange> source) =>
+        new(source, useNewState: false);
 
     public static IObservable<StateChange> WasOff(this IObservable<StateChange> source) =>
-        source.Where(e => e.Old.IsOff());
+        source.Was().Off();
 
     public static IObservable<StateChange> WasOn(this IObservable<StateChange> source) =>
-        source.Where(e => e.Old.IsOn());
+        source.Was().On();
 
-    public static IObservable<StateChange> IsOn(
-        this IObservable<StateChange> source,
-        bool ignorePreviousUnavailable = true
-    ) => source.IsAnyOfStates(ignorePreviousUnavailable, HaEntityStates.ON);
+    public static IObservable<StateChange> WasUnlocked(this IObservable<StateChange> source) =>
+        source.Was().Unlocked();
 
-    public static IObservable<StateChange> IsOpen(
-        this IObservable<StateChange> source,
-        bool ignorePreviousUnavailable = true
-    ) => source.IsOn(ignorePreviousUnavailable);
+    public static IObservable<StateChange> IsOn(this IObservable<StateChange> source) =>
+        source.Is().On();
 
-    public static IObservable<StateChange> IsOff(
-        this IObservable<StateChange> source,
-        bool ignorePreviousUnavailable = true
-    ) => source.IsAnyOfStates(ignorePreviousUnavailable, HaEntityStates.OFF);
+    public static IObservable<StateChange> IsOccupied(this IObservable<StateChange> source) =>
+        source.Is().On();
 
-    public static IObservable<StateChange> IsClosed(
-        this IObservable<StateChange> source,
-        bool ignorePreviousUnavailable = true
-    ) => source.IsOff(ignorePreviousUnavailable);
+    public static IObservable<StateChange> IsOpen(this IObservable<StateChange> source) =>
+        source.Is().On();
 
-    public static IObservable<StateChange> IsLocked(
-        this IObservable<StateChange> source,
-        bool ignorePreviousUnavailable = true
-    ) => source.IsAnyOfStates(ignorePreviousUnavailable, HaEntityStates.LOCKED);
+    public static IObservable<StateChange> IsOff(this IObservable<StateChange> source) =>
+        source.Is().Off();
 
-    public static IObservable<StateChange> IsUnlocked(
-        this IObservable<StateChange> source,
-        bool ignorePreviousUnavailable = true
-    ) => source.IsAnyOfStates(ignorePreviousUnavailable, HaEntityStates.UNLOCKED);
+    public static IObservable<StateChange> IsClear(this IObservable<StateChange> source) =>
+        source.Is().Off();
 
-    public static IObservable<StateChange> IsUnavailable(
-        this IObservable<StateChange> source,
-        bool ignorePreviousUnavailable = true
-    ) =>
-        source.Where(s =>
-            string.Equals(
-                s.New?.State,
-                HaEntityStates.UNAVAILABLE,
-                StringComparison.OrdinalIgnoreCase
-            )
-            && (
-                !ignorePreviousUnavailable || (s.Old?.State != null && !s.Old.State.IsUnavailable())
-            )
-        );
+    public static IObservable<StateChange> IsClosed(this IObservable<StateChange> source) =>
+        source.Is().Off();
 
-    public static IObservable<StateChange> IsUnknown(
-        this IObservable<StateChange> source,
-        bool ignorePreviousUnavailable = true
-    ) =>
-        source.Where(s =>
-            string.Equals(s.New?.State, HaEntityStates.UNKNOWN, StringComparison.OrdinalIgnoreCase)
-            && (
-                !ignorePreviousUnavailable || (s.Old?.State != null && !s.Old.State.IsUnavailable())
-            )
-        );
+    public static IObservable<StateChange> IsLocked(this IObservable<StateChange> source) =>
+        source.Is().Locked();
+
+    public static IObservable<StateChange> IsUnlocked(this IObservable<StateChange> source) =>
+        source.Is().Unlocked();
+
+    public static IObservable<StateChange> IsUnavailable(this IObservable<StateChange> source) =>
+        source.Is().Unavailable();
+
+    public static IObservable<StateChange> IsUnknown(this IObservable<StateChange> source) =>
+        source.Is().Unknown();
 
     public static IObservable<StateChange> IsManuallyOperated(
         this IObservable<StateChange> source
@@ -134,7 +135,7 @@ public static class StateChangeDurationExtensions
         int time
     ) => source.For(time, TimeUnit.Hours);
 
-    private static IObservable<StateChange> For(
+    public static IObservable<StateChange> For(
         this IObservable<StateChange> source,
         int time,
         TimeUnit unit
