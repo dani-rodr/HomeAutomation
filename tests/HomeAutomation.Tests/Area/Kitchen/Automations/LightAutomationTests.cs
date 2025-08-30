@@ -8,7 +8,7 @@ namespace HomeAutomation.Tests.Area.Kitchen.Automations;
 /// Tests the specific Kitchen features: 5-second motion delay, power plug sensor integration,
 /// and 1-hour auto-reactivation functionality.
 ///
-/// NOTE: Kitchen automation uses IsOnForSeconds(5) which creates a 5-second delay before turning on light.
+/// NOTE: Kitchen automation uses IsOn().ForSeconds(5) which creates a 5-second delay before turning on light.
 /// This is different from other automations that turn on lights immediately.
 /// </summary>
 public class LightAutomationTests : IDisposable
@@ -43,7 +43,7 @@ public class LightAutomationTests : IDisposable
     [Fact]
     public void MotionDetected_WithCustomTiming_Should_SetupCorrectSubscription()
     {
-        // Kitchen-specific: Motion sensor uses 5-second delay (IsOnForSeconds(5))
+        // Kitchen-specific: Motion sensor uses 5-second delay (IsOn().ForSeconds(5))
         // This test verifies that the automation subscribes to motion events correctly
         // Note: Testing the actual 5-second delay would require a test scheduler
 
@@ -170,7 +170,7 @@ public class LightAutomationTests : IDisposable
     public void AutoReactivationSubscription_Should_BeSetupCorrectly()
     {
         // Kitchen-specific: Auto-reactivation after 1 hour of no motion
-        // SetupMotionSensorReactivation() uses IsOffForHours(1)
+        // SetupMotionSensorReactivation() uses IsOff().ForHours(1)
         // Note: Testing the actual 1-hour delay would require a test scheduler
 
         // Arrange - Set master switch to off initially

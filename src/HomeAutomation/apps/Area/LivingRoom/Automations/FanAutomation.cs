@@ -33,7 +33,7 @@ public class FanAutomation(ILivingRoomFanEntities entities, ILogger<FanAutomatio
 
     private IEnumerable<IDisposable> GetSalaFanAutomations()
     {
-        yield return MotionSensor.StateChanges().IsOnForSeconds(3).Subscribe(TurnOnFans);
-        yield return MotionSensor.StateChanges().IsOffForMinutes(1).Subscribe(TurnOffFans);
+        yield return MotionSensor.StateChanges().IsOn().ForSeconds(3).Subscribe(TurnOnFans);
+        yield return MotionSensor.StateChanges().IsOff().ForMinutes(1).Subscribe(TurnOffFans);
     }
 }

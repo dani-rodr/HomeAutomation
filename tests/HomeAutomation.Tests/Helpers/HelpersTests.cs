@@ -494,95 +494,72 @@ public class HelpersTests : IDisposable
     #region Time-based Extension Tests
 
     [Fact]
-    public void WhenStateIsForSeconds_Should_UseCorrectTimeSpan()
-    {
-        // This test verifies the method compiles and returns an observable
-        // The actual timing behavior is tested by NetDaemon framework
-        var observable = _stateChangeSubject.WhenStateIsForSeconds("on", 30);
-        observable.Should().NotBeNull();
-    }
-
-    [Fact]
-    public void WhenStateIsForMinutes_Should_UseCorrectTimeSpan()
-    {
-        var observable = _stateChangeSubject.WhenStateIsForMinutes("on", 5);
-        observable.Should().NotBeNull();
-    }
-
-    [Fact]
-    public void WhenStateIsForHours_Should_UseCorrectTimeSpan()
-    {
-        var observable = _stateChangeSubject.WhenStateIsForHours("on", 2);
-        observable.Should().NotBeNull();
-    }
-
-    [Fact]
     public void IsOnForSeconds_Should_UseOnStateAndSeconds()
     {
-        var observable = _stateChangeSubject.IsOnForSeconds(45);
+        var observable = _stateChangeSubject.IsOn().ForSeconds(45);
         observable.Should().NotBeNull();
     }
 
     [Fact]
     public void IsOnForMinutes_Should_UseOnStateAndMinutes()
     {
-        var observable = _stateChangeSubject.IsOnForMinutes(10);
+        var observable = _stateChangeSubject.IsOn().ForMinutes(10);
         observable.Should().NotBeNull();
     }
 
     [Fact]
     public void IsOnForHours_Should_UseOnStateAndHours()
     {
-        var observable = _stateChangeSubject.IsOnForHours(3);
+        var observable = _stateChangeSubject.IsOn().ForHours(3);
         observable.Should().NotBeNull();
     }
 
     [Fact]
     public void IsOffForSeconds_Should_UseOffStateAndSeconds()
     {
-        var observable = _stateChangeSubject.IsOffForSeconds(60);
+        var observable = _stateChangeSubject.IsOff().ForSeconds(60);
         observable.Should().NotBeNull();
     }
 
     [Fact]
     public void IsOffForMinutes_Should_UseOffStateAndMinutes()
     {
-        var observable = _stateChangeSubject.IsOffForMinutes(15);
+        var observable = _stateChangeSubject.IsOff().ForMinutes(15);
         observable.Should().NotBeNull();
     }
 
     [Fact]
     public void IsOffForHours_Should_UseOffStateAndHours()
     {
-        var observable = _stateChangeSubject.IsOffForHours(1);
+        var observable = _stateChangeSubject.IsOff().ForHours(1);
         observable.Should().NotBeNull();
     }
 
     [Fact]
     public void IsClosedForSeconds_Should_UseOffStateAndSeconds()
     {
-        var observable = _stateChangeSubject.IsClosedForSeconds(30);
+        var observable = _stateChangeSubject.IsClosed().ForSeconds(30);
         observable.Should().NotBeNull();
     }
 
     [Fact]
     public void IsOpenForSeconds_Should_UseOnStateAndSeconds()
     {
-        var observable = _stateChangeSubject.IsOpenForSeconds(20);
+        var observable = _stateChangeSubject.IsOpen().ForSeconds(20);
         observable.Should().NotBeNull();
     }
 
     [Fact]
     public void IsLockedForMinutes_Should_UseLockedStateAndMinutes()
     {
-        var observable = _stateChangeSubject.IsLockedForMinutes(5);
+        var observable = _stateChangeSubject.IsLocked().ForMinutes(5);
         observable.Should().NotBeNull();
     }
 
     [Fact]
     public void IsUnlockedForHours_Should_UseUnlockedStateAndHours()
     {
-        var observable = _stateChangeSubject.IsUnlockedForHours(2);
+        var observable = _stateChangeSubject.IsUnlocked().ForHours(2);
         observable.Should().NotBeNull();
     }
 

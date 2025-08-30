@@ -237,7 +237,7 @@ public class LightAutomationTests : IDisposable
         _mockHaContext.StateChangeSubject.OnNext(stateChange);
 
         // Simulate the 10-second timeout condition
-        // In real automation, this would be handled by IsOnForSeconds(10)
+        // In real automation, this would be handled by IsOn().ForSeconds(10)
         _entities.SensorDelay.SetNumericValue(45); // SensorActiveDelayValue
 
         // Assert - Should set sensor delay to active value (45)

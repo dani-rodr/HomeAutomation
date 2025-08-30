@@ -51,7 +51,8 @@ public abstract class LightAutomationBase(ILightAutomationEntities entities, ILo
 
         yield return MotionSensor
             .StateChanges()
-            .IsOnForSeconds(SensorWaitTime)
+            .IsOn()
+            .ForSeconds(SensorWaitTime)
             .Subscribe(_ =>
             {
                 Logger.LogDebug(
@@ -63,7 +64,8 @@ public abstract class LightAutomationBase(ILightAutomationEntities entities, ILo
             });
         yield return MotionSensor
             .StateChanges()
-            .IsOffForSeconds(SensorWaitTime)
+            .IsOff()
+            .ForSeconds(SensorWaitTime)
             .Subscribe(_ =>
             {
                 Logger.LogDebug(

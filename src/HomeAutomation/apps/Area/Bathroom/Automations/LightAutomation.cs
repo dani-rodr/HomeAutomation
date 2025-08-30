@@ -14,7 +14,7 @@ public class LightAutomation(
     }
 
     protected override IEnumerable<IDisposable> GetAdditionalPersistentAutomations() =>
-        [MotionSensor.StateChanges().IsOnForSeconds(2).Subscribe(_ => MasterSwitch.TurnOn())];
+        [MotionSensor.StateChanges().IsOn().ForSeconds(2).Subscribe(_ => MasterSwitch.TurnOn())];
 
     protected override IEnumerable<IDisposable> GetLightAutomations()
     {

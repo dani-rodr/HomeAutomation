@@ -88,7 +88,8 @@ public abstract class FanAutomationBase : ToggleableAutomation
     protected virtual IDisposable GetIdleOperationAutomations() =>
         MotionSensor
             .StateChanges()
-            .IsOffForMinutes(15)
+            .IsOff()
+            .ForMinutes(15)
             .Where(_ => MasterSwitch.IsOff())
             .Subscribe(_ => MasterSwitch.TurnOn());
 

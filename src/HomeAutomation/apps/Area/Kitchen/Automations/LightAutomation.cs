@@ -11,7 +11,11 @@ public class LightAutomation(IKitchenLightEntities entities, ILogger<LightAutoma
 
     protected override IEnumerable<IDisposable> GetLightAutomations() =>
         [
-            MotionSensor.StateChangesWithCurrent().IsOnForSeconds(1).Subscribe(_ => Light.TurnOn()),
+            MotionSensor
+                .StateChangesWithCurrent()
+                .IsOn()
+                .ForSeconds(1)
+                .Subscribe(_ => Light.TurnOn()),
             MotionSensor.StateChangesWithCurrent().IsOff().Subscribe(_ => Light.TurnOff()),
         ];
 
@@ -28,5 +32,5 @@ public class LightAutomation(IKitchenLightEntities entities, ILogger<LightAutoma
             .Subscribe(_ => SensorDelay?.SetNumericValue(SensorActiveDelayValue));
 
     private IDisposable SetupMotionSensorReactivation() =>
-        MotionSensor.StateChanges().IsOffForHours(1).Subscribe(_ => MasterSwitch.TurnOn());
+        MotionSensor.StateChanges().IsOff().ForHours(1).Subscribe(_ => MasterSwitch.TurnOn());
 }
