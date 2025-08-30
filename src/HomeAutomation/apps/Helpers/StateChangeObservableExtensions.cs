@@ -1,5 +1,4 @@
 using System.Linq;
-using System.Runtime.CompilerServices;
 
 namespace HomeAutomation.apps.Helpers;
 
@@ -127,13 +126,6 @@ public static class StateChangeObservableExtensions
         );
     }
 
-    private static IObservable<StateChange> ForEntityStateAndTime(
-        this IObservable<StateChange> source,
-        string entityState,
-        int time,
-        TimeUnit timeUnit
-    ) => source.WhenStateIsFor(entityState, time, timeUnit);
-
     private static IObservable<StateChange<T, TState>> WhenStateIsFor<T, TState>(
         this IObservable<StateChange<T, TState>> source,
         Func<TState?, bool> predicate,
@@ -175,107 +167,67 @@ public static class StateChangeObservableExtensions
     public static IObservable<StateChange> IsOnForSeconds(
         this IObservable<StateChange> source,
         int time
-    ) => source.ForEntityStateAndTime(HaEntityStates.ON, time, TimeUnit.Seconds);
+    ) => source.IsOn().ForSeconds(time);
 
     public static IObservable<StateChange> IsOnForMinutes(
         this IObservable<StateChange> source,
         int time
-    ) => source.ForEntityStateAndTime(HaEntityStates.ON, time, TimeUnit.Minutes);
+    ) => source.IsOn().ForMinutes(time);
 
     public static IObservable<StateChange> IsOnForHours(
         this IObservable<StateChange> source,
         int time
-    ) => source.ForEntityStateAndTime(HaEntityStates.ON, time, TimeUnit.Hours);
+    ) => source.IsOn().ForHours(time);
 
     public static IObservable<StateChange> IsOffForSeconds(
         this IObservable<StateChange> source,
         int time
-    ) => source.ForEntityStateAndTime(HaEntityStates.OFF, time, TimeUnit.Seconds);
+    ) => source.IsOff().ForSeconds(time);
 
     public static IObservable<StateChange> IsOffForMinutes(
         this IObservable<StateChange> source,
         int time
-    ) => source.ForEntityStateAndTime(HaEntityStates.OFF, time, TimeUnit.Minutes);
+    ) => source.IsOff().ForMinutes(time);
 
     public static IObservable<StateChange> IsOffForHours(
         this IObservable<StateChange> source,
         int time
-    ) => source.ForEntityStateAndTime(HaEntityStates.OFF, time, TimeUnit.Hours);
+    ) => source.IsOff().ForHours(time);
 
     public static IObservable<StateChange> IsClosedForSeconds(
         this IObservable<StateChange> source,
         int time
-    ) => source.ForEntityStateAndTime(HaEntityStates.OFF, time, TimeUnit.Seconds);
+    ) => source.IsClosed().ForSeconds(time);
 
     public static IObservable<StateChange> IsClosedForMinutes(
         this IObservable<StateChange> source,
         int time
-    ) => source.ForEntityStateAndTime(HaEntityStates.OFF, time, TimeUnit.Minutes);
-
-    public static IObservable<StateChange> IsClosedForHours(
-        this IObservable<StateChange> source,
-        int time
-    ) => source.ForEntityStateAndTime(HaEntityStates.OFF, time, TimeUnit.Hours);
-
-    public static IObservable<StateChange> IsUnavailableForSeconds(
-        this IObservable<StateChange> source,
-        int time
-    ) => source.ForEntityStateAndTime(HaEntityStates.UNAVAILABLE, time, TimeUnit.Seconds);
-
-    public static IObservable<StateChange> IsUnavailableForMinutes(
-        this IObservable<StateChange> source,
-        int time
-    ) => source.ForEntityStateAndTime(HaEntityStates.UNAVAILABLE, time, TimeUnit.Minutes);
-
-    public static IObservable<StateChange> IsUnavailableForHours(
-        this IObservable<StateChange> source,
-        int time
-    ) => source.ForEntityStateAndTime(HaEntityStates.UNAVAILABLE, time, TimeUnit.Hours);
+    ) => source.IsClosed().ForMinutes(time);
 
     public static IObservable<StateChange> IsOpenForSeconds(
         this IObservable<StateChange> source,
         int time
-    ) => source.ForEntityStateAndTime(HaEntityStates.ON, time, TimeUnit.Seconds);
+    ) => source.IsOpen().ForSeconds(time);
 
     public static IObservable<StateChange> IsOpenForMinutes(
         this IObservable<StateChange> source,
         int time
-    ) => source.ForEntityStateAndTime(HaEntityStates.ON, time, TimeUnit.Minutes);
-
-    public static IObservable<StateChange> IsOpenForHours(
-        this IObservable<StateChange> source,
-        int time
-    ) => source.ForEntityStateAndTime(HaEntityStates.ON, time, TimeUnit.Hours);
-
-    public static IObservable<StateChange> IsLockedForSeconds(
-        this IObservable<StateChange> source,
-        int time
-    ) => source.ForEntityStateAndTime(HaEntityStates.LOCKED, time, TimeUnit.Seconds);
+    ) => source.IsOpen().ForMinutes(time);
 
     public static IObservable<StateChange> IsLockedForMinutes(
         this IObservable<StateChange> source,
         int time
-    ) => source.ForEntityStateAndTime(HaEntityStates.LOCKED, time, TimeUnit.Minutes);
-
-    public static IObservable<StateChange> IsLockedForHours(
-        this IObservable<StateChange> source,
-        int time
-    ) => source.ForEntityStateAndTime(HaEntityStates.LOCKED, time, TimeUnit.Hours);
-
-    public static IObservable<StateChange> IsUnlockedForSeconds(
-        this IObservable<StateChange> source,
-        int time
-    ) => source.ForEntityStateAndTime(HaEntityStates.UNLOCKED, time, TimeUnit.Seconds);
+    ) => source.IsLocked().ForMinutes(time);
 
     public static IObservable<StateChange> IsUnlockedForMinutes(
         this IObservable<StateChange> source,
         int time
-    ) => source.ForEntityStateAndTime(HaEntityStates.UNLOCKED, time, TimeUnit.Minutes);
+    ) => source.IsUnlocked().ForMinutes(time);
 
     public static IObservable<StateChange> IsUnlockedForHours(
         this IObservable<StateChange> source,
         int time
-    ) => source.ForEntityStateAndTime(HaEntityStates.UNLOCKED, time, TimeUnit.Hours);
+    ) => source.IsUnlocked().ForHours(time);
 
     public static IObservable<IList<StateChange>> IsFlickering(
         this IObservable<StateChange> source,
@@ -288,30 +240,6 @@ public static class StateChangeObservableExtensions
             .DistinctUntilChanged(e => e.New?.State)
             .Buffer(TimeSpan.FromMilliseconds(timeWindowMs), scheduler ?? SchedulerProvider.Current)
             .Where(events => events.Count >= minimumFlips);
-
-    public static IObservable<StateChange<T, TState>> WhenStateIsForSeconds<T, TState>(
-        this IObservable<StateChange<T, TState>> source,
-        Func<TState?, bool> predicate,
-        int time
-    )
-        where T : Entity
-        where TState : EntityState => source.WhenStateIsFor(predicate, time, TimeUnit.Seconds);
-
-    public static IObservable<StateChange<T, TState>> WhenStateIsForMinutes<T, TState>(
-        this IObservable<StateChange<T, TState>> source,
-        Func<TState?, bool> predicate,
-        int time
-    )
-        where T : Entity
-        where TState : EntityState => source.WhenStateIsFor(predicate, time, TimeUnit.Minutes);
-
-    public static IObservable<StateChange<T, TState>> WhenStateIsForHours<T, TState>(
-        this IObservable<StateChange<T, TState>> source,
-        Func<TState?, bool> predicate,
-        int time
-    )
-        where T : Entity
-        where TState : EntityState => source.WhenStateIsFor(predicate, time, TimeUnit.Hours);
 }
 
 public static class StateChangeDurationExtensions
@@ -345,12 +273,8 @@ public static class StateChangeDurationExtensions
             _ => throw new ArgumentOutOfRangeException(nameof(unit)),
         };
 
-        // IMPORTANT: you already had WhenStateIsFor() in your file,
-        // we just route through it here.
-        return source.WhenStateIsFor(
-            s => s?.State.IsAvailable() ?? false, // <-- predicate applied to "current state"
-            timeSpan,
-            SchedulerProvider.Current
-        );
+        return source
+            .Select(e => Observable.Timer(timeSpan, SchedulerProvider.Current).Select(_ => e))
+            .Switch(); // Cancels previous timer if a new event comes
     }
 }
