@@ -1,6 +1,7 @@
 using HomeAutomation.apps.Area.Bathroom.Automations;
 using HomeAutomation.apps.Common.Containers;
 using HomeAutomation.apps.Common.Interface;
+using Microsoft.Reactive.Testing;
 
 namespace HomeAutomation.Tests.Area.Bathroom.Automations;
 
@@ -14,10 +15,16 @@ public class LightAutomationTests : IDisposable
     private readonly Mock<ILogger<LightAutomation>> _mockLogger;
     private readonly Mock<IDimmingLightController> _mockDimmingController;
     private readonly TestEntities _entities;
+    private readonly TestScheduler _testScheduler;
+
     private readonly LightAutomation _automation;
 
     public LightAutomationTests()
     {
+        // Set up TestScheduler for time-dependent operations
+        _testScheduler = new TestScheduler();
+        SchedulerProvider.Current = _testScheduler;
+
         _mockHaContext = new MockHaContext();
         _mockLogger = new Mock<ILogger<LightAutomation>>();
         _mockDimmingController = new Mock<IDimmingLightController>();
@@ -224,6 +231,44 @@ public class LightAutomationTests : IDisposable
         };
 
         act.Should().NotThrow();
+    }
+
+    [Fact]
+    public void MasterSwitch_Should_NotEnable_WhenMotionDetected_For2Seconds_AndMasterSwitch_IsOffFor5Minutes()
+    {
+        // Arrange - Set master switch to be off for 5 minutes
+        _mockHaContext.SimulateStateChange(_entities.MasterSwitch.EntityId, "on", "off");
+        _testScheduler.AdvanceBy(TimeSpan.FromMinutes(5).Ticks);
+
+        // Act - Simulate motion sensor turning on for 2 seconds
+        var stateChange = StateChangeHelpers.MotionDetected(_entities.MotionSensor);
+        _mockHaContext.StateChangeSubject.OnNext(stateChange);
+
+        _testScheduler.AdvanceBy(TimeSpan.FromSeconds(2).Ticks);
+
+        // Assert
+        _mockDimmingController.Verify(
+            x => x.OnMotionDetected(_entities.Light),
+            Times.Never,
+            "Light shouldn't turn on when it wasn't turn on by pantry motion sensor"
+        );
+        _mockHaContext.ShouldHaveCalledSwitchExactly(_entities.MasterSwitch.EntityId, "turn_on", 0);
+    }
+
+    [Fact]
+    public void MasterSwitch_Should_Enable_WhenMotionDetected_For2Seconds_AndMasterSwitch_WasOn()
+    {
+        // Arrange - Set master switch to be off for 4 minutes only
+        _mockHaContext.SimulateStateChange(_entities.MasterSwitch.EntityId, "on", "off");
+        _testScheduler.AdvanceBy(TimeSpan.FromMinutes(4).Ticks);
+
+        // Act - Simulate motion sensor turning on for 2 seconds
+        var stateChange = StateChangeHelpers.MotionDetected(_entities.MotionSensor);
+        _mockHaContext.StateChangeSubject.OnNext(stateChange);
+
+        _testScheduler.AdvanceBy(TimeSpan.FromSeconds(2).Ticks);
+
+        _mockHaContext.ShouldHaveCalledSwitchTurnOn(_entities.MasterSwitch.EntityId);
     }
 
     public void Dispose()

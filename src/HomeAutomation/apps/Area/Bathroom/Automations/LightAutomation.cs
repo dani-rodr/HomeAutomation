@@ -6,6 +6,8 @@ public class LightAutomation(
     ILogger<LightAutomation> logger
 ) : LightAutomationBase(entities, logger)
 {
+    private bool masterSwitchEnabledByPantry = true;
+
     public override void StartAutomation()
     {
         dimmingController.SetSensorActiveDelayValue(SensorActiveDelayValue);
@@ -14,7 +16,25 @@ public class LightAutomation(
     }
 
     protected override IEnumerable<IDisposable> GetAdditionalPersistentAutomations() =>
-        [MotionSensor.StateChanges().IsOn().ForSeconds(2).Subscribe(_ => MasterSwitch.TurnOn())];
+        [
+            MotionSensor
+                .StateChanges()
+                .IsOn()
+                .ForSeconds(2)
+                .Subscribe(_ =>
+                {
+                    if (masterSwitchEnabledByPantry)
+                    {
+                        MasterSwitch.TurnOn();
+                    }
+                }),
+            MasterSwitch.StateChanges().IsOn().Subscribe(_ => masterSwitchEnabledByPantry = true),
+            MasterSwitch
+                .StateChanges()
+                .IsOff()
+                .ForMinutes(5)
+                .Subscribe(_ => masterSwitchEnabledByPantry = false),
+        ];
 
     protected override IEnumerable<IDisposable> GetLightAutomations()
     {

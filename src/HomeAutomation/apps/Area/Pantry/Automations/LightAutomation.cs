@@ -57,6 +57,7 @@ public class LightAutomation(IPantryLightEntities entities, ILogger<LightAutomat
                 );
                 entities.BathroomMotionAutomation.TurnOn();
             });
+        var turnOffDelay = 30;
         yield return Observable
             .CombineLatest(
                 pantryChanges.IsOff(),
@@ -66,25 +67,27 @@ public class LightAutomation(IPantryLightEntities entities, ILogger<LightAutomat
             .Subscribe(_ =>
             {
                 Logger.LogDebug(
-                    "Both sensors off ({Pantry}: {PantryState}, {Bathroom}: {BathroomState}) - starting 1-minute delay before deactivating bathroom automation {EntityId}",
+                    "Both sensors off ({Pantry}: {PantryState}, {Bathroom}: {BathroomState}) - starting {turnOffDelay}-second delay before deactivating bathroom automation {EntityId}",
                     MotionSensor.EntityId,
                     entities.BathroomMotionSensor.EntityId,
                     MotionSensor.State,
                     entities.BathroomMotionSensor.State,
+                    turnOffDelay,
                     entities.BathroomMotionAutomation.EntityId
                 );
             });
 
         yield return Observable
             .CombineLatest(
-                pantryChanges.IsOff().ForMinutes(1),
-                bathroomChanges.IsOff().ForMinutes(1),
+                pantryChanges.IsOff().ForSeconds(turnOffDelay),
+                bathroomChanges.IsOff().ForSeconds(turnOffDelay),
                 (pantryOff, bathOff) => true
             )
             .Subscribe(_ =>
             {
                 Logger.LogDebug(
-                    "Both sensors remained off for 1 minute - deactivating bathroom automation {EntityId}",
+                    "Both sensors remained off for {turnOffDelay} seconds - deactivating bathroom automation {EntityId}",
+                    turnOffDelay,
                     entities.BathroomMotionAutomation.EntityId
                 );
                 entities.BathroomMotionAutomation.TurnOff();

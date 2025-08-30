@@ -43,9 +43,9 @@ public class LightAutomationTests : IDisposable
     /// <summary>
     /// Helper method to advance time by the specified number of minutes in tests.
     /// </summary>
-    private void AdvanceTimeByMinutes(int minutes)
+    private void AdvanceTimeBySeconds(int seconds)
     {
-        _testScheduler.AdvanceBy(TimeSpan.FromMinutes(minutes).Ticks);
+        _testScheduler.AdvanceBy(TimeSpan.FromSeconds(seconds).Ticks);
     }
 
     [Fact]
@@ -170,8 +170,8 @@ public class LightAutomationTests : IDisposable
             StateChangeHelpers.MotionCleared(_entities.BathroomMotionSensor)
         );
 
-        // Advance time by 1 minute to trigger bathroom automation turn_off
-        AdvanceTimeByMinutes(1);
+        // Advance time by 30 seconds to trigger bathroom automation turn_off
+        AdvanceTimeBySeconds(30);
 
         // Continue with final motion detection
         _mockHaContext.StateChangeSubject.OnNext(
@@ -278,15 +278,15 @@ public class LightAutomationTests : IDisposable
         var bathroomStateChange = StateChangeHelpers.MotionCleared(_entities.BathroomMotionSensor);
         _mockHaContext.StateChangeSubject.OnNext(bathroomStateChange);
 
-        // Assert - Should NOT turn off immediately (1 minute delay)
+        // Assert - Should NOT turn off immediately (30 seconds delay)
         _mockHaContext.ShouldHaveCalledSwitchExactly(
             _entities.BathroomMotionAutomation.EntityId,
             "turn_off",
             0
         );
 
-        // Advance time by 1 minute
-        AdvanceTimeByMinutes(1);
+        // Advance time by 30 seconds
+        AdvanceTimeBySeconds(30);
 
         // Assert - Should turn off bathroom automation after delay
         _mockHaContext.ShouldHaveCalledSwitchTurnOff(_entities.BathroomMotionAutomation.EntityId);
@@ -383,15 +383,15 @@ public class LightAutomationTests : IDisposable
             StateChangeHelpers.MotionCleared(_entities.BathroomMotionSensor)
         );
 
-        // Assert - Should NOT turn off immediately (1 minute delay)
+        // Assert - Should NOT turn off immediately (30 seconds delay)
         _mockHaContext.ShouldHaveCalledSwitchExactly(
             _entities.BathroomMotionAutomation.EntityId,
             "turn_off",
             0
         );
 
-        // Advance time by 1 minute
-        AdvanceTimeByMinutes(1);
+        // Advance time by 30 seconds
+        AdvanceTimeBySeconds(30);
 
         // Assert - Should turn off bathroom automation after delay
         _mockHaContext.ShouldHaveCalledSwitchTurnOff(_entities.BathroomMotionAutomation.EntityId);
@@ -417,15 +417,15 @@ public class LightAutomationTests : IDisposable
             StateChangeHelpers.MotionCleared(_entities.BathroomMotionSensor)
         );
 
-        // Assert - Should NOT turn off immediately (1 minute delay)
+        // Assert - Should NOT turn off immediately (30 seconds delay)
         _mockHaContext.ShouldHaveCalledSwitchExactly(
             _entities.BathroomMotionAutomation.EntityId,
             "turn_off",
             0
         );
 
-        // Advance time by 1 minute
-        AdvanceTimeByMinutes(1);
+        // Advance time by 30 seconds
+        AdvanceTimeBySeconds(30);
 
         // Assert - Should turn off bathroom automation after delay
         _mockHaContext.ShouldHaveCalledSwitchTurnOff(_entities.BathroomMotionAutomation.EntityId);
@@ -495,15 +495,15 @@ public class LightAutomationTests : IDisposable
             StateChangeHelpers.MotionCleared(_entities.BathroomMotionSensor)
         );
 
-        // Assert - Should NOT turn off immediately (1 minute delay)
+        // Assert - Should NOT turn off immediately (30 seconds delay)
         _mockHaContext.ShouldHaveCalledSwitchExactly(
             _entities.BathroomMotionAutomation.EntityId,
             "turn_off",
             0
         );
 
-        // Advance time by 1 minute
-        AdvanceTimeByMinutes(1);
+        // Advance time by 30 seconds
+        AdvanceTimeBySeconds(30);
 
         // Assert - Now bathroom automation should turn off after delay
         _mockHaContext.ShouldHaveCalledSwitchTurnOff(_entities.BathroomMotionAutomation.EntityId);
