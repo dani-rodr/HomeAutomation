@@ -46,7 +46,8 @@ public class LightAutomation(
     {
         return MotionSensor
             .StateChanges()
-            .IsOffForMinutes(2)
+            .IsOff()
+            .ForMinutes(2)
             .Where(_ =>
                 entities.BedroomDoor.IsClosed() && entities.BedroomMotionSensor.IsOccupied()
             )
@@ -57,7 +58,8 @@ public class LightAutomation(
     {
         return MotionSensor
             .StateChanges()
-            .IsOffForMinutes(30)
+            .IsOff()
+            .ForMinutes(30)
             .Where(_ => entities.TclTv.IsOff())
             .Subscribe(_ => MasterSwitch.TurnOn());
     }
@@ -66,7 +68,8 @@ public class LightAutomation(
     {
         return entities
             .KitchenMotionSensor.StateChanges()
-            .IsOnForSeconds(10)
+            .IsOn()
+            .ForSeconds(10)
             .Subscribe(_ => SensorDelay?.SetNumericValue(SensorActiveDelayValue));
     }
 

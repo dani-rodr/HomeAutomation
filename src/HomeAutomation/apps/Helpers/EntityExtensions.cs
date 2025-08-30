@@ -1,11 +1,7 @@
 using System.Linq;
-using System.Runtime.CompilerServices;
 
 namespace HomeAutomation.apps.Helpers;
 
-/// <summary>
-/// Extension methods for SensorEntity providing additional state checking and data extraction capabilities.
-/// </summary>
 public static class SensorEntityExtensions
 {
     /// <summary>
@@ -30,178 +26,60 @@ public static class SensorEntityExtensions
         return utcTime.Hour;
     }
 
-    /// <summary>
-    /// Determines if the sensor entity is in a locked state.
-    /// </summary>
-    /// <param name="sensor">The sensor entity to check.</param>
-    /// <returns>True if the sensor state indicates locked, false otherwise.</returns>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool IsLocked(this SensorEntity sensor) => sensor?.State.IsLocked() == true;
+    public static bool IsLocked(this SensorEntity sensor) => sensor.State.IsLocked();
 
-    /// <summary>
-    /// Determines if the sensor entity is in an unlocked state.
-    /// </summary>
-    /// <param name="sensor">The sensor entity to check.</param>
-    /// <returns>True if the sensor state indicates unlocked, false otherwise.</returns>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool IsUnlocked(this SensorEntity sensor) => sensor?.State.IsUnlocked() == true;
+    public static bool IsUnlocked(this SensorEntity sensor) => sensor.State.IsUnlocked();
 
-    /// <summary>
-    /// Determines if the sensor entity is unavailable.
-    /// </summary>
-    /// <param name="sensor">The sensor entity to check.</param>
-    /// <returns>True if the sensor is unavailable, false otherwise.</returns>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool IsUnavailable(this SensorEntity sensor) =>
-        sensor?.State.IsUnavailable() == true;
+    public static bool IsUnavailable(this SensorEntity sensor) => sensor.State.IsUnavailable();
 }
 
-/// <summary>
-/// Extension methods for BinarySensorEntity providing intuitive state checking for various sensor types.
-/// </summary>
 public static class BinaryEntityExtensions
 {
-    /// <summary>
-    /// Determines if the binary sensor indicates an open state (door, window, etc.).
-    /// </summary>
-    /// <param name="sensor">The binary sensor entity to check.</param>
-    /// <returns>True if the sensor indicates open state, false otherwise.</returns>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool IsOpen(this BinarySensorEntity sensor) => sensor.State.IsOpen();
 
-    /// <summary>
-    /// Determines if the binary sensor indicates occupancy or presence.
-    /// </summary>
-    /// <param name="sensor">The binary sensor entity to check.</param>
-    /// <returns>True if the sensor indicates occupancy/presence, false otherwise.</returns>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool IsOccupied(this BinarySensorEntity sensor) => sensor.State.IsOn();
 
-    /// <summary>
-    /// Determines if the binary sensor indicates a clear state (no motion, no detection).
-    /// </summary>
-    /// <param name="sensor">The binary sensor entity to check.</param>
-    /// <returns>True if the sensor indicates clear/no detection, false otherwise.</returns>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool IsClear(this BinarySensorEntity sensor) => sensor.State.IsOff();
 
-    /// <summary>
-    /// Determines if the binary sensor indicates a closed state (door, window, etc.).
-    /// </summary>
-    /// <param name="sensor">The binary sensor entity to check.</param>
-    /// <returns>True if the sensor indicates closed state, false otherwise.</returns>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool IsClosed(this BinarySensorEntity sensor) => sensor.State.IsClosed();
 
-    /// <summary>
-    /// Determines if the binary sensor indicates a connected state (device connectivity).
-    /// </summary>
-    /// <param name="sensor">The binary sensor entity to check.</param>
-    /// <returns>True if the sensor indicates connected state, false otherwise.</returns>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool IsConnected(this BinarySensorEntity sensor) => sensor.State.IsConnected();
 
-    /// <summary>
-    /// Determines if the binary sensor indicates a disconnected state (device connectivity).
-    /// </summary>
-    /// <param name="sensor">The binary sensor entity to check.</param>
-    /// <returns>True if the sensor indicates disconnected state, false otherwise.</returns>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool IsDisconnected(this BinarySensorEntity sensor) =>
         sensor.State.IsDisconnected();
 }
 
-/// <summary>
-/// Extension methods for ClimateEntity providing convenient HVAC mode and state checking.
-/// </summary>
 public static class ClimateEntityExtensions
 {
-    /// <summary>
-    /// Determines if the climate entity is in dry/dehumidify mode.
-    /// </summary>
-    /// <param name="climate">The climate entity to check.</param>
-    /// <returns>True if the climate is in dry mode, false otherwise.</returns>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool IsDry(this ClimateEntity climate) =>
         string.Equals(climate.State, HaEntityStates.DRY, StringComparison.OrdinalIgnoreCase);
 
-    /// <summary>
-    /// Determines if the climate entity is in cooling mode.
-    /// </summary>
-    /// <param name="climate">The climate entity to check.</param>
-    /// <returns>True if the climate is in cooling mode, false otherwise.</returns>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool IsCool(this ClimateEntity climate) =>
         string.Equals(climate.State, HaEntityStates.COOL, StringComparison.OrdinalIgnoreCase);
 
-    /// <summary>
-    /// Determines if the climate entity is turned off.
-    /// </summary>
-    /// <param name="climate">The climate entity to check.</param>
-    /// <returns>True if the climate is off, false otherwise.</returns>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool IsOff(this ClimateEntity climate) =>
         string.Equals(climate.State, HaEntityStates.OFF, StringComparison.OrdinalIgnoreCase);
 
-    /// <summary>
-    /// Determines if the climate entity is actively running (cooling or drying).
-    /// </summary>
-    /// <param name="climate">The climate entity to check.</param>
-    /// <returns>True if the climate is actively running in any mode, false otherwise.</returns>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool IsOn(this ClimateEntity climate) => climate.IsDry() || climate.IsCool();
 }
 
-/// <summary>
-/// Extension methods for WeatherEntity providing comprehensive weather condition checking.
-/// </summary>
 public static class WeatherEntityExtensions
 {
-    /// <summary>
-    /// Determines if the weather entity indicates dry conditions.
-    /// </summary>
-    /// <param name="climate">The weather entity to check.</param>
-    /// <returns>True if weather conditions are dry, false otherwise.</returns>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool IsDry(this WeatherEntity climate) =>
         string.Equals(climate.State, HaEntityStates.DRY, StringComparison.OrdinalIgnoreCase);
 
-    /// <summary>
-    /// Determines if the weather entity indicates sunny or partly cloudy conditions.
-    /// </summary>
-    /// <param name="climate">The weather entity to check.</param>
-    /// <returns>True if weather is sunny or partly cloudy, false otherwise.</returns>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool IsSunny(this WeatherEntity climate) =>
         climate.State is HaEntityStates.SUNNY or HaEntityStates.PARTLY_CLOUDY;
 
-    /// <summary>
-    /// Determines if the weather entity indicates rainy conditions (light to heavy rain).
-    /// </summary>
-    /// <param name="climate">The weather entity to check.</param>
-    /// <returns>True if weather includes any form of rain, false otherwise.</returns>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool IsRainy(this WeatherEntity climate) =>
         climate.State
             is HaEntityStates.RAINY
                 or HaEntityStates.POURING
                 or HaEntityStates.LIGHTNING_RAINY;
 
-    /// <summary>
-    /// Determines if the weather entity indicates cloudy conditions.
-    /// </summary>
-    /// <param name="climate">The weather entity to check.</param>
-    /// <returns>True if weather is cloudy or partly cloudy, false otherwise.</returns>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool IsCloudy(this WeatherEntity climate) =>
         climate.State is HaEntityStates.CLOUDY or HaEntityStates.PARTLY_CLOUDY;
 
-    /// <summary>
-    /// Determines if the weather entity indicates clear night conditions.
-    /// </summary>
-    /// <param name="climate">The weather entity to check.</param>
-    /// <returns>True if weather is clear at night, false otherwise.</returns>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool IsClearNight(this WeatherEntity climate) =>
         string.Equals(
             climate.State,
@@ -209,73 +87,31 @@ public static class WeatherEntityExtensions
             StringComparison.OrdinalIgnoreCase
         );
 
-    /// <summary>
-    /// Determines if the weather entity indicates stormy conditions (lightning, hail).
-    /// </summary>
-    /// <param name="climate">The weather entity to check.</param>
-    /// <returns>True if weather includes storms, lightning, or hail, false otherwise.</returns>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool IsStormy(this WeatherEntity climate) =>
         climate.State
             is HaEntityStates.LIGHTNING
                 or HaEntityStates.LIGHTNING_RAINY
                 or HaEntityStates.HAIL;
 
-    /// <summary>
-    /// Determines if the weather entity indicates snowy conditions.
-    /// </summary>
-    /// <param name="climate">The weather entity to check.</param>
-    /// <returns>True if weather includes snow, false otherwise.</returns>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool IsSnowy(this WeatherEntity climate) =>
         climate.State is HaEntityStates.SNOWY or HaEntityStates.SNOWY_RAINY;
 }
 
-/// <summary>
-/// Extension methods for NumberEntity providing convenient value manipulation.
-/// </summary>
 public static class NumberEntityExtensions
 {
-    /// <summary>
-    /// Sets the numeric value of a number entity using the Home Assistant service call.
-    /// </summary>
-    /// <param name="entity">The number entity to update.</param>
-    /// <param name="value">The numeric value to set.</param>
-    /// <remarks>
-    /// This method calls the Home Assistant "set_value" service to update the number entity.
-    /// The value should be within the entity's configured minimum and maximum range.
-    /// </remarks>
     public static void SetNumericValue(this NumberEntity entity, double value)
     {
         entity.CallService("set_value", new { value });
     }
 }
 
-/// <summary>
-/// Extension methods for LockEntity providing convenient lock state checking.
-/// </summary>
 public static class LockEntityExtensions
 {
-    /// <summary>
-    /// Determines if the lock entity is in a locked state.
-    /// </summary>
-    /// <param name="entity">The lock entity to check.</param>
-    /// <returns>True if the lock is locked, false otherwise.</returns>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool IsLocked(this LockEntity entity) => entity.State.IsLocked();
 
-    /// <summary>
-    /// Determines if the lock entity is in an unlocked state.
-    /// </summary>
-    /// <param name="entity">The lock entity to check.</param>
-    /// <returns>True if the lock is unlocked, false otherwise.</returns>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool IsUnlocked(this LockEntity entity) => entity.State.IsUnlocked();
 }
 
-/// <summary>
-/// Extension methods for SwitchEntity providing advanced interaction patterns.
-/// </summary>
 public static class SwitchEntityExtensions
 {
     /// <summary>

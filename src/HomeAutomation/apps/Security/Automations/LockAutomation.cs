@@ -24,13 +24,15 @@ public class LockAutomation(
         yield return lockChanges.IsLocked().Subscribe(HandleDoorLocked);
         yield return lockChanges.IsUnlocked().Subscribe(HandleDoorUnlocked);
         yield return lockChanges
-            .IsUnlockedForMinutes(AUTO_LOCK_IN_MINUTES)
+            .IsUnlocked()
+            .ForMinutes(AUTO_LOCK_IN_MINUTES)
             .Where(_ => entities.Door.IsClosed() && ShouldAutoLockAfterTime)
             .Subscribe(Lock);
         yield return doorChanges.IsClosed().Subscribe(HandleDoorClosed);
         yield return doorChanges.IsOpen().Subscribe(SendDoorOpenedNotification);
         yield return doorChanges
-            .IsOpenForMinutes(AUTO_LOCK_IN_MINUTES)
+            .IsOpen()
+            .ForMinutes(AUTO_LOCK_IN_MINUTES)
             .Subscribe(SendDoorOpenedNotification);
 
         yield return eventHandler.OnMobileEvent(LOCK_ACTION).Subscribe(_ => entities.Lock.Lock());

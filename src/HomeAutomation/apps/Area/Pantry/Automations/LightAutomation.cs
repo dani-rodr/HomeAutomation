@@ -45,8 +45,9 @@ public class LightAutomation(IPantryLightEntities entities, ILogger<LightAutomat
 
     private IEnumerable<IDisposable> AutoToggleBathroomMotionSensor()
     {
-        yield return MotionSensor
-            .StateChangesWithCurrent()
+        var pantryChanges = MotionSensor.StateChangesWithCurrent();
+        var bathroomChanges = entities.BathroomMotionSensor.StateChangesWithCurrent();
+        yield return pantryChanges
             .IsOn()
             .Subscribe(_ =>
             {
@@ -56,10 +57,12 @@ public class LightAutomation(IPantryLightEntities entities, ILogger<LightAutomat
                 );
                 entities.BathroomMotionAutomation.TurnOn();
             });
-        yield return MotionSensor
-            .StateChangesWithCurrent()
-            .CombineLatest(entities.BathroomMotionSensor.StateChangesWithCurrent())
-            .Where(states => states.First.IsOff() && states.Second.IsOff())
+        yield return Observable
+            .CombineLatest(
+                pantryChanges.IsOff(),
+                bathroomChanges.IsOff(),
+                (pantryOff, bathOff) => true
+            )
             .Subscribe(_ =>
             {
                 Logger.LogDebug(
@@ -72,16 +75,16 @@ public class LightAutomation(IPantryLightEntities entities, ILogger<LightAutomat
                 );
             });
 
-        yield return MotionSensor
-            .StateChangesWithCurrent()
-            .IsOffForMinutes(1)
+        yield return Observable
             .CombineLatest(
-                entities.BathroomMotionSensor.StateChangesWithCurrent().IsOffForMinutes(1)
+                pantryChanges.IsOff().ForMinutes(1),
+                bathroomChanges.IsOff().ForMinutes(1),
+                (pantryOff, bathOff) => true
             )
             .Subscribe(_ =>
             {
                 Logger.LogDebug(
-                    "1-minute delay completed - deactivating bathroom automation {EntityId}",
+                    "Both sensors remained off for 1 minute - deactivating bathroom automation {EntityId}",
                     entities.BathroomMotionAutomation.EntityId
                 );
                 entities.BathroomMotionAutomation.TurnOff();

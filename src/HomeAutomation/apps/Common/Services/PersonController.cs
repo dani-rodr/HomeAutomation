@@ -35,7 +35,8 @@ public class PersonController(IPersonEntities entities, IServices services, ILog
     public IObservable<string> LeftHome =>
         entities
             .AwayTriggers.StateChanges()
-            .IsOffForSeconds(AWAY_DELAY)
+            .IsOff()
+            .ForSeconds(AWAY_DELAY)
             .Where(_ => _person.IsHome())
             .Select(trigger => trigger.Entity.EntityId)
             .Merge(_leftHomeSubject);

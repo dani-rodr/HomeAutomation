@@ -139,7 +139,7 @@ public class FanAutomationTests : IDisposable
 
         _mockHaContext.ClearServiceCalls();
 
-        // Act - Test motion behavior (the automation uses IsOnForSeconds(3) which is complex to test)
+        // Act - Test motion behavior (the automation uses IsOn().ForSeconds(3) which is complex to test)
         // We'll test the TurnOnSalaFans method behavior directly through motion
         var motionDetected = StateChangeHelpers.MotionDetected(_entities.MotionSensor);
         _mockHaContext.StateChangeSubject.OnNext(motionDetected);

@@ -1,200 +1,141 @@
+using System.Text.Json;
+
 namespace HomeAutomation.apps.Helpers;
 
-/// <summary>
-/// Provides extension methods for state change validation, user identification, and state comparison.
-/// These methods simplify state change processing in NetDaemon automations.
-/// </summary>
-public static class StateExtensions
+public readonly struct StateChangeFluent<T, TState>(StateChange<T, TState> source, bool useNewState)
+    where T : Entity
+    where TState : EntityState
 {
-    /// <summary>
-    /// Extracts the user ID from the state change context.
-    /// </summary>
-    /// <typeparam name="T">The entity type.</typeparam>
-    /// <typeparam name="TState">The entity state type.</typeparam>
-    /// <param name="e">The state change event.</param>
-    /// <returns>The user ID if available, otherwise an empty string.</returns>
+    private readonly StateChange<T, TState> _source = source;
+    private readonly bool _useNewState = useNewState;
+
+    private string? GetState() => _useNewState ? _source.New?.State : _source.Old?.State;
+
+    public bool State(string expectedState) =>
+        string.Equals(GetState(), expectedState, StringComparison.OrdinalIgnoreCase);
+
+    public bool On() => State(HaEntityStates.ON);
+
+    public bool Off() => State(HaEntityStates.OFF);
+
+    public bool Locked() => State(HaEntityStates.LOCKED);
+
+    public bool Unlocked() => State(HaEntityStates.UNLOCKED);
+
+    public bool Open() => On();
+
+    public bool Closed() => Off();
+
+    public bool Unavailable() => State(HaEntityStates.UNAVAILABLE);
+}
+
+public static class StateChangeExtensions
+{
+    public static StateChangeFluent<T, TState> Is<T, TState>(this StateChange<T, TState> e)
+        where T : Entity
+        where TState : EntityState => new(e, useNewState: true);
+
+    public static StateChangeFluent<T, TState> Was<T, TState>(this StateChange<T, TState> e)
+        where T : Entity
+        where TState : EntityState => new(e, useNewState: false);
+
     public static string UserId<T, TState>(this StateChange<T, TState> e)
         where T : Entity
-        where TState : EntityState
-    {
-        return e.New?.Context?.UserId ?? string.Empty;
-    }
+        where TState : EntityState => e.New?.Context?.UserId ?? string.Empty;
 
-    /// <summary>
-    /// Extracts the state value from the state change.
-    /// </summary>
-    /// <typeparam name="T">The entity type.</typeparam>
-    /// <typeparam name="TState">The entity state type.</typeparam>
-    /// <param name="e">The state change event.</param>
-    /// <returns>The state value if available, otherwise an empty string.</returns>
     public static string State<T, TState>(this StateChange<T, TState> e)
         where T : Entity
-        where TState : EntityState
-    {
-        return e.New?.State ?? string.Empty;
-    }
+        where TState : EntityState => e.New?.State ?? string.Empty;
 
-    /// <summary>
-    /// Determines if the entity state change represents an "on" state.
-    /// </summary>
-    /// <typeparam name="T">The entity type.</typeparam>
-    /// <typeparam name="TState">The entity state type.</typeparam>
-    /// <param name="e">The state change event.</param>
-    /// <returns>True if the new state is "on", otherwise false.</returns>
     public static bool IsOn<T, TState>(this StateChange<T, TState> e)
         where T : Entity
-        where TState : EntityState
-    {
-        return e.New != null && e.New.State.IsOn();
-    }
+        where TState : EntityState => e.Is().On();
 
-    /// <summary>
-    /// Determines if the entity state change represents an "off" state.
-    /// </summary>
-    /// <typeparam name="T">The entity type.</typeparam>
-    /// <typeparam name="TState">The entity state type.</typeparam>
-    /// <param name="e">The state change event.</param>
-    /// <returns>True if the new state is "off", otherwise false.</returns>
     public static bool IsOff<T, TState>(this StateChange<T, TState> e)
         where T : Entity
-        where TState : EntityState
-    {
-        return e.New != null && e.New.State.IsOff();
-    }
+        where TState : EntityState => e.Is().Off();
 
-    /// <summary>
-    /// Determines if the entity state change represents a "locked" state.
-    /// </summary>
-    /// <typeparam name="T">The entity type.</typeparam>
-    /// <typeparam name="TState">The entity state type.</typeparam>
-    /// <param name="e">The state change event.</param>
-    /// <returns>True if the new state is "locked", otherwise false.</returns>
     public static bool IsLocked<T, TState>(this StateChange<T, TState> e)
         where T : Entity
-        where TState : EntityState
-    {
-        return e.New != null && e.New.State.IsLocked();
-    }
+        where TState : EntityState => e.Is().Locked();
 
-    /// <summary>
-    /// Determines if the entity state change represents an "unlocked" state.
-    /// </summary>
-    /// <typeparam name="T">The entity type.</typeparam>
-    /// <typeparam name="TState">The entity state type.</typeparam>
-    /// <param name="e">The state change event.</param>
-    /// <returns>True if the new state is "unlocked", otherwise false.</returns>
     public static bool IsUnlocked<T, TState>(this StateChange<T, TState> e)
         where T : Entity
-        where TState : EntityState
-    {
-        return e.New != null && e.New.State.IsUnlocked();
-    }
+        where TState : EntityState => e.Is().Unlocked();
 
     public static bool IsOpen<T, TState>(this StateChange<T, TState> e)
         where T : Entity
-        where TState : EntityState
-    {
-        return e.New != null && e.New.State.IsOpen();
-    }
+        where TState : EntityState => e.Is().Open();
 
-    /// <summary>
-    /// Determines if the entity state change represents an "unlocked" state.
-    /// </summary>
-    /// <typeparam name="T">The entity type.</typeparam>
-    /// <typeparam name="TState">The entity state type.</typeparam>
-    /// <param name="e">The state change event.</param>
-    /// <returns>True if the new state is "unlocked", otherwise false.</returns>
     public static bool IsClosed<T, TState>(this StateChange<T, TState> e)
         where T : Entity
-        where TState : EntityState
-    {
-        return e.New != null && e.New.State.IsClosed();
-    }
+        where TState : EntityState => e.Is().Closed();
 
-    /// <summary>
-    /// Determines if the entity state change represents an "unavailable" state.
-    /// </summary>
-    /// <typeparam name="T">The entity type.</typeparam>
-    /// <typeparam name="TState">The entity state type.</typeparam>
-    /// <param name="e">The state change event.</param>
-    /// <returns>True if the new state is "unavailable", otherwise false.</returns>
     public static bool IsUnavailable<T, TState>(this StateChange<T, TState> e)
         where T : Entity
-        where TState : EntityState
-    {
-        return e.New != null && e.New.State.IsUnavailable();
-    }
+        where TState : EntityState => e.Is().Unavailable();
 
-    /// <summary>
-    /// Extracts the user ID from the state change context (non-generic version).
-    /// </summary>
-    /// <param name="e">The state change event.</param>
-    /// <returns>The user ID if available, otherwise an empty string.</returns>
-    public static string UserId(this StateChange e)
-    {
-        return e.New?.Context?.UserId ?? string.Empty;
-    }
+    public static string UserId(this StateChange e) => e.New?.Context?.UserId ?? string.Empty;
 
     public static string Username(this StateChange e) => HaIdentity.GetName(e.UserId());
 
-    /// <summary>
-    /// Validates if the state change represents a valid button press event.
-    /// A valid button press has a state value that can be parsed as a DateTime.
-    /// </summary>
-    /// <param name="e">The state change event.</param>
-    /// <returns>True if the state represents a valid button press timestamp, otherwise false.</returns>
     public static bool IsValidButtonPress(this StateChange e) =>
         DateTime.TryParse(e?.New?.State, out _);
 
-    /// <summary>
-    /// Determines if the state change was triggered by manual user interaction.
-    /// </summary>
-    /// <param name="e">The state change event.</param>
-    /// <returns>True if the change was manually operated by a user, otherwise false.</returns>
     public static bool IsManuallyOperated(this StateChange e) =>
         HaIdentity.IsManuallyOperated(e.UserId());
 
-    /// <summary>
-    /// Determines if the state change was triggered by physical device interaction.
-    /// </summary>
-    /// <param name="e">The state change event.</param>
-    /// <returns>True if the change was physically operated, otherwise false.</returns>
     public static bool IsPhysicallyOperated(this StateChange e) =>
         HaIdentity.IsPhysicallyOperated(e.UserId());
 
-    /// <summary>
-    /// Determines if the state change was triggered by an automation.
-    /// </summary>
-    /// <param name="e">The state change event.</param>
-    /// <returns>True if the change was automated, otherwise false.</returns>
     public static bool IsAutomated(this StateChange e) => HaIdentity.IsAutomated(e.UserId());
 
-    /// <summary>
-    /// Determines if the state change represents an "on" state (non-generic version).
-    /// </summary>
-    /// <param name="e">The state change event.</param>
-    /// <returns>True if the new state is "on", otherwise false.</returns>
-    public static bool IsOn(this StateChange e) => e?.New?.State?.IsOn() ?? false;
+    public static (T? Old, T? New) GetAttributeChange<T>(
+        this StateChange change,
+        string attributeName
+    )
+    {
+        T? oldVal = TryGetAttributeValue<T>(change.Old?.Attributes, attributeName);
+        T? newVal = TryGetAttributeValue<T>(change.New?.Attributes, attributeName);
 
-    /// <summary>
-    /// Determines if the state change represents an "off" state (non-generic version).
-    /// </summary>
-    /// <param name="e">The state change event.</param>
-    /// <returns>True if the new state is "off", otherwise returns true by default for null states.</returns>
-    public static bool IsOff(this StateChange e) => e?.New?.State?.IsOff() ?? false;
+        return (oldVal, newVal);
+    }
 
-    /// <summary>
-    /// Determines if the state string represents an "open" state (alias for IsOn).
-    /// </summary>
-    /// <param name="state">The state string to check.</param>
-    /// <returns>True if the state is "open" (on), otherwise false.</returns>
+    private static T? TryGetAttributeValue<T>(
+        IReadOnlyDictionary<string, object>? attributes,
+        string key
+    )
+    {
+        if (attributes == null || !attributes.TryGetValue(key, out var value))
+            return default;
+
+        if (value is JsonElement json)
+        {
+            try
+            {
+                return json.Deserialize<T>();
+            }
+            catch
+            {
+                return default;
+            }
+        }
+
+        try
+        {
+            return (T?)Convert.ChangeType(value, typeof(T));
+        }
+        catch
+        {
+            return default;
+        }
+    }
+}
+
+public static class StateExtensions
+{
     public static bool IsOpen(this string? state) => state.IsOn();
 
-    /// <summary>
-    /// Determines if the state string represents a "closed" state (alias for IsOff).
-    /// </summary>
-    /// <param name="state">The state string to check.</param>
-    /// <returns>True if the state is "closed" (off), otherwise false.</returns>
     public static bool IsClosed(this string? state) => state.IsOff();
 
     public static bool Is(this string? actual, string? toCheck) =>

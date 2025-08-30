@@ -35,79 +35,6 @@ public class HelpersTests : IDisposable
 
     #region StateChangeObservableExtensions Tests
 
-    [Fact]
-    public void IsAnyOfStates_Should_FilterCorrectStates()
-    {
-        // Arrange
-        var results = new List<StateChange>();
-        _stateChangeSubject.IsAnyOfStates(states: ["on", "off"]).Subscribe(results.Add);
-
-        var onChange = StateChangeHelpers.CreateStateChange(_light, "off", "on");
-        var offChange = StateChangeHelpers.CreateStateChange(_light, "on", "off");
-        var dimChange = StateChangeHelpers.CreateStateChange(_light, "on", "dim");
-
-        // Act
-        _stateChangeSubject.OnNext(onChange);
-        _stateChangeSubject.OnNext(offChange);
-        _stateChangeSubject.OnNext(dimChange);
-
-        // Assert
-        results.Should().HaveCount(2);
-        results[0].New?.State.Should().Be("on");
-        results[1].New?.State.Should().Be("off");
-    }
-
-    [Fact]
-    public void IsAnyOfStates_Should_IgnoreUnavailableOldState()
-    {
-        // Arrange
-        var results = new List<StateChange>();
-        _stateChangeSubject
-            .IsAnyOfStates(states: ["on"], ignorePreviousUnavailable: false)
-            .Subscribe(results.Add);
-
-        // Create change with unavailable old state
-        var change = new StateChange(
-            (Entity)_light,
-            new EntityState { State = "unavailable" },
-            new EntityState { State = "on" }
-        );
-
-        // Act
-        _stateChangeSubject.OnNext(change);
-
-        // Assert
-        results.Should().BeEmpty("Should ignore changes from unavailable state");
-    }
-
-    [Fact]
-    public void IsAnyOfStates_Should_IgnoreNullStates()
-    {
-        // Arrange
-        var results = new List<StateChange>();
-        _stateChangeSubject
-            .IsAnyOfStates(states: ["on"], ignorePreviousUnavailable: false)
-            .Subscribe(results.Add);
-
-        var changeWithNullOld = new StateChange(
-            (Entity)_light,
-            null,
-            new EntityState { State = "on" }
-        );
-        var changeWithNullNew = new StateChange(
-            (Entity)_light,
-            new EntityState { State = "off" },
-            null
-        );
-
-        // Act
-        _stateChangeSubject.OnNext(changeWithNullOld);
-        _stateChangeSubject.OnNext(changeWithNullNew);
-
-        // Assert
-        results.Should().BeEmpty("Should ignore changes with null states");
-    }
-
     [Theory]
     [InlineData("ON", true)]
     [InlineData("on", true)]
@@ -494,95 +421,72 @@ public class HelpersTests : IDisposable
     #region Time-based Extension Tests
 
     [Fact]
-    public void WhenStateIsForSeconds_Should_UseCorrectTimeSpan()
-    {
-        // This test verifies the method compiles and returns an observable
-        // The actual timing behavior is tested by NetDaemon framework
-        var observable = _stateChangeSubject.WhenStateIsForSeconds("on", 30);
-        observable.Should().NotBeNull();
-    }
-
-    [Fact]
-    public void WhenStateIsForMinutes_Should_UseCorrectTimeSpan()
-    {
-        var observable = _stateChangeSubject.WhenStateIsForMinutes("on", 5);
-        observable.Should().NotBeNull();
-    }
-
-    [Fact]
-    public void WhenStateIsForHours_Should_UseCorrectTimeSpan()
-    {
-        var observable = _stateChangeSubject.WhenStateIsForHours("on", 2);
-        observable.Should().NotBeNull();
-    }
-
-    [Fact]
     public void IsOnForSeconds_Should_UseOnStateAndSeconds()
     {
-        var observable = _stateChangeSubject.IsOnForSeconds(45);
+        var observable = _stateChangeSubject.IsOn().ForSeconds(45);
         observable.Should().NotBeNull();
     }
 
     [Fact]
     public void IsOnForMinutes_Should_UseOnStateAndMinutes()
     {
-        var observable = _stateChangeSubject.IsOnForMinutes(10);
+        var observable = _stateChangeSubject.IsOn().ForMinutes(10);
         observable.Should().NotBeNull();
     }
 
     [Fact]
     public void IsOnForHours_Should_UseOnStateAndHours()
     {
-        var observable = _stateChangeSubject.IsOnForHours(3);
+        var observable = _stateChangeSubject.IsOn().ForHours(3);
         observable.Should().NotBeNull();
     }
 
     [Fact]
     public void IsOffForSeconds_Should_UseOffStateAndSeconds()
     {
-        var observable = _stateChangeSubject.IsOffForSeconds(60);
+        var observable = _stateChangeSubject.IsOff().ForSeconds(60);
         observable.Should().NotBeNull();
     }
 
     [Fact]
     public void IsOffForMinutes_Should_UseOffStateAndMinutes()
     {
-        var observable = _stateChangeSubject.IsOffForMinutes(15);
+        var observable = _stateChangeSubject.IsOff().ForMinutes(15);
         observable.Should().NotBeNull();
     }
 
     [Fact]
     public void IsOffForHours_Should_UseOffStateAndHours()
     {
-        var observable = _stateChangeSubject.IsOffForHours(1);
+        var observable = _stateChangeSubject.IsOff().ForHours(1);
         observable.Should().NotBeNull();
     }
 
     [Fact]
     public void IsClosedForSeconds_Should_UseOffStateAndSeconds()
     {
-        var observable = _stateChangeSubject.IsClosedForSeconds(30);
+        var observable = _stateChangeSubject.IsClosed().ForSeconds(30);
         observable.Should().NotBeNull();
     }
 
     [Fact]
     public void IsOpenForSeconds_Should_UseOnStateAndSeconds()
     {
-        var observable = _stateChangeSubject.IsOpenForSeconds(20);
+        var observable = _stateChangeSubject.IsOpen().ForSeconds(20);
         observable.Should().NotBeNull();
     }
 
     [Fact]
     public void IsLockedForMinutes_Should_UseLockedStateAndMinutes()
     {
-        var observable = _stateChangeSubject.IsLockedForMinutes(5);
+        var observable = _stateChangeSubject.IsLocked().ForMinutes(5);
         observable.Should().NotBeNull();
     }
 
     [Fact]
     public void IsUnlockedForHours_Should_UseUnlockedStateAndHours()
     {
-        var observable = _stateChangeSubject.IsUnlockedForHours(2);
+        var observable = _stateChangeSubject.IsUnlocked().ForHours(2);
         observable.Should().NotBeNull();
     }
 
@@ -651,40 +555,6 @@ public class HelpersTests : IDisposable
 
         // Assert
         result.Should().Be(string.Empty);
-    }
-
-    [Theory]
-    [InlineData("on", true)]
-    [InlineData("ON", true)]
-    [InlineData("off", false)]
-    [InlineData("unknown", false)]
-    public void GenericStateChange_IsOn_Should_CheckOnState(string state, bool expected)
-    {
-        // Arrange
-        var change = StateChangeHelpers.CreateStateChange(_light, "off", state);
-
-        // Act
-        var result = change.IsOn();
-
-        // Assert
-        result.Should().Be(expected);
-    }
-
-    [Theory]
-    [InlineData("off", true)]
-    [InlineData("OFF", true)]
-    [InlineData("on", false)]
-    [InlineData("unknown", false)]
-    public void GenericStateChange_IsOff_Should_CheckOffState(string state, bool expected)
-    {
-        // Arrange
-        var change = StateChangeHelpers.CreateStateChange(_light, "on", state);
-
-        // Act
-        var result = change.IsOff();
-
-        // Assert
-        result.Should().Be(expected);
     }
 
     [Theory]
@@ -820,22 +690,6 @@ public class HelpersTests : IDisposable
 
         // Assert
         result.Should().Be(expected);
-    }
-
-    [Fact]
-    public void StateChange_IsOn_Should_ReturnFalseForNullStateChange()
-    {
-        // Act & Assert
-        StateChange? nullChange = null;
-        nullChange!.IsOn().Should().BeFalse();
-    }
-
-    [Fact]
-    public void StateChange_IsOff_Should_ReturnTrueForNullStateChange()
-    {
-        // Act & Assert
-        StateChange? nullChange = null;
-        nullChange!.IsOff().Should().BeFalse();
     }
 
     #endregion
