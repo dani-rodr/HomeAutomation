@@ -57,7 +57,7 @@ public class LightAutomation(IPantryLightEntities entities, ILogger<LightAutomat
                 );
                 entities.BathroomMotionAutomation.TurnOn();
             });
-        var turnOffDelay = 30;
+        var turnOffDelay = 60;
         yield return Observable
             .CombineLatest(
                 pantryChanges.IsOff(),
