@@ -3,7 +3,6 @@ using HomeAutomation.apps.Area.Desk.Automations;
 using HomeAutomation.apps.Area.Desk.Devices;
 using HomeAutomation.apps.Common.Containers;
 using HomeAutomation.apps.Common.Interface;
-using Microsoft.Reactive.Testing;
 
 namespace HomeAutomation.Tests.Area.Desk.Automations;
 
@@ -27,7 +26,6 @@ public class DisplayAutomationTests : IDisposable
     private readonly Mock<ILaptopScheduler> _mockScheduler;
     private readonly Mock<ILaptopChargingHandler> _mockBatteryHandler;
     private readonly Mock<INotificationServices> _mockNotificationServices;
-    private readonly TestScheduler _testScheduler = new();
 
     private readonly TestDesktopEntities _desktopEntities;
     private readonly TestLaptopEntities _laptopEntities;
@@ -103,7 +101,6 @@ public class DisplayAutomationTests : IDisposable
             _desktopEntities,
             _mockEventHandler.Object,
             _mockNotificationServices.Object,
-            _testScheduler,
             _mockDesktopLogger.Object
         );
         _desktop.StartAutomation();

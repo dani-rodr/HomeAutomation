@@ -1,7 +1,6 @@
 using HomeAutomation.apps.Common.Containers;
 using HomeAutomation.apps.Common.Services;
 using HomeAutomation.apps.Security.Automations;
-using Microsoft.Reactive.Testing;
 
 namespace HomeAutomation.Tests.Security.Automations;
 
@@ -17,7 +16,6 @@ public class AccessControlAutomationTests : IDisposable
     private readonly Mock<IPersonController> _mockPerson1Controller;
     private readonly Mock<IPersonController> _mockPerson2Controller;
     private readonly AccessControlAutomation _automation;
-    private readonly TestScheduler _testScheduler;
 
     // Observable subjects for controlling person controller events in tests
     private readonly Subject<string> _person1ArrivedHome = new();
@@ -30,10 +28,6 @@ public class AccessControlAutomationTests : IDisposable
     {
         _mockHaContext = new MockHaContext();
         _mockLogger = new Mock<ILogger<AccessControlAutomation>>();
-        _testScheduler = new TestScheduler();
-
-        // Set up TestScheduler for time-based testing
-        SchedulerProvider.Current = _testScheduler;
 
         // Create test entities wrapper
         _entities = new TestEntities(_mockHaContext);
@@ -214,7 +208,7 @@ public class AccessControlAutomationTests : IDisposable
         _mockHaContext.StateChangeSubject.OnNext(awayTriggerChange);
 
         // Advance time by 59 seconds (just before delay expires)
-        _testScheduler.AdvanceBy(TimeSpan.FromSeconds(59).Ticks);
+        _mockHaContext.AdvanceTimeBySeconds(59);
 
         // Assert - Should not trigger yet (delay not complete)
         _mockHaContext.ShouldHaveNoServiceCalls();
@@ -231,7 +225,7 @@ public class AccessControlAutomationTests : IDisposable
         // Act - Person 1 left home via person controller observable (after delay logic in PersonController)
         _person1LeftHome.OnNext(_entities.Person1AwayTrigger.EntityId);
         // Advance time by exactly 60 seconds
-        _testScheduler.AdvanceBy(TimeSpan.FromSeconds(60).Ticks);
+        _mockHaContext.AdvanceTimeBySeconds(60);
 
         // Assert - Should now lock door and set person away
         _mockHaContext.ShouldHaveCalledLockLock(_entities.Lock.EntityId);
@@ -254,7 +248,7 @@ public class AccessControlAutomationTests : IDisposable
         _mockHaContext.StateChangeSubject.OnNext(awayTriggerChange);
 
         // After 30 seconds, person 1 comes back (trigger turns on again - cancelling delay)
-        _testScheduler.AdvanceBy(TimeSpan.FromSeconds(30).Ticks);
+        _mockHaContext.AdvanceTimeBySeconds(30);
         var homeCancelChange = StateChangeHelpers.CreateStateChange(
             _entities.Person1AwayTrigger,
             "off",
@@ -263,7 +257,7 @@ public class AccessControlAutomationTests : IDisposable
         _mockHaContext.StateChangeSubject.OnNext(homeCancelChange);
 
         // Advance past original 60-second mark
-        _testScheduler.AdvanceBy(TimeSpan.FromSeconds(40).Ticks);
+        _mockHaContext.AdvanceTimeBySeconds(40);
 
         // Assert - Should not trigger because delay was cancelled
         _mockHaContext.ShouldHaveNoServiceCalls();
@@ -305,7 +299,7 @@ public class AccessControlAutomationTests : IDisposable
         _person1LeftHome.OnNext(_entities.Person1AwayTrigger.EntityId);
 
         // Advance 60 seconds to trigger away logic (door recently closed = true)
-        _testScheduler.AdvanceBy(TimeSpan.FromSeconds(60).Ticks);
+        _mockHaContext.AdvanceTimeBySeconds(60);
 
         // Should have triggered because door was recently closed
         _mockHaContext.ShouldHaveCalledLockLock(_entities.Lock.EntityId);
@@ -313,11 +307,11 @@ public class AccessControlAutomationTests : IDisposable
         _mockHaContext.ClearServiceCalls();
 
         // Act - Advance time by 5 minutes (door recently closed flag should clear)
-        _testScheduler.AdvanceBy(TimeSpan.FromMinutes(5).Ticks);
+        _mockHaContext.AdvanceTimeByMinutes(5);
 
         // Trigger away logic again (door recently closed should now be false)
         _person1LeftHome.OnNext(_entities.Person1AwayTrigger.EntityId);
-        _testScheduler.AdvanceBy(TimeSpan.FromSeconds(60).Ticks);
+        _mockHaContext.AdvanceTimeBySeconds(60);
 
         // Assert - Should not trigger because door recently closed flag was cleared
         // Verify that SetAway was called exactly once (from the first trigger, not the second)
@@ -332,7 +326,8 @@ public class AccessControlAutomationTests : IDisposable
         _mockHaContext.StateChangeSubject.OnNext(doorClosedChange);
 
         // Advance time past door window (5 minutes)
-        _testScheduler.AdvanceBy(TimeSpan.FromMinutes(5).Ticks);
+        _mockHaContext.AdvanceTimeByMinutes(5);
+
         _mockHaContext.ClearServiceCalls();
 
         // Act - Person 1 away trigger turns off after door window expired
@@ -344,7 +339,7 @@ public class AccessControlAutomationTests : IDisposable
         _mockHaContext.StateChangeSubject.OnNext(awayTriggerChange);
 
         // Advance time by 60 seconds (away trigger delay)
-        _testScheduler.AdvanceBy(TimeSpan.FromSeconds(60).Ticks);
+        _mockHaContext.AdvanceTimeBySeconds(60);
 
         // Assert - Should not trigger because door window expired
         _mockHaContext.ShouldHaveNoServiceCalls();
@@ -413,9 +408,9 @@ public class AccessControlAutomationTests : IDisposable
         _person2ArrivedHome.OnNext(_entities.Person2HomeTrigger.EntityId);
 
         // Test at various points during suppression window
-        _testScheduler.AdvanceBy(TimeSpan.FromMinutes(1).Ticks);
-        _testScheduler.AdvanceBy(TimeSpan.FromMinutes(5).Ticks);
-        _testScheduler.AdvanceBy(TimeSpan.FromMinutes(3).Ticks); // Total: 9 minutes
+        _mockHaContext.AdvanceTimeByMinutes(1);
+        _mockHaContext.AdvanceTimeByMinutes(5);
+        _mockHaContext.AdvanceTimeByMinutes(3); // Total: 9 minutes
 
         // Assert - Should still be suppressed (no unlock)
         _mockPerson2Controller.Verify(p => p.SetHome(), Times.Once);
@@ -435,7 +430,7 @@ public class AccessControlAutomationTests : IDisposable
         _mockHaContext.ClearServiceCalls();
 
         // Act - Advance time by exactly 10 minutes (suppression timer expires)
-        _testScheduler.AdvanceBy(TimeSpan.FromMinutes(10).Ticks);
+        _mockHaContext.AdvanceTimeByMinutes(10);
 
         // Person 2 comes home after suppression expired
         _person2ArrivedHome.OnNext(_entities.Person2HomeTrigger.EntityId);
@@ -458,7 +453,8 @@ public class AccessControlAutomationTests : IDisposable
         _mockHaContext.ClearServiceCalls();
 
         // Act - House becomes empty again after 5 minutes (should clear suppression)
-        _testScheduler.AdvanceBy(TimeSpan.FromMinutes(5).Ticks);
+        _mockHaContext.AdvanceTimeByMinutes(5);
+
         var houseEmptyAgain = StateChangeHelpers.CreateStateChange(_entities.House, "on", "off");
         _mockHaContext.StateChangeSubject.OnNext(houseEmptyAgain);
 
@@ -489,7 +485,7 @@ public class AccessControlAutomationTests : IDisposable
         _person1ArrivedHome.OnNext(_entities.Person1HomeTrigger.EntityId);
         _mockHaContext.ClearServiceCalls();
 
-        _testScheduler.AdvanceBy(TimeSpan.FromMinutes(10).Ticks);
+        _mockHaContext.AdvanceTimeByMinutes(10);
 
         // Act - Person 2 comes home after suppression cleared
         _person2ArrivedHome.OnNext(_entities.Person2HomeTrigger.EntityId);
@@ -598,7 +594,8 @@ public class AccessControlAutomationTests : IDisposable
         _mockHaContext.ClearServiceCalls();
 
         // Person 2 comes home 3 minutes later (during suppression)
-        _testScheduler.AdvanceBy(TimeSpan.FromMinutes(3).Ticks);
+        _mockHaContext.AdvanceTimeByMinutes(3);
+
         _person2ArrivedHome.OnNext(_entities.Person2HomeTrigger.EntityId);
 
         // Should be suppressed
@@ -607,14 +604,14 @@ public class AccessControlAutomationTests : IDisposable
         _mockHaContext.ClearServiceCalls();
 
         // Advance past suppression window (7 more minutes = 10 total)
-        _testScheduler.AdvanceBy(TimeSpan.FromMinutes(7).Ticks);
+        _mockHaContext.AdvanceTimeByMinutes(7);
 
         // Now person 2 leaves (door closes, away trigger after delay)
         var doorClosedChange = StateChangeHelpers.CreateStateChange(_entities.Door, "on", "off");
         _mockHaContext.StateChangeSubject.OnNext(doorClosedChange);
 
         _person2LeftHome.OnNext(_entities.Person2AwayTrigger.EntityId);
-        _testScheduler.AdvanceBy(TimeSpan.FromSeconds(60).Ticks);
+        _mockHaContext.AdvanceTimeByMinutes(1);
 
         _mockPerson2Controller.Verify(p => p.SetAway(), Times.Once);
         _mockHaContext.ShouldHaveCalledLockLock(_entities.Lock.EntityId);
@@ -636,7 +633,7 @@ public class AccessControlAutomationTests : IDisposable
         _mockHaContext.ClearServiceCalls();
 
         // Away trigger starts at 4 minutes 59 seconds after door close
-        _testScheduler.AdvanceBy(TimeSpan.FromMinutes(4).Add(TimeSpan.FromSeconds(59)).Ticks);
+        _mockHaContext.AdvanceTimeBy(TimeSpan.FromMinutes(4).Add(TimeSpan.FromSeconds(59)));
 
         var awayTriggerChange = StateChangeHelpers.CreateStateChange(
             _entities.Person1AwayTrigger,
@@ -646,10 +643,10 @@ public class AccessControlAutomationTests : IDisposable
         _mockHaContext.StateChangeSubject.OnNext(awayTriggerChange);
 
         // Advance by 1 second (door window expires at exactly 5 minutes)
-        _testScheduler.AdvanceBy(TimeSpan.FromSeconds(1).Ticks);
+        _mockHaContext.AdvanceTimeBySeconds(1);
 
         // Advance by remaining 59 seconds (60-second away trigger delay completes)
-        _testScheduler.AdvanceBy(TimeSpan.FromSeconds(59).Ticks);
+        _mockHaContext.AdvanceTimeBySeconds(59);
 
         // Assert - Should NOT trigger because door window expired before away trigger logic executed
         // At this point we're at 6:00 total time, door window expired at 5:00

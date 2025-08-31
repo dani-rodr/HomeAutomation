@@ -2,7 +2,6 @@ using System.Reflection;
 using HomeAutomation.apps.Area.Desk.Devices;
 using HomeAutomation.apps.Common.Containers;
 using HomeAutomation.apps.Common.Interface;
-using Microsoft.Reactive.Testing;
 
 namespace HomeAutomation.Tests.Area.Desk.Devices;
 
@@ -17,7 +16,6 @@ public class DesktopTests : IDisposable
     private readonly Mock<IEventHandler> _mockEventHandler;
     private readonly Mock<INotificationServices> _mockNotificationServices;
     private readonly TestDesktopEntities _entities;
-    private readonly TestScheduler _mockScheduler = new();
     private readonly Desktop _desktop;
     private readonly List<bool> _stateChanges = [];
 
@@ -34,7 +32,6 @@ public class DesktopTests : IDisposable
             _entities,
             _mockEventHandler.Object,
             _mockNotificationServices.Object,
-            _mockScheduler,
             _mockLogger.Object
         );
         _desktop.StartAutomation();
@@ -102,7 +99,7 @@ public class DesktopTests : IDisposable
             HaEntityStates.OFF
         );
         // Advance virtual time to trigger delayed false
-        _mockScheduler.AdvanceBy(TimeSpan.FromSeconds(1).Ticks);
+        _mockHaContext.AdvanceTimeBySeconds(1);
 
         _mockHaContext.SimulateStateChange(
             _entities.Power.EntityId,
@@ -146,7 +143,7 @@ public class DesktopTests : IDisposable
             HaEntityStates.ON,
             HaEntityStates.OFF
         );
-        _mockScheduler.AdvanceBy(TimeSpan.FromSeconds(1).Ticks);
+        _mockHaContext.AdvanceTimeBySeconds(1);
         // Assert
         _stateChanges
             .Should()

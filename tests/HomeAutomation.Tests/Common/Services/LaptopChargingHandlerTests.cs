@@ -1,6 +1,5 @@
 using HomeAutomation.apps.Common.Containers;
 using HomeAutomation.apps.Common.Services;
-using Microsoft.Reactive.Testing;
 
 namespace HomeAutomation.Tests.Common.Services;
 
@@ -14,7 +13,6 @@ public class LaptopChargingHandlerTests : IDisposable
     private readonly MockHaContext _mockHaContext;
     private readonly Mock<ILogger<LaptopChargingHandler>> _mockLogger;
     private readonly TestBatteryHandlerEntities _entities;
-    private readonly TestScheduler _testScheduler = new();
     private readonly LaptopChargingHandler _batteryHandler;
 
     public LaptopChargingHandlerTests()
@@ -22,7 +20,7 @@ public class LaptopChargingHandlerTests : IDisposable
         _mockHaContext = new MockHaContext();
         _mockLogger = new Mock<ILogger<LaptopChargingHandler>>();
         _entities = new TestBatteryHandlerEntities(_mockHaContext);
-        _batteryHandler = new LaptopChargingHandler(_entities, _testScheduler, _mockLogger.Object);
+        _batteryHandler = new LaptopChargingHandler(_entities, _mockLogger.Object);
     }
 
     #region Constructor & Initialization Tests
@@ -187,7 +185,7 @@ public class LaptopChargingHandlerTests : IDisposable
         _mockHaContext.ShouldHaveCalledSwitchTurnOn(_entities.Power.EntityId);
 
         // Advance scheduler by 1 hour to trigger power off
-        _testScheduler.AdvanceBy(TimeSpan.FromHours(1).Ticks);
+        _mockHaContext.AdvanceTimeBy(TimeSpan.FromHours(1));
 
         // Assert - Power should turn off after 1 hour
         _mockHaContext.ShouldHaveCalledSwitchTurnOff(_entities.Power.EntityId);
@@ -209,13 +207,13 @@ public class LaptopChargingHandlerTests : IDisposable
         _batteryHandler.HandleLaptopTurnedOn();
 
         // Advance some time (but less than 1 hour) to verify timer was cancelled
-        _testScheduler.AdvanceBy(TimeSpan.FromMinutes(30).Ticks);
+        _mockHaContext.AdvanceTimeBy(TimeSpan.FromMinutes(30));
 
         // Power should remain on (timer was cancelled) - only turn_on call, no turn_off
         _mockHaContext.ShouldHaveCalledSwitchTurnOn(_entities.Power.EntityId);
 
         // Advance full hour - still should not turn off due to cancellation
-        _testScheduler.AdvanceBy(TimeSpan.FromMinutes(30).Ticks);
+        _mockHaContext.AdvanceTimeBy(TimeSpan.FromMinutes(30));
 
         // Should have 2 turn_on calls (from HandleLaptopTurnedOff + HandleLaptopTurnedOn), but no turn_off
         _mockHaContext.ShouldHaveCalledSwitchExactly(_entities.Power.EntityId, "turn_on", 2);
@@ -243,13 +241,13 @@ public class LaptopChargingHandlerTests : IDisposable
 
         // Start second operation (should cancel the first timer)
         _batteryHandler.HandleLaptopTurnedOff();
-        _testScheduler.AdvanceBy(TimeSpan.FromMilliseconds(10).Ticks); // Let second start
+        _mockHaContext.AdvanceTimeBy(TimeSpan.FromMilliseconds(10)); // Let second start
 
         // Should have turned on power again (second call)
         _mockHaContext.ShouldHaveCalledSwitchExactly(_entities.Power.EntityId, "turn_on", 2);
 
         // Advance by 1 hour - only the second timer should fire
-        _testScheduler.AdvanceBy(TimeSpan.FromHours(1).Ticks);
+        _mockHaContext.AdvanceTimeBy(TimeSpan.FromHours(1));
 
         // Should turn off power once (from second call)
         _mockHaContext.ShouldHaveCalledSwitchTurnOff(_entities.Power.EntityId);
@@ -346,7 +344,7 @@ public class LaptopChargingHandlerTests : IDisposable
         _mockHaContext.ShouldHaveCalledSwitchTurnOn(_entities.Power.EntityId);
 
         // Act - Advance time by the specified hours to trigger power-off
-        _testScheduler.AdvanceBy(TimeSpan.FromHours(hours).Ticks);
+        _mockHaContext.AdvanceTimeBy(TimeSpan.FromHours(hours));
 
         // Assert - Power should turn off after scheduled duration
         _mockHaContext.ShouldHaveCalledSwitchTurnOff(_entities.Power.EntityId);
@@ -360,16 +358,16 @@ public class LaptopChargingHandlerTests : IDisposable
 
         // Set scheduler baseline to Friday 11:59 PM to minimize time jump
         var fridayNight = new DateTime(2025, 1, 3, 23, 59, 0); // Friday night
-        _testScheduler.AdvanceTo(fridayNight.Ticks);
+        _mockHaContext.AdvanceTimeTo(fridayNight);
 
         // Act - Advance by 10 hours 1 minute to reach Saturday 10:00 AM (much faster than absolute time)
-        _testScheduler.AdvanceBy(TimeSpan.FromHours(10).Ticks + TimeSpan.FromMinutes(1).Ticks);
+        _mockHaContext.AdvanceTimeBy(TimeSpan.FromHours(10).Add(TimeSpan.FromMinutes(1)));
 
         // Assert - Should trigger power on for 1-hour charging session
         _mockHaContext.ShouldHaveCalledSwitchTurnOn(_entities.Power.EntityId);
 
         // Act - Advance by 1 hour to complete charging session
-        _testScheduler.AdvanceBy(TimeSpan.FromHours(1).Ticks);
+        _mockHaContext.AdvanceTimeBy(TimeSpan.FromHours(1));
 
         // Assert - Should turn power off after 1 hour
         _mockHaContext.ShouldHaveCalledSwitchTurnOff(_entities.Power.EntityId);
@@ -385,16 +383,16 @@ public class LaptopChargingHandlerTests : IDisposable
 
         // Set scheduler baseline to Sunday 5:59 PM to minimize time jump
         var sundayEvening = new DateTime(2025, 1, 5, 17, 59, 0); // Sunday evening
-        _testScheduler.AdvanceTo(sundayEvening.Ticks);
+        _mockHaContext.AdvanceTimeTo(sundayEvening);
 
         // Act - Advance by 1 minute to reach Sunday 6:00 PM (much faster than absolute time)
-        _testScheduler.AdvanceBy(TimeSpan.FromMinutes(1).Ticks);
+        _mockHaContext.AdvanceTimeBy(TimeSpan.FromMinutes(1));
 
         // Assert - Should trigger power on for 1-hour charging session
         _mockHaContext.ShouldHaveCalledSwitchTurnOn(_entities.Power.EntityId);
 
         // Act - Advance by 1 hour to complete charging session
-        _testScheduler.AdvanceBy(TimeSpan.FromHours(1).Ticks);
+        _mockHaContext.AdvanceTimeBy(TimeSpan.FromHours(1));
 
         // Assert - Should turn power off after 1 hour
         _mockHaContext.ShouldHaveCalledSwitchTurnOff(_entities.Power.EntityId);
@@ -410,16 +408,16 @@ public class LaptopChargingHandlerTests : IDisposable
 
         // Set scheduler baseline to Monday 5:59 AM to minimize time jump
         var mondayMorning = new DateTime(2025, 1, 6, 5, 59, 0); // Monday morning
-        _testScheduler.AdvanceTo(mondayMorning.Ticks);
+        _mockHaContext.AdvanceTimeTo(mondayMorning);
 
         // Act - Advance by 1 minute to reach Monday 6:00 AM (much faster than absolute time)
-        _testScheduler.AdvanceBy(TimeSpan.FromMinutes(1).Ticks);
+        _mockHaContext.AdvanceTimeBy(TimeSpan.FromMinutes(1));
 
         // Assert - Should trigger power on for 1-hour charging session (before 7-8 AM wake time)
         _mockHaContext.ShouldHaveCalledSwitchTurnOn(_entities.Power.EntityId);
 
         // Act - Advance by 1 hour to complete charging session
-        _testScheduler.AdvanceBy(TimeSpan.FromHours(1).Ticks);
+        _mockHaContext.AdvanceTimeBy(TimeSpan.FromHours(1));
 
         // Assert - Should turn power off after 1 hour
         _mockHaContext.ShouldHaveCalledSwitchTurnOff(_entities.Power.EntityId);
@@ -474,7 +472,7 @@ public class LaptopChargingHandlerTests : IDisposable
         _batteryHandler.Dispose();
 
         // Advance by 1 hour - the timer should be cancelled so power should NOT turn off
-        _testScheduler.AdvanceBy(TimeSpan.FromHours(1).Ticks);
+        _mockHaContext.AdvanceTimeBy(TimeSpan.FromHours(1));
 
         // Assert – Power should not turn off because timer was disposed
         var switchCalls = _mockHaContext

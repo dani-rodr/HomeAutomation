@@ -1,6 +1,5 @@
 using HomeAutomation.apps.Common.Containers;
 using HomeAutomation.apps.Common.Services;
-using Microsoft.Reactive.Testing;
 
 namespace HomeAutomation.Tests.Common.Services;
 
@@ -10,7 +9,6 @@ public class PersonControllerTests : IDisposable
     private readonly TestEntities _entities;
     private readonly Mock<ILogger<PersonController>> _mockLogger;
     private readonly PersonController _controller;
-    private readonly TestScheduler _testScheduler;
     private readonly List<string> _arrivedHomeEvents = [];
     private readonly List<string> _leftHomeEvents = [];
     private readonly List<string> _directUnlockEvents = [];
@@ -19,10 +17,6 @@ public class PersonControllerTests : IDisposable
     {
         _mockHaContext = new MockHaContext();
         _mockLogger = new Mock<ILogger<PersonController>>();
-        _testScheduler = new TestScheduler();
-
-        // Set up TestScheduler for time-based testing
-        SchedulerProvider.Current = _testScheduler;
 
         _entities = new TestEntities(_mockHaContext);
 
@@ -167,7 +161,7 @@ public class PersonControllerTests : IDisposable
         _mockHaContext.StateChangeSubject.OnNext(stateChange);
 
         // Advance time by exactly 60 seconds
-        _testScheduler.AdvanceBy(TimeSpan.FromSeconds(60).Ticks);
+        _mockHaContext.AdvanceTimeBySeconds(60);
 
         // Assert - Should emit after delay
         Assert.Single(_leftHomeEvents);
@@ -185,7 +179,7 @@ public class PersonControllerTests : IDisposable
         _mockHaContext.StateChangeSubject.OnNext(stateChange);
 
         // Advance time by 60 seconds
-        _testScheduler.AdvanceBy(TimeSpan.FromSeconds(60).Ticks);
+        _mockHaContext.AdvanceTimeBySeconds(60);
 
         // Assert - Should not emit
         Assert.Empty(_leftHomeEvents);
@@ -202,7 +196,7 @@ public class PersonControllerTests : IDisposable
         _mockHaContext.StateChangeSubject.OnNext(stateChange);
 
         // Advance time by only 59 seconds (before delay)
-        _testScheduler.AdvanceBy(TimeSpan.FromSeconds(59).Ticks);
+        _mockHaContext.AdvanceTimeBySeconds(59);
 
         // Assert - Should not emit before delay completes
         Assert.Empty(_leftHomeEvents);
@@ -230,7 +224,7 @@ public class PersonControllerTests : IDisposable
         _mockHaContext.StateChangeSubject.OnNext(trigger2Change);
 
         // Advance time by 60 seconds from the second trigger
-        _testScheduler.AdvanceBy(TimeSpan.FromSeconds(60).Ticks);
+        _mockHaContext.AdvanceTimeBySeconds(60);
 
         // Assert - At least one trigger should emit (could be 1 or 2 depending on timing/implementation)
         Assert.True(
@@ -260,7 +254,7 @@ public class PersonControllerTests : IDisposable
         _mockHaContext.StateChangeSubject.OnNext(trigger1Change);
 
         // Advance time by 60 seconds for first trigger
-        _testScheduler.AdvanceBy(TimeSpan.FromSeconds(60).Ticks);
+        _mockHaContext.AdvanceTimeBySeconds(60);
 
         // Verify first trigger emitted
         Assert.Single(_leftHomeEvents);
@@ -275,7 +269,7 @@ public class PersonControllerTests : IDisposable
         _mockHaContext.StateChangeSubject.OnNext(trigger2Change);
 
         // Advance time by 60 seconds for second trigger
-        _testScheduler.AdvanceBy(TimeSpan.FromSeconds(60).Ticks);
+        _mockHaContext.AdvanceTimeBySeconds(60);
 
         // Assert - Should have both trigger entity IDs
         Assert.Equal(2, _leftHomeEvents.Count);
@@ -294,7 +288,7 @@ public class PersonControllerTests : IDisposable
         _mockHaContext.StateChangeSubject.OnNext(stateChange);
 
         // Advance time by 60 seconds
-        _testScheduler.AdvanceBy(TimeSpan.FromSeconds(60).Ticks);
+        _mockHaContext.AdvanceTimeBySeconds(60);
 
         // Assert - Should not emit (only responds to "off" state)
         Assert.Empty(_leftHomeEvents);
@@ -450,7 +444,7 @@ public class PersonControllerTests : IDisposable
         _mockHaContext.StateChangeSubject.OnNext(sensorTrigger);
 
         // Advance time by 60 seconds for sensor delay
-        _testScheduler.AdvanceBy(TimeSpan.FromSeconds(60).Ticks);
+        _mockHaContext.AdvanceTimeBySeconds(60);
 
         // Verify sensor event emitted
         Assert.Single(_leftHomeEvents);
@@ -520,7 +514,7 @@ public class PersonControllerTests : IDisposable
             "off"
         );
         _mockHaContext.StateChangeSubject.OnNext(awaySensorTrigger);
-        _testScheduler.AdvanceBy(TimeSpan.FromSeconds(60).Ticks);
+        _mockHaContext.AdvanceTimeBySeconds(60);
 
         Assert.Single(_leftHomeEvents);
         Assert.Equal(_entities.AwayTrigger1.EntityId, _leftHomeEvents[0]);
@@ -559,8 +553,6 @@ public class PersonControllerTests : IDisposable
 
     public void Dispose()
     {
-        // Reset scheduler to default
-        SchedulerProvider.Reset();
         _controller.Dispose();
         _mockHaContext.Dispose();
     }

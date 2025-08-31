@@ -4,7 +4,6 @@ namespace HomeAutomation.apps.Common.Services;
 
 public class DimmingLightController(
     NumberEntity sensorDelay,
-    IScheduler scheduler,
     ILogger<DimmingLightController> logger
 ) : IDimmingLightController
 {
@@ -68,7 +67,7 @@ public class DimmingLightController(
             );
 
             await Observable
-                .Timer(TimeSpan.FromSeconds(_dimDelaySeconds), scheduler)
+                .Timer(TimeSpan.FromSeconds(_dimDelaySeconds), SchedulerProvider.Current)
                 .TakeUntil(token.AsObservable())
                 .ToTask(token);
             if (!token.IsCancellationRequested)

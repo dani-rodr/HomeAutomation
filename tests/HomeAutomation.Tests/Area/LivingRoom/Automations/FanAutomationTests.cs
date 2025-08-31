@@ -1,8 +1,5 @@
-using System.Diagnostics;
 using HomeAutomation.apps.Area.LivingRoom.Automations;
 using HomeAutomation.apps.Common.Containers;
-using Microsoft.Reactive.Testing;
-using Xunit.Abstractions;
 
 namespace HomeAutomation.Tests.Area.LivingRoom.Automations;
 
@@ -14,20 +11,19 @@ public class FanAutomationTests : IDisposable
 {
     private readonly MockHaContext _mockHaContext;
     private readonly TestEntities _entities;
-    private readonly TestScheduler _testScheduler;
     private readonly FanAutomation _automation;
 
     public FanAutomationTests()
     {
-        _testScheduler = new TestScheduler();
-        SchedulerProvider.Current = _testScheduler;
-
         _mockHaContext = new MockHaContext();
 
         // Create test entities wrapper
         _entities = new TestEntities(_mockHaContext);
 
-        _automation = new FanAutomation(_entities, CreateLogger());
+        _automation = new FanAutomation(
+            _entities,
+            MockHaContext.CreateLogger<FanAutomation>(LogLevel.Debug)
+        );
 
         // Start the automation to set up subscriptions
         _automation.StartAutomation();
@@ -42,16 +38,6 @@ public class FanAutomationTests : IDisposable
 
         // Clear any initialization service calls
         _mockHaContext.ClearServiceCalls();
-    }
-
-    private static ILogger<FanAutomation> CreateLogger()
-    {
-        var factory = LoggerFactory.Create(builder =>
-        {
-            builder.SetMinimumLevel(LogLevel.Debug).AddConsole();
-        });
-
-        return factory.CreateLogger<FanAutomation>();
     }
 
     [Fact]
@@ -130,7 +116,7 @@ public class FanAutomationTests : IDisposable
         _mockHaContext.ShouldHaveCalledSwitchExactly(_entities.MasterSwitch.EntityId, "turn_on", 0);
 
         // Act
-        _testScheduler.AdvanceBy(TimeSpan.FromMinutes(15).Ticks);
+        _mockHaContext.AdvanceTimeByMinutes(15);
 
         // Assert
         _mockHaContext.ShouldHaveCalledSwitchExactly(_entities.MasterSwitch.EntityId, "turn_on", 1);
@@ -157,7 +143,7 @@ public class FanAutomationTests : IDisposable
 
         _mockHaContext.ShouldHaveCalledSwitchExactly(_entities.CeilingFan.EntityId, "turn_on", 0);
 
-        _testScheduler.AdvanceBy(TimeSpan.FromSeconds(3).Ticks);
+        _mockHaContext.AdvanceTimeBySeconds(3);
 
         // Assert
         _mockHaContext.ShouldHaveCalledSwitchExactly(_entities.CeilingFan.EntityId, "turn_on", 1);
@@ -187,7 +173,7 @@ public class FanAutomationTests : IDisposable
 
         _mockHaContext.ShouldHaveCalledSwitchExactly(_entities.CeilingFan.EntityId, "turn_on", 0);
 
-        _testScheduler.AdvanceBy(TimeSpan.FromSeconds(3).Ticks);
+        _mockHaContext.AdvanceTimeBySeconds(3);
 
         // Assert
         _mockHaContext.ShouldHaveCalledSwitchExactly(_entities.CeilingFan.EntityId, "turn_on", 1);
@@ -201,27 +187,27 @@ public class FanAutomationTests : IDisposable
         _mockHaContext.SimulateStateChange(_entities.MotionSensor.EntityId, "on", "off");
         _mockHaContext.ShouldHaveCalledSwitchExactly(_entities.CeilingFan.EntityId, "turn_off", 0);
 
-        _testScheduler.AdvanceBy(TimeSpan.FromSeconds(15).Ticks);
+        _mockHaContext.AdvanceTimeBySeconds(15);
         _mockHaContext.ShouldHaveCalledSwitchExactly(_entities.CeilingFan.EntityId, "turn_off", 0);
 
-        _testScheduler.AdvanceBy(TimeSpan.FromSeconds(15).Ticks);
+        _mockHaContext.AdvanceTimeBySeconds(15);
         _mockHaContext.ShouldHaveCalledSwitchExactly(_entities.CeilingFan.EntityId, "turn_off", 0);
 
-        _testScheduler.AdvanceBy(TimeSpan.FromSeconds(15).Ticks);
+        _mockHaContext.AdvanceTimeBySeconds(15);
         _mockHaContext.ShouldHaveCalledSwitchExactly(_entities.CeilingFan.EntityId, "turn_off", 0);
 
-        _testScheduler.AdvanceBy(TimeSpan.FromSeconds(15).Ticks);
+        _mockHaContext.AdvanceTimeBySeconds(15);
         _mockHaContext.ShouldHaveCalledSwitchExactly(_entities.CeilingFan.EntityId, "turn_off", 1);
 
         _mockHaContext.ClearServiceCalls();
         _mockHaContext.SimulateStateChange(_entities.MotionSensor.EntityId, "off", "on");
         _mockHaContext.ShouldHaveCalledSwitchExactly(_entities.CeilingFan.EntityId, "turn_on", 0);
 
-        _testScheduler.AdvanceBy(TimeSpan.FromSeconds(3).Ticks);
+        _mockHaContext.AdvanceTimeBySeconds(3);
         _mockHaContext.ShouldHaveCalledSwitchExactly(_entities.CeilingFan.EntityId, "turn_on", 1);
 
         _mockHaContext.SimulateStateChange(_entities.MotionSensor.EntityId, "on", "off");
-        _testScheduler.AdvanceBy(TimeSpan.FromMinutes(1).Ticks);
+        _mockHaContext.AdvanceTimeByMinutes(1);
         _mockHaContext.ShouldHaveCalledSwitchExactly(_entities.CeilingFan.EntityId, "turn_off", 1);
     }
 

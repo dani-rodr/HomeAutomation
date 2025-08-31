@@ -5,12 +5,12 @@ namespace HomeAutomation.apps.Common.Services;
 
 public class LaptopChargingHandler(
     IChargingHandlerEntities entities,
-    IScheduler scheduler,
     ILogger<LaptopChargingHandler> logger
 ) : ChargingHandler(entities), ILaptopChargingHandler
 {
     private const int MEDIUM_BATTERY = 50;
     private IDisposable? _powerOffTimer;
+    private readonly IScheduler _scheduler = SchedulerProvider.Current;
 
     public override IDisposable StartMonitoring()
     {
@@ -27,13 +27,13 @@ public class LaptopChargingHandler(
             .Subscribe(_ => StartScheduledCharge(hours: 1));
         logger.LogInformation("Setting up weekend and Monday morning charging schedules.");
         var weekendChargingSchedules = new CompositeDisposable(
-            scheduler.ScheduleCron("0 22 * * 5", () => StartScheduledCharge(1)), // Fri 22:00
-            scheduler.ScheduleCron("0 8 * * 6", () => StartScheduledCharge(1)), // Sat 08:00
-            scheduler.ScheduleCron("0 18 * * 6", () => StartScheduledCharge(1)), // Sat 18:00
-            scheduler.ScheduleCron("0 4 * * 0", () => StartScheduledCharge(1)), // Sun 04:00
-            scheduler.ScheduleCron("0 14 * * 0", () => StartScheduledCharge(1)), // Sun 14:00
-            scheduler.ScheduleCron("0 0 * * 1", () => StartScheduledCharge(1)), // Mon 00:00
-            scheduler.ScheduleCron("0 6 * * 1", () => StartScheduledCharge(1)) // Mon 06:00
+            _scheduler.ScheduleCron("0 22 * * 5", () => StartScheduledCharge(1)), // Fri 22:00
+            _scheduler.ScheduleCron("0 8 * * 6", () => StartScheduledCharge(1)), // Sat 08:00
+            _scheduler.ScheduleCron("0 18 * * 6", () => StartScheduledCharge(1)), // Sat 18:00
+            _scheduler.ScheduleCron("0 4 * * 0", () => StartScheduledCharge(1)), // Sun 04:00
+            _scheduler.ScheduleCron("0 14 * * 0", () => StartScheduledCharge(1)), // Sun 14:00
+            _scheduler.ScheduleCron("0 0 * * 1", () => StartScheduledCharge(1)), // Mon 00:00
+            _scheduler.ScheduleCron("0 6 * * 1", () => StartScheduledCharge(1)) // Mon 06:00
         );
 
         return new CompositeDisposable(baseMonitoring, weekendChargingSchedules, inactiveSchedules);
@@ -70,7 +70,7 @@ public class LaptopChargingHandler(
         logger.LogInformation("Scheduling power off after 1 hour.");
         _powerOffTimer?.Dispose();
         _powerOffTimer = Observable
-            .Timer(TimeSpan.FromHours(1), scheduler)
+            .Timer(TimeSpan.FromHours(1), _scheduler)
             .Subscribe(_ =>
             {
                 logger.LogInformation("1-hour timer expired. Turning power off.");
@@ -83,7 +83,7 @@ public class LaptopChargingHandler(
         logger.LogInformation("Starting scheduled charge for {Hours} hour(s).", hours);
         Power.TurnOn();
 
-        scheduler.Schedule(
+        _scheduler.Schedule(
             TimeSpan.FromHours(hours),
             () =>
             {

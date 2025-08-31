@@ -4,7 +4,6 @@ public class Desktop(
     IDesktopEntities entities,
     IEventHandler eventHandler,
     INotificationServices notificationServices,
-    IScheduler scheduler,
     ILogger<Desktop> logger
 ) : ComputerBase(eventHandler, logger), IDesktop
 {
@@ -24,7 +23,9 @@ public class Desktop(
             {
                 if (!isOn)
                 {
-                    return Observable.Return(false).Delay(TimeSpan.FromSeconds(1), scheduler);
+                    return Observable
+                        .Return(false)
+                        .Delay(TimeSpan.FromSeconds(1), SchedulerProvider.Current);
                 }
                 else
                 {

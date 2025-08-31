@@ -1,5 +1,5 @@
-using System.Reflection;
 using System.Text.Json;
+using Microsoft.Reactive.Testing;
 
 namespace HomeAutomation.Tests.Infrastructure;
 
@@ -14,6 +14,36 @@ public record ServiceCall(string Domain, string Service, ServiceTarget? Target, 
 /// </summary>
 public class MockHaContext : IHaContext
 {
+    public MockHaContext()
+    {
+        SchedulerProvider.Current = _testScheduler;
+    }
+
+    public IScheduler Scheduler => _testScheduler;
+
+    public void AdvanceTimeBySeconds(int seconds) => AdvanceTimeBy(TimeSpan.FromSeconds(seconds));
+
+    public void AdvanceTimeByMilliseconds(long milliseconds) =>
+        AdvanceTimeBy(TimeSpan.FromMilliseconds(milliseconds));
+
+    public void AdvanceTimeByMinutes(int minutes) => AdvanceTimeBy(TimeSpan.FromMinutes(minutes));
+
+    public void AdvanceTimeByHours(int hours) => AdvanceTimeBy(TimeSpan.FromHours(hours));
+
+    public void AdvanceTimeBy(TimeSpan timeSpan) => _testScheduler.AdvanceBy(timeSpan.Ticks);
+
+    public void AdvanceTimeTo(DateTimeOffset time) => _testScheduler.AdvanceTo(time.Ticks);
+
+    public static ILogger<T> CreateLogger<T>(LogLevel level)
+    {
+        var factory = LoggerFactory.Create(builder =>
+        {
+            builder.SetMinimumLevel(level).AddConsole();
+        });
+
+        return factory.CreateLogger<T>();
+    }
+
     /// <summary>
     /// List of all service calls made during testing
     /// </summary>
@@ -28,6 +58,7 @@ public class MockHaContext : IHaContext
     /// Subject for simulating events in tests
     /// </summary>
     public Subject<Event> EventSubject { get; } = new();
+    private readonly TestScheduler _testScheduler = new();
 
     /// <summary>
     /// Dictionary to track entity states for GetState() calls

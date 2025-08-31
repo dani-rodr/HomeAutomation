@@ -1,7 +1,6 @@
 using HomeAutomation.apps.Area.Bathroom.Automations;
 using HomeAutomation.apps.Common.Containers;
 using HomeAutomation.apps.Common.Interface;
-using Microsoft.Reactive.Testing;
 
 namespace HomeAutomation.Tests.Area.Bathroom.Automations;
 
@@ -15,16 +14,11 @@ public class LightAutomationTests : IDisposable
     private readonly Mock<ILogger<LightAutomation>> _mockLogger;
     private readonly Mock<IDimmingLightController> _mockDimmingController;
     private readonly TestEntities _entities;
-    private readonly TestScheduler _testScheduler;
 
     private readonly LightAutomation _automation;
 
     public LightAutomationTests()
     {
-        // Set up TestScheduler for time-dependent operations
-        _testScheduler = new TestScheduler();
-        SchedulerProvider.Current = _testScheduler;
-
         _mockHaContext = new MockHaContext();
         _mockLogger = new Mock<ILogger<LightAutomation>>();
         _mockDimmingController = new Mock<IDimmingLightController>();
@@ -238,13 +232,13 @@ public class LightAutomationTests : IDisposable
     {
         // Arrange - Set master switch to be off for 5 minutes
         _mockHaContext.SimulateStateChange(_entities.MasterSwitch.EntityId, "on", "off");
-        _testScheduler.AdvanceBy(TimeSpan.FromMinutes(5).Ticks);
+        _mockHaContext.AdvanceTimeByMinutes(5);
 
         // Act - Simulate motion sensor turning on for 2 seconds
         var stateChange = StateChangeHelpers.MotionDetected(_entities.MotionSensor);
         _mockHaContext.StateChangeSubject.OnNext(stateChange);
 
-        _testScheduler.AdvanceBy(TimeSpan.FromSeconds(2).Ticks);
+        _mockHaContext.AdvanceTimeBySeconds(2);
 
         // Assert
         _mockDimmingController.Verify(
@@ -260,13 +254,13 @@ public class LightAutomationTests : IDisposable
     {
         // Arrange - Set master switch to be off for 4 minutes only
         _mockHaContext.SimulateStateChange(_entities.MasterSwitch.EntityId, "on", "off");
-        _testScheduler.AdvanceBy(TimeSpan.FromMinutes(4).Ticks);
+        _mockHaContext.AdvanceTimeByMinutes(4);
 
         // Act - Simulate motion sensor turning on for 2 seconds
         var stateChange = StateChangeHelpers.MotionDetected(_entities.MotionSensor);
         _mockHaContext.StateChangeSubject.OnNext(stateChange);
 
-        _testScheduler.AdvanceBy(TimeSpan.FromSeconds(2).Ticks);
+        _mockHaContext.AdvanceTimeBySeconds(2);
 
         _mockHaContext.ShouldHaveCalledSwitchTurnOn(_entities.MasterSwitch.EntityId);
     }

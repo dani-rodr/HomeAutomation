@@ -1,6 +1,5 @@
 using System.Text.Json;
 using HomeAutomation.apps.Common.Services;
-using Microsoft.Reactive.Testing;
 
 namespace HomeAutomation.Tests.Common.Services;
 
@@ -13,7 +12,6 @@ public class DimmingLightControllerTests : IDisposable
     private readonly MockHaContext _mockHaContext;
     private readonly NumberEntity _sensorDelay;
     private readonly Mock<ILogger<DimmingLightController>> _mockLogger;
-    private readonly TestScheduler _testScheduler = new();
     private readonly LightEntity _light;
     private readonly DimmingLightController _controller;
 
@@ -23,7 +21,7 @@ public class DimmingLightControllerTests : IDisposable
         _sensorDelay = new NumberEntity(_mockHaContext, "number.test_sensor_delay");
         _light = new LightEntity(_mockHaContext, "light.test_light");
         _mockLogger = new Mock<ILogger<DimmingLightController>>();
-        _controller = new DimmingLightController(_sensorDelay, _testScheduler, _mockLogger.Object);
+        _controller = new DimmingLightController(_sensorDelay, _mockLogger.Object);
     }
 
     [Fact]
@@ -57,7 +55,7 @@ public class DimmingLightControllerTests : IDisposable
 
         // Start a dimming operation
         var dimmingTask = _controller.OnMotionStoppedAsync(_light);
-        _testScheduler.AdvanceBy(TimeSpan.FromMilliseconds(50).Ticks); // Let it start
+        _mockHaContext.AdvanceTimeByMilliseconds(50); // Let it start
 
         // Act - Motion detected should cancel the dimming
         _controller.OnMotionDetected(_light);
@@ -77,7 +75,7 @@ public class DimmingLightControllerTests : IDisposable
 
         // Act
         var task = _controller.OnMotionStoppedAsync(_light);
-        _testScheduler.AdvanceBy(TimeSpan.FromSeconds(1.1).Ticks);
+        _mockHaContext.AdvanceTimeBy(TimeSpan.FromSeconds(1.1));
 
         await task;
         // Assert - Should turn off immediately, no dimming
@@ -99,7 +97,7 @@ public class DimmingLightControllerTests : IDisposable
 
         // Act
         var task = _controller.OnMotionStoppedAsync(_light);
-        _testScheduler.AdvanceBy(TimeSpan.FromSeconds(1.1).Ticks);
+        _mockHaContext.AdvanceTimeBy(TimeSpan.FromSeconds(1.1));
 
         await task;
 
@@ -128,7 +126,7 @@ public class DimmingLightControllerTests : IDisposable
         _controller.SetDimParameters(brightnessPct: 75, delaySeconds: 1);
 
         var task = _controller.OnMotionStoppedAsync(_light);
-        _testScheduler.AdvanceBy(TimeSpan.FromSeconds(1.1).Ticks);
+        _mockHaContext.AdvanceTimeBy(TimeSpan.FromSeconds(1.1));
 
         await task;
 
@@ -154,7 +152,7 @@ public class DimmingLightControllerTests : IDisposable
         _controller.SetSensorActiveDelayValue(25);
 
         var task = _controller.OnMotionStoppedAsync(_light);
-        _testScheduler.AdvanceBy(TimeSpan.FromSeconds(1.1).Ticks);
+        _mockHaContext.AdvanceTimeBy(TimeSpan.FromSeconds(1.1));
 
         await task;
 
@@ -171,7 +169,7 @@ public class DimmingLightControllerTests : IDisposable
 
         // Act - Start dimming and quickly cancel with motion
         var task = _controller.OnMotionStoppedAsync(_light);
-        _testScheduler.AdvanceBy(TimeSpan.FromSeconds(2.1).Ticks);
+        _mockHaContext.AdvanceTimeBy(TimeSpan.FromSeconds(2.1));
 
         await task;
 
@@ -188,7 +186,7 @@ public class DimmingLightControllerTests : IDisposable
 
         // Act
         var task = _controller.OnMotionStoppedAsync(_light);
-        _testScheduler.AdvanceBy(TimeSpan.FromSeconds(1.1).Ticks);
+        _mockHaContext.AdvanceTimeBy(TimeSpan.FromSeconds(1.1));
 
         await task;
 
@@ -204,7 +202,7 @@ public class DimmingLightControllerTests : IDisposable
 
         // Act - Should use default configuration
         var task = _controller.OnMotionStoppedAsync(_light);
-        _testScheduler.AdvanceBy(TimeSpan.FromSeconds(1.1).Ticks); // simulate time
+        _mockHaContext.AdvanceTimeBy(TimeSpan.FromSeconds(1.1)); // simulate time
 
         await task;
 

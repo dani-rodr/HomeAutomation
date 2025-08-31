@@ -1,6 +1,5 @@
 using HomeAutomation.apps.Area.Bedroom.Automations;
 using HomeAutomation.apps.Common.Containers;
-using Microsoft.Reactive.Testing;
 
 namespace HomeAutomation.Tests.Area.Bedroom.Automations;
 
@@ -13,7 +12,6 @@ public class LightAutomationTests : IDisposable
 {
     private readonly MockHaContext _mockHaContext;
     private readonly Mock<ILogger<LightAutomation>> _mockLogger;
-    private readonly TestScheduler _testScheduler = new();
     private readonly TestEntities _entities;
     private readonly LightAutomation _automation;
 
@@ -25,7 +23,7 @@ public class LightAutomationTests : IDisposable
         // Create test entities wrapper
         _entities = new TestEntities(_mockHaContext);
 
-        _automation = new LightAutomation(_entities, _testScheduler, _mockLogger.Object);
+        _automation = new LightAutomation(_entities, _mockHaContext.Scheduler, _mockLogger.Object);
 
         // Start the automation to set up subscriptions
         _automation.StartAutomation();
@@ -161,7 +159,7 @@ public class LightAutomationTests : IDisposable
         _mockHaContext.StateChangeSubject.OnNext(stateChange);
 
         // Wait a moment to ensure no double-click is detected\
-        _testScheduler.AdvanceBy(TimeSpan.FromMilliseconds(100).Ticks);
+        _mockHaContext.AdvanceTimeByMilliseconds(100);
 
         // Assert - Should not perform any actions (single click doesn't trigger double-click logic)
         _mockHaContext.ShouldHaveNoServiceCalls();
@@ -234,7 +232,7 @@ public class LightAutomationTests : IDisposable
         _mockHaContext.StateChangeSubject.OnNext(firstClick);
 
         // Wait longer than the 2-second timeout
-        _testScheduler.AdvanceBy(TimeSpan.FromSeconds(3).Ticks);
+        _mockHaContext.AdvanceTimeBySeconds(3);
 
         var secondClick = StateChangeHelpers.CreateSwitchStateChange(
             _entities.LeftSideFanSwitch,
@@ -424,7 +422,7 @@ public class LightAutomationTests : IDisposable
                 userId: null
             );
             _mockHaContext.StateChangeSubject.OnNext(stateChange);
-            _testScheduler.AdvanceBy(TimeSpan.FromMilliseconds(50).Ticks); // Brief delay between presses
+            _mockHaContext.AdvanceTimeByMilliseconds(50); // Brief delay between presses
         }
 
         // Assert - Should handle each press independently

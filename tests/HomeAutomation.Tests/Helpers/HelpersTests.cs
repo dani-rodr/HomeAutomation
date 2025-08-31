@@ -1,5 +1,3 @@
-using Microsoft.Reactive.Testing;
-
 namespace HomeAutomation.Tests.Helpers;
 
 /// <summary>
@@ -386,13 +384,12 @@ public class HelpersTests : IDisposable
     public void IsFlickering_Should_Emit_WhenMultipleFlipsOccurWithinWindow()
     {
         // Arrange
-        var scheduler = new TestScheduler();
         var results = new List<IList<StateChange>>();
         var flipSubject = new Subject<StateChange>();
 
         flipSubject
-            .ObserveOn(scheduler)
-            .IsFlickering(minimumFlips: 4, timeWindowMs: 300, scheduler: scheduler)
+            .ObserveOn(_mockHaContext.Scheduler)
+            .IsFlickering(minimumFlips: 4, timeWindowMs: 300, scheduler: _mockHaContext.Scheduler)
             .Subscribe(results.Add);
 
         var flipSequence = new[]
@@ -406,11 +403,11 @@ public class HelpersTests : IDisposable
         int tickInterval = 50;
         for (int i = 0; i < flipSequence.Length; i++)
         {
-            scheduler.AdvanceBy(TimeSpan.FromMilliseconds(tickInterval).Ticks);
+            _mockHaContext.AdvanceTimeBy(TimeSpan.FromMilliseconds(tickInterval));
             flipSubject.OnNext(flipSequence[i]);
         }
 
-        scheduler.AdvanceBy(TimeSpan.FromMilliseconds(300).Ticks);
+        _mockHaContext.AdvanceTimeBy(TimeSpan.FromMilliseconds(300));
 
         results.Should().HaveCount(1);
         results[0].Should().HaveCount(4);
