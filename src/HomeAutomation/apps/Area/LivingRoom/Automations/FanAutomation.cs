@@ -1,5 +1,3 @@
-using System.Linq;
-
 namespace HomeAutomation.apps.Area.LivingRoom.Automations;
 
 public class FanAutomation(ILivingRoomFanEntities entities, ILogger<FanAutomation> logger)

@@ -1,5 +1,8 @@
+using System.Diagnostics;
 using HomeAutomation.apps.Area.LivingRoom.Automations;
 using HomeAutomation.apps.Common.Containers;
+using Microsoft.Reactive.Testing;
+using Xunit.Abstractions;
 
 namespace HomeAutomation.Tests.Area.LivingRoom.Automations;
 
@@ -10,19 +13,21 @@ namespace HomeAutomation.Tests.Area.LivingRoom.Automations;
 public class FanAutomationTests : IDisposable
 {
     private readonly MockHaContext _mockHaContext;
-    private readonly Mock<ILogger<FanAutomation>> _mockLogger;
     private readonly TestEntities _entities;
+    private readonly TestScheduler _testScheduler;
     private readonly FanAutomation _automation;
 
     public FanAutomationTests()
     {
+        _testScheduler = new TestScheduler();
+        SchedulerProvider.Current = _testScheduler;
+
         _mockHaContext = new MockHaContext();
-        _mockLogger = new Mock<ILogger<FanAutomation>>();
 
         // Create test entities wrapper
         _entities = new TestEntities(_mockHaContext);
 
-        _automation = new FanAutomation(_entities, _mockLogger.Object);
+        _automation = new FanAutomation(_entities, CreateLogger());
 
         // Start the automation to set up subscriptions
         _automation.StartAutomation();
@@ -37,6 +42,16 @@ public class FanAutomationTests : IDisposable
 
         // Clear any initialization service calls
         _mockHaContext.ClearServiceCalls();
+    }
+
+    private static ILogger<FanAutomation> CreateLogger()
+    {
+        var factory = LoggerFactory.Create(builder =>
+        {
+            builder.SetMinimumLevel(LogLevel.Debug).AddConsole();
+        });
+
+        return factory.CreateLogger<FanAutomation>();
     }
 
     [Fact]
@@ -108,20 +123,17 @@ public class FanAutomationTests : IDisposable
     public void CeilingFanOffFor15Minutes_Should_SetShouldActivateFanTrue()
     {
         // This tests the ceiling fan being off for 15 minutes automatically re-enabling activation
-        // In a real test, we'd need to mock the timer, but for unit testing we test the behavior pattern
 
         // Arrange - Set fan to off state initially
-        _mockHaContext.SetEntityState(_entities.CeilingFan.EntityId, "off");
+        _mockHaContext.SetEntityState(_entities.MasterSwitch.EntityId, "off");
+        _mockHaContext.SimulateStateChange(_entities.MotionSensor.EntityId, "on", "off");
+        _mockHaContext.ShouldHaveCalledSwitchExactly(_entities.MasterSwitch.EntityId, "turn_on", 0);
 
-        // Since we can't easily test 15-minute delays in unit tests,
-        // we verify the subscription exists and the logic pattern
+        // Act
+        _testScheduler.AdvanceBy(TimeSpan.FromMinutes(15).Ticks);
 
-        // Act - Verify automation doesn't throw when processing off state
-        var act = () =>
-            _mockHaContext.SimulateStateChange(_entities.CeilingFan.EntityId, "on", "off");
-
-        // Assert - Should not throw and automation should handle state changes
-        act.Should().NotThrow();
+        // Assert
+        _mockHaContext.ShouldHaveCalledSwitchExactly(_entities.MasterSwitch.EntityId, "turn_on", 1);
     }
 
     [Fact]
@@ -139,17 +151,16 @@ public class FanAutomationTests : IDisposable
 
         _mockHaContext.ClearServiceCalls();
 
-        // Act - Test motion behavior (the automation uses IsOn().ForSeconds(3) which is complex to test)
-        // We'll test the TurnOnSalaFans method behavior directly through motion
+        // Act - Simulate motion detection
         var motionDetected = StateChangeHelpers.MotionDetected(_entities.MotionSensor);
         _mockHaContext.StateChangeSubject.OnNext(motionDetected);
 
-        // Note: The actual automation requires 3 seconds of motion, but for unit testing
-        // we focus on the core logic behavior patterns rather than time-based triggers
+        _mockHaContext.ShouldHaveCalledSwitchExactly(_entities.CeilingFan.EntityId, "turn_on", 0);
 
-        // Assert - Verify automation processes motion events without throwing
-        var act = () => _mockHaContext.StateChangeSubject.OnNext(motionDetected);
-        act.Should().NotThrow();
+        _testScheduler.AdvanceBy(TimeSpan.FromSeconds(3).Ticks);
+
+        // Assert
+        _mockHaContext.ShouldHaveCalledSwitchExactly(_entities.CeilingFan.EntityId, "turn_on", 1);
     }
 
     [Fact]
@@ -174,24 +185,44 @@ public class FanAutomationTests : IDisposable
         var motionDetected = StateChangeHelpers.MotionDetected(_entities.MotionSensor);
         _mockHaContext.StateChangeSubject.OnNext(motionDetected);
 
-        // Assert - Verify exhaust fan behavior is processed
-        // Due to timing complexity, we verify the automation handles the state change
-        var act = () => _mockHaContext.StateChangeSubject.OnNext(motionDetected);
-        act.Should().NotThrow();
+        _mockHaContext.ShouldHaveCalledSwitchExactly(_entities.CeilingFan.EntityId, "turn_on", 0);
+
+        _testScheduler.AdvanceBy(TimeSpan.FromSeconds(3).Ticks);
+
+        // Assert
+        _mockHaContext.ShouldHaveCalledSwitchExactly(_entities.CeilingFan.EntityId, "turn_on", 1);
+        _mockHaContext.ShouldHaveCalledSwitchExactly(_entities.ExhaustFan.EntityId, "turn_on", 1);
     }
 
     [Fact]
     public void MotionClearedFor1Minute_Should_TurnOffAllFans()
     {
-        // This tests motion being cleared for 1 minute turning off all fans
-        // Complex time-based testing, so we verify the subscription pattern
-
         // Act - Test motion cleared event processing
-        var motionCleared = StateChangeHelpers.MotionCleared(_entities.MotionSensor);
+        _mockHaContext.SimulateStateChange(_entities.MotionSensor.EntityId, "on", "off");
+        _mockHaContext.ShouldHaveCalledSwitchExactly(_entities.CeilingFan.EntityId, "turn_off", 0);
 
-        // Assert - Automation should handle motion cleared without throwing
-        var act = () => _mockHaContext.StateChangeSubject.OnNext(motionCleared);
-        act.Should().NotThrow();
+        _testScheduler.AdvanceBy(TimeSpan.FromSeconds(15).Ticks);
+        _mockHaContext.ShouldHaveCalledSwitchExactly(_entities.CeilingFan.EntityId, "turn_off", 0);
+
+        _testScheduler.AdvanceBy(TimeSpan.FromSeconds(15).Ticks);
+        _mockHaContext.ShouldHaveCalledSwitchExactly(_entities.CeilingFan.EntityId, "turn_off", 0);
+
+        _testScheduler.AdvanceBy(TimeSpan.FromSeconds(15).Ticks);
+        _mockHaContext.ShouldHaveCalledSwitchExactly(_entities.CeilingFan.EntityId, "turn_off", 0);
+
+        _testScheduler.AdvanceBy(TimeSpan.FromSeconds(15).Ticks);
+        _mockHaContext.ShouldHaveCalledSwitchExactly(_entities.CeilingFan.EntityId, "turn_off", 1);
+
+        _mockHaContext.ClearServiceCalls();
+        _mockHaContext.SimulateStateChange(_entities.MotionSensor.EntityId, "off", "on");
+        _mockHaContext.ShouldHaveCalledSwitchExactly(_entities.CeilingFan.EntityId, "turn_on", 0);
+
+        _testScheduler.AdvanceBy(TimeSpan.FromSeconds(3).Ticks);
+        _mockHaContext.ShouldHaveCalledSwitchExactly(_entities.CeilingFan.EntityId, "turn_on", 1);
+
+        _mockHaContext.SimulateStateChange(_entities.MotionSensor.EntityId, "on", "off");
+        _testScheduler.AdvanceBy(TimeSpan.FromMinutes(1).Ticks);
+        _mockHaContext.ShouldHaveCalledSwitchExactly(_entities.CeilingFan.EntityId, "turn_off", 1);
     }
 
     [Fact]
@@ -283,25 +314,6 @@ public class FanAutomationTests : IDisposable
 
         // Assert
         _mockHaContext.ShouldHaveCalledSwitchTurnOff(_entities.MasterSwitch.EntityId);
-    }
-
-    [Fact]
-    public void BedroomMotionSensor_Integration_Should_AffectExhaustFanBehavior()
-    {
-        // Test the integration with bedroom motion sensor affecting exhaust fan
-
-        // Arrange - Set bedroom motion to on
-        _mockHaContext.SetEntityState(_entities.BedroomMotionSensor.EntityId, "on");
-
-        // Act - Process motion events with bedroom motion on
-        var motionDetected = StateChangeHelpers.MotionDetected(_entities.MotionSensor);
-
-        // Assert - Should handle bedroom motion integration
-        var act = () => _mockHaContext.StateChangeSubject.OnNext(motionDetected);
-        act.Should().NotThrow();
-
-        // Verify bedroom motion sensor state is accessible
-        _mockHaContext.GetState(_entities.BedroomMotionSensor.EntityId)?.State.Should().Be("on");
     }
 
     [Fact]
