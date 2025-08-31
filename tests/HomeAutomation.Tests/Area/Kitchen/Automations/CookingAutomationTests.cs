@@ -33,65 +33,146 @@ public class CookingAutomationTests : IDisposable
         _mockHaContext.ClearServiceCalls();
     }
 
-    #region Rice Cooker Safety Tests
-
+    #region Timing Tests
     [Fact]
-    public void RiceCooker_IdlePowerStateChange_Should_TriggerSubscription()
+    public void RiceCooker_ShouldTurnOff_WhenDoneCooking()
     {
-        // This test verifies that rice cooker power state changes are being monitored
-        // The WhenStateIsForMinutes filtering logic is tested separately as a framework feature
+        _mockHaContext.SimulateStateChange(_entities.RiceCookerSwitch.EntityId, "off", "on");
+        _mockHaContext.SimulateStateChange(_entities.RiceCookerPower.EntityId, "500", "5");
 
-        // Arrange - Set rice cooker power to idle level (below 100W threshold)
-        var idlePower = 50; // Below 100W threshold
-
-        // Act - Simulate rice cooker power state change to idle level
-        var stateChange = new StateChange(
-            new Entity(_mockHaContext, _entities.RiceCookerPower.EntityId),
-            new EntityState { State = "200" }, // From cooking power
-            new EntityState { State = idlePower.ToString() } // To idle power
+        _mockHaContext.ShouldHaveCalledSwitchExactly(
+            _entities.RiceCookerSwitch.EntityId,
+            "turn_off",
+            0
         );
-        _mockHaContext.StateChangeSubject.OnNext(stateChange);
 
-        // Assert - State change should be processed without errors
-        // The actual turn-off logic happens after the WhenStateIsForMinutes delay
-        // which is framework functionality tested separately
-        var act = () => _mockHaContext.StateChangeSubject.OnNext(stateChange);
-        act.Should().NotThrow("Should handle rice cooker power state changes without errors");
+        _mockHaContext.AdvanceTimeByMinutes(10);
+
+        _mockHaContext.ShouldHaveCalledSwitchExactly(
+            _entities.RiceCookerSwitch.EntityId,
+            "turn_off",
+            1
+        );
     }
 
     [Fact]
-    public void RiceCooker_PowerThresholdBoundaries_Should_BeCorrect()
+    public void RiceCooker_ShouldTurnOff_WhenDoneCooking10MinutesStraight()
     {
-        // This test verifies that the power threshold logic is correct
-        // Testing boundary conditions around the 100W threshold
+        _mockHaContext.SimulateStateChange(_entities.RiceCookerSwitch.EntityId, "off", "on");
+        _mockHaContext.SimulateStateChange(_entities.RiceCookerPower.EntityId, "500", "5");
 
-        // The automation uses: s => s?.State < riceCookerIdlePowerThreshold (100W)
-        // This means 99W triggers shutdown, 100W does not
+        _mockHaContext.ShouldHaveCalledSwitchExactly(
+            _entities.RiceCookerSwitch.EntityId,
+            "turn_off",
+            0
+        );
 
-        // Test values just below threshold (should trigger when time expires)
-        var belowThreshold = 99;
-        var stateChange = CreatePowerStateChange(_entities.RiceCookerPower, belowThreshold);
+        _mockHaContext.AdvanceTimeByMinutes(5);
 
-        // Act & Assert - Should process state changes for values below threshold
-        var act = () => _mockHaContext.StateChangeSubject.OnNext(stateChange);
-        act.Should().NotThrow("Should handle power values below threshold");
+        _mockHaContext.ShouldHaveCalledSwitchExactly(
+            _entities.RiceCookerSwitch.EntityId,
+            "turn_off",
+            0
+        );
 
-        // Test values at threshold (should not trigger)
-        var atThreshold = 100;
-        stateChange = CreatePowerStateChange(_entities.RiceCookerPower, atThreshold);
-        act = () => _mockHaContext.StateChangeSubject.OnNext(stateChange);
-        act.Should().NotThrow("Should handle power values at threshold");
+        _mockHaContext.SimulateStateChange(_entities.RiceCookerPower.EntityId, "5", "200");
 
-        // Test values above threshold (should not trigger)
-        var aboveThreshold = 101;
-        stateChange = CreatePowerStateChange(_entities.RiceCookerPower, aboveThreshold);
-        act = () => _mockHaContext.StateChangeSubject.OnNext(stateChange);
-        act.Should().NotThrow("Should handle power values above threshold");
+        _mockHaContext.AdvanceTimeByMinutes(5);
+
+        _mockHaContext.ShouldHaveCalledSwitchExactly(
+            _entities.RiceCookerSwitch.EntityId,
+            "turn_off",
+            0
+        );
+
+        _mockHaContext.SimulateStateChange(_entities.RiceCookerPower.EntityId, "200", "5");
+
+        _mockHaContext.AdvanceTimeByMinutes(10);
+
+        _mockHaContext.ShouldHaveCalledSwitchExactly(
+            _entities.RiceCookerSwitch.EntityId,
+            "turn_off",
+            1
+        );
     }
 
+    [Fact]
+    public void InductionCooker_ShouldTurnOff_WhenBoilingFor12Minutes()
+    {
+        _mockHaContext.SetEntityState(_entities.AirFryerStatus.EntityId, "unavailable");
+        _mockHaContext.SimulateStateChange(_entities.InductionPower.EntityId, "0", "1600");
+
+        _mockHaContext.ShouldHaveCalledServiceExactly(
+            _entities.InductionTurnOff.EntityId,
+            "press",
+            0
+        );
+
+        _mockHaContext.AdvanceTimeByMinutes(12);
+
+        _mockHaContext.ShouldHaveCalledServiceExactly(
+            _entities.InductionTurnOff.EntityId,
+            "press",
+            1
+        );
+    }
+
+    [Fact]
+    public void InductionCooker_ShouldNotTurnOff_WhenBoilingFor12Minutes_AndAirFryerIsOn()
+    {
+        _mockHaContext.SetEntityState(_entities.AirFryerStatus.EntityId, "on");
+        _mockHaContext.SimulateStateChange(_entities.InductionPower.EntityId, "0", "1600");
+
+        _mockHaContext.ShouldHaveCalledServiceExactly(
+            _entities.InductionTurnOff.EntityId,
+            "press",
+            0
+        );
+
+        _mockHaContext.AdvanceTimeByMinutes(12);
+
+        _mockHaContext.ShouldHaveCalledServiceExactly(
+            _entities.InductionTurnOff.EntityId,
+            "press",
+            0
+        );
+    }
+
+    [Fact]
+    public void InductionCooker_ShouldTurnOff_WhenBoilingFor12MinutesStraight()
+    {
+        _mockHaContext.SetEntityState(_entities.AirFryerStatus.EntityId, "unavailable");
+        _mockHaContext.SimulateStateChange(_entities.InductionPower.EntityId, "0", "1600");
+
+        _mockHaContext.ShouldHaveCalledServiceExactly(
+            _entities.InductionTurnOff.EntityId,
+            "press",
+            0
+        );
+
+        _mockHaContext.AdvanceTimeByMinutes(6);
+        _mockHaContext.SimulateStateChange(_entities.InductionPower.EntityId, "1600", "5");
+        _mockHaContext.AdvanceTimeByMinutes(6);
+
+        _mockHaContext.ShouldHaveCalledServiceExactly(
+            _entities.InductionTurnOff.EntityId,
+            "press",
+            0
+        );
+
+        _mockHaContext.SimulateStateChange(_entities.InductionPower.EntityId, "0", "1600");
+        _mockHaContext.AdvanceTimeByMinutes(12);
+
+        _mockHaContext.ShouldHaveCalledServiceExactly(
+            _entities.InductionTurnOff.EntityId,
+            "press",
+            1
+        );
+    }
     #endregion
 
-    #region Induction Cooker Safety Tests
+    #region Rice Cooker Safety Tests
+
 
     [Fact]
     public void InductionCooker_BoilingPowerStateChange_Should_TriggerSubscription()
@@ -172,8 +253,6 @@ public class CookingAutomationTests : IDisposable
     }
 
     #endregion
-
-    #region Automation Architecture Tests
 
     [Fact]
     public void Automation_Should_SetupPersistentAutomationsOnly()
@@ -276,8 +355,6 @@ public class CookingAutomationTests : IDisposable
         act.Should().NotThrow("Should handle concurrent safety triggers gracefully");
     }
 
-    #endregion
-
     #region Entity Configuration Tests
 
     [Fact]
@@ -308,38 +385,6 @@ public class CookingAutomationTests : IDisposable
         _entities
             .AirFryerStatus.EntityId.Should()
             .Be("sensor.careli_sg593061393_maf05a_status_p21");
-    }
-
-    [Fact]
-    public void SafetyThresholds_Should_MatchImplementation()
-    {
-        // This test documents the safety thresholds used in the automation
-        // These are critical safety values that should not change without careful consideration
-
-        // Rice cooker idle power threshold: 100W
-        // Logic: s => s?.State < 100 (values below 100W trigger shutdown after 10 minutes)
-        const int riceCookerIdleThreshold = 100;
-
-        // Induction cooker boiling power threshold: 1550W
-        // Logic: s => s?.State > 1550 (values above 1550W trigger shutdown after 12 minutes)
-        const int inductionBoilingThreshold = 1550;
-
-        // Document timeouts
-        const int riceCookerTimeoutMinutes = 10;
-        const int inductionCookerTimeoutMinutes = 12;
-
-        // These thresholds are embedded in the automation code and critical for safety
-        // Any changes to these values should be done with extreme caution
-        riceCookerIdleThreshold
-            .Should()
-            .Be(100, "Rice cooker idle threshold is a safety-critical value");
-        inductionBoilingThreshold
-            .Should()
-            .Be(1550, "Induction boiling threshold is a safety-critical value");
-        riceCookerTimeoutMinutes.Should().Be(10, "Rice cooker timeout is a safety-critical value");
-        inductionCookerTimeoutMinutes
-            .Should()
-            .Be(12, "Induction cooker timeout is a safety-critical value");
     }
 
     #endregion

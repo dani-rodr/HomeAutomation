@@ -280,6 +280,26 @@ public static class MockHaContextExtensions
             );
     }
 
+    public static void ShouldHaveCalledServiceExactly(
+        this MockHaContext mock,
+        string entityId,
+        string service,
+        int times
+    )
+    {
+        if (entityId.Split('.') is not [var domain, var entity])
+        {
+            return;
+        }
+
+        var services = mock.GetServiceCalls(domain).ToList();
+        var calls = services.Where(c => c.Service == service).ToList();
+
+        calls
+            .Should()
+            .HaveCount(times, $"Expected {domain}.{service} to be called exactly {times} times");
+    }
+
     /// <summary>
     /// Verify that exactly the specified number of calls were made to a specific entity
     /// </summary>
