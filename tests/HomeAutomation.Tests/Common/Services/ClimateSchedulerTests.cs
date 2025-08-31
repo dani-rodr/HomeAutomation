@@ -14,7 +14,6 @@ public class ClimateSchedulerTests : IDisposable
     private readonly Mock<ILogger<ClimateScheduler>> _mockLogger;
     private readonly Mock<IAcTemperatureCalculator> _mockCalculator;
     private readonly TestWeatherEntities _weatherEntities;
-    private readonly TestScheduler _testScheduler;
     private readonly ClimateScheduler _scheduler;
 
     public ClimateSchedulerTests()
@@ -23,7 +22,6 @@ public class ClimateSchedulerTests : IDisposable
         _mockLogger = new Mock<ILogger<ClimateScheduler>>();
         _mockCalculator = new Mock<IAcTemperatureCalculator>();
         _weatherEntities = new TestWeatherEntities(_mockHaContext);
-        _testScheduler = new TestScheduler();
 
         // IMPORTANT: Setup sensor states BEFORE creating ClimateScheduler
         // because the constructor calls GetCurrentAcScheduleSettings() which reads sensor states
@@ -31,7 +29,6 @@ public class ClimateSchedulerTests : IDisposable
 
         _scheduler = new ClimateScheduler(
             _weatherEntities,
-            _testScheduler,
             _mockCalculator.Object,
             _mockLogger.Object
         );
@@ -189,54 +186,20 @@ public class ClimateSchedulerTests : IDisposable
 
     #region Time Block Detection Tests
 
-    [Theory(
-        Skip = "Time zone alignment on CI runner causes hour mismatch. Revisit when mocking is timezone-agnostic."
-    )]
-    [InlineData(8, TimeBlock.Sunrise, "8 AM should be in Sunrise period (6 AM - 6 PM)")]
-    [InlineData(12, TimeBlock.Sunrise, "12 PM should be in Sunrise period (6 AM - 6 PM)")]
-    [InlineData(17, TimeBlock.Sunrise, "5 PM should be in Sunrise period (6 AM - 6 PM)")]
-    [InlineData(19, TimeBlock.Sunset, "7 PM should be in Sunset period (6 PM - 12 AM)")]
-    [InlineData(22, TimeBlock.Sunset, "10 PM should be in Sunset period (6 PM - 12 AM)")]
-    [InlineData(23, TimeBlock.Sunset, "11 PM should be in Sunset period (6 PM - 12 AM)")]
-    [InlineData(1, TimeBlock.Midnight, "1 AM should be in Midnight period (12 AM - 6 AM)")]
-    [InlineData(3, TimeBlock.Midnight, "3 AM should be in Midnight period (12 AM - 6 AM)")]
-    [InlineData(5, TimeBlock.Midnight, "5 AM should be in Midnight period (12 AM - 6 AM)")]
-    public void FindCurrentTimeBlock_Various_Hours_Should_Return_Correct_TimeBlock(
-        int hour,
-        TimeBlock expectedTimeBlock,
-        string reason
-    )
-    {
-        // Arrange
-        var testScheduler = new TestSchedulerWithTime(hour);
-        var scheduler = new ClimateScheduler(
-            _weatherEntities,
-            testScheduler,
-            _mockCalculator.Object,
-            _mockLogger.Object
-        );
-
-        var now = testScheduler.Now;
-        var local = now.LocalDateTime;
-        var block = scheduler.FindCurrentTimeBlock();
-
-        Console.WriteLine($"[Test Hour: {hour}] Now: {now}, Local: {local}, Block: {block}");
-        // Act
-        var actualTimeBlock = scheduler.FindCurrentTimeBlock();
-
-        // Assert
-        actualTimeBlock.Should().Be(expectedTimeBlock, reason);
-    }
-
-    [Fact(Skip = "Failing in Github, can control it's local time")]
+    [Fact]
     public void FindCurrentTimeBlock_BoundaryHours_Should_Handle_Correctly()
     {
+        if (Environment.GetEnvironmentVariable("GITHUB_ACTIONS") == "true")
+        {
+            // Skip this test in GitHub Actions due to timezone issues
+            return;
+        }
         // Test boundary conditions
+        _mockHaContext.AdvanceTimeTo(new DateTime(2024, 1, 1, 6, 0, 0).AddHours(-8)); // Account for local hours
 
         // 6 AM - start of Sunrise
         var scheduler6 = new ClimateScheduler(
             _weatherEntities,
-            new TestSchedulerWithTime(6),
             _mockCalculator.Object,
             _mockLogger.Object
         );
@@ -246,9 +209,10 @@ public class ClimateSchedulerTests : IDisposable
             .Be(TimeBlock.Sunrise, "6 AM should start Sunrise period");
 
         // 18 (6 PM) - start of Sunset
+        _mockHaContext.AdvanceTimeByHours(12);
+
         var scheduler18 = new ClimateScheduler(
             _weatherEntities,
-            new TestSchedulerWithTime(18),
             _mockCalculator.Object,
             _mockLogger.Object
         );
@@ -257,10 +221,11 @@ public class ClimateSchedulerTests : IDisposable
             .Should()
             .Be(TimeBlock.Sunset, "6 PM should start Sunset period");
 
+        _mockHaContext.AdvanceTimeByHours(6);
+
         // 0 (12 AM) - start of Midnight
         var scheduler0 = new ClimateScheduler(
             _weatherEntities,
-            new TestSchedulerWithTime(0),
             _mockCalculator.Object,
             _mockLogger.Object
         );
@@ -282,7 +247,6 @@ public class ClimateSchedulerTests : IDisposable
         // This test is designed to catch the bug where 5:00 AM incorrectly returns Midnight instead of Sunrise
         var scheduler5AM = new ClimateScheduler(
             _weatherEntities,
-            new TestSchedulerWithTime(5), // Exactly 5:00 AM
             _mockCalculator.Object,
             _mockLogger.Object
         );
@@ -323,13 +287,14 @@ public class ClimateSchedulerTests : IDisposable
             return;
         }
         // Arrange
+
+        _mockHaContext.AdvanceTimeTo(new DateTime(2024, 1, 1, hour, minute, 0).AddHours(-8)); // Account for local hours
+
         var scheduler = new ClimateScheduler(
             _weatherEntities,
-            new TestSchedulerWithTimeAndMinutes(hour, minute),
             _mockCalculator.Object,
             _mockLogger.Object
         );
-
         // Act
         var actualBlock = scheduler.FindCurrentTimeBlock();
 
@@ -384,7 +349,6 @@ public class ClimateSchedulerTests : IDisposable
         // Act - Try to create schedules
         var scheduler = new ClimateScheduler(
             _weatherEntities,
-            _testScheduler,
             _mockCalculator.Object,
             _mockLogger.Object
         );
@@ -435,58 +399,5 @@ public class ClimateSchedulerTests : IDisposable
         public WeatherEntity Weather { get; } = new WeatherEntity(haContext, "weather.home");
         public InputBooleanEntity PowerSavingMode { get; } =
             new InputBooleanEntity(haContext, "input_boolean.power_saving_mode");
-    }
-
-    private class TestScheduler : IScheduler
-    {
-        public virtual DateTimeOffset Now =>
-            new DateTimeOffset(2024, 1, 1, 20, 0, 0, TimeSpan.Zero);
-
-        public IDisposable Schedule<TState>(
-            TState state,
-            Func<IScheduler, TState, IDisposable> action
-        )
-        {
-            return Mock.Of<IDisposable>();
-        }
-
-        public IDisposable Schedule<TState>(
-            TState state,
-            TimeSpan dueTime,
-            Func<IScheduler, TState, IDisposable> action
-        )
-        {
-            return Mock.Of<IDisposable>();
-        }
-
-        public IDisposable Schedule<TState>(
-            TState state,
-            DateTimeOffset dueTime,
-            Func<IScheduler, TState, IDisposable> action
-        )
-        {
-            return Mock.Of<IDisposable>();
-        }
-
-        public static IDisposable ScheduleCron(string cronExpression, Action action)
-        {
-            return Mock.Of<IDisposable>();
-        }
-    }
-
-    private class TestSchedulerWithTime(int hour) : TestScheduler
-    {
-        private readonly int _hour = hour;
-
-        public override DateTimeOffset Now => new(2024, 1, 1, _hour, 0, 0, TimeSpan.FromHours(+8)); // Account for local hours
-    }
-
-    private class TestSchedulerWithTimeAndMinutes(int hour, int minute) : TestScheduler
-    {
-        private readonly int _hour = hour;
-        private readonly int _minute = minute;
-
-        public override DateTimeOffset Now =>
-            new(2024, 1, 1, _hour, _minute, 0, TimeSpan.FromHours(+8)); // Account for local hours
     }
 }

@@ -12,13 +12,12 @@ public class ClimateScheduler : IClimateScheduler
 
     public ClimateScheduler(
         IClimateSchedulerEntities entities,
-        IScheduler scheduler,
         IAcTemperatureCalculator temperatureCalculator,
         ILogger<ClimateScheduler> logger
     )
     {
         _entities = entities;
-        _scheduler = scheduler;
+        _scheduler = SchedulerProvider.Current;
         _temperatureCalculator = temperatureCalculator;
         _logger = logger;
 
