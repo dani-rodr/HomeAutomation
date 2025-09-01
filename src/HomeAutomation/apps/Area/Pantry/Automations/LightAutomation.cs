@@ -79,10 +79,13 @@ public class LightAutomation(IPantryLightEntities entities, ILogger<LightAutomat
 
         yield return Observable
             .CombineLatest(
-                pantryChanges.IsOff().ForSeconds(turnOffDelay),
-                bathroomChanges.IsOff().ForSeconds(turnOffDelay),
-                (pantryOff, bathOff) => true
+                pantryChanges,
+                bathroomChanges,
+                (pantry, bathroom) => pantry.IsOff() && bathroom.IsOff()
             )
+            .Where(bothOff => bothOff)
+            .Select(_ => Observable.Timer(TimeSpan.FromSeconds(turnOffDelay), SchedulerProvider.Current))
+            .Switch()
             .Subscribe(_ =>
             {
                 Logger.LogDebug(
