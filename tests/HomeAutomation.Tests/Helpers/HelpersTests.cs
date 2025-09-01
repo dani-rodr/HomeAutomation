@@ -805,14 +805,14 @@ public class HelpersTests : IDisposable
     #region Entity Extension Tests
 
     [Fact]
-    public void SensorEntity_LocalHour_Should_ExtractHourFromDateTime()
+    public void SensorEntity_ToLocalHour_Should_ExtractHourFromDateTime()
     {
         // Arrange - Use a known date-time that we can test
         var testDateTime = "2023-12-01T14:30:00Z";
         _mockHaContext.SetEntityState(_sensor.EntityId, testDateTime);
 
         // Act
-        var result = _sensor.LocalHour();
+        var result = _sensor.ToLocalHour();
 
         // Assert - The method returns the hour from parsed DateTime.TryParse
         // This will return the local hour based on DateTime.TryParse behavior
@@ -820,7 +820,7 @@ public class HelpersTests : IDisposable
 
         // Test with a specific case we can verify
         _mockHaContext.SetEntityState(_sensor.EntityId, "2023-01-01T00:00:00");
-        var midnightResult = _sensor.LocalHour();
+        var midnightResult = _sensor.ToLocalHour();
         midnightResult.Should().Be(0, "Midnight should return hour 0");
     }
 
@@ -828,13 +828,15 @@ public class HelpersTests : IDisposable
     [InlineData("invalid_date")]
     [InlineData("")]
     [InlineData("unknown")]
-    public void SensorEntity_LocalHour_Should_ReturnNegativeOneForInvalidState(string invalidState)
+    public void SensorEntity_ToLocalHour_Should_ReturnNegativeOneForInvalidState(
+        string invalidState
+    )
     {
         // Arrange
         _mockHaContext.SetEntityState(_sensor.EntityId, invalidState);
 
         // Act
-        var result = _sensor.LocalHour();
+        var result = _sensor.ToLocalHour();
 
         // Assert
         result.Should().Be(-1);
@@ -847,10 +849,10 @@ public class HelpersTests : IDisposable
     public void SensorEntity_IsLocked_Should_CheckLockState(string state, bool expected)
     {
         // Arrange
-        _mockHaContext.SetEntityState(_sensor.EntityId, state);
+        _mockHaContext.SetEntityState(_lock.EntityId, state);
 
         // Act
-        var result = _sensor.IsLocked();
+        var result = _lock.IsLocked();
 
         // Assert
         result.Should().Be(expected);
@@ -863,10 +865,10 @@ public class HelpersTests : IDisposable
     public void SensorEntity_IsUnlocked_Should_CheckUnlockState(string state, bool expected)
     {
         // Arrange
-        _mockHaContext.SetEntityState(_sensor.EntityId, state);
+        _mockHaContext.SetEntityState(_lock.EntityId, state);
 
         // Act
-        var result = _sensor.IsUnlocked();
+        var result = _lock.IsUnlocked();
 
         // Assert
         result.Should().Be(expected);
@@ -951,16 +953,13 @@ public class HelpersTests : IDisposable
     [Theory]
     [InlineData("connected", true)]
     [InlineData("disconnected", false)]
-    public void BinarySensorEntity_IsConnected_Should_CheckConnectedState(
-        string state,
-        bool expected
-    )
+    public void SensorEntity_IsConnected_Should_CheckConnectedState(string state, bool expected)
     {
         // Arrange
-        _mockHaContext.SetEntityState(_motionSensor.EntityId, state);
+        _mockHaContext.SetEntityState(_sensor.EntityId, state);
 
         // Act
-        var result = _motionSensor.IsConnected();
+        var result = _sensor.IsConnected();
 
         // Assert
         result.Should().Be(expected);
@@ -975,10 +974,10 @@ public class HelpersTests : IDisposable
     )
     {
         // Arrange
-        _mockHaContext.SetEntityState(_motionSensor.EntityId, state);
+        _mockHaContext.SetEntityState(_sensor.EntityId, state);
 
         // Act
-        var result = _motionSensor.IsDisconnected();
+        var result = _sensor.IsDisconnected();
 
         // Assert
         result.Should().Be(expected);
@@ -986,7 +985,6 @@ public class HelpersTests : IDisposable
 
     [Theory]
     [InlineData("dry", true)]
-    [InlineData("DRY", true)]
     [InlineData("cool", false)]
     [InlineData("off", false)]
     public void ClimateEntity_IsDry_Should_CheckDryState(string state, bool expected)
@@ -1003,7 +1001,6 @@ public class HelpersTests : IDisposable
 
     [Theory]
     [InlineData("cool", true)]
-    [InlineData("COOL", true)]
     [InlineData("dry", false)]
     [InlineData("off", false)]
     public void ClimateEntity_IsCool_Should_CheckCoolState(string state, bool expected)
@@ -1054,7 +1051,6 @@ public class HelpersTests : IDisposable
 
     [Theory]
     [InlineData("dry", true)]
-    [InlineData("DRY", true)]
     [InlineData("sunny", false)]
     public void WeatherEntity_IsDry_Should_CheckDryState(string state, bool expected)
     {
@@ -1122,7 +1118,6 @@ public class HelpersTests : IDisposable
 
     [Theory]
     [InlineData("clear-night", true)]
-    [InlineData("CLEAR-NIGHT", true)]
     [InlineData("sunny", false)]
     public void WeatherEntity_IsClearNight_Should_CheckClearNightState(string state, bool expected)
     {

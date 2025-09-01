@@ -4,6 +4,10 @@ public static class HaEntityStates
 {
     public const string ON = "on";
     public const string OFF = "off";
+    public const string OPEN = "on";
+    public const string CLOSED = "off";
+    public const string OCCUPIED = "on";
+    public const string CLEAR = "off";
     public const string UNAVAILABLE = "unavailable";
     public const string UNKNOWN = "unknown";
     public const string DRY = "dry";
