@@ -76,7 +76,7 @@ public class PersonController(IPersonEntities entities, IServices services, ILog
     }
 
     protected override IEnumerable<IDisposable> GetAutomations() =>
-        [_toggle.StateChanges().IsValidButtonPress().Subscribe(ToggleLocation)];
+        [_toggle.OnPressed().Subscribe(ToggleLocation)];
 
     private void ToggleLocation(StateChange e)
     {

@@ -15,6 +15,7 @@ public class HelpersTests : IDisposable
     private readonly WeatherEntity _weather;
     private readonly NumberEntity _number;
     private readonly SensorEntity _sensor;
+    private readonly ButtonEntity _button;
     private readonly Subject<StateChange> _stateChangeSubject;
 
     public HelpersTests()
@@ -28,6 +29,7 @@ public class HelpersTests : IDisposable
         _weather = new WeatherEntity(_mockHaContext, "weather.test_weather");
         _number = new NumberEntity(_mockHaContext, "number.test_number");
         _sensor = new SensorEntity(_mockHaContext, "sensor.test_sensor");
+        _button = new ButtonEntity(_mockHaContext, "button.test_button ");
         _stateChangeSubject = new Subject<StateChange>();
     }
 
@@ -358,16 +360,10 @@ public class HelpersTests : IDisposable
     {
         // Arrange
         var results = new List<StateChange>();
-        _stateChangeSubject.IsValidButtonPress().Subscribe(results.Add);
-
-        var change = new StateChange(
-            (Entity)_switch,
-            new EntityState { State = "previous" },
-            new EntityState { State = state }
-        );
+        var automation = _button.OnPressed().Subscribe(results.Add);
 
         // Act
-        _stateChangeSubject.OnNext(change);
+        _mockHaContext.SimulateStateChange(_button.EntityId, "previous", state!);
 
         // Assert
         if (shouldMatch)
@@ -378,6 +374,7 @@ public class HelpersTests : IDisposable
         {
             results.Should().BeEmpty();
         }
+        automation.Dispose();
     }
 
     [Fact]
@@ -612,22 +609,16 @@ public class HelpersTests : IDisposable
     [InlineData("", false)]
     public void StateChange_IsValidButtonPress_Should_ValidateDateTime(string state, bool expected)
     {
+        bool result = false;
         // Arrange
-        var change = StateChangeHelpers.CreateStateChange(_switch, "previous", state);
+        IDisposable automation = _button.OnPressed().Subscribe(_ => result = true);
 
         // Act
-        var result = change.IsValidButtonPress();
+        _mockHaContext.SimulateStateChange(_button.EntityId, "previous", state);
 
         // Assert
         result.Should().Be(expected);
-    }
-
-    [Fact]
-    public void StateChange_IsValidButtonPress_Should_HandleNullStateChange()
-    {
-        // Act & Assert
-        StateChange? nullChange = null;
-        nullChange!.IsValidButtonPress().Should().BeFalse();
+        automation.Dispose();
     }
 
     [Theory]
@@ -1374,6 +1365,8 @@ public class HelpersTests : IDisposable
         // Act & Assert - verify the observable is properly set up
         switchChangeSubject.Should().NotBeNull();
         results.Should().NotBeEmpty();
+
+        automation.Dispose();
     }
 
     #endregion

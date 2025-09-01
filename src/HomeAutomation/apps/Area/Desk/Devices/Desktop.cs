@@ -38,8 +38,7 @@ public class Desktop(
 
     private IDisposable LaunchMoonlightApp() =>
         entities
-            .RemotePcButton.StateChanges()
-            .IsValidButtonPress()
+            .RemotePcButton.OnPressed()
             .Subscribe(e =>
             {
                 if (e.UserId() == HaIdentity.DANIEL_RODRIGUEZ)

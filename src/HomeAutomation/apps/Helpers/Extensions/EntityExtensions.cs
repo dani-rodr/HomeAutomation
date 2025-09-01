@@ -7,6 +7,7 @@ public record DurationOptions(
     bool ShouldCheckImmediately = false,
     bool ShouldCheckIfAutomated = false,
     bool ShouldCheckIfPhysicallyOperated = false,
+    bool ShouldCheckIfManuallyOperated = false,
     int Days = 0,
     int Hours = 0,
     int Minutes = 0,
@@ -42,6 +43,9 @@ public static class EntityExtensions
             { ShouldCheckIfPhysicallyOperated: true } => stream.Where(s =>
                 HaIdentity.IsPhysicallyOperated(s.UserId())
             ),
+            { ShouldCheckIfManuallyOperated: true } => stream.Where(s =>
+                HaIdentity.IsManuallyOperated(s.UserId())
+            ),
             _ => stream,
         };
 
@@ -54,7 +58,7 @@ public static class EntityExtensions
             ? source.WhenStateIsFor(predicate, duration, SchedulerProvider.Current)
             : source.Where(sc => predicate(sc.New));
 
-    public static IObservable<StateChange> OnChange(
+    public static IObservable<StateChange> OnChanges(
         this Entity entity,
         Func<EntityState?, bool>? predicate = null,
         DurationOptions? options = null
@@ -72,12 +76,12 @@ public static class EntityExtensions
     public static IObservable<StateChange> OnTurnedOn(
         this Entity entity,
         DurationOptions? options = null
-    ) => entity.OnChange(s => s.IsOn(), options);
+    ) => entity.OnChanges(s => s.IsOn(), options);
 
     public static IObservable<StateChange> OnTurnedOff(
         this Entity entity,
         DurationOptions? options = null
-    ) => entity.OnChange(s => s.IsOff(), options);
+    ) => entity.OnChanges(s => s.IsOff(), options);
 }
 
 public static class SensorEntityExtensions
@@ -230,4 +234,16 @@ public static class SwitchEntityExtensions
             )
             .Select(pair => pair.Select(x => x.Value).ToList());
     }
+}
+
+public static class ButtonEntityExtensions
+{
+    public static IObservable<StateChange> OnPressed(this ButtonEntity entity) =>
+        entity.StateChanges().Where(e => DateTime.TryParse(e.New?.State, out _));
+}
+
+public static class InputButtonEntityExtensions
+{
+    public static IObservable<StateChange> OnPressed(this InputButtonEntity entity) =>
+        entity.StateChanges().Where(e => DateTime.TryParse(e.New?.State, out _));
 }

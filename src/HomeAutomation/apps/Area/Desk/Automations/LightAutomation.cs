@@ -23,8 +23,7 @@ public class LightAutomation(
                 monitor.ShowToast("LG Display Automation is {0}", e.IsOn() ? "ON" : "OFF");
             });
         yield return Light
-            .StateChanges()
-            .IsOn()
+            .OnTurnedOn()
             .Subscribe(async _ =>
             {
                 if (entities.SalaLights.IsOn())

@@ -10,8 +10,7 @@ public class FanAutomation(IBedroomFanEntities entities, ILogger<FanAutomation> 
     protected override IEnumerable<IDisposable> GetPersistentAutomations()
     {
         yield return MainFan
-            .StateChanges()
-            .IsManuallyOperated()
+            .OnChanges(options: new(ShouldCheckIfManuallyOperated: true))
             .Subscribe(_ =>
             {
                 if (MainFan.IsOn() && MotionSensor.IsOn())

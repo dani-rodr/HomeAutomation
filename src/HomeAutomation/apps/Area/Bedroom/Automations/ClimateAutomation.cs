@@ -142,8 +142,7 @@ public class ClimateAutomation(
     private IEnumerable<IDisposable> GetFanModeToggleAutomation()
     {
         yield return entities
-            .AcFanModeToggle.StateChanges()
-            .Where(e => e.IsValidButtonPress())
+            .AcFanModeToggle.OnPressed()
             .Subscribe(_ =>
             {
                 var modes = new[]

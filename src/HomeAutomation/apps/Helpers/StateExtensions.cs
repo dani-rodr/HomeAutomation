@@ -79,9 +79,6 @@ public static class StateChangeExtensions
 
     public static string Username(this StateChange e) => HaIdentity.GetName(e.UserId());
 
-    public static bool IsValidButtonPress(this StateChange e) =>
-        DateTime.TryParse(e?.New?.State, out _);
-
     public static bool IsManuallyOperated(this StateChange e) =>
         HaIdentity.IsManuallyOperated(e.UserId());
 
