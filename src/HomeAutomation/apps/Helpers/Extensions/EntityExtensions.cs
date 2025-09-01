@@ -3,13 +3,59 @@ using System.Linq;
 
 namespace HomeAutomation.apps.Helpers.Extensions;
 
+public record DurationOptions(
+    bool ShouldCheckImmediately = false,
+    int Days = 0,
+    int Hours = 0,
+    int Minutes = 0,
+    int Seconds = 0,
+    int Milliseconds = 0
+)
+{
+    public TimeSpan TimeSpan => new(Days, Hours, Minutes, Seconds, Milliseconds);
+}
+
 public static class EntityExtensions
 {
-    public static bool IsUnavailable([NotNullWhen(true)] this SensorEntity? entity) =>
+    public static bool IsUnavailable([NotNullWhen(true)] this Entity? entity) =>
         entity?.State is HaEntityStates.UNAVAILABLE;
 
-    public static bool IsUnknown([NotNullWhen(true)] this SensorEntity? entity) =>
+    public static bool IsUnknown([NotNullWhen(true)] this Entity? entity) =>
         entity?.State is HaEntityStates.UNAVAILABLE;
+
+    private static IObservable<StateChange> GetStateChange(
+        this Entity entity,
+        bool shouldCheckImmediately
+    ) => shouldCheckImmediately ? entity.StateChangesWithCurrent() : entity.StateChanges();
+
+    public static IObservable<StateChange> WhenIsFor(
+        this IObservable<StateChange> source,
+        Func<EntityState?, bool> predicate,
+        TimeSpan duration
+    ) =>
+        duration > TimeSpan.Zero
+            ? source.WhenStateIsFor(predicate, duration, SchedulerProvider.Current)
+            : source.Where(sc => predicate(sc.New));
+
+    public static IObservable<StateChange> OnTurnedOn(
+        this Entity entity,
+        DurationOptions? options = null
+    )
+    {
+        var o = options ?? new DurationOptions();
+        return entity.GetStateChange(o.ShouldCheckImmediately).WhenIsFor(s => s.IsOn(), o.TimeSpan);
+    }
+
+    public static IObservable<StateChange> OnTurnedOff(
+        this Entity entity,
+        DurationOptions? options = null
+    )
+    {
+        var o = options ?? new DurationOptions();
+        return entity
+            .GetStateChange(o.ShouldCheckImmediately)
+            .WhenIsFor(s => s.IsOff(), o.TimeSpan);
+    }
 }
 
 public static class SensorEntityExtensions
@@ -33,6 +79,26 @@ public static class SensorEntityExtensions
 
 public static class BinaryEntityExtensions
 {
+    public static IObservable<StateChange> OnOccupied(
+        this BinarySensorEntity entity,
+        DurationOptions? options = null
+    ) => entity.OnTurnedOn(options);
+
+    public static IObservable<StateChange> OnCleared(
+        this BinarySensorEntity entity,
+        DurationOptions? options = null
+    ) => entity.OnTurnedOff(options);
+
+    public static IObservable<StateChange> OnOpened(
+        this BinarySensorEntity entity,
+        DurationOptions? options = null
+    ) => entity.OnTurnedOn(options);
+
+    public static IObservable<StateChange> OnClosed(
+        this BinarySensorEntity entity,
+        DurationOptions? options = null
+    ) => entity.OnTurnedOff(options);
+
     public static bool IsOpen([NotNullWhen(true)] this BinarySensorEntity? entity) =>
         entity?.State is HaEntityStates.ON;
 

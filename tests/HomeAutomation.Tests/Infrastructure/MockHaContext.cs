@@ -261,5 +261,6 @@ public class MockHaContext : IHaContext
     {
         StateChangeSubject?.Dispose();
         EventSubject?.Dispose();
+        SchedulerProvider.Reset();
     }
 }
