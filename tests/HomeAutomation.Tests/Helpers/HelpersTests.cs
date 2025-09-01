@@ -1364,14 +1364,16 @@ public class HelpersTests : IDisposable
             new Subject<StateChange<SwitchEntity, EntityState<SwitchAttributes>>>();
         var results = new List<IList<StateChange<SwitchEntity, EntityState<SwitchAttributes>>>>();
 
-        switchChangeSubject.OnDoubleClick(2).Subscribe(results.Add);
+        IDisposable automation = _switch.OnDoubleClick(2).Subscribe(results.Add);
 
-        // This test mainly verifies the method compiles and returns the expected type
-        // The actual buffering and timing logic would require more complex reactive testing
+        _mockHaContext.SimulateStateChange(_switch.EntityId, "on", "off");
+        _mockHaContext.AdvanceTimeBy(TimeSpan.FromMilliseconds(500));
+        _mockHaContext.SimulateStateChange(_switch.EntityId, "off", "on");
+        _mockHaContext.AdvanceTimeBy(TimeSpan.FromMilliseconds(500));
 
         // Act & Assert - verify the observable is properly set up
         switchChangeSubject.Should().NotBeNull();
-        results.Should().BeEmpty(); // No changes emitted yet
+        results.Should().NotBeEmpty();
     }
 
     #endregion

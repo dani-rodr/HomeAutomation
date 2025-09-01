@@ -5,6 +5,8 @@ namespace HomeAutomation.apps.Helpers.Extensions;
 
 public record DurationOptions(
     bool ShouldCheckImmediately = false,
+    bool ShouldCheckIfAutomated = false,
+    bool ShouldCheckIfPhysicallyOperated = false,
     int Days = 0,
     int Hours = 0,
     int Minutes = 0,
@@ -28,7 +30,22 @@ public static class EntityExtensions
         bool shouldCheckImmediately
     ) => shouldCheckImmediately ? entity.StateChangesWithCurrent() : entity.StateChanges();
 
-    public static IObservable<StateChange> WhenIsFor(
+    private static IObservable<StateChange> FilterByIdentity(
+        this IObservable<StateChange> stream,
+        DurationOptions options
+    ) =>
+        options switch
+        {
+            { ShouldCheckIfAutomated: true } => stream.Where(s =>
+                HaIdentity.IsAutomated(s.UserId())
+            ),
+            { ShouldCheckIfPhysicallyOperated: true } => stream.Where(s =>
+                HaIdentity.IsPhysicallyOperated(s.UserId())
+            ),
+            _ => stream,
+        };
+
+    private static IObservable<StateChange> WhenIsFor(
         this IObservable<StateChange> source,
         Func<EntityState?, bool> predicate,
         TimeSpan duration
@@ -37,25 +54,30 @@ public static class EntityExtensions
             ? source.WhenStateIsFor(predicate, duration, SchedulerProvider.Current)
             : source.Where(sc => predicate(sc.New));
 
-    public static IObservable<StateChange> OnTurnedOn(
+    public static IObservable<StateChange> OnChange(
         this Entity entity,
+        Func<EntityState?, bool>? predicate = null,
         DurationOptions? options = null
     )
     {
-        var o = options ?? new DurationOptions();
-        return entity.GetStateChange(o.ShouldCheckImmediately).WhenIsFor(s => s.IsOn(), o.TimeSpan);
+        options ??= new DurationOptions();
+        predicate ??= _ => true;
+
+        return entity
+            .GetStateChange(options.ShouldCheckImmediately)
+            .WhenIsFor(predicate, options.TimeSpan)
+            .FilterByIdentity(options);
     }
+
+    public static IObservable<StateChange> OnTurnedOn(
+        this Entity entity,
+        DurationOptions? options = null
+    ) => entity.OnChange(s => s.IsOn(), options);
 
     public static IObservable<StateChange> OnTurnedOff(
         this Entity entity,
         DurationOptions? options = null
-    )
-    {
-        var o = options ?? new DurationOptions();
-        return entity
-            .GetStateChange(o.ShouldCheckImmediately)
-            .WhenIsFor(s => s.IsOff(), o.TimeSpan);
-    }
+    ) => entity.OnChange(s => s.IsOff(), options);
 }
 
 public static class SensorEntityExtensions
@@ -194,16 +216,13 @@ public static class SwitchEntityExtensions
     /// </remarks>
     public static IObservable<
         IList<StateChange<SwitchEntity, EntityState<SwitchAttributes>>>
-    > OnDoubleClick(
-        this IObservable<StateChange<SwitchEntity, EntityState<SwitchAttributes>>> source,
-        int timeout,
-        IScheduler? scheduler = null
-    )
+    > OnDoubleClick(this SwitchEntity entity, int timeout)
     {
         const int maxBufferSize = 2;
 
-        return source
-            .Timestamp(scheduler ?? Scheduler.Default) // inject scheduler here
+        return entity
+            .StateChanges()
+            .Timestamp(SchedulerProvider.Current)
             .Buffer(maxBufferSize, 1) // sliding window of 2 consecutive changes
             .Where(pair =>
                 pair.Count == maxBufferSize
