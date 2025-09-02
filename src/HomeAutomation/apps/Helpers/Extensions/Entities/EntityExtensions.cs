@@ -24,18 +24,27 @@ public static class EntityExtensions
         entity?.State is HaEntityStates.UNAVAILABLE;
 
     public static bool IsUnknown([NotNullWhen(true)] this Entity? entity) =>
-        entity?.State is HaEntityStates.UNAVAILABLE;
+        entity?.State is HaEntityStates.UNKNOWN;
 
-    private static IObservable<StateChange> GetStateChange(
-        this Entity entity,
-        bool shouldCheckImmediately
-    ) => shouldCheckImmediately ? entity.StateChangesWithCurrent() : entity.StateChanges();
+    private static IObservable<StateChange<T, TState>> GetStateChange<T, TState, TAttributes>(
+        this Entity<T, TState, TAttributes> entity,
+        bool shouldCheckImmediately = false
+    )
+        where T : Entity<T, TState, TAttributes>
+        where TState : EntityState<TAttributes>
+        where TAttributes : class
+    {
+        return shouldCheckImmediately ? entity.StateChangesWithCurrent() : entity.StateChanges();
+    }
 
-    private static IObservable<StateChange> FilterByIdentity(
-        this IObservable<StateChange> stream,
+    private static IObservable<StateChange<T, TState>> FilterByIdentity<T, TState>(
+        this IObservable<StateChange<T, TState>> stream,
         DurationOptions options
-    ) =>
-        options switch
+    )
+        where T : Entity
+        where TState : EntityState
+    {
+        return options switch
         {
             { ShouldCheckIfAutomated: true } => stream.Where(s =>
                 HaIdentity.IsAutomated(s.UserId())
@@ -48,21 +57,27 @@ public static class EntityExtensions
             ),
             _ => stream,
         };
+    }
 
-    private static IObservable<StateChange> WhenIsFor(
-        this IObservable<StateChange> source,
-        Func<EntityState?, bool> predicate,
+    private static IObservable<StateChange<T, TState>> WhenIsFor<T, TState>(
+        this IObservable<StateChange<T, TState>> source,
+        Func<TState?, bool> predicate,
         TimeSpan duration
-    ) =>
+    )
+        where T : Entity
+        where TState : EntityState =>
         duration > TimeSpan.Zero
             ? source.WhenStateIsFor(predicate, duration, SchedulerProvider.Current)
             : source.Where(sc => predicate(sc.New));
 
-    public static IObservable<StateChange> OnChanges(
-        this Entity entity,
-        Func<EntityState?, bool>? predicate = null,
+    public static IObservable<StateChange<T, TState>> OnChanges<T, TState, TAttributes>(
+        this Entity<T, TState, TAttributes> entity,
+        Func<TState?, bool>? predicate = null,
         DurationOptions? options = null
     )
+        where T : Entity<T, TState, TAttributes>
+        where TState : EntityState<TAttributes>
+        where TAttributes : class
     {
         options ??= new DurationOptions();
         predicate ??= _ => true;
@@ -73,14 +88,19 @@ public static class EntityExtensions
             .FilterByIdentity(options);
     }
 
-    public static IObservable<StateChange> OnTurnedOn(
-        this Entity entity,
+    public static IObservable<StateChange<T, TState>> OnTurnedOn<T, TState, TAttributes>(
+        this Entity<T, TState, TAttributes> entity,
         DurationOptions? options = null
-    ) => entity.OnChanges(s => s.IsOn(), options);
+    )
+        where T : Entity<T, TState, TAttributes>
+        where TState : EntityState<TAttributes>
+        where TAttributes : class => entity.OnChanges(s => s.IsOn(), options);
 
-    public static IObservable<StateChange> OnTurnedOff(
-        this Entity entity,
+    public static IObservable<StateChange<T, TState>> OnTurnedOff<T, TState, TAttributes>(
+        this Entity<T, TState, TAttributes> entity,
         DurationOptions? options = null
-    ) => entity.OnChanges(s => s.IsOff(), options);
+    )
+        where T : Entity<T, TState, TAttributes>
+        where TState : EntityState<TAttributes>
+        where TAttributes : class => entity.OnChanges(s => s.IsOff(), options);
 }
-
