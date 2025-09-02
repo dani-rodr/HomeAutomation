@@ -12,18 +12,18 @@ public class LightAutomation(IPantryLightEntities entities, ILogger<LightAutomat
     protected override IEnumerable<IDisposable> GetLightAutomations()
     {
         var mirrorLight = entities.MirrorLight;
-        yield return MotionSensor.StateChangesWithCurrent().IsOn().Subscribe(_ => Light.TurnOn());
         yield return MotionSensor
-            .StateChangesWithCurrent()
-            .IsOff()
+            .OnOccupied(new(ShouldCheckImmediately: true))
+            .Subscribe(_ => Light.TurnOn());
+        yield return MotionSensor
+            .OnCleared(new(ShouldCheckImmediately: true))
             .Subscribe(_ =>
             {
                 Light.TurnOff();
                 mirrorLight.TurnOff();
             });
         yield return entities
-            .MiScalePresenceSensor.StateChanges()
-            .IsOn()
+            .MiScalePresenceSensor.OnOccupied()
             .Subscribe(_ => mirrorLight.TurnOn());
     }
 
@@ -84,7 +84,9 @@ public class LightAutomation(IPantryLightEntities entities, ILogger<LightAutomat
                 (pantry, bathroom) => pantry.IsOff() && bathroom.IsOff()
             )
             .Where(bothOff => bothOff)
-            .Select(_ => Observable.Timer(TimeSpan.FromSeconds(turnOffDelay), SchedulerProvider.Current))
+            .Select(_ =>
+                Observable.Timer(TimeSpan.FromSeconds(turnOffDelay), SchedulerProvider.Current)
+            )
             .Switch()
             .Subscribe(_ =>
             {

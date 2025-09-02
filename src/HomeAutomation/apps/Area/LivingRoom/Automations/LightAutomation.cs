@@ -20,11 +20,12 @@ public class LightAutomation(
 
     protected override IEnumerable<IDisposable> GetLightAutomations()
     {
-        yield return entities.LivingRoomDoor.StateChanges().IsOpen().Subscribe(TurnOnLights);
-        yield return MotionSensor.StateChangesWithCurrent().IsOn().Subscribe(TurnOnLights);
+        yield return entities.LivingRoomDoor.OnOpened().Subscribe(TurnOnLights);
         yield return MotionSensor
-            .StateChangesWithCurrent()
-            .IsOff()
+            .OnOccupied(new(ShouldCheckImmediately: true))
+            .Subscribe(TurnOnLights);
+        yield return MotionSensor
+            .OnCleared(new(ShouldCheckImmediately: true))
             .Subscribe(async _ => await dimmingController.OnMotionStoppedAsync(Light));
     }
 
@@ -67,9 +68,7 @@ public class LightAutomation(
     private IDisposable SetSensorDelayOnKitchenOccupancy()
     {
         return entities
-            .KitchenMotionSensor.StateChanges()
-            .IsOn()
-            .ForSeconds(10)
+            .KitchenMotionSensor.OnOccupied(new(Seconds: 10))
             .Subscribe(_ => SensorDelay?.SetNumericValue(SensorActiveDelayValue));
     }
 

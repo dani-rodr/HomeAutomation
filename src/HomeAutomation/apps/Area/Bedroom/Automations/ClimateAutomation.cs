@@ -78,17 +78,9 @@ public class ClimateAutomation(
 
     private IEnumerable<IDisposable> GetSensorBasedAutomations()
     {
-        yield return _doorSensor
-            .StateChanges()
-            .IsOn()
-            .ForMinutes(5)
-            .Subscribe(ApplyTimeBasedAcSetting);
-        yield return _motionSensor
-            .StateChanges()
-            .IsOff()
-            .ForMinutes(10)
-            .Subscribe(ApplyTimeBasedAcSetting);
-        yield return _motionSensor.StateChanges().IsOn().Subscribe(ApplyTimeBasedAcSetting);
+        yield return _doorSensor.OnOpened(new(Minutes: 5)).Subscribe(ApplyTimeBasedAcSetting);
+        yield return _motionSensor.OnCleared(new(Minutes: 10)).Subscribe(ApplyTimeBasedAcSetting);
+        yield return _motionSensor.OnOccupied().Subscribe(ApplyTimeBasedAcSetting);
     }
 
     private void ApplyTimeBasedAcSetting(StateChange e)

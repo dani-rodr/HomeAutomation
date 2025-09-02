@@ -39,7 +39,7 @@ public class AccessControlAutomation(
                 _lock.Unlock();
             });
         }
-        yield return _door.StateChanges().IsClosed().Subscribe(_ => _doorRecentlyClosed = true);
+        yield return _door.OnClosed().Subscribe(_ => _doorRecentlyClosed = true);
         yield return _door
             .StateChanges()
             .IsClosed()

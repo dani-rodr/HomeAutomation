@@ -67,7 +67,7 @@ public class LgDisplay(ILgDisplayEntities entities, IServices services, ILogger<
 
     public IObservable<
         StateChange<MediaPlayerEntity, EntityState<MediaPlayerAttributes>>
-    > StateChanges() => Entity.StateChanges();
+    > StateChanges() => MediaPlayer.StateChanges();
 
     public void ShowToast(string msg, params object[] args) =>
         SendCommand("system.notifications/createToast", new { message = string.Format(msg, args) });
@@ -179,15 +179,15 @@ public class LgDisplay(ILgDisplayEntities entities, IServices services, ILogger<
 
     private IEnumerable<IDisposable> SyncLightEntityWithMediaState()
     {
-        yield return Entity.StateChangesWithCurrent().IsOn().Subscribe(_ => _lightDisplay.TurnOn());
-        yield return Entity
-            .StateChangesWithCurrent()
-            .IsOff()
+        yield return MediaPlayer
+            .OnTurnedOn(new(ShouldCheckImmediately: true))
+            .Subscribe(_ => _lightDisplay.TurnOn());
+        yield return MediaPlayer
+            .OnTurnedOff(new(ShouldCheckImmediately: true))
             .Subscribe(_ => _lightDisplay.TurnOff());
         yield return _lightDisplay
-            .StateChanges()
-            .IsOn()
-            .Where(_ => Entity.IsOff())
+            .OnTurnedOn()
+            .Where(_ => MediaPlayer.IsOff())
             .Subscribe(_ => TurnOn());
     }
 

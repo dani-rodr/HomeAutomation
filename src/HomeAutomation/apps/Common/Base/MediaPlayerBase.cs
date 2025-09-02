@@ -6,18 +6,18 @@ public abstract class MediaPlayerBase(MediaPlayerEntity entity, ILogger logger)
     : AutomationBase(logger),
         IMediaPlayer
 {
-    public string EntityId => Entity.EntityId;
-    public double? VolumeLevel => Entity.Attributes?.VolumeLevel;
-    public bool? IsMuted => Entity.Attributes?.IsVolumeMuted;
-    public string? CurrentSource => Entity.Attributes?.Source;
-    public IReadOnlyList<string>? SourceList => Entity.Attributes?.SourceList;
-    public string? FriendlyName => Entity.Attributes?.FriendlyName;
-    public string? DeviceClass => Entity.Attributes?.DeviceClass;
-    public string? AppId => Entity.Attributes?.AppId;
-    public string? AppName => Entity.Attributes?.AppName;
-    public string? MediaContentType => Entity.Attributes?.MediaContentType;
+    public string EntityId => MediaPlayer.EntityId;
+    public double? VolumeLevel => MediaPlayer.Attributes?.VolumeLevel;
+    public bool? IsMuted => MediaPlayer.Attributes?.IsVolumeMuted;
+    public string? CurrentSource => MediaPlayer.Attributes?.Source;
+    public IReadOnlyList<string>? SourceList => MediaPlayer.Attributes?.SourceList;
+    public string? FriendlyName => MediaPlayer.Attributes?.FriendlyName;
+    public string? DeviceClass => MediaPlayer.Attributes?.DeviceClass;
+    public string? AppId => MediaPlayer.Attributes?.AppId;
+    public string? AppName => MediaPlayer.Attributes?.AppName;
+    public string? MediaContentType => MediaPlayer.Attributes?.MediaContentType;
     protected abstract Dictionary<string, string> ExtendedSources { get; }
-    protected MediaPlayerEntity Entity => entity;
+    protected MediaPlayerEntity MediaPlayer => entity;
     protected Dictionary<string, string> Sources { get; private set; } = [];
     private string _queuedSourceKey = string.Empty;
 
@@ -30,21 +30,21 @@ public abstract class MediaPlayerBase(MediaPlayerEntity entity, ILogger logger)
 
     protected override IEnumerable<IDisposable> GetAutomations() => [ShowQueuedSource()];
 
-    public void SetVolume(double volumeLevel) => Entity.VolumeSet(volumeLevel);
+    public void SetVolume(double volumeLevel) => MediaPlayer.VolumeSet(volumeLevel);
 
-    public void Mute() => Entity.VolumeMute(true);
+    public void Mute() => MediaPlayer.VolumeMute(true);
 
-    public void Unmute() => Entity.VolumeMute(false);
+    public void Unmute() => MediaPlayer.VolumeMute(false);
 
-    public void SelectSource(string source) => Entity.SelectSource(source);
+    public void SelectSource(string source) => MediaPlayer.SelectSource(source);
 
-    public virtual void TurnOn() => Entity.TurnOn();
+    public virtual void TurnOn() => MediaPlayer.TurnOn();
 
-    public virtual void TurnOff() => Entity.TurnOff();
+    public virtual void TurnOff() => MediaPlayer.TurnOff();
 
-    public bool IsOn() => Entity.State.IsOn();
+    public bool IsOn() => MediaPlayer.State.IsOn();
 
-    public bool IsOff() => Entity.State.IsOff();
+    public bool IsOff() => MediaPlayer.State.IsOff();
 
     protected void ShowSource(string key)
     {
@@ -66,7 +66,7 @@ public abstract class MediaPlayerBase(MediaPlayerEntity entity, ILogger logger)
         if (source != CurrentSource)
         {
             Logger.LogInformation("Switching source to '{Source}' (key: '{Key}').", source, key);
-            Entity.SelectSource(source);
+            MediaPlayer.SelectSource(source);
             return;
         }
         Logger.LogInformation(
@@ -77,14 +77,14 @@ public abstract class MediaPlayerBase(MediaPlayerEntity entity, ILogger logger)
     }
 
     public IObservable<string?> OnSourceChange() =>
-        Entity
+        MediaPlayer
             .StateAllChangesWithCurrent()
             .Where(e => e.Old?.Attributes?.Source != e.New?.Attributes?.Source)
             .Select(e => e.New?.Attributes?.Source);
 
     private IDisposable ShowQueuedSource()
     {
-        return Entity
+        return MediaPlayer
             .StateChanges()
             .IsOn()
             .Subscribe(_ =>
