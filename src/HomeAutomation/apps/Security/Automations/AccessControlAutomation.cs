@@ -41,9 +41,7 @@ public class AccessControlAutomation(
         }
         yield return _door.OnClosed().Subscribe(_ => _doorRecentlyClosed = true);
         yield return _door
-            .StateChanges()
-            .IsClosed()
-            .ForMinutes(DOOR_CLOSE_WINDOW_DELAY)
+            .OnClosed(new DurationOptions(Minutes: DOOR_CLOSE_WINDOW_DELAY))
             .Subscribe(_ => _doorRecentlyClosed = false);
         yield return entities
             .House.StateChanges()

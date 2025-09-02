@@ -46,9 +46,7 @@ public class LightAutomation(
     private IDisposable TurnOnMotionSensorAfterNoMotionAndRoomOccupied()
     {
         return MotionSensor
-            .StateChanges()
-            .IsOff()
-            .ForMinutes(2)
+            .OnCleared(new DurationOptions(Minutes: 2))
             .Where(_ =>
                 entities.BedroomDoor.IsClosed() && entities.BedroomMotionSensor.IsOccupied()
             )
@@ -58,9 +56,7 @@ public class LightAutomation(
     private IDisposable TurnOnMotionSensorOnTvOff()
     {
         return MotionSensor
-            .StateChanges()
-            .IsOff()
-            .ForMinutes(30)
+            .OnCleared(new DurationOptions(Minutes: 30))
             .Where(_ => entities.TclTv.IsOff())
             .Subscribe(_ => MasterSwitch.TurnOn());
     }

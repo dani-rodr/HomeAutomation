@@ -19,15 +19,11 @@ public class ClimateAutomation(
             .IsManuallyOperated()
             .Subscribe(TurnOffMasterSwitchOnManualOperation);
         yield return _motionSensor
-            .StateChangesWithCurrent()
-            .IsOff()
-            .ForHours(1)
+            .OnCleared(new DurationOptions(Hours: 1, ShouldCheckImmediately: true))
             .Where(_ => MasterSwitch.IsOff())
             .Subscribe(_ => MasterSwitch.TurnOn());
         yield return MasterSwitch
-            .StateChangesWithCurrent()
-            .IsOff()
-            .ForHours(8)
+            .OnTurnedOff(new DurationOptions(Hours: 8, ShouldCheckImmediately: true))
             .Subscribe(_ => MasterSwitch.TurnOn());
         yield return _doorSensor
             .StateChanges()
@@ -98,9 +94,7 @@ public class ClimateAutomation(
     {
         var houseOccupancy = entities.HouseMotionSensor;
         yield return houseOccupancy
-            .StateChanges()
-            .IsOff()
-            .ForMinutes(30)
+            .OnCleared(new DurationOptions(Minutes: 30))
             .Subscribe(_ => _ac.TurnOff());
         yield return houseOccupancy
             .StateChanges()
