@@ -18,11 +18,16 @@ public class ChargingHandler(IChargingHandlerEntities entities) : IChargingHandl
         {
             _lastBatteryPct = Level.State.Value;
         }
+        if (forceCharge)
+        {
+            Power.TurnOn();
+            return;
+        }
         if (BatteryLevel >= HIGH_BATTERY)
         {
             Power.TurnOff();
         }
-        else if (BatteryLevel <= LOW_BATTERY || forceCharge)
+        else if (BatteryLevel <= LOW_BATTERY)
         {
             Power.TurnOn();
         }

@@ -56,6 +56,7 @@ public class LaptopChargingHandlerTests : IDisposable
 
         // Act & Assert - Should return last known value
         _batteryHandler.BatteryLevel.Should().Be(65);
+        _mockHaContext.ShouldHaveCalledSwitchTurnOn(_entities.Power.EntityId);
     }
 
     #endregion
@@ -63,7 +64,7 @@ public class LaptopChargingHandlerTests : IDisposable
     #region Charging Logic Tests
 
     [Fact]
-    public void HandleLaptopTurnedOn_HighBattery_Should_TurnOffPower()
+    public void HandleLaptopTurnedOn_HighBattery_Should_TurnOnPower()
     {
         // Arrange - High battery level (≥80%)
         _mockHaContext.SetEntityState(_entities.Level.EntityId, "85");
@@ -72,7 +73,7 @@ public class LaptopChargingHandlerTests : IDisposable
         _batteryHandler.HandleLaptopTurnedOn();
 
         // Assert - Should turn off power to prevent overcharging
-        _mockHaContext.ShouldHaveCalledSwitchTurnOff(_entities.Power.EntityId);
+        _mockHaContext.ShouldHaveCalledSwitchTurnOn(_entities.Power.EntityId);
     }
 
     [Fact]
@@ -490,7 +491,7 @@ public class LaptopChargingHandlerTests : IDisposable
     #region Edge Cases & Error Handling
 
     [Fact]
-    public void BatteryLevel_InvalidSensorValue_Should_UseLastKnownValue()
+    public void BatteryLevel_CachedSensorValue_Should_TurnOnPower()
     {
         // Arrange - Set initial valid value and cache it
         _mockHaContext.SetEntityState(_entities.Level.EntityId, "60");
@@ -501,6 +502,19 @@ public class LaptopChargingHandlerTests : IDisposable
 
         // Assert - Should fall back to last known value
         _batteryHandler.BatteryLevel.Should().Be(60);
+        _mockHaContext.ShouldHaveCalledSwitchTurnOn(_entities.Power.EntityId);
+    }
+
+    [Fact]
+    public void BatteryLevel_InvalidSensorValue_Should_StillTurnOnPower()
+    {
+        // Arrange - Set initial valid value and cache it
+        _mockHaContext.SetEntityState(_entities.Level.EntityId, "invalid");
+        _batteryHandler.HandleLaptopTurnedOn(); // Cache the value through ApplyChargingLogic
+
+        // Assert - Should fall back to last known value
+        _batteryHandler.BatteryLevel.Should().Be(0);
+        _mockHaContext.ShouldHaveCalledSwitchTurnOn(_entities.Power.EntityId);
     }
 
     [Fact]
