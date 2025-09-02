@@ -30,9 +30,7 @@ public class LightAutomation(IBedroomLightEntities entities, ILogger<LightAutoma
                 ToggleLightsViaSwitch(e.First());
             });
         yield return _rightSideEmptySwitch.StateChanges().Subscribe(ToggleLightsViaSwitch);
-        yield return Light
-            .OnTurnedOn(new(ShouldCheckIfAutomated: true))
-            .Subscribe(_ => MasterSwitch.TurnOn());
+        yield return Light.OnTurnedOn().IsAutomated().Subscribe(_ => MasterSwitch.TurnOn());
     }
 
     private void ToggleLightsViaSwitch(StateChange e)

@@ -5,9 +5,6 @@ namespace HomeAutomation.apps.Helpers.Extensions.Entities;
 
 public record DurationOptions<TState>(
     bool ShouldCheckImmediately = false,
-    bool ShouldCheckIfAutomated = false,
-    bool ShouldCheckIfPhysicallyOperated = false,
-    bool ShouldCheckIfManuallyOperated = false,
     int Days = 0,
     int Hours = 0,
     int Minutes = 0,
@@ -47,24 +44,16 @@ public static class EntityExtensions
         return shouldCheckImmediately ? entity.StateChangesWithCurrent() : entity.StateChanges();
     }
 
-    private static IObservable<StateChange<T, TState>> FilterByIdentity<T, TState>(
-        this IObservable<StateChange<T, TState>> stream,
-        DurationOptions<TState> options
-    )
-        where T : Entity
-        where TState : EntityState
-    {
-        if (options.ShouldCheckIfAutomated)
-            stream = stream.Where(s => HaIdentity.IsAutomated(s.UserId()));
+    public static IObservable<StateChange> IsAutomated(this IObservable<StateChange> stream) =>
+        stream.Where(s => HaIdentity.IsAutomated(s.UserId()));
 
-        if (options.ShouldCheckIfPhysicallyOperated)
-            stream = stream.Where(s => HaIdentity.IsPhysicallyOperated(s.UserId()));
+    public static IObservable<StateChange> IsPhysicallyOperated(
+        this IObservable<StateChange> source
+    ) => source.Where(s => HaIdentity.IsPhysicallyOperated(s.UserId()));
 
-        if (options.ShouldCheckIfManuallyOperated)
-            stream = stream.Where(s => HaIdentity.IsManuallyOperated(s.UserId()));
-
-        return stream;
-    }
+    public static IObservable<StateChange> IsManuallyOperated(
+        this IObservable<StateChange> source
+    ) => source.Where(s => HaIdentity.IsManuallyOperated(s.UserId()));
 
     private static IObservable<StateChange<T, TState>> WhenIsFor<T, TState>(
         this IObservable<StateChange<T, TState>> source,
@@ -89,8 +78,7 @@ public static class EntityExtensions
 
         return entity
             .GetStateChange(options.ShouldCheckImmediately)
-            .WhenIsFor(options.SafeCondition, options.TimeSpan)
-            .FilterByIdentity(options);
+            .WhenIsFor(options.SafeCondition, options.TimeSpan);
     }
 
     public static IObservable<StateChange<T, TState>> OnTurnedOn<T, TState, TAttributes>(

@@ -55,10 +55,6 @@ public static class StateChangeObservableExtensions
     public static IObservable<StateChange> IsLocked(this IObservable<StateChange> source) =>
         source.Is().Locked();
 
-    public static IObservable<StateChange> IsManuallyOperated(
-        this IObservable<StateChange> source
-    ) => source.Where(s => HaIdentity.IsManuallyOperated(s.UserId()));
-
     public static IObservable<IList<StateChange>> IsFlickering(
         this IObservable<StateChange> source,
         int minimumFlips = 4,

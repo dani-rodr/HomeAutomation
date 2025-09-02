@@ -19,10 +19,12 @@ public abstract class FanAutomationBase : ToggleableAutomation
     protected override IEnumerable<IDisposable> GetPersistentAutomations()
     {
         yield return MainFan
-            .OnTurnedOn(new(ShouldCheckIfManuallyOperated: true))
+            .OnTurnedOn()
+            .IsManuallyOperated()
             .Subscribe(_ => MasterSwitch.TurnOn());
         yield return MainFan
-            .OnTurnedOff(new(ShouldCheckIfManuallyOperated: true))
+            .OnTurnedOff()
+            .IsManuallyOperated()
             .Subscribe(_ => MasterSwitch.TurnOff());
         yield return GetMasterSwitchAutomations();
         yield return GetIdleOperationAutomations();

@@ -15,9 +15,7 @@ public abstract class LightAutomationBase(ILightAutomationEntities entities, ILo
 
     protected override IEnumerable<IDisposable> GetPersistentAutomations() =>
         [
-            Light
-                .OnChanges(options: new(ShouldCheckIfManuallyOperated: true))
-                .Subscribe(ControlMasterSwitchOnLightChange),
+            Light.OnChanges().IsManuallyOperated().Subscribe(ControlMasterSwitchOnLightChange),
             MasterSwitch.OnTurnedOn().Subscribe(ControlLightOnMotionChange),
             .. GetAdditionalPersistentAutomations(),
         ];

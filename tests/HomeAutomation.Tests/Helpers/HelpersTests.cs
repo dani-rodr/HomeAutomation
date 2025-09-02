@@ -265,9 +265,7 @@ public class HelpersTests : IDisposable
     {
         // Arrange
         var results = new List<StateChange>();
-        using var disposable = _light
-            .OnChanges(new(ShouldCheckIfManuallyOperated: true))
-            .Subscribe(results.Add);
+        using var disposable = _light.OnChanges().IsManuallyOperated().Subscribe(results.Add);
 
         // Act
         _mockHaContext.SimulateStateChange(_light.EntityId, "off", "on", userId);
@@ -296,9 +294,7 @@ public class HelpersTests : IDisposable
     {
         // Arrange
         var results = new List<StateChange>();
-        using var disposable = _light
-            .OnChanges(new(ShouldCheckIfPhysicallyOperated: true))
-            .Subscribe(results.Add);
+        using var disposable = _light.OnChanges().IsPhysicallyOperated().Subscribe(results.Add);
 
         // Act
         _mockHaContext.SimulateStateChange(_light.EntityId, "off", "on", userId);
@@ -328,9 +324,7 @@ public class HelpersTests : IDisposable
     {
         // Arrange
         var results = new List<StateChange>();
-        using var disposable = _light
-            .OnChanges(new(ShouldCheckIfAutomated: true))
-            .Subscribe(results.Add);
+        using var disposable = _light.OnChanges().IsAutomated().Subscribe(results.Add);
 
         // Act
         _mockHaContext.SimulateStateChange(_light.EntityId, "off", "on", userId);
