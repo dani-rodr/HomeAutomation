@@ -18,9 +18,12 @@ public abstract class FanAutomationBase : ToggleableAutomation
 
     protected override IEnumerable<IDisposable> GetPersistentAutomations()
     {
-        var manualOperation = MainFan.StateChanges().IsManuallyOperated();
-        yield return manualOperation.WasOff().IsOn().Subscribe(_ => MasterSwitch.TurnOn());
-        yield return manualOperation.WasOn().IsOff().Subscribe(_ => MasterSwitch.TurnOff());
+        yield return MainFan
+            .OnTurnedOn(new(ShouldCheckIfManuallyOperated: true))
+            .Subscribe(_ => MasterSwitch.TurnOn());
+        yield return MainFan
+            .OnTurnedOff(new(ShouldCheckIfManuallyOperated: true))
+            .Subscribe(_ => MasterSwitch.TurnOff());
         yield return GetMasterSwitchAutomations();
         yield return GetIdleOperationAutomations();
     }
@@ -66,9 +69,8 @@ public abstract class FanAutomationBase : ToggleableAutomation
             .Subscribe(_ => MasterSwitch.TurnOn());
 
     private IDisposable GetMasterSwitchAutomations() =>
-        MasterSwitch!
-            .StateChanges()
-            .IsOn()
+        MasterSwitch
+            .OnTurnedOn()
             .Subscribe(e =>
             {
                 if (MotionSensor.IsOn())

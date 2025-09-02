@@ -26,21 +26,10 @@ public class ClimateAutomation(
             .OnTurnedOff(new DurationOptions(Hours: 8, ShouldCheckImmediately: true))
             .Subscribe(_ => MasterSwitch.TurnOn());
         yield return _doorSensor
-            .StateChanges()
-            .IsClosed()
-            .Subscribe(e =>
-            {
-                if (MasterSwitch.IsOff())
-                {
-                    return;
-                }
-                ApplyTimeBasedAcSetting(e);
-            });
-        yield return MasterSwitch!
-            .StateChanges()
-            .WasOff()
-            .IsOn()
+            .OnClosed()
+            .Where(_ => MasterSwitch.IsOn())
             .Subscribe(ApplyTimeBasedAcSetting);
+        yield return MasterSwitch.OnTurnedOn().Subscribe(ApplyTimeBasedAcSetting);
     }
 
     protected override IEnumerable<IDisposable> GetToggleableAutomations() =>
@@ -97,8 +86,7 @@ public class ClimateAutomation(
             .OnCleared(new DurationOptions(Minutes: 30))
             .Subscribe(_ => _ac.TurnOff());
         yield return houseOccupancy
-            .StateChanges()
-            .IsOn()
+            .OnOccupied()
             .Subscribe(e =>
             {
                 var last = e.Old?.LastChanged;

@@ -44,8 +44,7 @@ public class AccessControlAutomation(
             .OnClosed(new DurationOptions(Minutes: DOOR_CLOSE_WINDOW_DELAY))
             .Subscribe(_ => _doorRecentlyClosed = false);
         yield return entities
-            .House.StateChanges()
-            .IsOff()
+            .House.OnCleared()
             .Subscribe(_ =>
             {
                 Logger.LogInformation("House became empty.");

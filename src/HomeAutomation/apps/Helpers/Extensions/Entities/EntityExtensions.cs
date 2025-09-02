@@ -28,6 +28,12 @@ public static class EntityExtensions
     public static bool IsUnknown([NotNullWhen(true)] this Entity? entity) =>
         entity.StateInvariant() is HaEntityStates.UNKNOWN;
 
+    public static bool IsUnavailable(this EntityState? state) =>
+        state?.State?.ToLowerInvariant() == HaEntityStates.UNAVAILABLE;
+
+    public static bool IsUnknown(this EntityState? state) =>
+        state?.State?.ToLowerInvariant() == HaEntityStates.UNKNOWN;
+
     private static IObservable<StateChange<T, TState>> GetStateChange<T, TState, TAttributes>(
         this Entity<T, TState, TAttributes> entity,
         bool shouldCheckImmediately = false
@@ -105,4 +111,20 @@ public static class EntityExtensions
         where T : Entity<T, TState, TAttributes>
         where TState : EntityState<TAttributes>
         where TAttributes : class => entity.OnChanges(s => s.IsOff(), options);
+
+    public static IObservable<StateChange<T, TState>> OnUnavailable<T, TState, TAttributes>(
+        this Entity<T, TState, TAttributes> entity,
+        DurationOptions? options = null
+    )
+        where T : Entity<T, TState, TAttributes>
+        where TState : EntityState<TAttributes>
+        where TAttributes : class => entity.OnChanges(s => s.IsLocked(), options);
+
+    public static IObservable<StateChange<T, TState>> OnUnknown<T, TState, TAttributes>(
+        this Entity<T, TState, TAttributes> entity,
+        DurationOptions? options = null
+    )
+        where T : Entity<T, TState, TAttributes>
+        where TState : EntityState<TAttributes>
+        where TAttributes : class => entity.OnChanges(s => s.IsUnknown(), options);
 }

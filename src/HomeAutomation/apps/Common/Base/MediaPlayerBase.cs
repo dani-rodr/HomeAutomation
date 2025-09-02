@@ -85,8 +85,7 @@ public abstract class MediaPlayerBase(MediaPlayerEntity entity, ILogger logger)
     private IDisposable ShowQueuedSource()
     {
         return MediaPlayer
-            .StateChanges()
-            .IsOn()
+            .OnTurnedOn()
             .Subscribe(_ =>
             {
                 if (string.IsNullOrEmpty(_queuedSourceKey))

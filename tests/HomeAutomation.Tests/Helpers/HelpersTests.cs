@@ -1,3 +1,5 @@
+using System.Reactive.Disposables;
+
 namespace HomeAutomation.Tests.Helpers;
 
 /// <summary>
@@ -45,12 +47,10 @@ public class HelpersTests : IDisposable
     {
         // Arrange
         var results = new List<StateChange>();
-        _stateChangeSubject.IsOn().Subscribe(results.Add);
-
-        var change = StateChangeHelpers.CreateStateChange(_light, "off", state);
+        using var disposable = _light.OnTurnedOn().Subscribe(results.Add);
 
         // Act
-        _stateChangeSubject.OnNext(change);
+        _mockHaContext.SimulateStateChange(_light.EntityId, "off", state);
 
         // Assert
         if (shouldMatch)
@@ -70,19 +70,20 @@ public class HelpersTests : IDisposable
         // Arrange
         var onResults = new List<StateChange>();
         var openResults = new List<StateChange>();
+        var occupiedResults = new List<StateChange>();
 
-        _stateChangeSubject.IsOn().Subscribe(onResults.Add);
-        _stateChangeSubject.IsOpen().Subscribe(openResults.Add);
-
-        var change = StateChangeHelpers.CreateStateChange(_motionSensor, "off", "on");
-
+        using var disposable = new CompositeDisposable(
+            _motionSensor.OnTurnedOn().Subscribe(onResults.Add),
+            _motionSensor.OnOpened().Subscribe(openResults.Add),
+            _motionSensor.OnOccupied().Subscribe(occupiedResults.Add)
+        );
         // Act
-        _stateChangeSubject.OnNext(change);
+        _mockHaContext.SimulateStateChange(_motionSensor.EntityId, "off", "on");
 
         // Assert
         onResults.Should().HaveCount(1);
         openResults.Should().HaveCount(1);
-        openResults[0].Should().BeEquivalentTo(onResults[0]);
+        occupiedResults.Should().HaveCount(1);
     }
 
     [Theory]
@@ -95,12 +96,10 @@ public class HelpersTests : IDisposable
     {
         // Arrange
         var results = new List<StateChange>();
-        _stateChangeSubject.IsOff().Subscribe(results.Add);
-
-        var change = StateChangeHelpers.CreateStateChange(_light, "on", state);
+        using var disposable = _light.OnTurnedOff().Subscribe(results.Add);
 
         // Act
-        _stateChangeSubject.OnNext(change);
+        _mockHaContext.SimulateStateChange(_light.EntityId, "on", state);
 
         // Assert
         if (shouldMatch)
@@ -120,19 +119,20 @@ public class HelpersTests : IDisposable
         // Arrange
         var offResults = new List<StateChange>();
         var closedResults = new List<StateChange>();
+        var clearedResults = new List<StateChange>();
 
-        _stateChangeSubject.IsOff().Subscribe(offResults.Add);
-        _stateChangeSubject.IsClosed().Subscribe(closedResults.Add);
-
-        var change = StateChangeHelpers.CreateStateChange(_motionSensor, "on", "off");
-
+        using var disposable = new CompositeDisposable(
+            _motionSensor.OnTurnedOff().Subscribe(offResults.Add),
+            _motionSensor.OnClosed().Subscribe(closedResults.Add),
+            _motionSensor.OnCleared().Subscribe(clearedResults.Add)
+        );
         // Act
-        _stateChangeSubject.OnNext(change);
+        _mockHaContext.SimulateStateChange(_motionSensor.EntityId, "on", "off");
 
         // Assert
         offResults.Should().HaveCount(1);
         closedResults.Should().HaveCount(1);
-        closedResults[0].Should().BeEquivalentTo(offResults[0]);
+        clearedResults.Should().HaveCount(1);
     }
 
     [Theory]
@@ -145,12 +145,10 @@ public class HelpersTests : IDisposable
     {
         // Arrange
         var results = new List<StateChange>();
-        _stateChangeSubject.IsLocked().Subscribe(results.Add);
-
-        var change = StateChangeHelpers.CreateStateChange(_lock, "unlocked", state);
+        using var disposable = _lock.OnLocked().Subscribe(results.Add);
 
         // Act
-        _stateChangeSubject.OnNext(change);
+        _mockHaContext.SimulateStateChange(_lock.EntityId, "unlocked", state);
 
         // Assert
         if (shouldMatch)
@@ -174,12 +172,10 @@ public class HelpersTests : IDisposable
     {
         // Arrange
         var results = new List<StateChange>();
-        _stateChangeSubject.IsUnlocked().Subscribe(results.Add);
-
-        var change = StateChangeHelpers.CreateStateChange(_lock, "locked", state);
+        using var disposable = _lock.OnUnlocked().Subscribe(results.Add);
 
         // Act
-        _stateChangeSubject.OnNext(change);
+        _mockHaContext.SimulateStateChange(_lock.EntityId, "locked", state);
 
         // Assert
         if (shouldMatch)
@@ -205,12 +201,10 @@ public class HelpersTests : IDisposable
     {
         // Arrange
         var results = new List<StateChange>();
-        _stateChangeSubject.IsUnavailable().Subscribe(results.Add);
-
-        var change = StateChangeHelpers.CreateStateChange(_light, "on", state);
+        using var disposable = _light.OnChanges(s => s.IsUnavailable()).Subscribe(results.Add);
 
         // Act
-        _stateChangeSubject.OnNext(change);
+        _mockHaContext.SimulateStateChange(_light.EntityId, "on", state);
 
         // Assert
         if (shouldMatch)
@@ -233,12 +227,10 @@ public class HelpersTests : IDisposable
     {
         // Arrange
         var results = new List<StateChange>();
-        _stateChangeSubject.IsUnknown().Subscribe(results.Add);
-
-        var change = StateChangeHelpers.CreateStateChange(_light, "on", state);
+        using var disposable = _light.OnChanges(s => s.IsUnknown()).Subscribe(results.Add);
 
         // Act
-        _stateChangeSubject.OnNext(change);
+        _mockHaContext.SimulateStateChange(_light.EntityId, "on", state);
 
         // Assert
         if (shouldMatch)
@@ -269,12 +261,12 @@ public class HelpersTests : IDisposable
     {
         // Arrange
         var results = new List<StateChange>();
-        _stateChangeSubject.IsManuallyOperated().Subscribe(results.Add);
-
-        var change = StateChangeHelpers.CreateStateChange(_light, "off", "on", userId);
+        using var disposable = _light
+            .OnChanges(options: new DurationOptions(ShouldCheckIfManuallyOperated: true))
+            .Subscribe(results.Add);
 
         // Act
-        _stateChangeSubject.OnNext(change);
+        _mockHaContext.SimulateStateChange(_light.EntityId, "off", "on", userId);
 
         // Assert
         if (shouldMatch)
@@ -300,12 +292,12 @@ public class HelpersTests : IDisposable
     {
         // Arrange
         var results = new List<StateChange>();
-        _stateChangeSubject.IsPhysicallyOperated().Subscribe(results.Add);
-
-        var change = StateChangeHelpers.CreateStateChange(_light, "off", "on", userId);
+        using var disposable = _light
+            .OnChanges(options: new DurationOptions(ShouldCheckIfPhysicallyOperated: true))
+            .Subscribe(results.Add);
 
         // Act
-        _stateChangeSubject.OnNext(change);
+        _mockHaContext.SimulateStateChange(_light.EntityId, "off", "on", userId);
 
         // Assert
         if (shouldMatch)
@@ -332,12 +324,12 @@ public class HelpersTests : IDisposable
     {
         // Arrange
         var results = new List<StateChange>();
-        _stateChangeSubject.IsAutomated().Subscribe(results.Add);
-
-        var change = StateChangeHelpers.CreateStateChange(_light, "off", "on", userId);
+        using var disposable = _light
+            .OnChanges(options: new DurationOptions(ShouldCheckIfAutomated: true))
+            .Subscribe(results.Add);
 
         // Act
-        _stateChangeSubject.OnNext(change);
+        _mockHaContext.SimulateStateChange(_light.EntityId, "off", "on", userId);
 
         // Assert
         if (shouldMatch)

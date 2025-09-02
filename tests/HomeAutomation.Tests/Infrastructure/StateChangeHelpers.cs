@@ -28,7 +28,7 @@ public static class StateChangeHelpers
         IEntityCore entity,
         string oldState,
         string newState,
-        string? userId
+        string? userId = null
     )
     {
         return new StateChange(

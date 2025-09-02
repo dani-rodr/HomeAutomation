@@ -30,17 +30,9 @@ public readonly struct StateChangeFilter(IObservable<StateChange> source, bool u
 
     public IObservable<StateChange> Off() => State(HaEntityStates.OFF);
 
-    public IObservable<StateChange> Open() => On();
-
-    public IObservable<StateChange> Closed() => Off();
-
     public IObservable<StateChange> Locked() => State(HaEntityStates.LOCKED);
 
     public IObservable<StateChange> Unlocked() => State(HaEntityStates.UNLOCKED);
-
-    public IObservable<StateChange> Unknown() => State(HaEntityStates.UNKNOWN);
-
-    public IObservable<StateChange> Unavailable() => State(HaEntityStates.UNAVAILABLE);
 }
 
 public static class StateChangeObservableExtensions
@@ -51,55 +43,21 @@ public static class StateChangeObservableExtensions
     public static StateChangeFilter Was(this IObservable<StateChange> source) =>
         new(source, useNewState: false);
 
-    public static IObservable<StateChange> WasOff(this IObservable<StateChange> source) =>
-        source.Was().Off();
-
-    public static IObservable<StateChange> WasOn(this IObservable<StateChange> source) =>
-        source.Was().On();
-
     public static IObservable<StateChange> WasUnlocked(this IObservable<StateChange> source) =>
         source.Was().Unlocked();
 
     public static IObservable<StateChange> IsOn(this IObservable<StateChange> source) =>
         source.Is().On();
 
-    public static IObservable<StateChange> IsOccupied(this IObservable<StateChange> source) =>
-        source.Is().On();
-
-    public static IObservable<StateChange> IsOpen(this IObservable<StateChange> source) =>
-        source.Is().On();
-
     public static IObservable<StateChange> IsOff(this IObservable<StateChange> source) =>
-        source.Is().Off();
-
-    public static IObservable<StateChange> IsClear(this IObservable<StateChange> source) =>
-        source.Is().Off();
-
-    public static IObservable<StateChange> IsClosed(this IObservable<StateChange> source) =>
         source.Is().Off();
 
     public static IObservable<StateChange> IsLocked(this IObservable<StateChange> source) =>
         source.Is().Locked();
 
-    public static IObservable<StateChange> IsUnlocked(this IObservable<StateChange> source) =>
-        source.Is().Unlocked();
-
-    public static IObservable<StateChange> IsUnavailable(this IObservable<StateChange> source) =>
-        source.Is().Unavailable();
-
-    public static IObservable<StateChange> IsUnknown(this IObservable<StateChange> source) =>
-        source.Is().Unknown();
-
     public static IObservable<StateChange> IsManuallyOperated(
         this IObservable<StateChange> source
     ) => source.Where(s => HaIdentity.IsManuallyOperated(s.UserId()));
-
-    public static IObservable<StateChange> IsPhysicallyOperated(
-        this IObservable<StateChange> source
-    ) => source.Where(s => HaIdentity.IsPhysicallyOperated(s.UserId()));
-
-    public static IObservable<StateChange> IsAutomated(this IObservable<StateChange> source) =>
-        source.Where(s => HaIdentity.IsAutomated(s.UserId()));
 
     public static IObservable<IList<StateChange>> IsFlickering(
         this IObservable<StateChange> source,
@@ -120,16 +78,6 @@ public static class StateChangeDurationExtensions
         this IObservable<StateChange> source,
         int time
     ) => source.For(time, TimeUnit.Seconds);
-
-    public static IObservable<StateChange> ForMinutes(
-        this IObservable<StateChange> source,
-        int time
-    ) => source.For(time, TimeUnit.Minutes);
-
-    public static IObservable<StateChange> ForHours(
-        this IObservable<StateChange> source,
-        int time
-    ) => source.For(time, TimeUnit.Hours);
 
     public static IObservable<StateChange> For(
         this IObservable<StateChange> source,

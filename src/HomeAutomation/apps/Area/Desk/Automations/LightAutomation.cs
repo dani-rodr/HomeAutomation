@@ -72,12 +72,10 @@ public class LightAutomation(
         var salaLights = entities.SalaLights;
 
         yield return salaLights
-            .StateChanges()
-            .IsOn()
+            .OnTurnedOn()
             .Subscribe(async _ => await monitor.SetBrightnessHighAsync());
         yield return salaLights
-            .StateChanges()
-            .IsOff()
+            .OnTurnedOff()
             .Subscribe(async _ => await monitor.SetBrightnessLowAsync());
     }
 }

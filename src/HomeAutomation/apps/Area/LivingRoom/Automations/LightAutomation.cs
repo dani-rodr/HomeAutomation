@@ -71,8 +71,7 @@ public class LightAutomation(
     private IDisposable TurnOffPantryLights()
     {
         return Light
-            .StateChanges()
-            .IsOff()
+            .OnTurnedOff()
             .Where(_ => PantryUnoccupied())
             .Subscribe(_ => entities.PantryLights.TurnOff());
     }
