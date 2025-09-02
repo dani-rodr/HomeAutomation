@@ -33,7 +33,7 @@ public class LightAutomation(IPantryLightEntities entities, ILogger<LightAutomat
             .BedroomDoor.StateChanges()
             .Subscribe(e =>
             {
-                if (e.IsOpen())
+                if (e.Entity.IsOpen())
                 {
                     MasterSwitch.TurnOff();
                     Light.TurnOn();

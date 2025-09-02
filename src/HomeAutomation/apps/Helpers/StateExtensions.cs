@@ -35,18 +35,6 @@ public static class StateChangeExtensions
         where T : Entity
         where TState : EntityState => new(e, useNewState: true);
 
-    public static StateChangeFluent<T, TState> Was<T, TState>(this StateChange<T, TState> e)
-        where T : Entity
-        where TState : EntityState => new(e, useNewState: false);
-
-    public static string UserId<T, TState>(this StateChange<T, TState> e)
-        where T : Entity
-        where TState : EntityState => e.New?.Context?.UserId ?? string.Empty;
-
-    public static string State<T, TState>(this StateChange<T, TState> e)
-        where T : Entity
-        where TState : EntityState => e.New?.State ?? string.Empty;
-
     public static bool IsOn<T, TState>(this StateChange<T, TState> e)
         where T : Entity
         where TState : EntityState => e.Is().On();
@@ -55,37 +43,12 @@ public static class StateChangeExtensions
         where T : Entity
         where TState : EntityState => e.Is().Off();
 
-    public static bool IsLocked<T, TState>(this StateChange<T, TState> e)
-        where T : Entity
-        where TState : EntityState => e.Is().Locked();
-
-    public static bool IsUnlocked<T, TState>(this StateChange<T, TState> e)
-        where T : Entity
-        where TState : EntityState => e.Is().Unlocked();
-
-    public static bool IsOpen<T, TState>(this StateChange<T, TState> e)
-        where T : Entity
-        where TState : EntityState => e.Is().Open();
-
-    public static bool IsClosed<T, TState>(this StateChange<T, TState> e)
-        where T : Entity
-        where TState : EntityState => e.Is().Closed();
-
-    public static bool IsUnavailable<T, TState>(this StateChange<T, TState> e)
-        where T : Entity
-        where TState : EntityState => e.Is().Unavailable();
-
     public static string UserId(this StateChange e) => e.New?.Context?.UserId ?? string.Empty;
 
     public static string Username(this StateChange e) => HaIdentity.GetName(e.UserId());
 
-    public static bool IsManuallyOperated(this StateChange e) =>
-        HaIdentity.IsManuallyOperated(e.UserId());
-
     public static bool IsPhysicallyOperated(this StateChange e) =>
         HaIdentity.IsPhysicallyOperated(e.UserId());
-
-    public static bool IsAutomated(this StateChange e) => HaIdentity.IsAutomated(e.UserId());
 
     public static (T? Old, T? New) GetAttributeChange<T>(
         this StateChange change,

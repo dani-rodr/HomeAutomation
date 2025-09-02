@@ -53,7 +53,7 @@ public class AirQualityAutomation(
             .StateChanges()
             .Subscribe(e =>
             {
-                var value = double.TryParse(e?.State(), out var parsed) ? parsed : 0;
+                var value = _airQuality.State ?? 0;
                 Logger.LogDebug("Air quality state changed → {ParsedValue}", value);
                 HandleAirQuality(value);
             });

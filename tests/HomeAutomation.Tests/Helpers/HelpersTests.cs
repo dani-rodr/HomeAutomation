@@ -549,10 +549,16 @@ public class HelpersTests : IDisposable
     )
     {
         // Arrange
-        var change = StateChangeHelpers.CreateStateChange(_light, "off", "on", userId);
+        bool result = false;
+
+        using var automation = _motionSensor
+            .StateChanges()
+            .IsManuallyOperated()
+            .Subscribe(_ => result = true);
 
         // Act
-        var result = change.IsManuallyOperated();
+        // Act
+        _mockHaContext.SimulateStateChange(_motionSensor.EntityId, "off", "on", userId);
 
         // Assert
         result.Should().Be(expected);
@@ -568,10 +574,14 @@ public class HelpersTests : IDisposable
     )
     {
         // Arrange
-        var change = StateChangeHelpers.CreateStateChange(_light, "off", "on", userId);
+        var result = false;
+        using var automation = _motionSensor
+            .OnTurnedOn()
+            .IsPhysicallyOperated()
+            .Subscribe(_ => result = true);
 
         // Act
-        var result = change.IsPhysicallyOperated();
+        _mockHaContext.SimulateStateChange(_motionSensor.EntityId, "off", "on", userId);
 
         // Assert
         result.Should().Be(expected);
@@ -588,10 +598,14 @@ public class HelpersTests : IDisposable
     )
     {
         // Arrange
-        var change = StateChangeHelpers.CreateStateChange(_light, "off", "on", userId);
+        var result = false;
+        using var automation = _motionSensor
+            .OnTurnedOn()
+            .IsAutomated()
+            .Subscribe(_ => result = true);
 
         // Act
-        var result = change.IsAutomated();
+        _mockHaContext.SimulateStateChange(_motionSensor.EntityId, "off", "on", userId);
 
         // Assert
         result.Should().Be(expected);
