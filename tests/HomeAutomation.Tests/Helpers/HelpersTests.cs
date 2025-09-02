@@ -201,7 +201,9 @@ public class HelpersTests : IDisposable
     {
         // Arrange
         var results = new List<StateChange>();
-        using var disposable = _light.OnChanges(s => s.IsUnavailable()).Subscribe(results.Add);
+        using var disposable = _light
+            .OnChanges(new(Condition: s => s.IsUnavailable()))
+            .Subscribe(results.Add);
 
         // Act
         _mockHaContext.SimulateStateChange(_light.EntityId, "on", state);
@@ -227,7 +229,9 @@ public class HelpersTests : IDisposable
     {
         // Arrange
         var results = new List<StateChange>();
-        using var disposable = _light.OnChanges(s => s.IsUnknown()).Subscribe(results.Add);
+        using var disposable = _light
+            .OnChanges(new(Condition: s => s.IsUnknown()))
+            .Subscribe(results.Add);
 
         // Act
         _mockHaContext.SimulateStateChange(_light.EntityId, "on", state);
@@ -262,7 +266,7 @@ public class HelpersTests : IDisposable
         // Arrange
         var results = new List<StateChange>();
         using var disposable = _light
-            .OnChanges(options: new DurationOptions(ShouldCheckIfManuallyOperated: true))
+            .OnChanges(new(ShouldCheckIfManuallyOperated: true))
             .Subscribe(results.Add);
 
         // Act
@@ -293,7 +297,7 @@ public class HelpersTests : IDisposable
         // Arrange
         var results = new List<StateChange>();
         using var disposable = _light
-            .OnChanges(options: new DurationOptions(ShouldCheckIfPhysicallyOperated: true))
+            .OnChanges(new(ShouldCheckIfPhysicallyOperated: true))
             .Subscribe(results.Add);
 
         // Act
@@ -325,7 +329,7 @@ public class HelpersTests : IDisposable
         // Arrange
         var results = new List<StateChange>();
         using var disposable = _light
-            .OnChanges(options: new DurationOptions(ShouldCheckIfAutomated: true))
+            .OnChanges(new(ShouldCheckIfAutomated: true))
             .Subscribe(results.Add);
 
         // Act

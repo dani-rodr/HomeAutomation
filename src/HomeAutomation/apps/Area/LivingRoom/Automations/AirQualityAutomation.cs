@@ -103,7 +103,7 @@ public class AirQualityAutomation(
 
     private IDisposable SubscribeToSupportingFanIdle() =>
         _supportingFan
-            .OnTurnedOff(new DurationOptions(Minutes: 10))
+            .OnTurnedOff(new(Minutes: 10))
             .Subscribe(_ =>
             {
                 _activateSupportingFan = false;

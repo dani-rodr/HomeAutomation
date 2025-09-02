@@ -4,24 +4,32 @@ namespace HomeAutomation.apps.Helpers.Extensions.Entities;
 
 public static class BinaryEntityExtensions
 {
-    public static IObservable<StateChange> OnOccupied(
+    public static IObservable<
+        StateChange<BinarySensorEntity, EntityState<BinarySensorAttributes>>
+    > OnOccupied(
         this BinarySensorEntity entity,
-        DurationOptions? options = null
+        DurationOptions<EntityState<BinarySensorAttributes>>? options = null
     ) => entity.OnTurnedOn(options);
 
-    public static IObservable<StateChange> OnCleared(
+    public static IObservable<
+        StateChange<BinarySensorEntity, EntityState<BinarySensorAttributes>>
+    > OnOpened(
         this BinarySensorEntity entity,
-        DurationOptions? options = null
+        DurationOptions<EntityState<BinarySensorAttributes>>? options = null
+    ) => entity.OnTurnedOn(options);
+
+    public static IObservable<
+        StateChange<BinarySensorEntity, EntityState<BinarySensorAttributes>>
+    > OnCleared(
+        this BinarySensorEntity entity,
+        DurationOptions<EntityState<BinarySensorAttributes>>? options = null
     ) => entity.OnTurnedOff(options);
 
-    public static IObservable<StateChange> OnOpened(
+    public static IObservable<
+        StateChange<BinarySensorEntity, EntityState<BinarySensorAttributes>>
+    > OnClosed(
         this BinarySensorEntity entity,
-        DurationOptions? options = null
-    ) => entity.OnTurnedOn(options);
-
-    public static IObservable<StateChange> OnClosed(
-        this BinarySensorEntity entity,
-        DurationOptions? options = null
+        DurationOptions<EntityState<BinarySensorAttributes>>? options = null
     ) => entity.OnTurnedOff(options);
 
     public static bool IsOpen([NotNullWhen(true)] this BinarySensorEntity? entity) =>

@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace HomeAutomation.apps.Helpers.Extensions.Entities;
 
-public record DurationOptions(
+public record DurationOptions<TState>(
     bool ShouldCheckImmediately = false,
     bool ShouldCheckIfAutomated = false,
     bool ShouldCheckIfPhysicallyOperated = false,
@@ -12,10 +12,12 @@ public record DurationOptions(
     int Hours = 0,
     int Minutes = 0,
     int Seconds = 0,
-    int Milliseconds = 0
+    int Milliseconds = 0,
+    Func<TState?, bool>? Condition = null
 )
 {
     public TimeSpan TimeSpan => new(Days, Hours, Minutes, Seconds, Milliseconds);
+    public Func<TState?, bool> SafeCondition => Condition ?? (_ => true);
 }
 
 public static class EntityExtensions
@@ -47,24 +49,21 @@ public static class EntityExtensions
 
     private static IObservable<StateChange<T, TState>> FilterByIdentity<T, TState>(
         this IObservable<StateChange<T, TState>> stream,
-        DurationOptions options
+        DurationOptions<TState> options
     )
         where T : Entity
         where TState : EntityState
     {
-        return options switch
-        {
-            { ShouldCheckIfAutomated: true } => stream.Where(s =>
-                HaIdentity.IsAutomated(s.UserId())
-            ),
-            { ShouldCheckIfPhysicallyOperated: true } => stream.Where(s =>
-                HaIdentity.IsPhysicallyOperated(s.UserId())
-            ),
-            { ShouldCheckIfManuallyOperated: true } => stream.Where(s =>
-                HaIdentity.IsManuallyOperated(s.UserId())
-            ),
-            _ => stream,
-        };
+        if (options.ShouldCheckIfAutomated)
+            stream = stream.Where(s => HaIdentity.IsAutomated(s.UserId()));
+
+        if (options.ShouldCheckIfPhysicallyOperated)
+            stream = stream.Where(s => HaIdentity.IsPhysicallyOperated(s.UserId()));
+
+        if (options.ShouldCheckIfManuallyOperated)
+            stream = stream.Where(s => HaIdentity.IsManuallyOperated(s.UserId()));
+
+        return stream;
     }
 
     private static IObservable<StateChange<T, TState>> WhenIsFor<T, TState>(
@@ -80,51 +79,72 @@ public static class EntityExtensions
 
     public static IObservable<StateChange<T, TState>> OnChanges<T, TState, TAttributes>(
         this Entity<T, TState, TAttributes> entity,
-        Func<TState?, bool>? predicate = null,
-        DurationOptions? options = null
+        DurationOptions<TState>? options = null
     )
         where T : Entity<T, TState, TAttributes>
         where TState : EntityState<TAttributes>
         where TAttributes : class
     {
-        options ??= new DurationOptions();
-        predicate ??= _ => true;
+        options ??= new DurationOptions<TState>();
 
         return entity
             .GetStateChange(options.ShouldCheckImmediately)
-            .WhenIsFor(predicate, options.TimeSpan)
+            .WhenIsFor(options.SafeCondition, options.TimeSpan)
             .FilterByIdentity(options);
     }
 
     public static IObservable<StateChange<T, TState>> OnTurnedOn<T, TState, TAttributes>(
         this Entity<T, TState, TAttributes> entity,
-        DurationOptions? options = null
+        DurationOptions<TState>? options = null
     )
         where T : Entity<T, TState, TAttributes>
         where TState : EntityState<TAttributes>
-        where TAttributes : class => entity.OnChanges(s => s.IsOn(), options);
+        where TAttributes : class
+    {
+        options = (options ?? new DurationOptions<TState>()) with { Condition = s => s.IsOn() };
+        return entity.OnChanges(options);
+    }
 
     public static IObservable<StateChange<T, TState>> OnTurnedOff<T, TState, TAttributes>(
         this Entity<T, TState, TAttributes> entity,
-        DurationOptions? options = null
+        DurationOptions<TState>? options = null
     )
         where T : Entity<T, TState, TAttributes>
         where TState : EntityState<TAttributes>
-        where TAttributes : class => entity.OnChanges(s => s.IsOff(), options);
+        where TAttributes : class
+    {
+        options = (options ?? new DurationOptions<TState>()) with { Condition = s => s.IsOff() };
+        return entity.OnChanges(options);
+    }
 
     public static IObservable<StateChange<T, TState>> OnUnavailable<T, TState, TAttributes>(
         this Entity<T, TState, TAttributes> entity,
-        DurationOptions? options = null
+        DurationOptions<TState>? options = null
     )
         where T : Entity<T, TState, TAttributes>
         where TState : EntityState<TAttributes>
-        where TAttributes : class => entity.OnChanges(s => s.IsLocked(), options);
+        where TAttributes : class
+    {
+        options = (options ?? new DurationOptions<TState>()) with
+        {
+            Condition = s => s.IsUnavailable(),
+        };
+        return entity.OnChanges(options);
+    }
 
     public static IObservable<StateChange<T, TState>> OnUnknown<T, TState, TAttributes>(
         this Entity<T, TState, TAttributes> entity,
-        DurationOptions? options = null
+        DurationOptions<TState>? options = null
     )
         where T : Entity<T, TState, TAttributes>
         where TState : EntityState<TAttributes>
-        where TAttributes : class => entity.OnChanges(s => s.IsUnknown(), options);
+        where TAttributes : class
+    {
+        options = (options ?? new DurationOptions<TState>()) with
+        {
+            Condition = s => s.IsUnknown(),
+        };
+
+        return entity.OnChanges(options);
+    }
 }

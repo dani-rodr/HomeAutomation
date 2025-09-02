@@ -84,7 +84,7 @@ public abstract class MotionSensorBase(
                 }
             });
         yield return EngineeringMode
-            .OnTurnedOff(new DurationOptions(Seconds: 1))
+            .OnTurnedOff(new(Seconds: 1))
             .Where(_ => MasterSwitch.IsOn())
             .Subscribe(_ => EngineeringMode.TurnOn());
     }

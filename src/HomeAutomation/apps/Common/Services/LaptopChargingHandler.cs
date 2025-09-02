@@ -21,7 +21,7 @@ public class LaptopChargingHandler(
 
         var baseMonitoring = base.StartMonitoring();
         var inactiveSchedules = Power
-            .OnTurnedOff(new DurationOptions(Hours: 12, ShouldCheckImmediately: true))
+            .OnTurnedOff(new(Hours: 12, ShouldCheckImmediately: true))
             .Subscribe(_ => StartScheduledCharge(hours: 1));
         logger.LogInformation("Setting up weekend and Monday morning charging schedules.");
         var weekendChargingSchedules = new CompositeDisposable(

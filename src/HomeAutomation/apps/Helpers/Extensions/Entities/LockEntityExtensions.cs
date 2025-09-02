@@ -18,17 +18,30 @@ public static class LockEntityExtensions
 
     public static IObservable<StateChange<T, TState>> OnLocked<T, TState, TAttributes>(
         this Entity<T, TState, TAttributes> entity,
-        DurationOptions? options = null
+        DurationOptions<TState>? options = null
     )
         where T : Entity<T, TState, TAttributes>
         where TState : EntityState<TAttributes>
-        where TAttributes : class => entity.OnChanges(s => s.IsLocked(), options);
+        where TAttributes : class
+    {
+        options = (options ?? new DurationOptions<TState>()) with { Condition = s => s.IsLocked() };
+
+        return entity.OnChanges(options);
+    }
 
     public static IObservable<StateChange<T, TState>> OnUnlocked<T, TState, TAttributes>(
         this Entity<T, TState, TAttributes> entity,
-        DurationOptions? options = null
+        DurationOptions<TState>? options = null
     )
         where T : Entity<T, TState, TAttributes>
         where TState : EntityState<TAttributes>
-        where TAttributes : class => entity.OnChanges(s => s.IsUnlocked(), options);
+        where TAttributes : class
+    {
+        options = (options ?? new DurationOptions<TState>()) with
+        {
+            Condition = s => s.IsUnlocked(),
+        };
+
+        return entity.OnChanges(options);
+    }
 }

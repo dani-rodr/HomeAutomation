@@ -18,7 +18,7 @@ public class CookingAutomation(ICookingEntities entities, ILogger<CookingAutomat
     {
         var boilingPowerThreshold = 1550;
         return _inductionPower
-            .OnChanges(s => s?.State > boilingPowerThreshold, new DurationOptions(Minutes: minutes))
+            .OnChanges(new(Minutes: minutes, Condition: s => s?.State > boilingPowerThreshold))
             .Where(_ => entities.AirFryerStatus.IsUnavailable())
             .Subscribe(_ =>
             {
@@ -35,8 +35,7 @@ public class CookingAutomation(ICookingEntities entities, ILogger<CookingAutomat
         var riceCookerIdlePowerThreshold = 100;
         return entities
             .RiceCookerPower.OnChanges(
-                s => s?.State < riceCookerIdlePowerThreshold,
-                new DurationOptions(Minutes: minutes)
+                new(Minutes: minutes, Condition: s => s?.State < riceCookerIdlePowerThreshold)
             )
             .Subscribe(_ =>
             {

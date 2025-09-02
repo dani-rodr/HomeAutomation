@@ -19,11 +19,11 @@ public class ClimateAutomation(
             .IsManuallyOperated()
             .Subscribe(TurnOffMasterSwitchOnManualOperation);
         yield return _motionSensor
-            .OnCleared(new DurationOptions(Hours: 1, ShouldCheckImmediately: true))
+            .OnCleared(new(Hours: 1, ShouldCheckImmediately: true))
             .Where(_ => MasterSwitch.IsOff())
             .Subscribe(_ => MasterSwitch.TurnOn());
         yield return MasterSwitch
-            .OnTurnedOff(new DurationOptions(Hours: 8, ShouldCheckImmediately: true))
+            .OnTurnedOff(new(Hours: 8, ShouldCheckImmediately: true))
             .Subscribe(_ => MasterSwitch.TurnOn());
         yield return _doorSensor
             .OnClosed()
@@ -82,9 +82,7 @@ public class ClimateAutomation(
     private IEnumerable<IDisposable> GetHousePresenceAutomations()
     {
         var houseOccupancy = entities.HouseMotionSensor;
-        yield return houseOccupancy
-            .OnCleared(new DurationOptions(Minutes: 30))
-            .Subscribe(_ => _ac.TurnOff());
+        yield return houseOccupancy.OnCleared(new(Minutes: 30)).Subscribe(_ => _ac.TurnOff());
         yield return houseOccupancy
             .OnOccupied()
             .Subscribe(e =>

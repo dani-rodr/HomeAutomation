@@ -1,3 +1,5 @@
+using Microsoft.Extensions.Options;
+
 namespace HomeAutomation.apps.Common.Base;
 
 public abstract class LightAutomationBase(ILightAutomationEntities entities, ILogger logger)
@@ -52,7 +54,7 @@ public abstract class LightAutomationBase(ILightAutomationEntities entities, ILo
         );
 
         yield return MotionSensor
-            .OnOccupied(new DurationOptions(Seconds: SensorWaitTime))
+            .OnOccupied(new(Seconds: SensorWaitTime))
             .Subscribe(_ =>
             {
                 Logger.LogDebug(
@@ -63,7 +65,7 @@ public abstract class LightAutomationBase(ILightAutomationEntities entities, ILo
                 SensorDelay.SetNumericValue(SensorActiveDelayValue);
             });
         yield return MotionSensor
-            .OnCleared(new DurationOptions(Seconds: SensorWaitTime))
+            .OnCleared(new(Seconds: SensorWaitTime))
             .Subscribe(_ =>
             {
                 Logger.LogDebug(
