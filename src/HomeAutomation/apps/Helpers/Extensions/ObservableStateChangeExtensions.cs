@@ -1,5 +1,3 @@
-using System.Linq;
-
 namespace HomeAutomation.apps.Helpers.Extensions;
 
 public static class ObservableStateChangeExtensions

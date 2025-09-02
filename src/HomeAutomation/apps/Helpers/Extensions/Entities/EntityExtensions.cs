@@ -20,11 +20,13 @@ public record DurationOptions(
 
 public static class EntityExtensions
 {
+    public static string? StateInvariant(this Entity? entity) => entity?.State?.ToLowerInvariant();
+
     public static bool IsUnavailable([NotNullWhen(true)] this Entity? entity) =>
-        entity?.State is HaEntityStates.UNAVAILABLE;
+        entity.StateInvariant() is HaEntityStates.UNAVAILABLE;
 
     public static bool IsUnknown([NotNullWhen(true)] this Entity? entity) =>
-        entity?.State is HaEntityStates.UNKNOWN;
+        entity.StateInvariant() is HaEntityStates.UNKNOWN;
 
     private static IObservable<StateChange<T, TState>> GetStateChange<T, TState, TAttributes>(
         this Entity<T, TState, TAttributes> entity,

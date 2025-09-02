@@ -25,14 +25,14 @@ public static class BinaryEntityExtensions
     ) => entity.OnTurnedOff(options);
 
     public static bool IsOpen([NotNullWhen(true)] this BinarySensorEntity? entity) =>
-        entity?.State is HaEntityStates.ON;
+        entity.StateInvariant() is HaEntityStates.ON;
 
     public static bool IsClosed([NotNullWhen(true)] this BinarySensorEntity? entity) =>
-        entity?.State is HaEntityStates.CLOSED;
+        entity.StateInvariant() is HaEntityStates.CLOSED;
 
     public static bool IsOccupied([NotNullWhen(true)] this BinarySensorEntity? entity) =>
-        entity?.State is HaEntityStates.ON;
+        entity.StateInvariant() is HaEntityStates.ON;
 
     public static bool IsClear([NotNullWhen(true)] this BinarySensorEntity? entity) =>
-        entity?.State is HaEntityStates.OFF;
+        entity.StateInvariant() is HaEntityStates.OFF;
 }
