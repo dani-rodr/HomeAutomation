@@ -8,18 +8,20 @@ public interface ITypedEntityFactory
         where T : Entity;
     public T Create<T>(string entityId)
         where T : Entity;
+    public string DeviceName { get; set; }
 }
 
 public class EntityFactory(IHaContext haContext, ILogger<EntityFactory> logger)
     : ITypedEntityFactory
 {
+    public string DeviceName { get; set; } = string.Empty;
     private static readonly Dictionary<Type, string> DomainOverrides = new()
     {
         [typeof(NumericSensorEntity)] = "sensor",
     };
 
     public T Create<T>(string entityId)
-        where T : Entity => Create<T>(string.Empty, entityId);
+        where T : Entity => Create<T>(DeviceName, entityId);
 
     public T Create<T>(string deviceName, string entityId)
         where T : Entity

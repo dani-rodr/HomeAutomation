@@ -1,6 +1,3 @@
-using System.Linq;
-using Microsoft.Extensions.Options;
-
 namespace HomeAutomation.apps.Common.Base;
 
 public abstract class LightAutomationBase(ILightAutomationEntities entities, ILogger logger)
