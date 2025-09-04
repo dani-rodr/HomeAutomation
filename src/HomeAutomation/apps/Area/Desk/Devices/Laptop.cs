@@ -44,9 +44,7 @@ public class Laptop(
         var switchStateChanges = entities.VirtualSwitch.StateChanges().Select(e => e.IsOn());
 
         var sessionLocked = entities
-            .Session.StateChanges()
-            .WasUnlocked()
-            .IsLocked()
+            .Session.OnLocked(new(IgnoreUnavailableState: false))
             .Select(_ => false);
 
         // Emits true when switch turns on, false when switch turns off or session locks

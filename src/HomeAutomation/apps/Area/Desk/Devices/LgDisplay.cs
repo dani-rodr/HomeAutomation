@@ -180,10 +180,10 @@ public class LgDisplay(ILgDisplayEntities entities, IServices services, ILogger<
     private IEnumerable<IDisposable> SyncLightEntityWithMediaState()
     {
         yield return MediaPlayer
-            .OnTurnedOn(new(ShouldCheckImmediately: true))
+            .OnTurnedOn(new(CheckImmediately: true))
             .Subscribe(_ => _lightDisplay.TurnOn());
         yield return MediaPlayer
-            .OnTurnedOff(new(ShouldCheckImmediately: true))
+            .OnTurnedOff(new(CheckImmediately: true))
             .Subscribe(_ => _lightDisplay.TurnOff());
         yield return _lightDisplay
             .OnTurnedOn()

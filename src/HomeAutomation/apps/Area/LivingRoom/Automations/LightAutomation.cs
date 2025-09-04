@@ -21,11 +21,9 @@ public class LightAutomation(
     protected override IEnumerable<IDisposable> GetLightAutomations()
     {
         yield return entities.LivingRoomDoor.OnOpened().Subscribe(TurnOnLights);
+        yield return MotionSensor.OnOccupied(new(CheckImmediately: true)).Subscribe(TurnOnLights);
         yield return MotionSensor
-            .OnOccupied(new(ShouldCheckImmediately: true))
-            .Subscribe(TurnOnLights);
-        yield return MotionSensor
-            .OnCleared(new(ShouldCheckImmediately: true))
+            .OnCleared(new(CheckImmediately: true))
             .Subscribe(async _ => await dimmingController.OnMotionStoppedAsync(Light));
     }
 

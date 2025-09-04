@@ -29,10 +29,6 @@ public readonly struct StateChangeFilter(IObservable<StateChange> source, bool u
     public IObservable<StateChange> On() => State(HaEntityStates.ON);
 
     public IObservable<StateChange> Off() => State(HaEntityStates.OFF);
-
-    public IObservable<StateChange> Locked() => State(HaEntityStates.LOCKED);
-
-    public IObservable<StateChange> Unlocked() => State(HaEntityStates.UNLOCKED);
 }
 
 public static class StateChangeObservableExtensions
@@ -40,20 +36,11 @@ public static class StateChangeObservableExtensions
     public static StateChangeFilter Is(this IObservable<StateChange> source) =>
         new(source, useNewState: true);
 
-    public static StateChangeFilter Was(this IObservable<StateChange> source) =>
-        new(source, useNewState: false);
-
-    public static IObservable<StateChange> WasUnlocked(this IObservable<StateChange> source) =>
-        source.Was().Unlocked();
-
     public static IObservable<StateChange> IsOn(this IObservable<StateChange> source) =>
         source.Is().On();
 
     public static IObservable<StateChange> IsOff(this IObservable<StateChange> source) =>
         source.Is().Off();
-
-    public static IObservable<StateChange> IsLocked(this IObservable<StateChange> source) =>
-        source.Is().Locked();
 
     public static IObservable<IList<StateChange>> IsFlickering(
         this IObservable<StateChange> source,

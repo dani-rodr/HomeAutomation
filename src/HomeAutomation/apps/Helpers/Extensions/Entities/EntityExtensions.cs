@@ -1,10 +1,10 @@
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 
 namespace HomeAutomation.apps.Helpers.Extensions.Entities;
 
 public record DurationOptions<TState>(
-    bool ShouldCheckImmediately = false,
+    bool CheckImmediately = false,
+    bool IgnoreUnavailableState = false,
     int Days = 0,
     int Hours = 0,
     int Minutes = 0,
@@ -21,15 +21,21 @@ public static class EntityExtensions
 {
     public static string? StateInvariant(this Entity? entity) => entity?.State?.ToLowerInvariant();
 
+    public static bool IsAvailable([NotNullWhen(true)] this Entity? entity) =>
+        entity.StateInvariant() is not HaEntityStates.UNAVAILABLE;
+
     public static bool IsUnavailable([NotNullWhen(true)] this Entity? entity) =>
         entity.StateInvariant() is HaEntityStates.UNAVAILABLE;
 
     public static bool IsUnknown([NotNullWhen(true)] this Entity? entity) =>
         entity.StateInvariant() is HaEntityStates.UNKNOWN;
 
+    public static bool IsAvailable(this EntityState? state) =>
+        state?.State?.ToLowerInvariant() is not HaEntityStates.UNAVAILABLE;
+
     public static bool IsUnavailable(this EntityState? state) =>
-        state?.State?.ToLowerInvariant() == HaEntityStates.UNAVAILABLE;
+        state?.State?.ToLowerInvariant() is HaEntityStates.UNAVAILABLE;
 
     public static bool IsUnknown(this EntityState? state) =>
-        state?.State?.ToLowerInvariant() == HaEntityStates.UNKNOWN;
+        state?.State?.ToLowerInvariant() is HaEntityStates.UNKNOWN;
 }

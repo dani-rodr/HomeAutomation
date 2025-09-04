@@ -30,10 +30,10 @@ public class LightAutomation(
     protected override IEnumerable<IDisposable> GetLightAutomations()
     {
         yield return MotionSensor
-            .OnOccupied(new(ShouldCheckImmediately: true))
+            .OnOccupied(new(CheckImmediately: true))
             .Subscribe(e => dimmingController.OnMotionDetected(Light));
         yield return MotionSensor
-            .OnCleared(new(ShouldCheckImmediately: true))
+            .OnCleared(new(CheckImmediately: true, IgnoreUnavailableState: true))
             .Subscribe(async _ => await dimmingController.OnMotionStoppedAsync(Light));
     }
 

@@ -4,9 +4,8 @@ namespace HomeAutomation.apps.Helpers;
 
 public static class CancellationTokenExtensions
 {
-    public static IObservable<long> AsObservable(this CancellationToken token)
-    {
-        return Observable.Create<long>(observer =>
+    public static IObservable<long> AsObservable(this CancellationToken token) =>
+        Observable.Create<long>(observer =>
         {
             if (token.IsCancellationRequested)
             {
@@ -17,5 +16,4 @@ public static class CancellationTokenExtensions
             var registration = token.Register(() => observer.OnCompleted());
             return registration;
         });
-    }
 }

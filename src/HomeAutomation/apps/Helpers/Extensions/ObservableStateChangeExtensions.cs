@@ -44,10 +44,12 @@ public static class ObservableStateChangeExtensions
         where TAttributes : class
     {
         options ??= new DurationOptions<TState>();
-
-        return entity
-            .GetStateChange(options.ShouldCheckImmediately)
-            .WhenIsFor(options.SafeCondition, options.TimeSpan);
+        var stream = entity.GetStateChange(options.CheckImmediately);
+        if (!options.IgnoreUnavailableState)
+        {
+            stream = stream.Where(src => src.Old.IsAvailable());
+        }
+        return stream.WhenIsFor(options.SafeCondition, options.TimeSpan);
     }
 
     public static IObservable<StateChange<T, TState>> OnTurnedOn<T, TState, TAttributes>(
