@@ -47,7 +47,6 @@ public class LightAutomation(IPantryLightEntities entities, ILogger<LightAutomat
     {
         yield return MotionSensor
             .OnOccupied(new(CheckImmediately: true))
-            .IsOn()
             .Subscribe(_ =>
             {
                 Logger.LogDebug(

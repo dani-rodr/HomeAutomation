@@ -1,3 +1,4 @@
+using System.Linq;
 using Microsoft.Extensions.Options;
 
 namespace HomeAutomation.apps.Common.Base;
@@ -74,13 +75,12 @@ public abstract class LightAutomationBase(ILightAutomationEntities entities, ILo
                 SensorDelay.SetNumericValue(SensorInactiveDelayValue);
             });
         yield return MotionSensor
-            .StateChanges()
-            .IsFlickering()
+            .OnFlickering()
             .Subscribe(events =>
             {
                 Logger.LogDebug(
                     "Motion sensor flickering detected ({EventCount} events) - setting sensor delay to active value {Value}",
-                    events.Count,
+                    events,
                     SensorActiveDelayValue
                 );
                 SensorDelay.SetNumericValue(SensorActiveDelayValue);

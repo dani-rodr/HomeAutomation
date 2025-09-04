@@ -226,10 +226,10 @@ public class PersonControllerTests : IDisposable
         // Advance time by 60 seconds from the second trigger
         _mockHaContext.AdvanceTimeBySeconds(60);
 
-        // Assert - At least one trigger should emit (could be 1 or 2 depending on timing/implementation)
+        // Assert - Each trigger should emit 2 events
         Assert.True(
-            _leftHomeEvents.Count == 1,
-            $"Expected at least 1 event, got {_leftHomeEvents.Count}"
+            _leftHomeEvents.Count == 2,
+            $"Expected at least 2 event, got {_leftHomeEvents.Count}"
         );
         Assert.True(
             _leftHomeEvents.All(id =>

@@ -371,33 +371,28 @@ public class HelpersTests : IDisposable
     public void IsFlickering_Should_Emit_WhenMultipleFlipsOccurWithinWindow()
     {
         // Arrange
-        var results = new List<IList<StateChange>>();
-        var flipSubject = new Subject<StateChange>();
+        int result = 0;
 
-        flipSubject
-            .ObserveOn(_mockHaContext.Scheduler)
-            .IsFlickering(minimumFlips: 4, timeWindowMs: 300, scheduler: _mockHaContext.Scheduler)
-            .Subscribe(results.Add);
+        _motionSensor
+            .OnFlickering(timeWindowMs: 300, minimumFlips: 4)
+            .Subscribe(count => result = count);
 
-        var flipSequence = new[]
-        {
-            StateChangeHelpers.CreateStateChange(_motionSensor, "off", "on"),
-            StateChangeHelpers.CreateStateChange(_motionSensor, "on", "off"),
-            StateChangeHelpers.CreateStateChange(_motionSensor, "off", "on"),
-            StateChangeHelpers.CreateStateChange(_motionSensor, "on", "off"),
-        };
+        var flipSequence = new[] { ("off", "on"), ("on", "off"), ("off", "on"), ("on", "off") };
 
         int tickInterval = 50;
         for (int i = 0; i < flipSequence.Length; i++)
         {
             _mockHaContext.AdvanceTimeBy(TimeSpan.FromMilliseconds(tickInterval));
-            flipSubject.OnNext(flipSequence[i]);
+            _mockHaContext.SimulateStateChange(
+                _motionSensor.EntityId,
+                flipSequence[i].Item1,
+                flipSequence[i].Item2
+            );
         }
 
         _mockHaContext.AdvanceTimeBy(TimeSpan.FromMilliseconds(300));
 
-        results.Should().HaveCount(1);
-        results[0].Should().HaveCount(4);
+        result.Should().Be(4);
     }
 
     #endregion

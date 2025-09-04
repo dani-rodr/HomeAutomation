@@ -106,4 +106,24 @@ public static class ObservableStateChangeExtensions
 
         return entity.OnChanges(options);
     }
+
+    public static IObservable<int> OnFlickering<T, TState, TAttributes>(
+        this Entity<T, TState, TAttributes> entity,
+        DurationOptions<TState>? options = null,
+        int minimumFlips = 4,
+        int timeWindowMs = 10000
+    )
+        where T : Entity<T, TState, TAttributes>
+        where TState : EntityState<TAttributes>
+        where TAttributes : class
+    {
+        options ??= new DurationOptions<TState>() { IgnoreUnavailableState = true };
+
+        return entity
+            .OnChanges(options)
+            .DistinctUntilChanged(sc => sc.New?.State)
+            .Buffer(TimeSpan.FromMilliseconds(timeWindowMs), SchedulerProvider.Current)
+            .Where(events => events.Count >= minimumFlips)
+            .Select(events => events.Count); // return just the number of flips
+    }
 }
