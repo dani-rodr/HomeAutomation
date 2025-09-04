@@ -114,13 +114,8 @@ public class LightAutomationTests : IDisposable
     public void ComplexScenario_With_ExactCountVerification()
     {
         // Act - First motion is detected, then MiScale presence
-        var motionStateChange = StateChangeHelpers.MotionDetected(_entities.MotionSensor);
-        _mockHaContext.StateChangeSubject.OnNext(motionStateChange);
-
-        var presenceStateChange = StateChangeHelpers.PresenceDetected(
-            _entities.MiScalePresenceSensor
-        );
-        _mockHaContext.StateChangeSubject.OnNext(presenceStateChange);
+        _mockHaContext.SimulateStateChange(_entities.MotionSensor.EntityId, "off", "on");
+        _mockHaContext.SimulateStateChange(_entities.MiScalePresenceSensor.EntityId, "off", "on");
 
         // Assert - Verify both lights and exact counts using entity IDs
         _mockHaContext.ShouldHaveCalledLightTurnOn(_entities.Light.EntityId);
@@ -380,24 +375,14 @@ public class LightAutomationTests : IDisposable
     }
 
     [Fact]
-    public void ConcurrentSensorChanges_Should_HandleCorrectly()
+    public void ConcurrentSensorChanges_Should_TurnOffBathroomAutomation()
     {
         // Arrange - Set initial states
-        _mockHaContext.SetEntityState(_entities.MotionSensor.EntityId, "on");
-        _mockHaContext.SetEntityState(_entities.BathroomMotionSensor.EntityId, "on");
         _mockHaContext.ClearServiceCalls();
 
         // Act - Simulate both sensors turning off "simultaneously"
-        _mockHaContext.SetEntityState(_entities.MotionSensor.EntityId, "off");
-        _mockHaContext.SetEntityState(_entities.BathroomMotionSensor.EntityId, "off");
-
-        // Trigger both state changes in quick succession
-        _mockHaContext.StateChangeSubject.OnNext(
-            StateChangeHelpers.MotionCleared(_entities.MotionSensor)
-        );
-        _mockHaContext.StateChangeSubject.OnNext(
-            StateChangeHelpers.MotionCleared(_entities.BathroomMotionSensor)
-        );
+        _mockHaContext.SimulateStateChange(_entities.MotionSensor.EntityId, "on", "off");
+        _mockHaContext.SimulateStateChange(_entities.BathroomMotionSensor.EntityId, "on", "off");
 
         // Assert - Should NOT turn off immediately (30 seconds delay)
         _mockHaContext.ShouldHaveCalledSwitchExactly(
@@ -408,6 +393,47 @@ public class LightAutomationTests : IDisposable
 
         _mockHaContext.AdvanceTimeBySeconds(60);
 
+        // Assert - Should turn off bathroom automation after delay
+        _mockHaContext.ShouldHaveCalledSwitchTurnOff(_entities.BathroomMotionAutomation.EntityId);
+    }
+
+    [Fact]
+    public void ConcurrentSensorChanges_Should_TurnOffBathroomAutomation_When_BothSensors_AreOff_ForNSeconds()
+    {
+        // Arrange - Set initial states
+        _mockHaContext.ClearServiceCalls();
+
+        // Act - Simulate both sensors turning off "simultaneously"
+        _mockHaContext.SimulateStateChange(_entities.MotionSensor.EntityId, "on", "off");
+        _mockHaContext.SimulateStateChange(_entities.BathroomMotionSensor.EntityId, "on", "off");
+
+        // Assert - Should NOT turn off immediately (30 seconds delay)
+        _mockHaContext.ShouldHaveCalledSwitchExactly(
+            _entities.BathroomMotionAutomation.EntityId,
+            "turn_off",
+            0
+        );
+
+        _mockHaContext.AdvanceTimeBySeconds(30);
+        _mockHaContext.SimulateStateChange(_entities.BathroomMotionSensor.EntityId, "off", "on");
+
+        _mockHaContext.AdvanceTimeBySeconds(30);
+        _mockHaContext.ShouldHaveCalledSwitchExactly(
+            _entities.BathroomMotionAutomation.EntityId,
+            "turn_off",
+            0
+        );
+
+        _mockHaContext.SimulateStateChange(_entities.BathroomMotionSensor.EntityId, "on", "off");
+
+        _mockHaContext.AdvanceTimeBySeconds(30);
+        _mockHaContext.ShouldHaveCalledSwitchExactly(
+            _entities.BathroomMotionAutomation.EntityId,
+            "turn_off",
+            0
+        );
+
+        _mockHaContext.AdvanceTimeBySeconds(30);
         // Assert - Should turn off bathroom automation after delay
         _mockHaContext.ShouldHaveCalledSwitchTurnOff(_entities.BathroomMotionAutomation.EntityId);
     }
