@@ -18,33 +18,22 @@ public class LightAutomation(
     protected override IEnumerable<IDisposable> GetAdditionalPersistentAutomations() =>
         [
             MotionSensor
-                .StateChanges()
-                .IsOn()
-                .ForSeconds(2)
-                .Subscribe(_ =>
-                {
-                    if (masterSwitchEnabledByPantry)
-                    {
-                        MasterSwitch.TurnOn();
-                    }
-                }),
-            MasterSwitch.StateChanges().IsOn().Subscribe(_ => masterSwitchEnabledByPantry = true),
+                .OnOccupied(new(Seconds: 2))
+                .Where(_ => masterSwitchEnabledByPantry)
+                .Subscribe(_ => MasterSwitch.TurnOn()),
+            MasterSwitch.OnTurnedOn().Subscribe(_ => masterSwitchEnabledByPantry = true),
             MasterSwitch
-                .StateChanges()
-                .IsOff()
-                .ForMinutes(5)
+                .OnTurnedOff(new(Minutes: 5))
                 .Subscribe(_ => masterSwitchEnabledByPantry = false),
         ];
 
     protected override IEnumerable<IDisposable> GetLightAutomations()
     {
         yield return MotionSensor
-            .StateChangesWithCurrent()
-            .IsOn()
+            .OnOccupied(new(CheckImmediately: true))
             .Subscribe(e => dimmingController.OnMotionDetected(Light));
         yield return MotionSensor
-            .StateChangesWithCurrent()
-            .IsOff()
+            .OnCleared(new(CheckImmediately: true, IgnoreUnavailableState: true))
             .Subscribe(async _ => await dimmingController.OnMotionStoppedAsync(Light));
     }
 

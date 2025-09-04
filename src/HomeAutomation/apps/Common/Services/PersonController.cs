@@ -26,26 +26,20 @@ public class PersonController(IPersonEntities entities, IServices services, ILog
 
     public IObservable<string> ArrivedHome =>
         entities
-            .HomeTriggers.StateChanges()
-            .IsOn()
+            .HomeTriggers.OnTurnedOn()
             .Where(_ => _person.IsAway())
             .Select(trigger => trigger.Entity.EntityId)
             .Merge(_arrivedHomeSubject);
 
     public IObservable<string> LeftHome =>
         entities
-            .AwayTriggers.StateChanges()
-            .IsOff()
-            .ForSeconds(AWAY_DELAY)
+            .AwayTriggers.OnTurnedOff(new(Seconds: AWAY_DELAY))
             .Where(_ => _person.IsHome())
             .Select(trigger => trigger.Entity.EntityId)
             .Merge(_leftHomeSubject);
 
     public IObservable<string> DirectUnlock =>
-        entities
-            .DirectUnlockTriggers.StateChanges()
-            .IsOn()
-            .Select(trigger => trigger.Entity.EntityId);
+        entities.DirectUnlockTriggers.OnTurnedOn().Select(trigger => trigger.Entity.EntityId);
 
     public string Name => _person.Attributes?.FriendlyName ?? "Unknown";
 
@@ -76,7 +70,7 @@ public class PersonController(IPersonEntities entities, IServices services, ILog
     }
 
     protected override IEnumerable<IDisposable> GetAutomations() =>
-        [_toggle.StateChanges().IsValidButtonPress().Subscribe(ToggleLocation)];
+        [_toggle.OnPressed().Subscribe(ToggleLocation)];
 
     private void ToggleLocation(StateChange e)
     {

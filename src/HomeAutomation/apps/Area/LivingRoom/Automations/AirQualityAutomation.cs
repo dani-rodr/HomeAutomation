@@ -50,10 +50,10 @@ public class AirQualityAutomation(
 
     private IDisposable SubscribeToAirQuality() =>
         _airQuality
-            .StateChanges()
+            .OnChanges()
             .Subscribe(e =>
             {
-                var value = double.TryParse(e?.State(), out var parsed) ? parsed : 0;
+                var value = _airQuality.State ?? 0;
                 Logger.LogDebug("Air quality state changed → {ParsedValue}", value);
                 HandleAirQuality(value);
             });
@@ -93,7 +93,7 @@ public class AirQualityAutomation(
 
     private IDisposable SubscribeToManualFanOperation() =>
         _supportingFan
-            .StateChanges()
+            .OnChanges()
             .IsManuallyOperated()
             .Subscribe(e =>
             {
@@ -103,9 +103,7 @@ public class AirQualityAutomation(
 
     private IDisposable SubscribeToSupportingFanIdle() =>
         _supportingFan
-            .StateChanges()
-            .IsOff()
-            .ForMinutes(10)
+            .OnTurnedOff(new(Minutes: 10))
             .Subscribe(_ =>
             {
                 _activateSupportingFan = false;
@@ -114,7 +112,7 @@ public class AirQualityAutomation(
 
     private IDisposable SubscribeToFanStateChanges() =>
         MainFan
-            .StateChanges()
+            .OnChanges()
             .Subscribe(e =>
             {
                 if (MainFan.IsOn())

@@ -38,7 +38,7 @@ public abstract class ToggleableAutomation(SwitchEntity masterSwitch, ILogger lo
                 );
                 _persistentAutomations.Add(
                     MasterSwitch
-                        .StateChangesWithCurrent()
+                        .OnChanges(new(CheckImmediately: true))
                         .SubscribeSafe(
                             ToggleAutomation,
                             onError: ex =>

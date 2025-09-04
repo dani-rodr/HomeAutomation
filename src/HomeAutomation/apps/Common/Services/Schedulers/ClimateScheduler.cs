@@ -124,8 +124,8 @@ public class ClimateScheduler : IClimateScheduler
                 PassiveTemp: 27,
                 Mode: HaEntityStates.COOL,
                 ActivateFan: true,
-                HourStart: _entities.SunRising.LocalHour(),
-                HourEnd: _entities.SunSetting.LocalHour()
+                HourStart: _entities.SunRising.ToLocalHour(),
+                HourEnd: _entities.SunSetting.ToLocalHour()
             ),
 
             [TimeBlock.Sunset] = new(
@@ -135,8 +135,8 @@ public class ClimateScheduler : IClimateScheduler
                 PassiveTemp: 27,
                 Mode: HaEntityStates.COOL,
                 ActivateFan: false,
-                HourStart: _entities.SunSetting.LocalHour(),
-                HourEnd: _entities.SunMidnight.LocalHour()
+                HourStart: _entities.SunSetting.ToLocalHour(),
+                HourEnd: _entities.SunMidnight.ToLocalHour()
             ),
 
             [TimeBlock.Midnight] = new(
@@ -146,8 +146,8 @@ public class ClimateScheduler : IClimateScheduler
                 PassiveTemp: 25,
                 Mode: HaEntityStates.COOL,
                 ActivateFan: false,
-                HourStart: _entities.SunMidnight.LocalHour(),
-                HourEnd: _entities.SunRising.LocalHour()
+                HourStart: _entities.SunMidnight.ToLocalHour(),
+                HourEnd: _entities.SunRising.ToLocalHour()
             ),
         };
 

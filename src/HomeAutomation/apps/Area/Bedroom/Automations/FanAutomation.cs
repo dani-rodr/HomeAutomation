@@ -10,7 +10,7 @@ public class FanAutomation(IBedroomFanEntities entities, ILogger<FanAutomation> 
     protected override IEnumerable<IDisposable> GetPersistentAutomations()
     {
         yield return MainFan
-            .StateChanges()
+            .OnChanges()
             .IsManuallyOperated()
             .Subscribe(_ =>
             {
@@ -25,7 +25,7 @@ public class FanAutomation(IBedroomFanEntities entities, ILogger<FanAutomation> 
 
     protected override IEnumerable<IDisposable> GetToggleableAutomations() =>
         [
-            MotionSensor.StateChanges().IsOccupied().Subscribe(e => TurnOnFans(e)),
-            MotionSensor.StateChanges().IsClear().Subscribe(e => TurnOffFans(e)),
+            MotionSensor.OnOccupied().Subscribe(e => TurnOnFans(e)),
+            MotionSensor.OnCleared().Subscribe(e => TurnOffFans(e)),
         ];
 }

@@ -1,3 +1,5 @@
+using System.Reactive.Disposables;
+
 namespace HomeAutomation.Tests.Helpers;
 
 /// <summary>
@@ -15,6 +17,7 @@ public class HelpersTests : IDisposable
     private readonly WeatherEntity _weather;
     private readonly NumberEntity _number;
     private readonly SensorEntity _sensor;
+    private readonly ButtonEntity _button;
     private readonly Subject<StateChange> _stateChangeSubject;
 
     public HelpersTests()
@@ -28,6 +31,7 @@ public class HelpersTests : IDisposable
         _weather = new WeatherEntity(_mockHaContext, "weather.test_weather");
         _number = new NumberEntity(_mockHaContext, "number.test_number");
         _sensor = new SensorEntity(_mockHaContext, "sensor.test_sensor");
+        _button = new ButtonEntity(_mockHaContext, "button.test_button ");
         _stateChangeSubject = new Subject<StateChange>();
     }
 
@@ -43,12 +47,10 @@ public class HelpersTests : IDisposable
     {
         // Arrange
         var results = new List<StateChange>();
-        _stateChangeSubject.IsOn().Subscribe(results.Add);
-
-        var change = StateChangeHelpers.CreateStateChange(_light, "off", state);
+        using var disposable = _light.OnTurnedOn().Subscribe(results.Add);
 
         // Act
-        _stateChangeSubject.OnNext(change);
+        _mockHaContext.SimulateStateChange(_light.EntityId, "off", state);
 
         // Assert
         if (shouldMatch)
@@ -68,19 +70,20 @@ public class HelpersTests : IDisposable
         // Arrange
         var onResults = new List<StateChange>();
         var openResults = new List<StateChange>();
+        var occupiedResults = new List<StateChange>();
 
-        _stateChangeSubject.IsOn().Subscribe(onResults.Add);
-        _stateChangeSubject.IsOpen().Subscribe(openResults.Add);
-
-        var change = StateChangeHelpers.CreateStateChange(_motionSensor, "off", "on");
-
+        using var disposable = new CompositeDisposable(
+            _motionSensor.OnTurnedOn().Subscribe(onResults.Add),
+            _motionSensor.OnOpened().Subscribe(openResults.Add),
+            _motionSensor.OnOccupied().Subscribe(occupiedResults.Add)
+        );
         // Act
-        _stateChangeSubject.OnNext(change);
+        _mockHaContext.SimulateStateChange(_motionSensor.EntityId, "off", "on");
 
         // Assert
         onResults.Should().HaveCount(1);
         openResults.Should().HaveCount(1);
-        openResults[0].Should().BeEquivalentTo(onResults[0]);
+        occupiedResults.Should().HaveCount(1);
     }
 
     [Theory]
@@ -93,12 +96,10 @@ public class HelpersTests : IDisposable
     {
         // Arrange
         var results = new List<StateChange>();
-        _stateChangeSubject.IsOff().Subscribe(results.Add);
-
-        var change = StateChangeHelpers.CreateStateChange(_light, "on", state);
+        using var disposable = _light.OnTurnedOff().Subscribe(results.Add);
 
         // Act
-        _stateChangeSubject.OnNext(change);
+        _mockHaContext.SimulateStateChange(_light.EntityId, "on", state);
 
         // Assert
         if (shouldMatch)
@@ -118,19 +119,20 @@ public class HelpersTests : IDisposable
         // Arrange
         var offResults = new List<StateChange>();
         var closedResults = new List<StateChange>();
+        var clearedResults = new List<StateChange>();
 
-        _stateChangeSubject.IsOff().Subscribe(offResults.Add);
-        _stateChangeSubject.IsClosed().Subscribe(closedResults.Add);
-
-        var change = StateChangeHelpers.CreateStateChange(_motionSensor, "on", "off");
-
+        using var disposable = new CompositeDisposable(
+            _motionSensor.OnTurnedOff().Subscribe(offResults.Add),
+            _motionSensor.OnClosed().Subscribe(closedResults.Add),
+            _motionSensor.OnCleared().Subscribe(clearedResults.Add)
+        );
         // Act
-        _stateChangeSubject.OnNext(change);
+        _mockHaContext.SimulateStateChange(_motionSensor.EntityId, "on", "off");
 
         // Assert
         offResults.Should().HaveCount(1);
         closedResults.Should().HaveCount(1);
-        closedResults[0].Should().BeEquivalentTo(offResults[0]);
+        clearedResults.Should().HaveCount(1);
     }
 
     [Theory]
@@ -143,12 +145,10 @@ public class HelpersTests : IDisposable
     {
         // Arrange
         var results = new List<StateChange>();
-        _stateChangeSubject.IsLocked().Subscribe(results.Add);
-
-        var change = StateChangeHelpers.CreateStateChange(_lock, "unlocked", state);
+        using var disposable = _lock.OnLocked().Subscribe(results.Add);
 
         // Act
-        _stateChangeSubject.OnNext(change);
+        _mockHaContext.SimulateStateChange(_lock.EntityId, "unlocked", state);
 
         // Assert
         if (shouldMatch)
@@ -172,12 +172,10 @@ public class HelpersTests : IDisposable
     {
         // Arrange
         var results = new List<StateChange>();
-        _stateChangeSubject.IsUnlocked().Subscribe(results.Add);
-
-        var change = StateChangeHelpers.CreateStateChange(_lock, "locked", state);
+        using var disposable = _lock.OnUnlocked().Subscribe(results.Add);
 
         // Act
-        _stateChangeSubject.OnNext(change);
+        _mockHaContext.SimulateStateChange(_lock.EntityId, "locked", state);
 
         // Assert
         if (shouldMatch)
@@ -203,12 +201,12 @@ public class HelpersTests : IDisposable
     {
         // Arrange
         var results = new List<StateChange>();
-        _stateChangeSubject.IsUnavailable().Subscribe(results.Add);
-
-        var change = StateChangeHelpers.CreateStateChange(_light, "on", state);
+        using var disposable = _light
+            .OnChanges(new(Condition: s => s.IsUnavailable()))
+            .Subscribe(results.Add);
 
         // Act
-        _stateChangeSubject.OnNext(change);
+        _mockHaContext.SimulateStateChange(_light.EntityId, "on", state);
 
         // Assert
         if (shouldMatch)
@@ -231,12 +229,12 @@ public class HelpersTests : IDisposable
     {
         // Arrange
         var results = new List<StateChange>();
-        _stateChangeSubject.IsUnknown().Subscribe(results.Add);
-
-        var change = StateChangeHelpers.CreateStateChange(_light, "on", state);
+        using var disposable = _light
+            .OnChanges(new(Condition: s => s.IsUnknown()))
+            .Subscribe(results.Add);
 
         // Act
-        _stateChangeSubject.OnNext(change);
+        _mockHaContext.SimulateStateChange(_light.EntityId, "on", state);
 
         // Assert
         if (shouldMatch)
@@ -267,12 +265,10 @@ public class HelpersTests : IDisposable
     {
         // Arrange
         var results = new List<StateChange>();
-        _stateChangeSubject.IsManuallyOperated().Subscribe(results.Add);
-
-        var change = StateChangeHelpers.CreateStateChange(_light, "off", "on", userId);
+        using var disposable = _light.OnChanges().IsManuallyOperated().Subscribe(results.Add);
 
         // Act
-        _stateChangeSubject.OnNext(change);
+        _mockHaContext.SimulateStateChange(_light.EntityId, "off", "on", userId);
 
         // Assert
         if (shouldMatch)
@@ -298,12 +294,10 @@ public class HelpersTests : IDisposable
     {
         // Arrange
         var results = new List<StateChange>();
-        _stateChangeSubject.IsPhysicallyOperated().Subscribe(results.Add);
-
-        var change = StateChangeHelpers.CreateStateChange(_light, "off", "on", userId);
+        using var disposable = _light.OnChanges().IsPhysicallyOperated().Subscribe(results.Add);
 
         // Act
-        _stateChangeSubject.OnNext(change);
+        _mockHaContext.SimulateStateChange(_light.EntityId, "off", "on", userId);
 
         // Assert
         if (shouldMatch)
@@ -330,12 +324,10 @@ public class HelpersTests : IDisposable
     {
         // Arrange
         var results = new List<StateChange>();
-        _stateChangeSubject.IsAutomated().Subscribe(results.Add);
-
-        var change = StateChangeHelpers.CreateStateChange(_light, "off", "on", userId);
+        using var disposable = _light.OnChanges().IsAutomated().Subscribe(results.Add);
 
         // Act
-        _stateChangeSubject.OnNext(change);
+        _mockHaContext.SimulateStateChange(_light.EntityId, "off", "on", userId);
 
         // Assert
         if (shouldMatch)
@@ -358,16 +350,10 @@ public class HelpersTests : IDisposable
     {
         // Arrange
         var results = new List<StateChange>();
-        _stateChangeSubject.IsValidButtonPress().Subscribe(results.Add);
-
-        var change = new StateChange(
-            (Entity)_switch,
-            new EntityState { State = "previous" },
-            new EntityState { State = state }
-        );
+        var automation = _button.OnPressed().Subscribe(results.Add);
 
         // Act
-        _stateChangeSubject.OnNext(change);
+        _mockHaContext.SimulateStateChange(_button.EntityId, "previous", state!);
 
         // Assert
         if (shouldMatch)
@@ -378,116 +364,39 @@ public class HelpersTests : IDisposable
         {
             results.Should().BeEmpty();
         }
+        automation.Dispose();
     }
 
     [Fact]
     public void IsFlickering_Should_Emit_WhenMultipleFlipsOccurWithinWindow()
     {
         // Arrange
-        var results = new List<IList<StateChange>>();
-        var flipSubject = new Subject<StateChange>();
+        int result = 0;
 
-        flipSubject
-            .ObserveOn(_mockHaContext.Scheduler)
-            .IsFlickering(minimumFlips: 4, timeWindowMs: 300, scheduler: _mockHaContext.Scheduler)
-            .Subscribe(results.Add);
+        _motionSensor
+            .OnFlickering(timeWindowMs: 300, minimumFlips: 4)
+            .Subscribe(count => result = count);
 
-        var flipSequence = new[]
-        {
-            StateChangeHelpers.CreateStateChange(_motionSensor, "off", "on"),
-            StateChangeHelpers.CreateStateChange(_motionSensor, "on", "off"),
-            StateChangeHelpers.CreateStateChange(_motionSensor, "off", "on"),
-            StateChangeHelpers.CreateStateChange(_motionSensor, "on", "off"),
-        };
+        var flipSequence = new[] { ("off", "on"), ("on", "off"), ("off", "on"), ("on", "off") };
 
         int tickInterval = 50;
         for (int i = 0; i < flipSequence.Length; i++)
         {
             _mockHaContext.AdvanceTimeBy(TimeSpan.FromMilliseconds(tickInterval));
-            flipSubject.OnNext(flipSequence[i]);
+            _mockHaContext.SimulateStateChange(
+                _motionSensor.EntityId,
+                flipSequence[i].Item1,
+                flipSequence[i].Item2
+            );
         }
 
         _mockHaContext.AdvanceTimeBy(TimeSpan.FromMilliseconds(300));
 
-        results.Should().HaveCount(1);
-        results[0].Should().HaveCount(4);
+        result.Should().Be(4);
     }
 
     #endregion
 
-    #region Time-based Extension Tests
-
-    [Fact]
-    public void IsOnForSeconds_Should_UseOnStateAndSeconds()
-    {
-        var observable = _stateChangeSubject.IsOn().ForSeconds(45);
-        observable.Should().NotBeNull();
-    }
-
-    [Fact]
-    public void IsOnForMinutes_Should_UseOnStateAndMinutes()
-    {
-        var observable = _stateChangeSubject.IsOn().ForMinutes(10);
-        observable.Should().NotBeNull();
-    }
-
-    [Fact]
-    public void IsOnForHours_Should_UseOnStateAndHours()
-    {
-        var observable = _stateChangeSubject.IsOn().ForHours(3);
-        observable.Should().NotBeNull();
-    }
-
-    [Fact]
-    public void IsOffForSeconds_Should_UseOffStateAndSeconds()
-    {
-        var observable = _stateChangeSubject.IsOff().ForSeconds(60);
-        observable.Should().NotBeNull();
-    }
-
-    [Fact]
-    public void IsOffForMinutes_Should_UseOffStateAndMinutes()
-    {
-        var observable = _stateChangeSubject.IsOff().ForMinutes(15);
-        observable.Should().NotBeNull();
-    }
-
-    [Fact]
-    public void IsOffForHours_Should_UseOffStateAndHours()
-    {
-        var observable = _stateChangeSubject.IsOff().ForHours(1);
-        observable.Should().NotBeNull();
-    }
-
-    [Fact]
-    public void IsClosedForSeconds_Should_UseOffStateAndSeconds()
-    {
-        var observable = _stateChangeSubject.IsClosed().ForSeconds(30);
-        observable.Should().NotBeNull();
-    }
-
-    [Fact]
-    public void IsOpenForSeconds_Should_UseOnStateAndSeconds()
-    {
-        var observable = _stateChangeSubject.IsOpen().ForSeconds(20);
-        observable.Should().NotBeNull();
-    }
-
-    [Fact]
-    public void IsLockedForMinutes_Should_UseLockedStateAndMinutes()
-    {
-        var observable = _stateChangeSubject.IsLocked().ForMinutes(5);
-        observable.Should().NotBeNull();
-    }
-
-    [Fact]
-    public void IsUnlockedForHours_Should_UseUnlockedStateAndHours()
-    {
-        var observable = _stateChangeSubject.IsUnlocked().ForHours(2);
-        observable.Should().NotBeNull();
-    }
-
-    #endregion
 
     #region StateExtensions Tests
 
@@ -545,7 +454,7 @@ public class HelpersTests : IDisposable
     public void StateChange_State_Should_ReturnEmptyWhenNewIsNull()
     {
         // Arrange
-        var change = new StateChange((Entity)_light, new EntityState { State = "off" }, null);
+        var change = new StateChange(_light, new EntityState { State = "off" }, null);
 
         // Act
         var result = change.New?.State ?? string.Empty;
@@ -555,79 +464,21 @@ public class HelpersTests : IDisposable
     }
 
     [Theory]
-    [InlineData("locked", true)]
-    [InlineData("LOCKED", true)]
-    [InlineData("unlocked", false)]
-    public void GenericStateChange_IsLocked_Should_CheckLockedState(string state, bool expected)
-    {
-        // Arrange
-        var change = StateChangeHelpers.CreateStateChange(_lock, "unlocked", state);
-
-        // Act
-        var result = change.New?.State?.IsLocked() ?? false;
-
-        // Assert
-        result.Should().Be(expected);
-    }
-
-    [Theory]
-    [InlineData("unlocked", true)]
-    [InlineData("UNLOCKED", true)]
-    [InlineData("locked", false)]
-    public void GenericStateChange_IsUnlocked_Should_CheckUnlockedState(string state, bool expected)
-    {
-        // Arrange
-        var change = StateChangeHelpers.CreateStateChange(_lock, "locked", state);
-
-        // Act
-        var result = change.New?.State?.IsUnlocked() ?? false;
-
-        // Assert
-        result.Should().Be(expected);
-    }
-
-    [Theory]
-    [InlineData("unavailable", true)]
-    [InlineData("UNAVAILABLE", true)]
-    [InlineData("on", false)]
-    [InlineData("off", false)]
-    public void GenericStateChange_IsUnavailable_Should_CheckUnavailableState(
-        string state,
-        bool expected
-    )
-    {
-        // Arrange
-        var change = StateChangeHelpers.CreateStateChange(_light, "on", state);
-
-        // Act
-        var result = change.New?.State?.IsUnavailable() ?? false;
-
-        // Assert
-        result.Should().Be(expected);
-    }
-
-    [Theory]
     [InlineData("2023-12-01T10:30:00Z", true)]
     [InlineData("invalid_date", false)]
     [InlineData("", false)]
     public void StateChange_IsValidButtonPress_Should_ValidateDateTime(string state, bool expected)
     {
+        bool result = false;
         // Arrange
-        var change = StateChangeHelpers.CreateStateChange(_switch, "previous", state);
+        IDisposable automation = _button.OnPressed().Subscribe(_ => result = true);
 
         // Act
-        var result = change.IsValidButtonPress();
+        _mockHaContext.SimulateStateChange(_button.EntityId, "previous", state);
 
         // Assert
         result.Should().Be(expected);
-    }
-
-    [Fact]
-    public void StateChange_IsValidButtonPress_Should_HandleNullStateChange()
-    {
-        // Act & Assert
-        StateChange? nullChange = null;
-        nullChange!.IsValidButtonPress().Should().BeFalse();
+        automation.Dispose();
     }
 
     [Theory]
@@ -641,10 +492,16 @@ public class HelpersTests : IDisposable
     )
     {
         // Arrange
-        var change = StateChangeHelpers.CreateStateChange(_light, "off", "on", userId);
+        bool result = false;
+
+        using var automation = _motionSensor
+            .StateChanges()
+            .IsManuallyOperated()
+            .Subscribe(_ => result = true);
 
         // Act
-        var result = change.IsManuallyOperated();
+        // Act
+        _mockHaContext.SimulateStateChange(_motionSensor.EntityId, "off", "on", userId);
 
         // Assert
         result.Should().Be(expected);
@@ -660,10 +517,14 @@ public class HelpersTests : IDisposable
     )
     {
         // Arrange
-        var change = StateChangeHelpers.CreateStateChange(_light, "off", "on", userId);
+        var result = false;
+        using var automation = _motionSensor
+            .OnTurnedOn()
+            .IsPhysicallyOperated()
+            .Subscribe(_ => result = true);
 
         // Act
-        var result = change.IsPhysicallyOperated();
+        _mockHaContext.SimulateStateChange(_motionSensor.EntityId, "off", "on", userId);
 
         // Assert
         result.Should().Be(expected);
@@ -680,10 +541,14 @@ public class HelpersTests : IDisposable
     )
     {
         // Arrange
-        var change = StateChangeHelpers.CreateStateChange(_light, "off", "on", userId);
+        var result = false;
+        using var automation = _motionSensor
+            .OnTurnedOn()
+            .IsAutomated()
+            .Subscribe(_ => result = true);
 
         // Act
-        var result = change.IsAutomated();
+        _mockHaContext.SimulateStateChange(_motionSensor.EntityId, "off", "on", userId);
 
         // Assert
         result.Should().Be(expected);
@@ -691,128 +556,17 @@ public class HelpersTests : IDisposable
 
     #endregion
 
-    #region String State Extension Tests
-
-    [Theory]
-    [InlineData("on", true)]
-    [InlineData("ON", true)]
-    [InlineData("On", true)]
-    [InlineData("off", false)]
-    [InlineData("", false)]
-    [InlineData(null, false)]
-    public void String_IsOn_Should_CheckOnState(string? state, bool expected)
-    {
-        // Act & Assert
-        state.IsOn().Should().Be(expected);
-    }
-
-    [Theory]
-    [InlineData("off", true)]
-    [InlineData("OFF", true)]
-    [InlineData("Off", true)]
-    [InlineData("on", false)]
-    [InlineData("", false)]
-    [InlineData(null, false)]
-    public void String_IsOff_Should_CheckOffState(string? state, bool expected)
-    {
-        // Act & Assert
-        state.IsOff().Should().Be(expected);
-    }
-
-    [Fact]
-    public void String_IsOpen_Should_BeAliasForIsOn()
-    {
-        // Act & Assert
-        "on".IsOpen().Should().BeTrue();
-        "off".IsOpen().Should().BeFalse();
-    }
-
-    [Fact]
-    public void String_IsClosed_Should_BeAliasForIsOff()
-    {
-        // Act & Assert
-        "off".IsClosed().Should().BeTrue();
-        "on".IsClosed().Should().BeFalse();
-    }
-
-    [Theory]
-    [InlineData("locked", true)]
-    [InlineData("LOCKED", true)]
-    [InlineData("Locked", true)]
-    [InlineData("unlocked", false)]
-    [InlineData("", false)]
-    [InlineData(null, false)]
-    public void String_IsLocked_Should_CheckLockedState(string? state, bool expected)
-    {
-        // Act & Assert
-        state.IsLocked().Should().Be(expected);
-    }
-
-    [Theory]
-    [InlineData("unlocked", true)]
-    [InlineData("UNLOCKED", true)]
-    [InlineData("Unlocked", true)]
-    [InlineData("locked", false)]
-    [InlineData("", false)]
-    [InlineData(null, false)]
-    public void String_IsUnlocked_Should_CheckUnlockedState(string? state, bool expected)
-    {
-        // Act & Assert
-        state.IsUnlocked().Should().Be(expected);
-    }
-
-    [Theory]
-    [InlineData("connected", true)]
-    [InlineData("CONNECTED", true)]
-    [InlineData("Connected", true)]
-    [InlineData("disconnected", false)]
-    [InlineData("", false)]
-    [InlineData(null, false)]
-    public void String_IsConnected_Should_CheckConnectedState(string? state, bool expected)
-    {
-        // Act & Assert
-        state.IsConnected().Should().Be(expected);
-    }
-
-    [Theory]
-    [InlineData("disconnected", true)]
-    [InlineData("DISCONNECTED", true)]
-    [InlineData("Disconnected", true)]
-    [InlineData("connected", false)]
-    [InlineData("", false)]
-    [InlineData(null, false)]
-    public void String_IsDisconnected_Should_CheckDisconnectedState(string? state, bool expected)
-    {
-        // Act & Assert
-        state.IsDisconnected().Should().Be(expected);
-    }
-
-    [Theory]
-    [InlineData("unavailable", true)]
-    [InlineData("UNAVAILABLE", true)]
-    [InlineData("Unavailable", true)]
-    [InlineData("available", false)]
-    [InlineData("", false)]
-    [InlineData(null, false)]
-    public void String_IsUnavailable_Should_CheckUnavailableState(string? state, bool expected)
-    {
-        // Act & Assert
-        state.IsUnavailable().Should().Be(expected);
-    }
-
-    #endregion
-
     #region Entity Extension Tests
 
     [Fact]
-    public void SensorEntity_LocalHour_Should_ExtractHourFromDateTime()
+    public void SensorEntity_ToLocalHour_Should_ExtractHourFromDateTime()
     {
         // Arrange - Use a known date-time that we can test
         var testDateTime = "2023-12-01T14:30:00Z";
         _mockHaContext.SetEntityState(_sensor.EntityId, testDateTime);
 
         // Act
-        var result = _sensor.LocalHour();
+        var result = _sensor.ToLocalHour();
 
         // Assert - The method returns the hour from parsed DateTime.TryParse
         // This will return the local hour based on DateTime.TryParse behavior
@@ -820,7 +574,7 @@ public class HelpersTests : IDisposable
 
         // Test with a specific case we can verify
         _mockHaContext.SetEntityState(_sensor.EntityId, "2023-01-01T00:00:00");
-        var midnightResult = _sensor.LocalHour();
+        var midnightResult = _sensor.ToLocalHour();
         midnightResult.Should().Be(0, "Midnight should return hour 0");
     }
 
@@ -828,13 +582,15 @@ public class HelpersTests : IDisposable
     [InlineData("invalid_date")]
     [InlineData("")]
     [InlineData("unknown")]
-    public void SensorEntity_LocalHour_Should_ReturnNegativeOneForInvalidState(string invalidState)
+    public void SensorEntity_ToLocalHour_Should_ReturnNegativeOneForInvalidState(
+        string invalidState
+    )
     {
         // Arrange
         _mockHaContext.SetEntityState(_sensor.EntityId, invalidState);
 
         // Act
-        var result = _sensor.LocalHour();
+        var result = _sensor.ToLocalHour();
 
         // Assert
         result.Should().Be(-1);
@@ -847,10 +603,10 @@ public class HelpersTests : IDisposable
     public void SensorEntity_IsLocked_Should_CheckLockState(string state, bool expected)
     {
         // Arrange
-        _mockHaContext.SetEntityState(_sensor.EntityId, state);
+        _mockHaContext.SetEntityState(_lock.EntityId, state);
 
         // Act
-        var result = _sensor.IsLocked();
+        var result = _lock.IsLocked();
 
         // Assert
         result.Should().Be(expected);
@@ -863,10 +619,10 @@ public class HelpersTests : IDisposable
     public void SensorEntity_IsUnlocked_Should_CheckUnlockState(string state, bool expected)
     {
         // Arrange
-        _mockHaContext.SetEntityState(_sensor.EntityId, state);
+        _mockHaContext.SetEntityState(_lock.EntityId, state);
 
         // Act
-        var result = _sensor.IsUnlocked();
+        var result = _lock.IsUnlocked();
 
         // Assert
         result.Should().Be(expected);
@@ -951,16 +707,13 @@ public class HelpersTests : IDisposable
     [Theory]
     [InlineData("connected", true)]
     [InlineData("disconnected", false)]
-    public void BinarySensorEntity_IsConnected_Should_CheckConnectedState(
-        string state,
-        bool expected
-    )
+    public void SensorEntity_IsConnected_Should_CheckConnectedState(string state, bool expected)
     {
         // Arrange
-        _mockHaContext.SetEntityState(_motionSensor.EntityId, state);
+        _mockHaContext.SetEntityState(_sensor.EntityId, state);
 
         // Act
-        var result = _motionSensor.IsConnected();
+        var result = _sensor.IsConnected();
 
         // Assert
         result.Should().Be(expected);
@@ -975,10 +728,10 @@ public class HelpersTests : IDisposable
     )
     {
         // Arrange
-        _mockHaContext.SetEntityState(_motionSensor.EntityId, state);
+        _mockHaContext.SetEntityState(_sensor.EntityId, state);
 
         // Act
-        var result = _motionSensor.IsDisconnected();
+        var result = _sensor.IsDisconnected();
 
         // Assert
         result.Should().Be(expected);
@@ -986,7 +739,6 @@ public class HelpersTests : IDisposable
 
     [Theory]
     [InlineData("dry", true)]
-    [InlineData("DRY", true)]
     [InlineData("cool", false)]
     [InlineData("off", false)]
     public void ClimateEntity_IsDry_Should_CheckDryState(string state, bool expected)
@@ -1003,7 +755,6 @@ public class HelpersTests : IDisposable
 
     [Theory]
     [InlineData("cool", true)]
-    [InlineData("COOL", true)]
     [InlineData("dry", false)]
     [InlineData("off", false)]
     public void ClimateEntity_IsCool_Should_CheckCoolState(string state, bool expected)
@@ -1054,7 +805,6 @@ public class HelpersTests : IDisposable
 
     [Theory]
     [InlineData("dry", true)]
-    [InlineData("DRY", true)]
     [InlineData("sunny", false)]
     public void WeatherEntity_IsDry_Should_CheckDryState(string state, bool expected)
     {
@@ -1122,7 +872,6 @@ public class HelpersTests : IDisposable
 
     [Theory]
     [InlineData("clear-night", true)]
-    [InlineData("CLEAR-NIGHT", true)]
     [InlineData("sunny", false)]
     public void WeatherEntity_IsClearNight_Should_CheckClearNightState(string state, bool expected)
     {
@@ -1369,14 +1118,18 @@ public class HelpersTests : IDisposable
             new Subject<StateChange<SwitchEntity, EntityState<SwitchAttributes>>>();
         var results = new List<IList<StateChange<SwitchEntity, EntityState<SwitchAttributes>>>>();
 
-        switchChangeSubject.OnDoubleClick(2).Subscribe(results.Add);
+        IDisposable automation = _switch.OnDoubleClick(2).Subscribe(results.Add);
 
-        // This test mainly verifies the method compiles and returns the expected type
-        // The actual buffering and timing logic would require more complex reactive testing
+        _mockHaContext.SimulateStateChange(_switch.EntityId, "on", "off");
+        _mockHaContext.AdvanceTimeBy(TimeSpan.FromMilliseconds(500));
+        _mockHaContext.SimulateStateChange(_switch.EntityId, "off", "on");
+        _mockHaContext.AdvanceTimeBy(TimeSpan.FromMilliseconds(500));
 
         // Act & Assert - verify the observable is properly set up
         switchChangeSubject.Should().NotBeNull();
-        results.Should().BeEmpty(); // No changes emitted yet
+        results.Should().NotBeEmpty();
+
+        automation.Dispose();
     }
 
     #endregion

@@ -19,32 +19,17 @@ public class ClimateAutomation(
             .IsManuallyOperated()
             .Subscribe(TurnOffMasterSwitchOnManualOperation);
         yield return _motionSensor
-            .StateChangesWithCurrent()
-            .IsOff()
-            .ForHours(1)
+            .OnCleared(new(Hours: 1, CheckImmediately: true))
             .Where(_ => MasterSwitch.IsOff())
             .Subscribe(_ => MasterSwitch.TurnOn());
         yield return MasterSwitch
-            .StateChangesWithCurrent()
-            .IsOff()
-            .ForHours(8)
+            .OnTurnedOff(new(Hours: 8, CheckImmediately: true))
             .Subscribe(_ => MasterSwitch.TurnOn());
         yield return _doorSensor
-            .StateChanges()
-            .IsClosed()
-            .Subscribe(e =>
-            {
-                if (MasterSwitch.IsOff())
-                {
-                    return;
-                }
-                ApplyTimeBasedAcSetting(e);
-            });
-        yield return MasterSwitch!
-            .StateChanges()
-            .WasOff()
-            .IsOn()
+            .OnClosed()
+            .Where(_ => MasterSwitch.IsOn())
             .Subscribe(ApplyTimeBasedAcSetting);
+        yield return MasterSwitch.OnTurnedOn().Subscribe(ApplyTimeBasedAcSetting);
     }
 
     protected override IEnumerable<IDisposable> GetToggleableAutomations() =>
@@ -78,17 +63,9 @@ public class ClimateAutomation(
 
     private IEnumerable<IDisposable> GetSensorBasedAutomations()
     {
-        yield return _doorSensor
-            .StateChanges()
-            .IsOn()
-            .ForMinutes(5)
-            .Subscribe(ApplyTimeBasedAcSetting);
-        yield return _motionSensor
-            .StateChanges()
-            .IsOff()
-            .ForMinutes(10)
-            .Subscribe(ApplyTimeBasedAcSetting);
-        yield return _motionSensor.StateChanges().IsOn().Subscribe(ApplyTimeBasedAcSetting);
+        yield return _doorSensor.OnOpened(new(Minutes: 5)).Subscribe(ApplyTimeBasedAcSetting);
+        yield return _motionSensor.OnCleared(new(Minutes: 10)).Subscribe(ApplyTimeBasedAcSetting);
+        yield return _motionSensor.OnOccupied().Subscribe(ApplyTimeBasedAcSetting);
     }
 
     private void ApplyTimeBasedAcSetting(StateChange e)
@@ -105,14 +82,9 @@ public class ClimateAutomation(
     private IEnumerable<IDisposable> GetHousePresenceAutomations()
     {
         var houseOccupancy = entities.HouseMotionSensor;
+        yield return houseOccupancy.OnCleared(new(Minutes: 30)).Subscribe(_ => _ac.TurnOff());
         yield return houseOccupancy
-            .StateChanges()
-            .IsOff()
-            .ForMinutes(30)
-            .Subscribe(_ => _ac.TurnOff());
-        yield return houseOccupancy
-            .StateChanges()
-            .IsOn()
+            .OnOccupied()
             .Subscribe(e =>
             {
                 var last = e.Old?.LastChanged;
@@ -142,8 +114,7 @@ public class ClimateAutomation(
     private IEnumerable<IDisposable> GetFanModeToggleAutomation()
     {
         yield return entities
-            .AcFanModeToggle.StateChanges()
-            .Where(e => e.IsValidButtonPress())
+            .AcFanModeToggle.OnPressed()
             .Subscribe(_ =>
             {
                 var modes = new[]
@@ -197,7 +168,7 @@ public class ClimateAutomation(
         var currentTemp = _ac.Attributes?.Temperature;
         var currentMode = _ac.State;
 
-        if (currentTemp == targetTemp && _ac.State.Is(setting.Mode))
+        if (currentTemp == targetTemp && _ac.Is(setting.Mode))
         {
             Logger.LogDebug(
                 "Skipping AC settings: Already configured correctly - Temp: {CurrentTemp}°C = {TargetTemp}°C, Mode: {CurrentMode} = {TargetMode}",

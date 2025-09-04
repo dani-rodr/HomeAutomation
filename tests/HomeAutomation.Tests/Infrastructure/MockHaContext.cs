@@ -159,7 +159,12 @@ public class MockHaContext : IHaContext
     /// <summary>
     /// Helper method to simulate an entity state change
     /// </summary>
-    public void SimulateStateChange(string entityId, string oldState, string newState)
+    public void SimulateStateChange(
+        string entityId,
+        string oldState,
+        string newState,
+        string? userId = null
+    )
     {
         // Update tracked state so GetState() calls return the new state
         _entityStates[entityId] = newState;
@@ -168,7 +173,11 @@ public class MockHaContext : IHaContext
         var stateChange = new StateChange(
             new Entity(this, entityId),
             new EntityState { State = oldState },
-            new EntityState { State = newState }
+            new EntityState
+            {
+                State = newState,
+                Context = new Context { UserId = userId },
+            }
         );
         StateChangeSubject.OnNext(stateChange);
     }
@@ -261,5 +270,6 @@ public class MockHaContext : IHaContext
     {
         StateChangeSubject?.Dispose();
         EventSubject?.Dispose();
+        SchedulerProvider.Reset();
     }
 }

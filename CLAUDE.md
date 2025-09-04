@@ -334,7 +334,7 @@ public override void StartAutomation()
 - `BinarySensorEntity.IsOccupied()` - Check occupancy state
 - `ClimateEntity.IsOn()` - Returns true if cooling or drying
 - `NumberEntity.SetNumericValue(double)` - Set number entity value
-- `SensorEntity.LocalHour()` - Extract hour from datetime sensor
+- `SensorEntity.ToLocalHour()` - Extract hour from datetime sensor
 
 ### User Action Validation (HaIdentity)
 ```csharp

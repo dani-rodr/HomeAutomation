@@ -20,11 +20,10 @@ public class LightAutomation(
 
     protected override IEnumerable<IDisposable> GetLightAutomations()
     {
-        yield return entities.LivingRoomDoor.StateChanges().IsOpen().Subscribe(TurnOnLights);
-        yield return MotionSensor.StateChangesWithCurrent().IsOn().Subscribe(TurnOnLights);
+        yield return entities.LivingRoomDoor.OnOpened().Subscribe(TurnOnLights);
+        yield return MotionSensor.OnOccupied(new(CheckImmediately: true)).Subscribe(TurnOnLights);
         yield return MotionSensor
-            .StateChangesWithCurrent()
-            .IsOff()
+            .OnCleared(new(CheckImmediately: true))
             .Subscribe(async _ => await dimmingController.OnMotionStoppedAsync(Light));
     }
 
@@ -45,9 +44,7 @@ public class LightAutomation(
     private IDisposable TurnOnMotionSensorAfterNoMotionAndRoomOccupied()
     {
         return MotionSensor
-            .StateChanges()
-            .IsOff()
-            .ForMinutes(2)
+            .OnCleared(new(Minutes: 2))
             .Where(_ =>
                 entities.BedroomDoor.IsClosed() && entities.BedroomMotionSensor.IsOccupied()
             )
@@ -57,9 +54,7 @@ public class LightAutomation(
     private IDisposable TurnOnMotionSensorOnTvOff()
     {
         return MotionSensor
-            .StateChanges()
-            .IsOff()
-            .ForMinutes(30)
+            .OnCleared(new(Minutes: 30))
             .Where(_ => entities.TclTv.IsOff())
             .Subscribe(_ => MasterSwitch.TurnOn());
     }
@@ -67,17 +62,14 @@ public class LightAutomation(
     private IDisposable SetSensorDelayOnKitchenOccupancy()
     {
         return entities
-            .KitchenMotionSensor.StateChanges()
-            .IsOn()
-            .ForSeconds(10)
+            .KitchenMotionSensor.OnOccupied(new(Seconds: 10))
             .Subscribe(_ => SensorDelay?.SetNumericValue(SensorActiveDelayValue));
     }
 
     private IDisposable TurnOffPantryLights()
     {
         return Light
-            .StateChanges()
-            .IsOff()
+            .OnTurnedOff()
             .Where(_ => PantryUnoccupied())
             .Subscribe(_ => entities.PantryLights.TurnOff());
     }

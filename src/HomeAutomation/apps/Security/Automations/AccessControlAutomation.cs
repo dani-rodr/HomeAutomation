@@ -39,15 +39,12 @@ public class AccessControlAutomation(
                 _lock.Unlock();
             });
         }
-        yield return _door.StateChanges().IsClosed().Subscribe(_ => _doorRecentlyClosed = true);
+        yield return _door.OnClosed().Subscribe(_ => _doorRecentlyClosed = true);
         yield return _door
-            .StateChanges()
-            .IsClosed()
-            .ForMinutes(DOOR_CLOSE_WINDOW_DELAY)
+            .OnClosed(new(Minutes: DOOR_CLOSE_WINDOW_DELAY))
             .Subscribe(_ => _doorRecentlyClosed = false);
         yield return entities
-            .House.StateChanges()
-            .IsOff()
+            .House.OnCleared()
             .Subscribe(_ =>
             {
                 Logger.LogInformation("House became empty.");

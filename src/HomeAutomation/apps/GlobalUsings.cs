@@ -13,6 +13,8 @@ global using HomeAutomation.apps.Common.Services;
 global using HomeAutomation.apps.Common.Services.Factories;
 global using HomeAutomation.apps.Common.Services.Schedulers;
 global using HomeAutomation.apps.Helpers;
+global using HomeAutomation.apps.Helpers.Extensions;
+global using HomeAutomation.apps.Helpers.Extensions.Entities;
 global using Microsoft.Extensions.Logging;
 global using NetDaemon.AppModel;
 global using NetDaemon.HassModel;

@@ -25,7 +25,7 @@ public class Laptop(
     public override bool IsOn()
     {
         var switchState = entities.VirtualSwitch;
-        var sessionState = entities.Session.State;
+        var sessionState = entities.Session;
 
         if (switchState.IsOff())
         {
@@ -44,9 +44,7 @@ public class Laptop(
         var switchStateChanges = entities.VirtualSwitch.StateChanges().Select(e => e.IsOn());
 
         var sessionLocked = entities
-            .Session.StateChanges()
-            .WasUnlocked()
-            .IsLocked()
+            .Session.OnLocked(new(IgnoreUnavailableState: false))
             .Select(_ => false);
 
         // Emits true when switch turns on, false when switch turns off or session locks
@@ -65,7 +63,7 @@ public class Laptop(
         batteryHandler.HandleLaptopTurnedOff();
         entities.VirtualSwitch.TurnOff();
 
-        if (entities.Session.State.IsUnlocked())
+        if (entities.Session.IsUnlocked())
         {
             entities.Lock.Press();
         }
@@ -73,7 +71,7 @@ public class Laptop(
 
     private IDisposable GetSwitchToggleAutomations() =>
         entities
-            .VirtualSwitch.StateChanges()
+            .VirtualSwitch.OnChanges()
             .DistinctUntilChanged()
             .Subscribe(e =>
             {
@@ -100,7 +98,7 @@ public class Laptop(
                     return;
                 }
 
-                if (entities.MotionSensor.State.IsOff())
+                if (entities.MotionSensor.IsOff())
                 {
                     Logger.LogDebug("Motion sensor is already off, proceeding to TurnOff.");
                     TurnOff();
@@ -110,8 +108,7 @@ public class Laptop(
                 Logger.LogDebug("Motion sensor is on, waiting for it to turn off.");
 
                 var motionSubscription = entities
-                    .MotionSensor.StateChanges()
-                    .Where(e => e.New?.State.IsOff() == true)
+                    .MotionSensor.OnTurnedOff()
                     .Take(1)
                     .Subscribe(_ =>
                     {
@@ -130,8 +127,7 @@ public class Laptop(
     private IEnumerable<IDisposable> GetSessionLockSwitchAutomation() =>
         [
             entities
-                .Session.StateChanges()
-                .Where(e => e.Old?.State.IsUnlocked() == true && e.New?.State.IsLocked() == true)
+                .Session.OnLocked(new(IgnoreUnavailableState: true))
                 .Subscribe(_ =>
                 {
                     Logger.LogInformation(
@@ -143,8 +139,7 @@ public class Laptop(
 
     private IDisposable GetSessionUnlockSwitchAutomation() =>
         entities
-            .Session.StateChanges()
-            .Where(e => e.Old?.State.IsLocked() == true && e.New?.State.IsUnlocked() == true)
+            .Session.OnUnlocked(new(IgnoreUnavailableState: true))
             .Subscribe(_ =>
             {
                 Logger.LogInformation(

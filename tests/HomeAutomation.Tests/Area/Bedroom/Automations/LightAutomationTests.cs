@@ -23,7 +23,7 @@ public class LightAutomationTests : IDisposable
         // Create test entities wrapper
         _entities = new TestEntities(_mockHaContext);
 
-        _automation = new LightAutomation(_entities, _mockHaContext.Scheduler, _mockLogger.Object);
+        _automation = new LightAutomation(_entities, _mockLogger.Object);
 
         // Start the automation to set up subscriptions
         _automation.StartAutomation();

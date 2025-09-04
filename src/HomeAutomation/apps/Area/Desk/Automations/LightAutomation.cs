@@ -14,17 +14,8 @@ public class LightAutomation(
 
     protected override IEnumerable<IDisposable> GetAdditionalPersistentAutomations()
     {
-        yield return MasterSwitch!
-            .StateChanges()
-            .DistinctUntilChanged()
-            .Where(_ => Light.IsOn() && monitor.IsOn())
-            .Subscribe(e =>
-            {
-                monitor.ShowToast("LG Display Automation is {0}", e.IsOn() ? "ON" : "OFF");
-            });
         yield return Light
-            .StateChanges()
-            .IsOn()
+            .OnTurnedOn()
             .Subscribe(async _ =>
             {
                 if (entities.SalaLights.IsOn())
@@ -51,10 +42,10 @@ public class LightAutomation(
 
     private IDisposable GetLightMotionAutomation() =>
         MotionSensor
-            .StateChanges()
+            .OnChanges(new(IgnoreUnavailableState: true))
             .Subscribe(e =>
             {
-                if (e.Entity.State.IsUnavailable() || monitor.IsOff())
+                if (monitor.IsOff())
                 {
                     return;
                 }
@@ -73,12 +64,10 @@ public class LightAutomation(
         var salaLights = entities.SalaLights;
 
         yield return salaLights
-            .StateChanges()
-            .IsOn()
+            .OnTurnedOn()
             .Subscribe(async _ => await monitor.SetBrightnessHighAsync());
         yield return salaLights
-            .StateChanges()
-            .IsOff()
+            .OnTurnedOff()
             .Subscribe(async _ => await monitor.SetBrightnessLowAsync());
     }
 }

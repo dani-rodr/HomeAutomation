@@ -50,8 +50,7 @@ public abstract class MotionSensorBase(
     protected override IEnumerable<IDisposable> GetToggleableAutomations()
     {
         yield return SmartPresence
-            .StateChangesWithCurrent()
-            .IsOn()
+            .OnOccupied(new(CheckImmediately: true))
             .Subscribe(_ => MotionCalibrator.LogMotionTrigger(Zones, Logger));
     }
 
@@ -71,7 +70,7 @@ public abstract class MotionSensorBase(
     private IEnumerable<IDisposable> HandleAutoCalibrateStateChange()
     {
         yield return MasterSwitch
-            .StateChanges()
+            .OnChanges()
             .Subscribe(s =>
             {
                 if (s.IsOn())
@@ -84,9 +83,7 @@ public abstract class MotionSensorBase(
                 }
             });
         yield return EngineeringMode
-            .StateChanges()
-            .IsOff()
-            .ForSeconds(1)
+            .OnTurnedOff(new(Seconds: 1))
             .Where(_ => MasterSwitch.IsOn())
             .Subscribe(_ => EngineeringMode.TurnOn());
     }
@@ -107,8 +104,7 @@ public abstract class MotionSensorBase(
                     "Scheduled restart: motion is active, waiting for it to clear."
                 );
                 SmartPresence
-                    .StateChanges()
-                    .Where(e => SmartPresence.IsClear())
+                    .OnCleared()
                     .Take(1)
                     .Subscribe(_ =>
                     {
@@ -124,11 +120,7 @@ public abstract class MotionSensorBase(
     {
         yield return SmartPresence
             .StateChanges()
-            .Where(e =>
-                e.Old?.State.IsUnavailable() == true
-                && e.New?.State.IsAvailable() == true
-                && Presence.IsClear() == true
-            )
+            .Where(e => e.Old.IsUnavailable() && e.New.IsAvailable() && Presence.IsClear() == true)
             .Subscribe(_ =>
             {
                 Logger.LogInformation(

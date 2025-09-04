@@ -252,6 +252,8 @@ public class LightAutomationTests : IDisposable
     [Fact]
     public void MasterSwitch_Should_Enable_WhenMotionDetected_For2Seconds_AndMasterSwitch_WasOn()
     {
+        _mockHaContext.SimulateStateChange(_entities.MasterSwitch.EntityId, "off", "on");
+
         // Arrange - Set master switch to be off for 4 minutes only
         _mockHaContext.SimulateStateChange(_entities.MasterSwitch.EntityId, "on", "off");
         _mockHaContext.AdvanceTimeByMinutes(4);

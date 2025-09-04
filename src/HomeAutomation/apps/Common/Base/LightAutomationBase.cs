@@ -1,3 +1,6 @@
+using System.Linq;
+using Microsoft.Extensions.Options;
+
 namespace HomeAutomation.apps.Common.Base;
 
 public abstract class LightAutomationBase(ILightAutomationEntities entities, ILogger logger)
@@ -13,8 +16,8 @@ public abstract class LightAutomationBase(ILightAutomationEntities entities, ILo
 
     protected override IEnumerable<IDisposable> GetPersistentAutomations() =>
         [
-            Light.StateChanges().IsManuallyOperated().Subscribe(ControlMasterSwitchOnLightChange),
-            MasterSwitch!.StateChanges().IsOn().Subscribe(ControlLightOnMotionChange),
+            Light.OnChanges().IsManuallyOperated().Subscribe(ControlMasterSwitchOnLightChange),
+            MasterSwitch.OnTurnedOn().Subscribe(ControlLightOnMotionChange),
             .. GetAdditionalPersistentAutomations(),
         ];
 
@@ -50,9 +53,7 @@ public abstract class LightAutomationBase(ILightAutomationEntities entities, ILo
         );
 
         yield return MotionSensor
-            .StateChanges()
-            .IsOn()
-            .ForSeconds(SensorWaitTime)
+            .OnOccupied(new(Seconds: SensorWaitTime))
             .Subscribe(_ =>
             {
                 Logger.LogDebug(
@@ -63,9 +64,7 @@ public abstract class LightAutomationBase(ILightAutomationEntities entities, ILo
                 SensorDelay.SetNumericValue(SensorActiveDelayValue);
             });
         yield return MotionSensor
-            .StateChanges()
-            .IsOff()
-            .ForSeconds(SensorWaitTime)
+            .OnCleared(new(Seconds: SensorWaitTime))
             .Subscribe(_ =>
             {
                 Logger.LogDebug(
@@ -76,13 +75,12 @@ public abstract class LightAutomationBase(ILightAutomationEntities entities, ILo
                 SensorDelay.SetNumericValue(SensorInactiveDelayValue);
             });
         yield return MotionSensor
-            .StateChanges()
-            .IsFlickering()
+            .OnFlickering()
             .Subscribe(events =>
             {
                 Logger.LogDebug(
                     "Motion sensor flickering detected ({EventCount} events) - setting sensor delay to active value {Value}",
-                    events.Count,
+                    events,
                     SensorActiveDelayValue
                 );
                 SensorDelay.SetNumericValue(SensorActiveDelayValue);

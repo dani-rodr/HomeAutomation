@@ -18,21 +18,18 @@ public class LockAutomation(
 
     protected override IEnumerable<IDisposable> GetToggleableAutomations()
     {
-        var lockChanges = entities.Lock.StateChanges();
-        var doorChanges = entities.Door.StateChanges();
+        var @lock = entities.Lock;
+        var door = entities.Door;
 
-        yield return lockChanges.IsLocked().Subscribe(HandleDoorLocked);
-        yield return lockChanges.IsUnlocked().Subscribe(HandleDoorUnlocked);
-        yield return lockChanges
-            .IsUnlocked()
-            .ForMinutes(AUTO_LOCK_IN_MINUTES)
+        yield return @lock.OnLocked().Subscribe(HandleDoorLocked);
+        yield return @lock.OnUnlocked().Subscribe(HandleDoorUnlocked);
+        yield return @lock
+            .OnUnlocked(new(Minutes: AUTO_LOCK_IN_MINUTES))
             .Where(_ => entities.Door.IsClosed() && ShouldAutoLockAfterTime)
             .Subscribe(Lock);
-        yield return doorChanges.IsClosed().Subscribe(HandleDoorClosed);
-        yield return doorChanges.IsOpen().Subscribe(SendDoorOpenedNotification);
-        yield return doorChanges
-            .IsOpen()
-            .ForMinutes(AUTO_LOCK_IN_MINUTES)
+        yield return door.OnClosed().Subscribe(HandleDoorClosed);
+        yield return door.OnOpened().Subscribe(SendDoorOpenedNotification);
+        yield return door.OnOpened(new(Minutes: AUTO_LOCK_IN_MINUTES))
             .Subscribe(SendDoorOpenedNotification);
 
         yield return eventHandler.OnMobileEvent(LOCK_ACTION).Subscribe(_ => entities.Lock.Lock());

@@ -12,28 +12,28 @@ public class LightAutomation(IPantryLightEntities entities, ILogger<LightAutomat
     protected override IEnumerable<IDisposable> GetLightAutomations()
     {
         var mirrorLight = entities.MirrorLight;
-        yield return MotionSensor.StateChangesWithCurrent().IsOn().Subscribe(_ => Light.TurnOn());
         yield return MotionSensor
-            .StateChangesWithCurrent()
-            .IsOff()
+            .OnOccupied(new(CheckImmediately: true))
+            .Subscribe(_ => Light.TurnOn());
+        yield return MotionSensor
+            .OnCleared(new(CheckImmediately: true))
             .Subscribe(_ =>
             {
                 Light.TurnOff();
                 mirrorLight.TurnOff();
             });
         yield return entities
-            .MiScalePresenceSensor.StateChanges()
-            .IsOn()
+            .MiScalePresenceSensor.OnOccupied()
             .Subscribe(_ => mirrorLight.TurnOn());
     }
 
     private IEnumerable<IDisposable> AutoTogglePantryMotionSensor()
     {
         yield return entities
-            .BedroomDoor.StateChanges()
+            .BedroomDoor.OnChanges()
             .Subscribe(e =>
             {
-                if (e.IsOpen())
+                if (e.Entity.IsOpen())
                 {
                     MasterSwitch.TurnOff();
                     Light.TurnOn();
@@ -45,10 +45,8 @@ public class LightAutomation(IPantryLightEntities entities, ILogger<LightAutomat
 
     private IEnumerable<IDisposable> AutoToggleBathroomMotionSensor()
     {
-        var pantryChanges = MotionSensor.StateChangesWithCurrent();
-        var bathroomChanges = entities.BathroomMotionSensor.StateChangesWithCurrent();
-        yield return pantryChanges
-            .IsOn()
+        yield return MotionSensor
+            .OnOccupied(new(CheckImmediately: true))
             .Subscribe(_ =>
             {
                 Logger.LogDebug(
@@ -59,11 +57,7 @@ public class LightAutomation(IPantryLightEntities entities, ILogger<LightAutomat
             });
         var turnOffDelay = 60;
         yield return Observable
-            .CombineLatest(
-                pantryChanges.IsOff(),
-                bathroomChanges.IsOff(),
-                (pantryOff, bathOff) => true
-            )
+            .CombineLatest(MotionSensor.OnCleared(), entities.BathroomMotionSensor.OnCleared())
             .Subscribe(_ =>
             {
                 Logger.LogDebug(
@@ -76,16 +70,9 @@ public class LightAutomation(IPantryLightEntities entities, ILogger<LightAutomat
                     entities.BathroomMotionAutomation.EntityId
                 );
             });
-
-        yield return Observable
-            .CombineLatest(
-                pantryChanges,
-                bathroomChanges,
-                (pantry, bathroom) => pantry.IsOff() && bathroom.IsOff()
-            )
-            .Where(bothOff => bothOff)
-            .Select(_ => Observable.Timer(TimeSpan.FromSeconds(turnOffDelay), SchedulerProvider.Current))
-            .Switch()
+        yield return MotionSensor
+            .OnCleared(new(Seconds: turnOffDelay))
+            .CombineLatest(entities.BathroomMotionSensor.OnCleared(new(Seconds: turnOffDelay)))
             .Subscribe(_ =>
             {
                 Logger.LogDebug(

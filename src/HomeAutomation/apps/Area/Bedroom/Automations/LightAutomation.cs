@@ -2,56 +2,35 @@ using System.Linq;
 
 namespace HomeAutomation.apps.Area.Bedroom.Automations;
 
-public class LightAutomation(
-    IBedroomLightEntities entities,
-    IScheduler scheduler,
-    ILogger<LightAutomation> logger
-) : LightAutomationBase(entities, logger)
+public class LightAutomation(IBedroomLightEntities entities, ILogger<LightAutomation> logger)
+    : LightAutomationBase(entities, logger)
 {
     private readonly SwitchEntity _rightSideEmptySwitch = entities.RightSideEmptySwitch;
     private readonly SwitchEntity _leftSideFanSwitch = entities.LeftSideFanSwitch;
-    private readonly IScheduler _scheduler = scheduler;
-
     protected override int SensorActiveDelayValue => 45;
 
     protected override IEnumerable<IDisposable> GetAdditionalPersistentAutomations() =>
         [.. GetLightSwitchAutomations(), .. GetSensorDelayAutomations(), GetPantryAutomation()];
 
-    protected override IEnumerable<IDisposable> GetLightAutomations()
-    {
-        yield return MotionSensor
-            .StateChanges()
-            .Subscribe(e =>
-            {
-                if (e.IsOn())
-                {
-                    Light.TurnOn();
-                }
-                else if (e.IsOff())
-                {
-                    Light.TurnOff();
-                }
-            });
-    }
+    protected override IEnumerable<IDisposable> GetLightAutomations() =>
+        [
+            MotionSensor.OnOccupied().Subscribe(_ => Light.TurnOn()),
+            MotionSensor.OnCleared().Subscribe(_ => Light.TurnOff()),
+        ];
 
     private IDisposable GetPantryAutomation() =>
-        MotionSensor.StateChanges().IsOff().Subscribe(_ => entities.PantryAutomation.TurnOn());
+        MotionSensor.OnCleared().Subscribe(_ => entities.PantryAutomation.TurnOn());
 
     private IEnumerable<IDisposable> GetLightSwitchAutomations()
     {
         yield return _leftSideFanSwitch
-            .StateChanges()
-            .OnDoubleClick(timeout: 2, _scheduler)
+            .OnDoubleClick(timeout: 2)
             .Subscribe(e =>
             {
                 ToggleLightsViaSwitch(e.First());
             });
-        yield return _rightSideEmptySwitch.StateChanges().Subscribe(ToggleLightsViaSwitch);
-        yield return Light
-            .StateChanges()
-            .IsAutomated()
-            .IsOn()
-            .Subscribe(_ => MasterSwitch.TurnOn());
+        yield return _rightSideEmptySwitch.OnChanges().Subscribe(ToggleLightsViaSwitch);
+        yield return Light.OnTurnedOn().IsAutomated().Subscribe(_ => MasterSwitch.TurnOn());
     }
 
     private void ToggleLightsViaSwitch(StateChange e)

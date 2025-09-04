@@ -6,7 +6,7 @@
         <Configuration>
           <Format>cobertura</Format>
           <Exclude>[*.Tests]*</Exclude>
-          <ExcludeByFile>**/HomeAssistantGenerated.cs,**/bin/**/*,**/obj/**/*,**/program.cs</ExcludeByFile>
+          <ExcludeByFile>**/HomeAssistantGenerated.cs,**/bin/**/*,**/obj/**/*,**/program.cs, **/tests/HomeAutomation.Tests/**/*.cs</ExcludeByFile>
           <Include>[HomeAutomation]**/apps/**/*</Include>
           <IncludeTestAssembly>false</IncludeTestAssembly>
           <SingleHit>false</SingleHit>
@@ -15,7 +15,7 @@
       </DataCollector>
     </DataCollectors>
   </DataCollectionRunSettings>
-  
+
   <RunConfiguration>
     <ResultsDirectory>./TestResults</ResultsDirectory>
     <CollectSourceInformation>true</CollectSourceInformation>
