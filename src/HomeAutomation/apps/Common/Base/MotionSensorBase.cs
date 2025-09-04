@@ -70,7 +70,7 @@ public abstract class MotionSensorBase(
     private IEnumerable<IDisposable> HandleAutoCalibrateStateChange()
     {
         yield return MasterSwitch
-            .StateChanges()
+            .OnChanges()
             .Subscribe(s =>
             {
                 if (s.IsOn())
@@ -104,8 +104,7 @@ public abstract class MotionSensorBase(
                     "Scheduled restart: motion is active, waiting for it to clear."
                 );
                 SmartPresence
-                    .StateChanges()
-                    .Where(e => SmartPresence.IsClear())
+                    .OnCleared()
                     .Take(1)
                     .Subscribe(_ =>
                     {

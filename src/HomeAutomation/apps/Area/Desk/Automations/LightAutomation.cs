@@ -14,14 +14,6 @@ public class LightAutomation(
 
     protected override IEnumerable<IDisposable> GetAdditionalPersistentAutomations()
     {
-        yield return MasterSwitch!
-            .StateChanges()
-            .DistinctUntilChanged()
-            .Where(_ => Light.IsOn() && monitor.IsOn())
-            .Subscribe(e =>
-            {
-                monitor.ShowToast("LG Display Automation is {0}", e.IsOn() ? "ON" : "OFF");
-            });
         yield return Light
             .OnTurnedOn()
             .Subscribe(async _ =>

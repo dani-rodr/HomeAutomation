@@ -71,7 +71,7 @@ public class Laptop(
 
     private IDisposable GetSwitchToggleAutomations() =>
         entities
-            .VirtualSwitch.StateChanges()
+            .VirtualSwitch.OnChanges()
             .DistinctUntilChanged()
             .Subscribe(e =>
             {
