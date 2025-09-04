@@ -50,10 +50,10 @@ public class LightAutomation(
 
     private IDisposable GetLightMotionAutomation() =>
         MotionSensor
-            .StateChanges()
+            .OnChanges(new(IgnoreUnavailableState: true))
             .Subscribe(e =>
             {
-                if (e.Entity.State.IsUnavailable() || monitor.IsOff())
+                if (monitor.IsOff())
                 {
                     return;
                 }

@@ -42,9 +42,9 @@ public abstract class MediaPlayerBase(MediaPlayerEntity entity, ILogger logger)
 
     public virtual void TurnOff() => MediaPlayer.TurnOff();
 
-    public bool IsOn() => MediaPlayer.State.IsOn();
+    public bool IsOn() => MediaPlayer.IsOn();
 
-    public bool IsOff() => MediaPlayer.State.IsOff();
+    public bool IsOff() => MediaPlayer.IsOff();
 
     protected void ShowSource(string key)
     {

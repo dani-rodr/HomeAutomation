@@ -121,11 +121,7 @@ public abstract class MotionSensorBase(
     {
         yield return SmartPresence
             .StateChanges()
-            .Where(e =>
-                e.Old?.State.IsUnavailable() == true
-                && e.New?.State.IsAvailable() == true
-                && Presence.IsClear() == true
-            )
+            .Where(e => e.Old.IsUnavailable() && e.New.IsAvailable() && Presence.IsClear() == true)
             .Subscribe(_ =>
             {
                 Logger.LogInformation(

@@ -454,65 +454,13 @@ public class HelpersTests : IDisposable
     public void StateChange_State_Should_ReturnEmptyWhenNewIsNull()
     {
         // Arrange
-        var change = new StateChange((Entity)_light, new EntityState { State = "off" }, null);
+        var change = new StateChange(_light, new EntityState { State = "off" }, null);
 
         // Act
         var result = change.New?.State ?? string.Empty;
 
         // Assert
         result.Should().Be(string.Empty);
-    }
-
-    [Theory]
-    [InlineData("locked", true)]
-    [InlineData("LOCKED", true)]
-    [InlineData("unlocked", false)]
-    public void GenericStateChange_IsLocked_Should_CheckLockedState(string state, bool expected)
-    {
-        // Arrange
-        var change = StateChangeHelpers.CreateStateChange(_lock, "unlocked", state);
-
-        // Act
-        var result = change.New?.State?.IsLocked() ?? false;
-
-        // Assert
-        result.Should().Be(expected);
-    }
-
-    [Theory]
-    [InlineData("unlocked", true)]
-    [InlineData("UNLOCKED", true)]
-    [InlineData("locked", false)]
-    public void GenericStateChange_IsUnlocked_Should_CheckUnlockedState(string state, bool expected)
-    {
-        // Arrange
-        var change = StateChangeHelpers.CreateStateChange(_lock, "locked", state);
-
-        // Act
-        var result = change.New?.State?.IsUnlocked() ?? false;
-
-        // Assert
-        result.Should().Be(expected);
-    }
-
-    [Theory]
-    [InlineData("unavailable", true)]
-    [InlineData("UNAVAILABLE", true)]
-    [InlineData("on", false)]
-    [InlineData("off", false)]
-    public void GenericStateChange_IsUnavailable_Should_CheckUnavailableState(
-        string state,
-        bool expected
-    )
-    {
-        // Arrange
-        var change = StateChangeHelpers.CreateStateChange(_light, "on", state);
-
-        // Act
-        var result = change.New?.State?.IsUnavailable() ?? false;
-
-        // Assert
-        result.Should().Be(expected);
     }
 
     [Theory]
@@ -604,117 +552,6 @@ public class HelpersTests : IDisposable
 
         // Assert
         result.Should().Be(expected);
-    }
-
-    #endregion
-
-    #region String State Extension Tests
-
-    [Theory]
-    [InlineData("on", true)]
-    [InlineData("ON", true)]
-    [InlineData("On", true)]
-    [InlineData("off", false)]
-    [InlineData("", false)]
-    [InlineData(null, false)]
-    public void String_IsOn_Should_CheckOnState(string? state, bool expected)
-    {
-        // Act & Assert
-        state.IsOn().Should().Be(expected);
-    }
-
-    [Theory]
-    [InlineData("off", true)]
-    [InlineData("OFF", true)]
-    [InlineData("Off", true)]
-    [InlineData("on", false)]
-    [InlineData("", false)]
-    [InlineData(null, false)]
-    public void String_IsOff_Should_CheckOffState(string? state, bool expected)
-    {
-        // Act & Assert
-        state.IsOff().Should().Be(expected);
-    }
-
-    [Fact]
-    public void String_IsOpen_Should_BeAliasForIsOn()
-    {
-        // Act & Assert
-        "on".IsOpen().Should().BeTrue();
-        "off".IsOpen().Should().BeFalse();
-    }
-
-    [Fact]
-    public void String_IsClosed_Should_BeAliasForIsOff()
-    {
-        // Act & Assert
-        "off".IsClosed().Should().BeTrue();
-        "on".IsClosed().Should().BeFalse();
-    }
-
-    [Theory]
-    [InlineData("locked", true)]
-    [InlineData("LOCKED", true)]
-    [InlineData("Locked", true)]
-    [InlineData("unlocked", false)]
-    [InlineData("", false)]
-    [InlineData(null, false)]
-    public void String_IsLocked_Should_CheckLockedState(string? state, bool expected)
-    {
-        // Act & Assert
-        state.IsLocked().Should().Be(expected);
-    }
-
-    [Theory]
-    [InlineData("unlocked", true)]
-    [InlineData("UNLOCKED", true)]
-    [InlineData("Unlocked", true)]
-    [InlineData("locked", false)]
-    [InlineData("", false)]
-    [InlineData(null, false)]
-    public void String_IsUnlocked_Should_CheckUnlockedState(string? state, bool expected)
-    {
-        // Act & Assert
-        state.IsUnlocked().Should().Be(expected);
-    }
-
-    [Theory]
-    [InlineData("connected", true)]
-    [InlineData("CONNECTED", true)]
-    [InlineData("Connected", true)]
-    [InlineData("disconnected", false)]
-    [InlineData("", false)]
-    [InlineData(null, false)]
-    public void String_IsConnected_Should_CheckConnectedState(string? state, bool expected)
-    {
-        // Act & Assert
-        state.IsConnected().Should().Be(expected);
-    }
-
-    [Theory]
-    [InlineData("disconnected", true)]
-    [InlineData("DISCONNECTED", true)]
-    [InlineData("Disconnected", true)]
-    [InlineData("connected", false)]
-    [InlineData("", false)]
-    [InlineData(null, false)]
-    public void String_IsDisconnected_Should_CheckDisconnectedState(string? state, bool expected)
-    {
-        // Act & Assert
-        state.IsDisconnected().Should().Be(expected);
-    }
-
-    [Theory]
-    [InlineData("unavailable", true)]
-    [InlineData("UNAVAILABLE", true)]
-    [InlineData("Unavailable", true)]
-    [InlineData("available", false)]
-    [InlineData("", false)]
-    [InlineData(null, false)]
-    public void String_IsUnavailable_Should_CheckUnavailableState(string? state, bool expected)
-    {
-        // Act & Assert
-        state.IsUnavailable().Should().Be(expected);
     }
 
     #endregion

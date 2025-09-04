@@ -21,14 +21,17 @@ public static class EntityExtensions
 {
     public static string? StateInvariant(this Entity? entity) => entity?.State?.ToLowerInvariant();
 
+    public static bool Is(this Entity? entity, string state) =>
+        string.Equals(entity?.State, state, StringComparison.OrdinalIgnoreCase);
+
     public static bool IsAvailable([NotNullWhen(true)] this Entity? entity) =>
-        entity.StateInvariant() is not HaEntityStates.UNAVAILABLE;
+        entity.Is(HaEntityStates.UNAVAILABLE) is not true;
 
     public static bool IsUnavailable([NotNullWhen(true)] this Entity? entity) =>
-        entity.StateInvariant() is HaEntityStates.UNAVAILABLE;
+        entity.Is(HaEntityStates.UNAVAILABLE);
 
     public static bool IsUnknown([NotNullWhen(true)] this Entity? entity) =>
-        entity.StateInvariant() is HaEntityStates.UNKNOWN;
+        entity.Is(HaEntityStates.UNKNOWN);
 
     public static bool IsAvailable(this EntityState? state) =>
         state?.State?.ToLowerInvariant() is not HaEntityStates.UNAVAILABLE;
