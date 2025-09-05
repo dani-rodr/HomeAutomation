@@ -57,6 +57,28 @@ public class LightAutomationTests : IDisposable
     }
 
     [Fact]
+    public void MotionDetected_FromUnavailableState_Should_TurnOnLighs()
+    {
+        _mockHaContext.SimulateStateChange(_entities.MotionSensor.EntityId, "unavailable", "on");
+        _mockHaContext.ShouldHaveNoServiceCalls();
+
+        _mockHaContext.AdvanceTimeBySeconds(1);
+
+        _mockHaContext.ShouldHaveCalledLightTurnOn(_entities.Light.EntityId);
+    }
+
+    [Fact]
+    public void MotionDetected_For1Second_Should_TurnOnLighs()
+    {
+        _mockHaContext.SimulateStateChange(_entities.MotionSensor.EntityId, "off", "on");
+        _mockHaContext.ShouldHaveNoServiceCalls();
+
+        _mockHaContext.AdvanceTimeBySeconds(1);
+
+        _mockHaContext.ShouldHaveCalledLightTurnOn(_entities.Light.EntityId);
+    }
+
+    [Fact]
     public void MotionCleared_Should_TurnOffLightImmediately()
     {
         // Kitchen-specific: Motion cleared triggers immediate light turn off (no delay)
