@@ -15,7 +15,7 @@ public class AccessControlAutomation(
     private const int UNLOCK_SUPPRESION_DELAY = 10;
     private volatile bool _doorRecentlyClosed = false;
     private volatile bool _wasHouseEmpty = false;
-    private IDisposable? _suppressUnlocks;
+    private volatile bool _suppressUnlocks = false;
 
     protected override IEnumerable<IDisposable> GetAutomations()
     {
@@ -49,9 +49,11 @@ public class AccessControlAutomation(
             {
                 Logger.LogInformation("House became empty.");
                 _wasHouseEmpty = true;
-                _suppressUnlocks?.Dispose();
-                _suppressUnlocks = null;
             });
+        yield return entities.House.OnOccupied().Subscribe(_ => _suppressUnlocks = true);
+        yield return entities
+            .House.OnOccupied(new(Minutes: UNLOCK_SUPPRESION_DELAY))
+            .Subscribe(_ => _suppressUnlocks = false);
     }
 
     private void OnHomeTriggerActivated(IPersonController person, string triggerEntityId)
@@ -65,25 +67,17 @@ public class AccessControlAutomation(
         person.SetHome();
         Logger.LogInformation("{PersonName} is now home", person.Name);
 
-        if (_wasHouseEmpty && _suppressUnlocks == null)
+        if (_wasHouseEmpty)
         {
             Logger.LogInformation("House was empty. Unlocking once for {PersonName}", person.Name);
             _lock.Unlock();
 
             _wasHouseEmpty = false;
 
-            _suppressUnlocks = Observable
-                .Timer(TimeSpan.FromMinutes(UNLOCK_SUPPRESION_DELAY), SchedulerProvider.Current)
-                .Subscribe(_ =>
-                {
-                    Logger.LogInformation("Unlock suppression window ended.");
-                    _suppressUnlocks = null;
-                });
-
             return;
         }
 
-        if (_suppressUnlocks != null)
+        if (_suppressUnlocks is true)
         {
             Logger.LogInformation(
                 "Suppression active. Ignoring unlock for {PersonName}",

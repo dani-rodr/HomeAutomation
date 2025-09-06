@@ -114,6 +114,7 @@ public class AccessControlAutomationTests : IDisposable
         _person1ArrivedHome.OnNext(_entities.Person1HomeTrigger.EntityId);
         _mockHaContext.ShouldHaveCalledLockUnlock(_entities.Lock.EntityId);
         _mockHaContext.ClearServiceCalls();
+        _mockHaContext.SimulateStateChange(_entities.House.EntityId, "off", "on"); // House occupied on 1st arrival
 
         // Act - Person 2 comes home during suppression window via person controller observable
         _person2ArrivedHome.OnNext(_entities.Person2HomeTrigger.EntityId);
@@ -403,6 +404,7 @@ public class AccessControlAutomationTests : IDisposable
 
         _person1ArrivedHome.OnNext(_entities.Person1HomeTrigger.EntityId);
         _mockHaContext.ClearServiceCalls();
+        _mockHaContext.SimulateStateChange(_entities.House.EntityId, "off", "on"); // House occupied on 1st arrival
 
         // Act - Person 2 comes home during suppression window (before 10 minutes)
         _person2ArrivedHome.OnNext(_entities.Person2HomeTrigger.EntityId);
@@ -532,6 +534,7 @@ public class AccessControlAutomationTests : IDisposable
 
         // Act - Person 1 comes home first
         _person1ArrivedHome.OnNext(_entities.Person1HomeTrigger.EntityId);
+        _mockHaContext.SimulateStateChange(_entities.House.EntityId, "off", "on"); // House occupied on 1st arrival
 
         // Clear calls from Person 1's unlock
         var unlockCallsAfterPerson1 = _mockHaContext
@@ -588,6 +591,7 @@ public class AccessControlAutomationTests : IDisposable
 
         // Person 1 comes home (should unlock and start suppression)
         _person1ArrivedHome.OnNext(_entities.Person1HomeTrigger.EntityId);
+        _mockHaContext.SimulateStateChange(_entities.House.EntityId, "off", "on"); // House occupied on 1st arrival
 
         _mockPerson1Controller.Verify(p => p.SetHome(), Times.Once);
         _mockHaContext.ShouldHaveCalledLockUnlock(_entities.Lock.EntityId);
