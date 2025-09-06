@@ -235,7 +235,7 @@ public class DanielEntities(Devices devices, Entities entities) : IPersonEntitie
         [
             entities.BinarySensor.PocoF4GtBle,
             entities.BinarySensor.RedmiWatch5Ble,
-            entities.BinarySensor._1921680152,
+            entities.BinarySensor.PocoF4GtPing,
         ];
 
     public IEnumerable<BinarySensorEntity> AwayTriggers => [entities.BinarySensor.PocoF4GtBle];

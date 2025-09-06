@@ -14,6 +14,11 @@
           "cSharpName": "BathroomLights2"
         },
         {
+          "id": "light.bathroom_motion_sensor_status_led",
+          "friendlyName": "Bathroom Motion Sensor Status LED",
+          "cSharpName": "BathroomMotionSensorStatusLed"
+        },
+        {
           "id": "light.bed_lights",
           "friendlyName": "Bed Lights",
           "cSharpName": "BedLights"
@@ -27,11 +32,6 @@
           "id": "light.controller_rgb_df1c0d",
           "friendlyName": "Controller RGB DF1C0D",
           "cSharpName": "ControllerRgbDf1c0d"
-        },
-        {
-          "id": "light.kitchen_motion_sensor_blue_status_light",
-          "friendlyName": "Kitchen Motion Sensor Blue Status Light",
-          "cSharpName": "KitchenMotionSensorBlueStatusLight"
         },
         {
           "id": "light.lg_display",
@@ -157,6 +157,21 @@
           "id": "light.tv_backlight_3_lite_segment_014",
           "friendlyName": "TV Backlight 3 Lite Segment 014",
           "cSharpName": "TvBacklight3LiteSegment014"
+        },
+        {
+          "id": "light.xiaomi_cn_729136202_rd08_s_5_indicator_light",
+          "friendlyName": "Xiaomi_770B  Indicator Light",
+          "cSharpName": "XiaomiCn729136202Rd08S5IndicatorLight"
+        },
+        {
+          "id": "light.z_esp32_c6_1_status_led_2",
+          "friendlyName": "Desk Motion Sensor Status LED",
+          "cSharpName": "ZEsp32C61StatusLed2"
+        },
+        {
+          "id": "light.z_esp32_c6_3_status_led",
+          "friendlyName": "Pantry Motion Sensor Status LED",
+          "cSharpName": "ZEsp32C63StatusLed"
         }
       ],
       "attributes": [
@@ -535,12 +550,12 @@
         {
           "jsonName": "video_interaction_required",
           "cSharpName": "VideoInteractionRequired",
-          "clrType": "System.Boolean"
+          "clrType": "System.Object"
         },
         {
           "jsonName": "audio_interaction_required",
           "cSharpName": "AudioInteractionRequired",
-          "clrType": "System.Boolean"
+          "clrType": "System.Object"
         },
         {
           "jsonName": "sound_output",
@@ -617,14 +632,19 @@
       "domain": "binary_sensor",
       "entities": [
         {
-          "id": "binary_sensor.192_168_0_152",
-          "friendlyName": "Poco F4 GT Ping",
-          "cSharpName": "_1921680152"
+          "id": "binary_sensor.192_168_0_126_motion_active",
+          "friendlyName": "Motion active",
+          "cSharpName": "_1921680126MotionActive"
         },
         {
           "id": "binary_sensor.8_8_8_8",
           "friendlyName": "8.8.8.8",
           "cSharpName": "_8888"
+        },
+        {
+          "id": "binary_sensor.adguard_home_running",
+          "friendlyName": "AdGuard Home Running",
+          "cSharpName": "AdguardHomeRunning"
         },
         {
           "id": "binary_sensor.backups_stale",
@@ -647,16 +667,6 @@
           "cSharpName": "BathroomLightsOverheated"
         },
         {
-          "id": "binary_sensor.bathroom_motion_sensor_moving_target",
-          "friendlyName": "Bathroom Motion Sensor Moving Target",
-          "cSharpName": "BathroomMotionSensorMovingTarget"
-        },
-        {
-          "id": "binary_sensor.bathroom_motion_sensor_presence",
-          "friendlyName": "Bathroom Motion Sensor Presence",
-          "cSharpName": "BathroomMotionSensorPresence"
-        },
-        {
           "id": "binary_sensor.bathroom_motion_sensor_smart_presence",
           "friendlyName": "Bathroom Motion Sensor Smart Presence",
           "cSharpName": "BathroomMotionSensorSmartPresence"
@@ -665,11 +675,6 @@
           "id": "binary_sensor.bathroom_motion_sensor_smart_presence_unfiltered",
           "friendlyName": "Bathroom Motion Sensor Smart Presence Unfiltered",
           "cSharpName": "BathroomMotionSensorSmartPresenceUnfiltered"
-        },
-        {
-          "id": "binary_sensor.bathroom_motion_sensor_still_target",
-          "friendlyName": "Bathroom Motion Sensor Still Target",
-          "cSharpName": "BathroomMotionSensorStillTarget"
         },
         {
           "id": "binary_sensor.bathroom_presence_sensors",
@@ -692,16 +697,6 @@
           "cSharpName": "BedroomMotionSensorMiScalePresence"
         },
         {
-          "id": "binary_sensor.bedroom_motion_sensor_moving_target",
-          "friendlyName": "Bedroom Motion Sensor Moving Target",
-          "cSharpName": "BedroomMotionSensorMovingTarget"
-        },
-        {
-          "id": "binary_sensor.bedroom_motion_sensor_presence",
-          "friendlyName": "Bedroom Motion Sensor Presence",
-          "cSharpName": "BedroomMotionSensorPresence"
-        },
-        {
           "id": "binary_sensor.bedroom_motion_sensor_smart_presence",
           "friendlyName": "Bedroom Motion Sensor Smart Presence",
           "cSharpName": "BedroomMotionSensorSmartPresence"
@@ -710,11 +705,6 @@
           "id": "binary_sensor.bedroom_motion_sensor_smart_presence_unfiltered",
           "friendlyName": "Bedroom Motion Sensor Smart Presence Unfiltered",
           "cSharpName": "BedroomMotionSensorSmartPresenceUnfiltered"
-        },
-        {
-          "id": "binary_sensor.bedroom_motion_sensor_still_target",
-          "friendlyName": "Bedroom Motion Sensor Still Target",
-          "cSharpName": "BedroomMotionSensorStillTarget"
         },
         {
           "id": "binary_sensor.bedroom_presence_sensors",
@@ -747,16 +737,6 @@
           "cSharpName": "DanielPcSshStatus"
         },
         {
-          "id": "binary_sensor.desk_motion_sensor_moving_target",
-          "friendlyName": "Desk Motion Sensor Moving Target",
-          "cSharpName": "DeskMotionSensorMovingTarget"
-        },
-        {
-          "id": "binary_sensor.desk_motion_sensor_presence",
-          "friendlyName": "Desk Motion Sensor Presence",
-          "cSharpName": "DeskMotionSensorPresence"
-        },
-        {
           "id": "binary_sensor.desk_motion_sensor_smart_presence",
           "friendlyName": "Desk Motion Sensor Smart Presence",
           "cSharpName": "DeskMotionSensorSmartPresence"
@@ -765,11 +745,6 @@
           "id": "binary_sensor.desk_motion_sensor_smart_presence_unfiltered",
           "friendlyName": "Desk Motion Sensor Smart Presence Unfiltered",
           "cSharpName": "DeskMotionSensorSmartPresenceUnfiltered"
-        },
-        {
-          "id": "binary_sensor.desk_motion_sensor_still_target",
-          "friendlyName": "Desk Motion Sensor Still Target",
-          "cSharpName": "DeskMotionSensorStillTarget"
         },
         {
           "id": "binary_sensor.door_wrapper",
@@ -842,6 +817,11 @@
           "cSharpName": "HouseOccupancy"
         },
         {
+          "id": "binary_sensor.hygrometer_tamper",
+          "friendlyName": "Hygrometer Tamper",
+          "cSharpName": "HygrometerTamper"
+        },
+        {
           "id": "binary_sensor.internet",
           "friendlyName": "Internet",
           "cSharpName": "Internet"
@@ -862,16 +842,6 @@
           "cSharpName": "IphoneFocus"
         },
         {
-          "id": "binary_sensor.kitchen_motion_sensor_moving_target",
-          "friendlyName": "Kitchen Motion Sensor Moving Target",
-          "cSharpName": "KitchenMotionSensorMovingTarget"
-        },
-        {
-          "id": "binary_sensor.kitchen_motion_sensor_presence",
-          "friendlyName": "Kitchen Motion Sensor Presence",
-          "cSharpName": "KitchenMotionSensorPresence"
-        },
-        {
           "id": "binary_sensor.kitchen_motion_sensor_smart_presence",
           "friendlyName": "Kitchen Motion Sensor Smart Presence",
           "cSharpName": "KitchenMotionSensorSmartPresence"
@@ -880,11 +850,6 @@
           "id": "binary_sensor.kitchen_motion_sensor_smart_presence_unfiltered",
           "friendlyName": "Kitchen Motion Sensor Smart Presence Unfiltered",
           "cSharpName": "KitchenMotionSensorSmartPresenceUnfiltered"
-        },
-        {
-          "id": "binary_sensor.kitchen_motion_sensor_still_target",
-          "friendlyName": "Kitchen Motion Sensor Still Target",
-          "cSharpName": "KitchenMotionSensorStillTarget"
         },
         {
           "id": "binary_sensor.kitchen_motion_sensors",
@@ -927,16 +892,6 @@
           "cSharpName": "PantryLightsOverheated"
         },
         {
-          "id": "binary_sensor.pantry_motion_sensor_moving_target",
-          "friendlyName": "Pantry Motion Sensor Moving Target",
-          "cSharpName": "PantryMotionSensorMovingTarget"
-        },
-        {
-          "id": "binary_sensor.pantry_motion_sensor_presence",
-          "friendlyName": "Pantry Motion Sensor Presence",
-          "cSharpName": "PantryMotionSensorPresence"
-        },
-        {
           "id": "binary_sensor.pantry_motion_sensor_smart_presence",
           "friendlyName": "Pantry Motion Sensor Smart Presence",
           "cSharpName": "PantryMotionSensorSmartPresence"
@@ -945,11 +900,6 @@
           "id": "binary_sensor.pantry_motion_sensor_smart_presence_unfiltered",
           "friendlyName": "Pantry Motion Sensor Smart Presence Unfiltered",
           "cSharpName": "PantryMotionSensorSmartPresenceUnfiltered"
-        },
-        {
-          "id": "binary_sensor.pantry_motion_sensor_still_target",
-          "friendlyName": "Pantry Motion Sensor Still Target",
-          "cSharpName": "PantryMotionSensorStillTarget"
         },
         {
           "id": "binary_sensor.pantry_motion_sensors",
@@ -965,6 +915,11 @@
           "id": "binary_sensor.poco_f4_gt_bluetooth_state",
           "friendlyName": "POCO F4 GT Bluetooth state",
           "cSharpName": "PocoF4GtBluetoothState"
+        },
+        {
+          "id": "binary_sensor.poco_f4_gt_ping",
+          "friendlyName": "Poco F4 GT Ping",
+          "cSharpName": "PocoF4GtPing"
         },
         {
           "id": "binary_sensor.redmi_watch_5_ble",
@@ -1015,21 +970,6 @@
           "id": "binary_sensor.sala_motion_sensor_smart_presence_unfiltered",
           "friendlyName": "Sala Motion Sensor Smart Presence Unfiltered",
           "cSharpName": "SalaMotionSensorSmartPresenceUnfiltered"
-        },
-        {
-          "id": "binary_sensor.sala_moving_presence",
-          "friendlyName": "Sala Moving Presence",
-          "cSharpName": "SalaMovingPresence"
-        },
-        {
-          "id": "binary_sensor.sala_presence",
-          "friendlyName": "Sala Presence",
-          "cSharpName": "SalaPresence"
-        },
-        {
-          "id": "binary_sensor.sala_static_presence",
-          "friendlyName": "Sala Static Presence",
-          "cSharpName": "SalaStaticPresence"
         },
         {
           "id": "binary_sensor.smart_plug_1_power_exceeds_threshold",
@@ -1095,11 +1035,6 @@
           "id": "binary_sensor.sun_solar_rising",
           "friendlyName": "Sun Solar rising",
           "cSharpName": "SunSolarRising"
-        },
-        {
-          "id": "binary_sensor.wifi_temperature_humidity_tamper",
-          "friendlyName": "WiFi Temperature \u0026 Humidity Tamper",
-          "cSharpName": "WifiTemperatureHumidityTamper"
         }
       ],
       "attributes": [
@@ -1142,6 +1077,16 @@
           "jsonName": "activityType",
           "cSharpName": "ActivityType",
           "clrType": "System.String"
+        },
+        {
+          "jsonName": "restored",
+          "cSharpName": "Restored",
+          "clrType": "System.Boolean"
+        },
+        {
+          "jsonName": "supported_features",
+          "cSharpName": "SupportedFeatures",
+          "clrType": "System.Double"
         }
       ]
     },
@@ -1284,6 +1229,21 @@
           "cSharpName": "DanielPcHassAgentPublishallsensors"
         },
         {
+          "id": "button.daniel_pc_hass_agent_update_all_esp_devices",
+          "friendlyName": "DANIEL-PC_hass-agent Update All ESP Devices",
+          "cSharpName": "DanielPcHassAgentUpdateAllEspDevices"
+        },
+        {
+          "id": "button.daniel_pc_hass_agent_update_motion_esp_devices",
+          "friendlyName": "DANIEL-PC_hass-agent Update Motion ESP Devices",
+          "cSharpName": "DanielPcHassAgentUpdateMotionEspDevices"
+        },
+        {
+          "id": "button.daniel_pc_hass_agent_update_plug_esp_devices",
+          "friendlyName": "DANIEL-PC_hass-agent Update Plug ESP Devices",
+          "cSharpName": "DanielPcHassAgentUpdatePlugEspDevices"
+        },
+        {
           "id": "button.daniel_pc_power",
           "friendlyName": "DANIEL-PC Power",
           "cSharpName": "DanielPcPower"
@@ -1317,11 +1277,6 @@
           "id": "button.desk_motion_sensor_restart_esp32",
           "friendlyName": "Desk Motion Sensor Restart ESP32",
           "cSharpName": "DeskMotionSensorRestartEsp32"
-        },
-        {
-          "id": "button.front_door_wake",
-          "friendlyName": "Front Door Wake",
-          "cSharpName": "FrontDoorWake"
         },
         {
           "id": "button.garbage_lid_manual_clear",
@@ -1572,7 +1527,7 @@
       "entities": [
         {
           "id": "climate.ac",
-          "friendlyName": "AC",
+          "friendlyName": "ac",
           "cSharpName": "Ac"
         }
       ],
@@ -1636,6 +1591,16 @@
           "jsonName": "supported_features",
           "cSharpName": "SupportedFeatures",
           "clrType": "System.Double"
+        },
+        {
+          "jsonName": "swing_modes",
+          "cSharpName": "SwingModes",
+          "clrType": "System.Collections.Generic.IReadOnlyList\u00601[System.String]"
+        },
+        {
+          "jsonName": "swing_mode",
+          "cSharpName": "SwingMode",
+          "clrType": "System.String"
         }
       ]
     },
@@ -1767,6 +1732,11 @@
           "cSharpName": "MyIphone"
         },
         {
+          "id": "device_tracker.oneplus",
+          "friendlyName": "OnePlus",
+          "cSharpName": "Oneplus"
+        },
+        {
           "id": "device_tracker.poco_f4_gt_ble_bermuda_tracker",
           "friendlyName": "Poco F4 GT BLE Bermuda Tracker",
           "cSharpName": "PocoF4GtBleBermudaTracker"
@@ -1884,6 +1854,26 @@
           "cSharpName": "Repair"
         },
         {
+          "id": "event.xiaomi_cn_729136202_rd08_device_connect_e_2_1",
+          "friendlyName": "Xiaomi_770B  Router Device Connect",
+          "cSharpName": "XiaomiCn729136202Rd08DeviceConnectE21"
+        },
+        {
+          "id": "event.xiaomi_cn_729136202_rd08_device_disconnect_e_2_2",
+          "friendlyName": "Xiaomi_770B  Router Device Disconnect",
+          "cSharpName": "XiaomiCn729136202Rd08DeviceDisconnectE22"
+        },
+        {
+          "id": "event.xiaomi_cn_729136202_rd08_device_long_time_inactive_e_2_3",
+          "friendlyName": "Xiaomi_770B  Router Device Long Time Inactive",
+          "cSharpName": "XiaomiCn729136202Rd08DeviceLongTimeInactiveE23"
+        },
+        {
+          "id": "event.xiaomi_cn_729136202_rd08_virtual_event_e_7_1",
+          "friendlyName": "Xiaomi_770B  Virtual Service Virtual Event",
+          "cSharpName": "XiaomiCn729136202Rd08VirtualEventE71"
+        },
+        {
           "id": "event.xiaomi_smart_air_fryer_pro_4l_air_fryer_completed",
           "friendlyName": "Xiaomi Smart Air Fryer Pro 4L  Air Fryer Completed",
           "cSharpName": "XiaomiSmartAirFryerPro4lAirFryerCompleted"
@@ -1924,6 +1914,11 @@
           "jsonName": "issue_id",
           "cSharpName": "IssueId",
           "clrType": "System.String"
+        },
+        {
+          "jsonName": "Connect Device Ids",
+          "cSharpName": "ConnectDeviceIds",
+          "clrType": "System.String"
         }
       ]
     },
@@ -1939,11 +1934,6 @@
           "id": "fan.sala_stand_fan",
           "friendlyName": "Sala Stand Fan",
           "cSharpName": "SalaStandFan"
-        },
-        {
-          "id": "fan.xiaomi_smart_air_purifier_4_compact_air_purifier_fan_switch",
-          "friendlyName": "Xiaomi Smart Air Purifier 4 Compact Air Purifier Fan Switch",
-          "cSharpName": "XiaomiSmartAirPurifier4CompactAirPurifierFanSwitch"
         }
       ],
       "attributes": [
@@ -1996,46 +1986,6 @@
           "id": "input_boolean.ac_power_saving_mode",
           "friendlyName": "AC Power Saving Mode",
           "cSharpName": "AcPowerSavingMode"
-        },
-        {
-          "id": "input_boolean.dev_netdaemon_home_automation_apps_area_bathroom_bathroom_app",
-          "friendlyName": "dev_netdaemon_home_automation_apps_area_bathroom_bathroom_app",
-          "cSharpName": "DevNetdaemonHomeAutomationAppsAreaBathroomBathroomApp"
-        },
-        {
-          "id": "input_boolean.dev_netdaemon_home_automation_apps_area_bedroom_bedroom_app",
-          "friendlyName": "dev_netdaemon_home_automation_apps_area_bedroom_bedroom_app",
-          "cSharpName": "DevNetdaemonHomeAutomationAppsAreaBedroomBedroomApp"
-        },
-        {
-          "id": "input_boolean.dev_netdaemon_home_automation_apps_area_desk_desk_app",
-          "friendlyName": "dev_netdaemon_home_automation_apps_area_desk_desk_app",
-          "cSharpName": "DevNetdaemonHomeAutomationAppsAreaDeskDeskApp"
-        },
-        {
-          "id": "input_boolean.dev_netdaemon_home_automation_apps_area_kitchen_kitchen_app",
-          "friendlyName": "dev_netdaemon_home_automation_apps_area_kitchen_kitchen_app",
-          "cSharpName": "DevNetdaemonHomeAutomationAppsAreaKitchenKitchenApp"
-        },
-        {
-          "id": "input_boolean.dev_netdaemon_home_automation_apps_area_living_room_living_room_app",
-          "friendlyName": "dev_netdaemon_home_automation_apps_area_living_room_living_room_app",
-          "cSharpName": "DevNetdaemonHomeAutomationAppsAreaLivingRoomLivingRoomApp"
-        },
-        {
-          "id": "input_boolean.dev_netdaemon_home_automation_apps_area_pantry_pantry_app",
-          "friendlyName": "dev_netdaemon_home_automation_apps_area_pantry_pantry_app",
-          "cSharpName": "DevNetdaemonHomeAutomationAppsAreaPantryPantryApp"
-        },
-        {
-          "id": "input_boolean.dev_netdaemon_home_automation_apps_common_security_security_app",
-          "friendlyName": "dev_netdaemon_home_automation_apps_common_security_security_app",
-          "cSharpName": "DevNetdaemonHomeAutomationAppsCommonSecuritySecurityApp"
-        },
-        {
-          "id": "input_boolean.dev_netdaemon_home_automation_apps_common_startup_app",
-          "friendlyName": "dev_netdaemon_home_automation_apps_common_startup_app",
-          "cSharpName": "DevNetdaemonHomeAutomationAppsCommonStartupApp"
         },
         {
           "id": "input_boolean.netdaemon_home_automation_apps_area_bathroom_bathroom_app",
@@ -2215,11 +2165,6 @@
           "cSharpName": "FrontDoor"
         },
         {
-          "id": "lock.front_door_1",
-          "friendlyName": "Front Door",
-          "cSharpName": "FrontDoor1"
-        },
-        {
           "id": "lock.lock_wrapper",
           "friendlyName": "Lock Wrapper",
           "cSharpName": "LockWrapper"
@@ -2247,6 +2192,11 @@
       "domain": "number",
       "isNumeric": true,
       "entities": [
+        {
+          "id": "number.ac_temperature_step",
+          "friendlyName": "AC Temperature Step",
+          "cSharpName": "AcTemperatureStep"
+        },
         {
           "id": "number.baseus_tag_calibration_ref_power_at_1m_0_for_default",
           "friendlyName": "Baseus Tag Calibration Ref Power at 1m. 0 for default.",
@@ -3393,6 +3343,11 @@
       "domain": "select",
       "entities": [
         {
+          "id": "select.ac_external_temperature_sensor",
+          "friendlyName": "AC External Temperature Sensor",
+          "cSharpName": "AcExternalTemperatureSensor"
+        },
+        {
           "id": "select.bathroom_lights_light_preset",
           "friendlyName": "Bathroom Lights Light preset",
           "cSharpName": "BathroomLightsLightPreset"
@@ -3660,9 +3615,29 @@
       "domain": "sensor",
       "entities": [
         {
+          "id": "sensor.192_168_0_126_audio_connections",
+          "friendlyName": "Audio connections",
+          "cSharpName": "_1921680126AudioConnections"
+        },
+        {
+          "id": "sensor.192_168_0_126_video_connections",
+          "friendlyName": "Video connections",
+          "cSharpName": "_1921680126VideoConnections"
+        },
+        {
           "id": "sensor.887216f5_c9c0_4901_bf59_51c6e940bf11_100_40004_vendor",
           "friendlyName": "887216f5-c9c0-4901-bf59-51c6e940bf11_100_40004 Vendor",
           "cSharpName": "_887216f5C9c04901Bf5951c6e940bf1110040004Vendor"
+        },
+        {
+          "id": "sensor.adguard_home_newest_version",
+          "friendlyName": "AdGuard Home Newest version",
+          "cSharpName": "AdguardHomeNewestVersion"
+        },
+        {
+          "id": "sensor.adguard_home_version",
+          "friendlyName": "AdGuard Home Version",
+          "cSharpName": "AdguardHomeVersion"
         },
         {
           "id": "sensor.air_quality",
@@ -3925,11 +3900,6 @@
           "cSharpName": "FlytrapSignalLevel2"
         },
         {
-          "id": "sensor.front_door_operator",
-          "friendlyName": "Front Door Operator",
-          "cSharpName": "FrontDoorOperator"
-        },
-        {
           "id": "sensor.garbage_lid_light",
           "friendlyName": "Garbage Lid light",
           "cSharpName": "GarbageLidLight"
@@ -4180,6 +4150,16 @@
           "cSharpName": "Numbers"
         },
         {
+          "id": "sensor.oneplus_battery_state",
+          "friendlyName": "OnePlus Battery state",
+          "cSharpName": "OneplusBatteryState"
+        },
+        {
+          "id": "sensor.oneplus_charger_type",
+          "friendlyName": "OnePlus Charger type",
+          "cSharpName": "OneplusChargerType"
+        },
+        {
           "id": "sensor.pantry_lights_signal_level_2",
           "friendlyName": "Pantry Lights Signal level",
           "cSharpName": "PantryLightsSignalLevel2"
@@ -4228,6 +4208,21 @@
           "id": "sensor.poco_f4_gt_last_update_trigger",
           "friendlyName": "POCO F4 GT Last update trigger",
           "cSharpName": "PocoF4GtLastUpdateTrigger"
+        },
+        {
+          "id": "sensor.poco_f4_gt_public_ip_address",
+          "friendlyName": "POCO F4 GT Public IP address",
+          "cSharpName": "PocoF4GtPublicIpAddress"
+        },
+        {
+          "id": "sensor.poco_f4_gt_screen_brightness",
+          "friendlyName": "POCO F4 GT Screen brightness",
+          "cSharpName": "PocoF4GtScreenBrightness"
+        },
+        {
+          "id": "sensor.poco_f4_gt_wi_fi_ip_address",
+          "friendlyName": "POCO F4 GT Wi-Fi IP address",
+          "cSharpName": "PocoF4GtWiFiIpAddress"
         },
         {
           "id": "sensor.real_debrid_download_link",
@@ -4468,6 +4463,26 @@
           "id": "sensor.weather",
           "friendlyName": "Home Assistant Weather",
           "cSharpName": "Weather"
+        },
+        {
+          "id": "sensor.xiaomi_cn_729136202_rd08_connect_device_ids_p_2_20",
+          "friendlyName": "Xiaomi_770B  Router Connect Device Ids",
+          "cSharpName": "XiaomiCn729136202Rd08ConnectDeviceIdsP220"
+        },
+        {
+          "id": "sensor.xiaomi_cn_729136202_rd08_connected_device_number_p_2_3",
+          "friendlyName": "Xiaomi_770B  Router Connected Devices",
+          "cSharpName": "XiaomiCn729136202Rd08ConnectedDeviceNumberP23"
+        },
+        {
+          "id": "sensor.xiaomi_cn_729136202_rd08_download_speed_p_2_1",
+          "friendlyName": "Xiaomi_770B  Router Download Speed",
+          "cSharpName": "XiaomiCn729136202Rd08DownloadSpeedP21"
+        },
+        {
+          "id": "sensor.xiaomi_cn_729136202_rd08_upload_speed_p_2_2",
+          "friendlyName": "Xiaomi_770B  Router Upload Speed",
+          "cSharpName": "XiaomiCn729136202Rd08UploadSpeedP22"
         },
         {
           "id": "sensor.xiaomi_sg_753990712_cpa4_fault_p_2_2",
@@ -4950,6 +4965,11 @@
           "jsonName": "processName",
           "cSharpName": "ProcessName",
           "clrType": "System.String"
+        },
+        {
+          "jsonName": "automatic",
+          "cSharpName": "Automatic",
+          "clrType": "System.Boolean"
         }
       ]
     },
@@ -4968,9 +4988,69 @@
           "cSharpName": "_887216f5C9c04901Bf5951c6e940bf1110040004Power"
         },
         {
+          "id": "sensor.ac_outside_temperature",
+          "friendlyName": "ac Outside Temperature",
+          "cSharpName": "AcOutsideTemperature"
+        },
+        {
+          "id": "sensor.ac_room_humidity",
+          "friendlyName": "ac Room Humidity",
+          "cSharpName": "AcRoomHumidity"
+        },
+        {
           "id": "sensor.active_issues",
           "friendlyName": "Repairs Active",
           "cSharpName": "ActiveIssues"
+        },
+        {
+          "id": "sensor.adguard_home_average_processing_speed",
+          "friendlyName": "AdGuard Home Average processing speed",
+          "cSharpName": "AdguardHomeAverageProcessingSpeed"
+        },
+        {
+          "id": "sensor.adguard_home_cpu_percent",
+          "friendlyName": "AdGuard Home CPU percent",
+          "cSharpName": "AdguardHomeCpuPercent"
+        },
+        {
+          "id": "sensor.adguard_home_dns_queries",
+          "friendlyName": "AdGuard Home DNS queries",
+          "cSharpName": "AdguardHomeDnsQueries"
+        },
+        {
+          "id": "sensor.adguard_home_dns_queries_blocked",
+          "friendlyName": "AdGuard Home DNS queries blocked",
+          "cSharpName": "AdguardHomeDnsQueriesBlocked"
+        },
+        {
+          "id": "sensor.adguard_home_dns_queries_blocked_ratio",
+          "friendlyName": "AdGuard Home DNS queries blocked ratio",
+          "cSharpName": "AdguardHomeDnsQueriesBlockedRatio"
+        },
+        {
+          "id": "sensor.adguard_home_memory_percent",
+          "friendlyName": "AdGuard Home Memory percent",
+          "cSharpName": "AdguardHomeMemoryPercent"
+        },
+        {
+          "id": "sensor.adguard_home_parental_control_blocked",
+          "friendlyName": "AdGuard Home Parental control blocked",
+          "cSharpName": "AdguardHomeParentalControlBlocked"
+        },
+        {
+          "id": "sensor.adguard_home_rules_count",
+          "friendlyName": "AdGuard Home Rules count",
+          "cSharpName": "AdguardHomeRulesCount"
+        },
+        {
+          "id": "sensor.adguard_home_safe_browsing_blocked",
+          "friendlyName": "AdGuard Home Safe browsing blocked",
+          "cSharpName": "AdguardHomeSafeBrowsingBlocked"
+        },
+        {
+          "id": "sensor.adguard_home_safe_searches_enforced",
+          "friendlyName": "AdGuard Home Safe searches enforced",
+          "cSharpName": "AdguardHomeSafeSearchesEnforced"
         },
         {
           "id": "sensor.baseus_tag_distance",
@@ -5538,11 +5618,6 @@
           "cSharpName": "FileEditorMemoryPercent"
         },
         {
-          "id": "sensor.front_door_battery",
-          "friendlyName": "Front Door Battery",
-          "cSharpName": "FrontDoorBattery"
-        },
-        {
           "id": "sensor.front_door_battery_2",
           "friendlyName": "Front Door Battery",
           "cSharpName": "FrontDoorBattery2"
@@ -5651,6 +5726,21 @@
           "id": "sensor.garbage_lid_uptime_sensor",
           "friendlyName": "Garbage Lid Uptime Sensor",
           "cSharpName": "GarbageLidUptimeSensor"
+        },
+        {
+          "id": "sensor.hygrometer_battery",
+          "friendlyName": "Hygrometer Battery",
+          "cSharpName": "HygrometerBattery"
+        },
+        {
+          "id": "sensor.hygrometer_humidity",
+          "friendlyName": "Hygrometer Humidity",
+          "cSharpName": "HygrometerHumidity"
+        },
+        {
+          "id": "sensor.hygrometer_temperature",
+          "friendlyName": "Temperature (Living Room)",
+          "cSharpName": "HygrometerTemperature"
         },
         {
           "id": "sensor.ignored_issues",
@@ -5848,6 +5938,11 @@
           "cSharpName": "Mipad5BatteryLevel"
         },
         {
+          "id": "sensor.oneplus_battery_level",
+          "friendlyName": "OnePlus Battery level",
+          "cSharpName": "OneplusBatteryLevel"
+        },
+        {
           "id": "sensor.pantry_motion_sensor_g0_move_energy",
           "friendlyName": "Pantry Motion Sensor g0 move energy",
           "cSharpName": "PantryMotionSensorG0MoveEnergy"
@@ -5946,11 +6041,6 @@
           "id": "sensor.pantry_motion_sensor_uptime_sensor",
           "friendlyName": "Pantry Motion Sensor Uptime Sensor",
           "cSharpName": "PantryMotionSensorUptimeSensor"
-        },
-        {
-          "id": "sensor.poco_f4_gt_bluetooth_connection",
-          "friendlyName": "POCO F4 GT Bluetooth connection",
-          "cSharpName": "PocoF4GtBluetoothConnection"
         },
         {
           "id": "sensor.poco_f4_gt_sleep_confidence",
@@ -6163,6 +6253,11 @@
           "cSharpName": "TemperatureBedroom"
         },
         {
+          "id": "sensor.temperature_weather",
+          "friendlyName": "Temperature (Weather)",
+          "cSharpName": "TemperatureWeather"
+        },
+        {
           "id": "sensor.thinkpadt14_battery_charge_remaining_percentage",
           "friendlyName": "ThinkpadT14 Charge Remaining Percentage",
           "cSharpName": "Thinkpadt14BatteryChargeRemainingPercentage"
@@ -6261,21 +6356,6 @@
           "id": "sensor.wattage_work_laptop",
           "friendlyName": "Wattage (Work Laptop)",
           "cSharpName": "WattageWorkLaptop"
-        },
-        {
-          "id": "sensor.wifi_temperature_humidity_battery",
-          "friendlyName": "WiFi Temperature \u0026 Humidity Battery",
-          "cSharpName": "WifiTemperatureHumidityBattery"
-        },
-        {
-          "id": "sensor.wifi_temperature_humidity_humidity",
-          "friendlyName": "WiFi Temperature \u0026 Humidity Humidity",
-          "cSharpName": "WifiTemperatureHumidityHumidity"
-        },
-        {
-          "id": "sensor.wifi_temperature_humidity_temperature",
-          "friendlyName": "WiFi Temperature \u0026 Humidity Temperature",
-          "cSharpName": "WifiTemperatureHumidityTemperature"
         },
         {
           "id": "sensor.xiaomi_sg_753990712_cpa4_filter_left_time_p_4_4",
@@ -6564,9 +6644,64 @@
       "domain": "switch",
       "entities": [
         {
+          "id": "switch.192_168_0_126_front_facing_camera",
+          "friendlyName": "Front-facing camera",
+          "cSharpName": "_1921680126FrontFacingCamera"
+        },
+        {
+          "id": "switch.192_168_0_126_gps_active",
+          "friendlyName": "GPS active",
+          "cSharpName": "_1921680126GpsActive"
+        },
+        {
+          "id": "switch.192_168_0_126_motion_detection",
+          "friendlyName": "Motion detection",
+          "cSharpName": "_1921680126MotionDetection"
+        },
+        {
+          "id": "switch.192_168_0_126_night_vision",
+          "friendlyName": "Night vision",
+          "cSharpName": "_1921680126NightVision"
+        },
+        {
+          "id": "switch.192_168_0_126_overlay",
+          "friendlyName": "Overlay",
+          "cSharpName": "_1921680126Overlay"
+        },
+        {
+          "id": "switch.192_168_0_126_torch",
+          "friendlyName": "Torch",
+          "cSharpName": "_1921680126Torch"
+        },
+        {
           "id": "switch.65c755_mute",
           "friendlyName": "65C755 Mute",
           "cSharpName": "_65c755Mute"
+        },
+        {
+          "id": "switch.ac_8degc_heat",
+          "friendlyName": "AC 8\u00B0C Heat",
+          "cSharpName": "Ac8degcHeat"
+        },
+        {
+          "id": "switch.ac_air",
+          "friendlyName": "AC Air",
+          "cSharpName": "AcAir"
+        },
+        {
+          "id": "switch.ac_anti_direct_blow",
+          "friendlyName": "AC Anti Direct Blow",
+          "cSharpName": "AcAntiDirectBlow"
+        },
+        {
+          "id": "switch.ac_auto_light",
+          "friendlyName": "AC Auto Light",
+          "cSharpName": "AcAutoLight"
+        },
+        {
+          "id": "switch.ac_auto_x_fan",
+          "friendlyName": "AC Auto X-Fan",
+          "cSharpName": "AcAutoXFan"
         },
         {
           "id": "switch.ac_automation",
@@ -6574,9 +6709,74 @@
           "cSharpName": "AcAutomation"
         },
         {
+          "id": "switch.ac_beeper",
+          "friendlyName": "AC Beeper",
+          "cSharpName": "AcBeeper"
+        },
+        {
+          "id": "switch.ac_health",
+          "friendlyName": "AC Health",
+          "cSharpName": "AcHealth"
+        },
+        {
+          "id": "switch.ac_light_sensor",
+          "friendlyName": "AC Light Sensor",
+          "cSharpName": "AcLightSensor"
+        },
+        {
+          "id": "switch.ac_lights",
+          "friendlyName": "AC Lights",
+          "cSharpName": "AcLights"
+        },
+        {
+          "id": "switch.ac_power_save",
+          "friendlyName": "AC Power Save",
+          "cSharpName": "AcPowerSave"
+        },
+        {
+          "id": "switch.ac_sleep",
+          "friendlyName": "AC Sleep",
+          "cSharpName": "AcSleep"
+        },
+        {
           "id": "switch.ac_swing_mode",
           "friendlyName": "AC Swing Mode",
           "cSharpName": "AcSwingMode"
+        },
+        {
+          "id": "switch.ac_x_fan",
+          "friendlyName": "AC X-Fan",
+          "cSharpName": "AcXFan"
+        },
+        {
+          "id": "switch.adguard_home_filtering",
+          "friendlyName": "AdGuard Home Filtering",
+          "cSharpName": "AdguardHomeFiltering"
+        },
+        {
+          "id": "switch.adguard_home_parental_control",
+          "friendlyName": "AdGuard Home Parental control",
+          "cSharpName": "AdguardHomeParentalControl"
+        },
+        {
+          "id": "switch.adguard_home_protection",
+          "friendlyName": "AdGuard Home Protection",
+          "cSharpName": "AdguardHomeProtection"
+        },
+        {
+          "id": "switch.adguard_home_query_log",
+          "friendlyName": "AdGuard Home Query log",
+          "cSharpName": "AdguardHomeQueryLog"
+        },
+        {
+          "id": "switch.adguard_home_safe_browsing",
+          "friendlyName": "AdGuard Home Safe browsing",
+          "cSharpName": "AdguardHomeSafeBrowsing"
+        },
+        {
+          "id": "switch.adguard_home_safe_search",
+          "friendlyName": "AdGuard Home Safe search",
+          "cSharpName": "AdguardHomeSafeSearch"
         },
         {
           "id": "switch.auto_calibrate",
@@ -7317,6 +7517,11 @@
       "domain": "update",
       "entities": [
         {
+          "id": "update.adguard_home_update",
+          "friendlyName": "AdGuard Home Update",
+          "cSharpName": "AdguardHomeUpdate"
+        },
+        {
           "id": "update.attribute_as_sensor_update",
           "friendlyName": "Attribute as Sensor update",
           "cSharpName": "AttributeAsSensorUpdate"
@@ -7776,6 +7981,92 @@
           "jsonName": "icon",
           "cSharpName": "Icon",
           "clrType": "System.String"
+        },
+        {
+          "jsonName": "friendly_name",
+          "cSharpName": "FriendlyName",
+          "clrType": "System.String"
+        }
+      ]
+    },
+    {
+      "domain": "camera",
+      "entities": [
+        {
+          "id": "camera.192_168_0_126",
+          "friendlyName": null,
+          "cSharpName": "_1921680126"
+        }
+      ],
+      "attributes": [
+        {
+          "jsonName": "restored",
+          "cSharpName": "Restored",
+          "clrType": "System.Boolean"
+        },
+        {
+          "jsonName": "supported_features",
+          "cSharpName": "SupportedFeatures",
+          "clrType": "System.Double"
+        }
+      ]
+    },
+    {
+      "domain": "notify",
+      "entities": [
+        {
+          "id": "notify.xiaomi_cn_729136202_rd08_emit_virtual_event_a_7_1",
+          "friendlyName": "Xiaomi_770B  Virtual Service Emit Virtual Event",
+          "cSharpName": "XiaomiCn729136202Rd08EmitVirtualEventA71"
+        }
+      ],
+      "attributes": [
+        {
+          "jsonName": "action params",
+          "cSharpName": "Actionparams",
+          "clrType": "System.String"
+        },
+        {
+          "jsonName": "friendly_name",
+          "cSharpName": "FriendlyName",
+          "clrType": "System.String"
+        },
+        {
+          "jsonName": "supported_features",
+          "cSharpName": "SupportedFeatures",
+          "clrType": "System.Double"
+        }
+      ]
+    },
+    {
+      "domain": "text",
+      "entities": [
+        {
+          "id": "text.xiaomi_cn_729136202_rd08_device_inactive_config_p_2_24",
+          "friendlyName": "Xiaomi_770B  Router Device Inactive Config",
+          "cSharpName": "XiaomiCn729136202Rd08DeviceInactiveConfigP224"
+        }
+      ],
+      "attributes": [
+        {
+          "jsonName": "mode",
+          "cSharpName": "Mode",
+          "clrType": "System.String"
+        },
+        {
+          "jsonName": "min",
+          "cSharpName": "Min",
+          "clrType": "System.Double"
+        },
+        {
+          "jsonName": "max",
+          "cSharpName": "Max",
+          "clrType": "System.Double"
+        },
+        {
+          "jsonName": "pattern",
+          "cSharpName": "Pattern",
+          "clrType": null
         },
         {
           "jsonName": "friendly_name",
