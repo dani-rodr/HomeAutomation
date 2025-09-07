@@ -42,7 +42,7 @@ public class LightAutomation(
 
     private IDisposable GetLightMotionAutomation() =>
         MotionSensor
-            .OnChanges(new(IgnoreUnavailableState: true))
+            .OnChanges()
             .Subscribe(e =>
             {
                 if (monitor.IsOff())

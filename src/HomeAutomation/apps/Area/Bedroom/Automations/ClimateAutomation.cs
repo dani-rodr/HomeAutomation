@@ -19,12 +19,10 @@ public class ClimateAutomation(
             .IsManuallyOperated()
             .Subscribe(TurnOffMasterSwitchOnManualOperation);
         yield return _motionSensor
-            .OnCleared(new(Hours: 1, CheckImmediately: true))
+            .OnCleared(new(Hours: 1))
             .Where(_ => MasterSwitch.IsOff())
             .Subscribe(_ => MasterSwitch.TurnOn());
-        yield return MasterSwitch
-            .OnTurnedOff(new(Hours: 8, CheckImmediately: true))
-            .Subscribe(_ => MasterSwitch.TurnOn());
+        yield return MasterSwitch.OnTurnedOff(new(Hours: 8)).Subscribe(_ => MasterSwitch.TurnOn());
         yield return _doorSensor
             .OnClosed()
             .Where(_ => MasterSwitch.IsOn())

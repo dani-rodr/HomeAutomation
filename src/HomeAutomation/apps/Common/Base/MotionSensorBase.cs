@@ -50,7 +50,7 @@ public abstract class MotionSensorBase(
     protected override IEnumerable<IDisposable> GetToggleableAutomations()
     {
         yield return SmartPresence
-            .OnOccupied(new(CheckImmediately: true))
+            .OnOccupied()
             .Subscribe(_ => MotionCalibrator.LogMotionTrigger(Zones, Logger));
     }
 

@@ -57,7 +57,7 @@ public class LightAutomationTests : IDisposable
     }
 
     [Fact]
-    public void MotionDetected_FromUnavailableState_Should_TurnOnLighs()
+    public void MotionDetected_FromUnavailableState_Should_TurnOnLights()
     {
         _mockHaContext.SimulateStateChange(_entities.MotionSensor.EntityId, "unavailable", "on");
         _mockHaContext.ShouldHaveNoServiceCalls();
@@ -68,7 +68,7 @@ public class LightAutomationTests : IDisposable
     }
 
     [Fact]
-    public void MotionDetected_For1Second_Should_TurnOnLighs()
+    public void MotionDetected_For1Second_Should_TurnOnLights()
     {
         _mockHaContext.SimulateStateChange(_entities.MotionSensor.EntityId, "off", "on");
         _mockHaContext.ShouldHaveNoServiceCalls();
@@ -88,6 +88,23 @@ public class LightAutomationTests : IDisposable
         _mockHaContext.StateChangeSubject.OnNext(stateChange);
 
         // Assert - Should turn off light immediately when motion cleared
+        _mockHaContext.ShouldHaveCalledLightTurnOff(_entities.Light.EntityId);
+    }
+
+    [Fact]
+    public void MotionCleared_FromUnavailableState_Should_TurnOffLightImmediately()
+    {
+        _mockHaContext.SimulateStateChange(_entities.MotionSensor.EntityId, "off", "on");
+        _mockHaContext.ShouldHaveNoServiceCalls();
+
+        _mockHaContext.AdvanceTimeBySeconds(1);
+        _mockHaContext.ShouldHaveCalledLightTurnOn(_entities.Light.EntityId);
+        _mockHaContext.ClearServiceCalls();
+
+        _mockHaContext.SimulateStateChange(_entities.MotionSensor.EntityId, "on", "unavailable");
+        _mockHaContext.ShouldHaveNoServiceCalls();
+
+        _mockHaContext.SimulateStateChange(_entities.MotionSensor.EntityId, "unavailable", "off");
         _mockHaContext.ShouldHaveCalledLightTurnOff(_entities.Light.EntityId);
     }
 

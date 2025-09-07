@@ -44,7 +44,7 @@ public class Laptop(
         var switchStateChanges = entities.VirtualSwitch.StateChanges().Select(e => e.IsOn());
 
         var sessionLocked = entities
-            .Session.OnLocked(new(IgnoreUnavailableState: false))
+            .Session.OnLocked(new(AllowFromUnavailable: false))
             .Select(_ => false);
 
         // Emits true when switch turns on, false when switch turns off or session locks
@@ -127,7 +127,7 @@ public class Laptop(
     private IEnumerable<IDisposable> GetSessionLockSwitchAutomation() =>
         [
             entities
-                .Session.OnLocked(new(IgnoreUnavailableState: true))
+                .Session.OnLocked()
                 .Subscribe(_ =>
                 {
                     Logger.LogInformation(
@@ -139,7 +139,7 @@ public class Laptop(
 
     private IDisposable GetSessionUnlockSwitchAutomation() =>
         entities
-            .Session.OnUnlocked(new(IgnoreUnavailableState: true))
+            .Session.OnUnlocked()
             .Subscribe(_ =>
             {
                 Logger.LogInformation(

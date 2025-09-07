@@ -12,11 +12,9 @@ public class LightAutomation(IPantryLightEntities entities, ILogger<LightAutomat
     protected override IEnumerable<IDisposable> GetLightAutomations()
     {
         var mirrorLight = entities.MirrorLight;
+        yield return MotionSensor.OnOccupied().Subscribe(_ => Light.TurnOn());
         yield return MotionSensor
-            .OnOccupied(new(CheckImmediately: true))
-            .Subscribe(_ => Light.TurnOn());
-        yield return MotionSensor
-            .OnCleared(new(CheckImmediately: true))
+            .OnCleared()
             .Subscribe(_ =>
             {
                 Light.TurnOff();
@@ -46,7 +44,7 @@ public class LightAutomation(IPantryLightEntities entities, ILogger<LightAutomat
     private IEnumerable<IDisposable> AutoToggleBathroomMotionSensor()
     {
         yield return MotionSensor
-            .OnOccupied(new(CheckImmediately: true))
+            .OnOccupied()
             .Subscribe(_ =>
             {
                 Logger.LogDebug(

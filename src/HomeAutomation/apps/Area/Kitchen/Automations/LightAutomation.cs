@@ -11,10 +11,8 @@ public class LightAutomation(IKitchenLightEntities entities, ILogger<LightAutoma
 
     protected override IEnumerable<IDisposable> GetLightAutomations() =>
         [
-            MotionSensor
-                .OnOccupied(new(CheckImmediately: true, IgnoreUnavailableState: true, Seconds: 1))
-                .Subscribe(_ => Light.TurnOn()),
-            MotionSensor.OnCleared(new(CheckImmediately: true)).Subscribe(_ => Light.TurnOff()),
+            MotionSensor.OnOccupied(new(Seconds: 1)).Subscribe(_ => Light.TurnOn()),
+            MotionSensor.OnCleared().Subscribe(_ => Light.TurnOff()),
         ];
 
     protected override IEnumerable<IDisposable> GetAdditionalSwitchableAutomations() =>

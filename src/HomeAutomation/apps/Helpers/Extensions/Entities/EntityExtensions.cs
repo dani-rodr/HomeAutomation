@@ -3,8 +3,8 @@ using System.Diagnostics.CodeAnalysis;
 namespace HomeAutomation.apps.Helpers.Extensions.Entities;
 
 public record DurationOptions<TState>(
-    bool CheckImmediately = false,
-    bool IgnoreUnavailableState = false,
+    bool CheckImmediately = true,
+    bool AllowFromUnavailable = true,
     int Days = 0,
     int Hours = 0,
     int Minutes = 0,
