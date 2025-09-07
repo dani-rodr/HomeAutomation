@@ -1,5 +1,3 @@
-using System.Reactive;
-
 namespace HomeAutomation.apps.Common.Security.Automations;
 
 public class LockAutomation(
@@ -27,7 +25,7 @@ public class LockAutomation(
             .OnUnlocked(new(Minutes: AUTO_LOCK_IN_MINUTES))
             .Where(_ => entities.Door.IsClosed() && ShouldAutoLockAfterTime)
             .Subscribe(Lock);
-        yield return door.OnClosed().Subscribe(HandleDoorClosed);
+        yield return door.OnClosed(new(CheckImmediately: false)).Subscribe(HandleDoorClosed);
         yield return door.OnOpened().Subscribe(SendDoorOpenedNotification);
         yield return door.OnOpened(new(Minutes: AUTO_LOCK_IN_MINUTES))
             .Subscribe(SendDoorOpenedNotification);
