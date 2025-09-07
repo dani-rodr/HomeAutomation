@@ -16,12 +16,16 @@ public class LightAutomationTests : IDisposable
     private readonly Mock<ILgDisplay> _mockLgDisplay;
     private readonly TestEntities _entities;
     private readonly LightAutomation _automation;
+    private Subject<string> _sourceChangeSubject = new();
 
     public LightAutomationTests()
     {
         _mockHaContext = new MockHaContext();
         _mockLogger = new Mock<ILogger<LightAutomation>>();
         _mockLgDisplay = new Mock<ILgDisplay>();
+        _mockLgDisplay.Setup(m => m.IsShowingPc).Returns(true);
+        _mockLgDisplay.Setup(m => m.IsOff()).Returns(false);
+        _mockLgDisplay.Setup(m => m.OnSourceChange()).Returns(_sourceChangeSubject.AsObservable());
 
         // Create test entities wrapper for desk-specific entities
         _entities = new TestEntities(_mockHaContext);
@@ -69,6 +73,38 @@ public class LightAutomationTests : IDisposable
         _mockHaContext.ShouldHaveCalledLightTurnOff(_entities.Light.EntityId);
     }
 
+    [Fact]
+    public void SalaLights_On_ShouldTurnOnLightWithHighBrightness()
+    {
+        // Act
+        _mockHaContext.SimulateStateChange(_entities.SalaLights.EntityId, "off", "on");
+
+        // Assert
+        _mockHaContext.ShouldHaveCalledLightTurnOn(_entities.Light.EntityId, 230);
+    }
+
+    [Fact]
+    public void SalaLights_Off_ShouldTurnOnLightWithLowBrightness()
+    {
+        // Act
+        _mockHaContext.SimulateStateChange(_entities.SalaLights.EntityId, "on", "off");
+
+        // Assert
+        _mockHaContext.ShouldHaveCalledLightTurnOn(_entities.Light.EntityId, 125);
+    }
+
+    [Fact]
+    public void MotionSensor_ShouldNotToggleLight_WhenMonitorIsOff()
+    {
+        _mockLgDisplay.Setup(m => m.IsOff()).Returns(true);
+
+        // Act
+        _mockHaContext.SimulateStateChange(_entities.MotionSensor.EntityId, "off", "on");
+
+        // Assert
+        _mockHaContext.ShouldHaveNoServiceCalls();
+    }
+
     public void Dispose()
     {
         _automation?.Dispose();
@@ -82,7 +118,7 @@ public class LightAutomationTests : IDisposable
     /// </summary>
     private class TestEntities(IHaContext haContext) : IDeskLightEntities
     {
-        public SwitchEntity MasterSwitch => new(haContext, "switch.motion_sensors");
+        public SwitchEntity MasterSwitch => new(haContext, "switch.LgTvMotionSensor");
         public BinarySensorEntity MotionSensor =>
             new(haContext, "binary_sensor.desk_smart_presence");
         public LightEntity Light => new(haContext, "light.lg_display");

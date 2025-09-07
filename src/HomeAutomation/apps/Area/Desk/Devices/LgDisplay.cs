@@ -1,4 +1,3 @@
-using System.Reactive.Subjects;
 using System.Text.Json;
 
 namespace HomeAutomation.apps.Area.Desk.Devices;
@@ -15,12 +14,10 @@ public class LgDisplay(ILgDisplayEntities entities, IServices services, ILogger<
         ILgDisplay
 {
     private const string MAC_ADDRESS = "D4:8D:26:B8:C4:AA";
-    private const int HIGH_BRIGHTNESS = 230;
-    private const int LOW_BRIGTNESS = 125;
     private readonly WebostvServices _webosServices = services.Webostv;
     private readonly WakeOnLanServices _wolServices = services.WakeOnLan;
     private readonly LightEntity _lightDisplay = entities.Display;
-    private int _brightness = HIGH_BRIGHTNESS;
+    private int _brightness = 230;
     public bool IsShowingPc => CurrentSource == Sources[DisplaySource.PC.ToString()];
     public bool IsShowingLaptop => CurrentSource == Sources[DisplaySource.Laptop.ToString()];
 
@@ -31,10 +28,6 @@ public class LgDisplay(ILgDisplayEntities entities, IServices services, ILogger<
             ToggleScreenAutomation(),
             .. SyncLightEntityWithMediaState(),
         ];
-
-    public async Task SetBrightnessHighAsync() => await SetBrightnessAsync(HIGH_BRIGHTNESS);
-
-    public async Task SetBrightnessLowAsync() => await SetBrightnessAsync(LOW_BRIGTNESS);
 
     public async Task SetBrightnessAsync(int value)
     {

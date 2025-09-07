@@ -12,23 +12,6 @@ public class LightAutomation(
     protected override IEnumerable<IDisposable> GetLightAutomations() =>
         [GetLightMotionAutomation(), .. GetSalaLightsAutomation()];
 
-    protected override IEnumerable<IDisposable> GetAdditionalPersistentAutomations()
-    {
-        yield return Light
-            .OnTurnedOn()
-            .Subscribe(async _ =>
-            {
-                if (entities.SalaLights.IsOn())
-                {
-                    await monitor.SetBrightnessHighAsync();
-                }
-                else
-                {
-                    await monitor.SetBrightnessLowAsync();
-                }
-            });
-    }
-
     protected override IEnumerable<IDisposable> GetSensorDelayAutomations()
     {
         yield return monitor
@@ -63,11 +46,7 @@ public class LightAutomation(
     {
         var salaLights = entities.SalaLights;
 
-        yield return salaLights
-            .OnTurnedOn()
-            .Subscribe(async _ => await monitor.SetBrightnessHighAsync());
-        yield return salaLights
-            .OnTurnedOff()
-            .Subscribe(async _ => await monitor.SetBrightnessLowAsync());
+        yield return salaLights.OnTurnedOn().Subscribe(_ => Light.TurnOn(brightness: 230));
+        yield return salaLights.OnTurnedOff().Subscribe(_ => Light.TurnOn(brightness: 125));
     }
 }

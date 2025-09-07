@@ -10,7 +10,11 @@ public static class MockHaContextExtensions
     /// <summary>
     /// Verify that a light entity's TurnOn() method was called
     /// </summary>
-    public static void ShouldHaveCalledLightTurnOn(this MockHaContext mock, string entityId)
+    public static void ShouldHaveCalledLightTurnOn(
+        this MockHaContext mock,
+        string entityId,
+        double? expectedBrightness = null
+    )
     {
         var lightCalls = mock.GetServiceCalls("light").ToList();
         var turnOnCall = lightCalls.FirstOrDefault(call =>
@@ -22,6 +26,23 @@ public static class MockHaContextExtensions
             .NotBeNull(
                 $"Expected light.turn_on to be called for entity '{entityId}' but it was not found"
             );
+        if (expectedBrightness.HasValue)
+        {
+            double? actualBrightness = null;
+
+            // Handle both dictionary format and ClimateSetTemperatureParameters
+            if (turnOnCall?.Data is LightTurnOnParameters properties)
+            {
+                actualBrightness = properties.Brightness;
+            }
+
+            actualBrightness
+                .Should()
+                .Be(
+                    expectedBrightness.Value,
+                    $"Expected Brightness to be set to {expectedBrightness.Value} for entity '{entityId}', but got {(actualBrightness.HasValue ? $"{actualBrightness.Value}" : "null")}"
+                );
+        }
     }
 
     /// <summary>

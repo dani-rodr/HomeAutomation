@@ -9,6 +9,4 @@ public interface ILgDisplay : IMediaPlayer, IAutomation
     bool IsShowingPc { get; }
     bool IsShowingLaptop { get; }
     Task SetBrightnessAsync(int value);
-    Task SetBrightnessHighAsync();
-    Task SetBrightnessLowAsync();
 }
