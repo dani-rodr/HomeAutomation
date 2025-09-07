@@ -252,8 +252,7 @@ public class AthenaEntities(Devices devices, Entities entities) : IPersonEntitie
     public IEnumerable<BinarySensorEntity> HomeTriggers =>
         [entities.BinarySensor.MiWatchBle, entities.BinarySensor.Iphone];
 
-    public IEnumerable<BinarySensorEntity> AwayTriggers =>
-        [entities.BinarySensor.MiWatchBle, entities.BinarySensor.Iphone];
+    public IEnumerable<BinarySensorEntity> AwayTriggers => [entities.BinarySensor.Iphone];
 
     public IEnumerable<BinarySensorEntity> DirectUnlockTriggers =>
         [entities.BinarySensor.BaseusTagBle];
