@@ -89,7 +89,12 @@ public class LockAutomationTests : IDisposable
         // Assert - Should turn on flytrap and send unlock notification
         _mockHaContext.ShouldHaveCalledSwitchTurnOn(_entities.Flytrap.EntityId);
         _mockNotificationServices.Verify(
-            x => x.NotifyPocoF4("Door is unlocked", It.IsAny<object>(), "Home Assistant"),
+            x =>
+                x.NotifyPocoF4(
+                    "Door was physically unlocked",
+                    It.IsAny<object>(),
+                    "Home Assistant"
+                ),
             Times.Once,
             "Should send unlock notification when lock is unlocked"
         );
@@ -225,7 +230,12 @@ public class LockAutomationTests : IDisposable
         lockCalls.Should().BeEmpty("Should not lock door when immediate relock is not set");
 
         _mockNotificationServices.Verify(
-            x => x.NotifyPocoF4("Door is unlocked", It.IsAny<object>(), "Home Assistant"),
+            x =>
+                x.NotifyPocoF4(
+                    "Door was physically unlocked",
+                    It.IsAny<object>(),
+                    "Home Assistant"
+                ),
             Times.Once,
             "Should send unlocked notification when door closes without immediate relock"
         );

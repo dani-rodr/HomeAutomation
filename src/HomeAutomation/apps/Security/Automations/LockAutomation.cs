@@ -92,15 +92,24 @@ public class LockAutomation(
     private void ClearLockNotification(StateChange e) =>
         services.NotifyPocoF4(message: "clear_notification", data: new { tag = LOCK_TAG });
 
-    private void SendUnlockedNotification(StateChange e) =>
+    private void SendUnlockedNotification(StateChange e)
+    {
+        var message = $"Door was unlocked by {e.Username()}";
+
+        if (e.IsPhysicallyOperated())
+        {
+            message = "Door was physically unlocked";
+        }
+
         services.NotifyPocoF4(
-            message: "Door is unlocked",
+            message: message,
             data: GetBaseNotificationData(
                 "mdi:lock-open-variant",
                 new[] { new { action = LOCK_ACTION, title = "Lock" } }
             ),
             title: "Home Assistant"
         );
+    }
 
     private void SendDoorOpenedNotification(StateChange e) =>
         services.NotifyPocoF4(
