@@ -1,4 +1,3 @@
-using System.Reactive.Subjects;
 using System.Text.Json;
 
 namespace HomeAutomation.apps.Area.Desk.Devices;
