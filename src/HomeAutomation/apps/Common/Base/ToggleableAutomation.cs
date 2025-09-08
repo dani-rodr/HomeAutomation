@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Reactive.Disposables;
 
 namespace HomeAutomation.apps.Common.Base;
@@ -20,37 +21,27 @@ public abstract class ToggleableAutomation(SwitchEntity masterSwitch, ILogger lo
     {
         try
         {
-            var persistentAutomations = GetPersistentAutomations();
-            var persistentList = new List<IDisposable>(persistentAutomations);
+            _persistentAutomations = [.. GetPersistentAutomations()];
             Logger.LogDebug(
                 "Starting {AutomationType} with {PersistentCount} persistent automations",
                 GetType().Name,
-                persistentList.Count
+                _persistentAutomations.Count()
             );
 
-            _persistentAutomations = [.. persistentList];
-
-            if (MasterSwitch is not null)
+            if (MasterSwitch is null)
             {
-                Logger.LogDebug(
-                    "Configuring master switch monitoring for {EntityId}",
-                    MasterSwitch.EntityId
-                );
-                _persistentAutomations.Add(
-                    MasterSwitch
-                        .OnChanges()
-                        .SubscribeSafe(
-                            ToggleAutomation,
-                            onError: ex =>
-                                Logger.LogError(
-                                    ex,
-                                    "Error in master switch subscription for {EntityId}",
-                                    MasterSwitch.EntityId
-                                )
-                        )
-                );
+                Logger.LogDebug("MasterSwitch for {AutomationType} is null", GetType().Name);
+                return;
             }
-
+            Logger.LogDebug(
+                "Configuring master switch monitoring for {EntityId}",
+                MasterSwitch.EntityId
+            );
+            _persistentAutomations.Add(
+                MasterSwitch
+                    .OnChanges(new(AllowFromUnavailable: false, CheckImmediately: true))
+                    .Subscribe(ToggleAutomation)
+            );
             Logger.LogInformation("{AutomationType} started successfully", GetType().Name);
         }
         catch (Exception ex)
