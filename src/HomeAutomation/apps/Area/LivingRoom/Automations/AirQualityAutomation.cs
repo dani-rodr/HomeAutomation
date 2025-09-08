@@ -10,8 +10,6 @@ public class AirQualityAutomation(
     private readonly SwitchEntity _supportingFan = entities.SupportingFan;
     private bool _activateSupportingFan = false;
     private bool _isCleaningAir = false;
-
-    private const int WAIT_TIME = 10;
     private const int CLEAN_AIR_THRESHOLD = 7;
     private const int DIRTY_AIR_THRESHOLD = 75;
 

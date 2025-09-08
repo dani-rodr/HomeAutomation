@@ -43,9 +43,9 @@ public class ClimateAutomation(
 
     private void TurnOffMasterSwitchOnManualOperation(StateChange e)
     {
-        if (e.New.IsUnavailable())
+        if (e.New.IsUnavailable() || e.Old.IsUnavailable())
         {
-            Logger.LogDebug("AC state is unavailable, skipping master switch turn-off.");
+            Logger.LogDebug("AC states is unavailable, skipping master switch turn-off.");
             return;
         }
         var (oldTemp, newTemp) = e.GetAttributeChange<double?>("temperature");

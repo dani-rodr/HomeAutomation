@@ -48,7 +48,7 @@ public abstract class ToggleableAutomation(SwitchEntity masterSwitch, ILogger lo
             );
             _persistentAutomations.Add(
                 MasterSwitch
-                    .OnChanges(new(AllowFromUnavailable: false, CheckImmediately: true))
+                    .OnChanges(new(AllowFromUnavailable: false, StartImmediately: true))
                     .Subscribe(ToggleAutomation)
             );
             Logger.LogInformation("{AutomationType} started successfully", GetType().Name);

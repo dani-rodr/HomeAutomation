@@ -44,7 +44,7 @@ public static class ObservableStateChangeExtensions
         where TAttributes : class
     {
         options ??= new DurationOptions<TState>();
-        var stream = entity.GetStateChange(options.CheckImmediately);
+        var stream = entity.GetStateChange(options.StartImmediately);
         if (!options.AllowFromUnavailable)
         {
             stream = stream.Where(src => src.Old.IsAvailable());
@@ -120,7 +120,7 @@ public static class ObservableStateChangeExtensions
         options ??= new DurationOptions<TState>()
         {
             AllowFromUnavailable = true,
-            CheckImmediately = false,
+            StartImmediately = false,
         };
 
         return entity

@@ -23,7 +23,7 @@ public abstract class FanAutomationBase : ToggleableAutomation
             .IsManuallyOperated()
             .Subscribe(_ => MasterSwitch.TurnOn());
         yield return MainFan
-            .OnTurnedOff()
+            .OnTurnedOff(new(StartImmediately: false))
             .IsManuallyOperated()
             .Subscribe(_ => MasterSwitch.TurnOff());
         yield return GetMasterSwitchAutomations();

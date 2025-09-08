@@ -16,8 +16,8 @@ public class Desktop(
 
     public override IObservable<bool> StateChanges() =>
         Observable.Merge(
-            power.OnTurnedOn(new(CheckImmediately: false)).Select(_ => true),
-            power.OnTurnedOff(new(CheckImmediately: false, Seconds: 1)).Select(_ => false)
+            power.OnTurnedOn(new(StartImmediately: false)).Select(_ => true),
+            power.OnTurnedOff(new(StartImmediately: false, Seconds: 1)).Select(_ => false)
         );
 
     protected override IEnumerable<IDisposable> GetAutomations() => [LaunchMoonlightApp()];

@@ -14,11 +14,6 @@ public class AirQualityAutomationTests : IDisposable
     private readonly TestEntities _entities;
     private readonly AirQualityAutomation _automation;
 
-    // Air quality thresholds from the implementation
-    private const int CLEAN_AIR_THRESHOLD = 7;
-    private const int DIRTY_AIR_THRESHOLD = 75;
-    private const int WAIT_TIME_SECONDS = 10;
-
     public AirQualityAutomationTests()
     {
         _mockHaContext = new MockHaContext();
@@ -31,6 +26,13 @@ public class AirQualityAutomationTests : IDisposable
 
         // Start the automation to set up subscriptions
         _automation.StartAutomation();
+        _mockHaContext.SetEntityState(_entities.Fans.First().EntityId, "off");
+
+        _mockHaContext.ShouldHaveCalledSwitchExactly(
+            _entities.MasterSwitch.EntityId,
+            "turn_off",
+            0
+        );
 
         // Simulate master switch being ON to enable automation logic
         _mockHaContext.SimulateStateChange(_entities.MasterSwitch.EntityId, "off", "on");

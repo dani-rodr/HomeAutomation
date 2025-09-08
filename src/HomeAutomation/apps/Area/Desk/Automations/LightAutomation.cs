@@ -10,7 +10,7 @@ public class LightAutomation(
     private const double SHORT_SENSOR_DELAY = 20;
 
     protected override IEnumerable<IDisposable> GetLightAutomations() =>
-        [GetLightMotionAutomation(), .. GetSalaLightsAutomation()];
+        [GetLightMotionAutomation(), GetSalaLightsAutomation()];
 
     protected override IEnumerable<IDisposable> GetSensorDelayAutomations()
     {
@@ -42,11 +42,17 @@ public class LightAutomation(
                 }
             });
 
-    private IEnumerable<IDisposable> GetSalaLightsAutomation()
-    {
-        var salaLights = entities.SalaLights;
+    private IDisposable GetSalaLightsAutomation() =>
+        entities
+            .SalaLights.OnChanges()
+            .Subscribe(state =>
+            {
+                var brightness = state.IsOn() ? 230 : 125;
+                Logger.LogDebug(
+                    "Updating Montior Brightness to {Brightness}. based on Sala Lights.",
+                    brightness
+                );
 
-        yield return salaLights.OnTurnedOn().Subscribe(_ => Light.TurnOn(brightness: 230));
-        yield return salaLights.OnTurnedOff().Subscribe(_ => Light.TurnOn(brightness: 125));
-    }
+                Light.TurnOn(brightness: brightness);
+            });
 }

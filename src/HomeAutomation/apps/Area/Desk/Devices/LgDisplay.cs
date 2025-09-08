@@ -50,6 +50,7 @@ public class LgDisplay(ILgDisplayEntities entities, IServices services, ILogger<
                 CreateBrightnessPayload(value)
             );
             SendButtonCommand("ENTER");
+            Logger.LogDebug("Brightness is set to {Value}.", value);
         }
         catch (Exception ex)
         {
@@ -190,6 +191,11 @@ public class LgDisplay(ILgDisplayEntities entities, IServices services, ILogger<
                 {
                     if (brightness != _brightness)
                     {
+                        Logger.LogDebug(
+                            "Adjusting Display Brightness from Input Value: {Value}.",
+                            brightness
+                        );
+
                         await SetBrightnessAsync((int)brightness);
                     }
                 }

@@ -230,7 +230,7 @@ public class HelpersTests : IDisposable
         // Arrange
         var results = new List<StateChange>();
         using var disposable = _light
-            .OnChanges(new(Condition: s => s.IsUnknown(), CheckImmediately: false))
+            .OnChanges(new(Condition: s => s.IsUnknown(), StartImmediately: false))
             .Subscribe(results.Add);
 
         // Act
@@ -266,7 +266,7 @@ public class HelpersTests : IDisposable
         // Arrange
         var results = new List<StateChange>();
         using var disposable = _light
-            .OnChanges(new(CheckImmediately: false))
+            .OnChanges(new(StartImmediately: false))
             .IsManuallyOperated()
             .Subscribe(results.Add);
 
@@ -298,7 +298,7 @@ public class HelpersTests : IDisposable
         // Arrange
         var results = new List<StateChange>();
         using var disposable = _light
-            .OnChanges(new(CheckImmediately: false))
+            .OnChanges(new(StartImmediately: false))
             .IsPhysicallyOperated()
             .Subscribe(results.Add);
 
