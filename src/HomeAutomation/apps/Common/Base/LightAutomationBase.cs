@@ -1,6 +1,3 @@
-using System.Linq;
-using Microsoft.Extensions.Options;
-
 namespace HomeAutomation.apps.Common.Base;
 
 public abstract class LightAutomationBase(ILightAutomationEntities entities, ILogger logger)
@@ -16,8 +13,13 @@ public abstract class LightAutomationBase(ILightAutomationEntities entities, ILo
 
     protected override IEnumerable<IDisposable> GetPersistentAutomations() =>
         [
-            Light.OnChanges().IsManuallyOperated().Subscribe(ControlMasterSwitchOnLightChange),
-            MasterSwitch.OnTurnedOn().Subscribe(ControlLightOnMotionChange),
+            Light
+                .OnChanges(new(CheckImmediately: true))
+                .IsManuallyOperated()
+                .Subscribe(ControlMasterSwitchOnLightChange),
+            MasterSwitch
+                .OnTurnedOn(new(CheckImmediately: false))
+                .Subscribe(ControlLightOnMotionChange),
             .. GetAdditionalPersistentAutomations(),
         ];
 
