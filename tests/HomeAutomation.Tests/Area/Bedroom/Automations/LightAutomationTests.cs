@@ -27,12 +27,22 @@ public class LightAutomationTests : IDisposable
 
         // Start the automation to set up subscriptions
         _automation.StartAutomation();
-
+        _mockHaContext.ShouldHaveCalledLightExactly(_entities.Light.EntityId, "toggle", 0);
         // Simulate master switch being ON to enable automation logic
         _mockHaContext.SimulateStateChange(_entities.MasterSwitch.EntityId, "off", "on");
 
         // Clear any initialization service calls
         _mockHaContext.ClearServiceCalls();
+    }
+
+    [Fact]
+    public void StartAutomation_ShouldNot_EnableMasterSwitchImmidiately()
+    {
+        _mockHaContext.SetEntityState(_entities.MotionSensor.EntityId, "on");
+        _automation.StartAutomation();
+        _mockHaContext.ShouldHaveCalledLightExactly(_entities.Light.EntityId, "turn_on", 0);
+        _mockHaContext.ShouldHaveCalledLightExactly(_entities.Light.EntityId, "turn_off", 0);
+        _mockHaContext.ShouldHaveCalledSwitchExactly(_entities.MasterSwitch.EntityId, "turn_on", 0);
     }
 
     #region Motion Detection Tests

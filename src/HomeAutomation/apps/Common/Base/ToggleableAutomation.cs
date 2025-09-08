@@ -19,6 +19,15 @@ public abstract class ToggleableAutomation(SwitchEntity masterSwitch, ILogger lo
 
     public virtual void StartAutomation()
     {
+        if (_persistentAutomations is not null)
+        {
+            _persistentAutomations.Dispose();
+            _persistentAutomations = null;
+            Logger.LogDebug(
+                "Restarting persistent automations for {AutomationType}",
+                GetType().Name
+            );
+        }
         try
         {
             _persistentAutomations = [.. GetPersistentAutomations()];
@@ -62,14 +71,13 @@ public abstract class ToggleableAutomation(SwitchEntity masterSwitch, ILogger lo
             return;
         }
 
-        var toggleableAutomations = GetToggleableAutomations();
-        var toggleableList = new List<IDisposable>(toggleableAutomations);
+        _toggleableAutomations = [.. GetToggleableAutomations()];
+
         Logger.LogDebug(
             "Enabling {Count} toggleable automations for {AutomationType}",
-            toggleableList.Count,
+            _toggleableAutomations.Count,
             GetType().Name
         );
-        _toggleableAutomations = [.. toggleableList];
         RunInitialActions();
     }
 
