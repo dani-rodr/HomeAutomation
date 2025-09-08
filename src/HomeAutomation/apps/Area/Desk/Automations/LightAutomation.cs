@@ -45,6 +45,8 @@ public class LightAutomation(
     private IDisposable GetSalaLightsAutomation() =>
         entities
             .SalaLights.OnChanges()
+            .Where(_ => Light.IsOn())
+            .Delay(TimeSpan.FromMilliseconds(1), SchedulerProvider.Current)
             .Subscribe(state =>
             {
                 var brightness = state.IsOn() ? 230 : 125;

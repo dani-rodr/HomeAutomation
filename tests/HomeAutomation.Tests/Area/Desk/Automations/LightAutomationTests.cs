@@ -76,9 +76,13 @@ public class LightAutomationTests : IDisposable
     [Fact]
     public void SalaLights_On_ShouldTurnOnLightWithHighBrightness()
     {
+        _mockHaContext.SetEntityState(_entities.Light.EntityId, "on");
+
         // Act
         _mockHaContext.SimulateStateChange(_entities.SalaLights.EntityId, "off", "on");
+        _mockHaContext.ShouldNeverHaveCalledLight(_entities.Light.EntityId);
 
+        _mockHaContext.AdvanceTimeByMilliseconds(1);
         // Assert
         _mockHaContext.ShouldHaveCalledLightTurnOn(_entities.Light.EntityId, 230);
     }
@@ -86,9 +90,13 @@ public class LightAutomationTests : IDisposable
     [Fact]
     public void SalaLights_Off_ShouldTurnOnLightWithLowBrightness()
     {
+        _mockHaContext.SetEntityState(_entities.Light.EntityId, "on");
+
         // Act
         _mockHaContext.SimulateStateChange(_entities.SalaLights.EntityId, "on", "off");
+        _mockHaContext.ShouldNeverHaveCalledLight(_entities.Light.EntityId);
 
+        _mockHaContext.AdvanceTimeByMilliseconds(1);
         // Assert
         _mockHaContext.ShouldHaveCalledLightTurnOn(_entities.Light.EntityId, 125);
     }
