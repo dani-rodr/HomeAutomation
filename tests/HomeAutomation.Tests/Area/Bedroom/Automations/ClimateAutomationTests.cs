@@ -413,18 +413,46 @@ public class ClimateAutomationTests : IDisposable
         _mockHaContext.ShouldHaveCalledSwitchTurnOff(_entities.MasterSwitch.EntityId);
     }
 
-    [Fact(Skip = "Temporarily disabled - bedroom automation logic under review")]
+    [Fact]
+    public void AcStateChangeUnavailable_ShouldNot_DisableMasterSwitch()
+    {
+        // Arrange - Set up AC with same temperature in attributes
+        _mockHaContext.SetEntityAttributes(
+            _entities.AirConditioner.EntityId,
+            new { temperature = 25.0 }
+        );
+
+        var stateChange = StateChangeHelpers.CreateClimateStateChange(
+            _entities.AirConditioner,
+            "cool",
+            "unavailable",
+            HaIdentity.DANIEL_RODRIGUEZ
+        );
+
+        _mockHaContext.StateChangeSubject.OnNext(stateChange);
+
+        // Act - Simulate AC state change (off to cool) without temperature change
+
+        _mockHaContext.SetEntityAttributes(
+            _entities.AirConditioner.EntityId,
+            new { temperature = 22.0 }
+        );
+        _mockHaContext.StateChangeSubject.OnNext(stateChange);
+
+        _mockHaContext.ShouldNeverHaveCalledSwitch(_entities.MasterSwitch.EntityId);
+    }
+
+    [Fact]
     public void MotionOffFor1Hour_WithMasterSwitchOff_Should_EnableMasterSwitch()
     {
         // Arrange - Set master switch to off
         _mockHaContext.SetEntityState(_entities.MasterSwitch.EntityId, "off");
         _mockHaContext.ClearServiceCalls();
 
-        // Note: This simulates the time-based behavior
-        // Act - Simulate motion off for 1 hour
-        var stateChange = StateChangeHelpers.MotionCleared(_entities.MotionSensor);
-        _mockHaContext.StateChangeSubject.OnNext(stateChange);
+        _mockHaContext.SimulateStateChange(_entities.MotionSensor.EntityId, "on", "off");
+        _mockHaContext.ShouldNeverHaveCalledSwitch(_entities.MasterSwitch.EntityId);
 
+        _mockHaContext.AdvanceTimeByHours(1);
         // Assert - Should turn on master switch
         _mockHaContext.ShouldHaveCalledSwitchTurnOn(_entities.MasterSwitch.EntityId);
     }
