@@ -15,7 +15,7 @@ public class LaptopTests : IDisposable
     private readonly MockHaContext _mockHaContext;
     private readonly Mock<IEventHandler> _mockEventHandler;
     private readonly Mock<ILogger<Laptop>> _mockLogger;
-    private readonly Mock<ILaptopScheduler> _mockScheduler;
+    private readonly Mock<ILaptopShutdownScheduler> _mockScheduler;
     private readonly Mock<ILaptopChargingHandler> _mockBatteryHandler;
     private readonly TestLaptopEntities _entities;
     private readonly Laptop _laptop;
@@ -25,7 +25,7 @@ public class LaptopTests : IDisposable
         _mockHaContext = new MockHaContext();
         _mockEventHandler = new Mock<IEventHandler>();
         _mockLogger = new Mock<ILogger<Laptop>>();
-        _mockScheduler = new Mock<ILaptopScheduler>();
+        _mockScheduler = new Mock<ILaptopShutdownScheduler>();
         _mockBatteryHandler = new Mock<ILaptopChargingHandler>();
         // Setup battery handler mocks to prevent unexpected service calls
         _mockBatteryHandler.Setup(x => x.HandleLaptopTurnedOn());
@@ -855,6 +855,153 @@ public class LaptopTests : IDisposable
                 && c.Target.EntityIds.Contains(_entities.Lock.EntityId)
             );
     }
+
+    [Fact]
+    public void ScheduledLogoff_Should_TurnOffImmediately_WhenMotionIsAlreadyOff()
+    {
+        // Arrange
+        var scheduledActions = new List<Action>();
+        _mockScheduler
+            .Setup(s => s.GetSchedules(It.IsAny<Action>()))
+            .Callback<Action>(scheduledActions.Add)
+            .Returns([]);
+
+        var laptop = new Laptop(
+            _entities,
+            _mockScheduler.Object,
+            _mockBatteryHandler.Object,
+            _mockEventHandler.Object,
+            _mockLogger.Object
+        );
+        laptop.StartAutomation();
+
+        _mockHaContext.SetEntityState(_entities.VirtualSwitch.EntityId, "on");
+        _mockHaContext.SetEntityState(_entities.Session.EntityId, "unlocked");
+        _mockHaContext.SetEntityState(_entities.MotionSensor.EntityId, "off");
+
+        // Act
+        scheduledActions[0]();
+
+        // Assert: TurnOff should be called right away
+        _mockHaContext
+            .ServiceCalls.Should()
+            .ContainSingle(c =>
+                c.Domain == "button"
+                && c.Service == "press"
+                && c.Target!.EntityIds!.Contains(_entities.Lock.EntityId)
+            );
+    }
+
+    [Fact]
+    public void ScheduledLogoff_ShouldNotTurnOff_WhenLaptopSwitchIsOff()
+    {
+        var scheduledActions = new List<Action>();
+        _mockScheduler
+            .Setup(s => s.GetSchedules(It.IsAny<Action>()))
+            .Callback<Action>(a => scheduledActions.Add(a))
+            .Returns([]);
+
+        var laptop = new Laptop(
+            _entities,
+            _mockScheduler.Object,
+            _mockBatteryHandler.Object,
+            _mockEventHandler.Object,
+            _mockLogger.Object
+        );
+        laptop.StartAutomation();
+
+        // Switch is already off
+        _mockHaContext.SetEntityState(_entities.VirtualSwitch.EntityId, "off");
+        _mockHaContext.SetEntityState(_entities.Session.EntityId, "unlocked");
+        _mockHaContext.SetEntityState(_entities.MotionSensor.EntityId, "off");
+
+        scheduledActions[0]();
+
+        _mockHaContext.ServiceCalls.Should().BeEmpty();
+    }
+
+    [Fact]
+    public void ScheduledLogoff_ShouldNotTurnOff_WhenSessionIsLocked()
+    {
+        var scheduledActions = new List<Action>();
+        _mockScheduler
+            .Setup(s => s.GetSchedules(It.IsAny<Action>()))
+            .Callback<Action>(a => scheduledActions.Add(a))
+            .Returns([]);
+
+        var laptop = new Laptop(
+            _entities,
+            _mockScheduler.Object,
+            _mockBatteryHandler.Object,
+            _mockEventHandler.Object,
+            _mockLogger.Object
+        );
+        laptop.StartAutomation();
+
+        _mockHaContext.SetEntityState(_entities.VirtualSwitch.EntityId, "on");
+        _mockHaContext.SetEntityState(_entities.Session.EntityId, "locked"); // already locked
+        _mockHaContext.SetEntityState(_entities.MotionSensor.EntityId, "off");
+
+        scheduledActions[0]();
+
+        _mockHaContext.ServiceCalls.Should().BeEmpty();
+    }
+
+    [Fact]
+    public void ScheduledLogoff_ShouldShutdownOncePerSchedule()
+    {
+        var scheduledActions = new List<Action>();
+        _mockScheduler
+            .Setup(s => s.GetSchedules(It.IsAny<Action>()))
+            .Callback<Action>(a => scheduledActions.Add(a))
+            .Returns([]);
+
+        var laptop = new Laptop(
+            _entities,
+            _mockScheduler.Object,
+            _mockBatteryHandler.Object,
+            _mockEventHandler.Object,
+            _mockLogger.Object
+        );
+        laptop.StartAutomation();
+
+        _mockHaContext.SetEntityState(_entities.VirtualSwitch.EntityId, "on");
+        _mockHaContext.SetEntityState(_entities.Session.EntityId, "unlocked");
+        _mockHaContext.SetEntityState(_entities.MotionSensor.EntityId, "on");
+
+        // First schedule fires
+        scheduledActions[0]();
+        _mockHaContext.SimulateStateChange(_entities.MotionSensor.EntityId, "on", "off");
+
+        // Clear service calls
+        _mockHaContext.ServiceCalls.Clear();
+
+        // Reset motion and fire schedule again
+        _mockHaContext.SetEntityState(_entities.MotionSensor.EntityId, "on");
+        scheduledActions[0]();
+        _mockHaContext.SimulateStateChange(_entities.MotionSensor.EntityId, "on", "off");
+
+        // Assert: TurnOff called again (once for each schedule)
+        var shutdownCalls = _mockHaContext
+            .ServiceCalls.Where(c =>
+                (
+                    c.Domain == "switch"
+                    && c.Service == "turn_off"
+                    && c.Target!.EntityIds!.Contains(_entities.VirtualSwitch.EntityId)
+                )
+                || (
+                    c.Domain == "button"
+                    && c.Service == "press"
+                    && c.Target!.EntityIds!.Contains(_entities.Lock.EntityId)
+                )
+            )
+            .ToList();
+
+        shutdownCalls
+            .Should()
+            .HaveCount(2, "shutdown should trigger switch off and lock press once");
+    }
+
     #endregion
 
     #region Entity Configuration Tests

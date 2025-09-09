@@ -7,7 +7,7 @@ public interface IAutomationScheduler
     IEnumerable<IDisposable> GetSchedules(Action action);
 }
 
-public interface ILaptopScheduler : IAutomationScheduler;
+public interface ILaptopShutdownScheduler : IAutomationScheduler;
 
 public interface IMotionSensorRestartScheduler : IAutomationScheduler;
 

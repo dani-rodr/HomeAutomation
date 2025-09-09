@@ -4,7 +4,7 @@ namespace HomeAutomation.apps.Area.Desk.Devices;
 
 public class Laptop(
     ILaptopEntities entities,
-    ILaptopScheduler scheduler,
+    ILaptopShutdownScheduler scheduler,
     ILaptopChargingHandler batteryHandler,
     IEventHandler eventHandler,
     ILogger<Laptop> logger
@@ -85,7 +85,7 @@ public class Laptop(
                 }
             });
 
-    private List<IDisposable> GetLogoffAutomations(ILaptopScheduler scheduler)
+    private List<IDisposable> GetLogoffAutomations(ILaptopShutdownScheduler scheduler)
     {
         var disposables = new List<IDisposable>();
 
@@ -128,6 +128,7 @@ public class Laptop(
         [
             entities
                 .Session.OnLocked()
+                .Where(s => s.Old.IsUnlocked())
                 .Subscribe(_ =>
                 {
                     Logger.LogInformation(

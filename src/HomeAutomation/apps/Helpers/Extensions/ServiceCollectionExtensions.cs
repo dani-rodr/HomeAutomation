@@ -72,7 +72,7 @@ public static class ServiceCollectionExtensions
             .AddTransient<ILaptopSchedulerEntities, LaptopSchedulerEntities>()
             .AddTransient<IChargingHandlerEntities, LaptopChargingHandlerEntities>()
             .AddTransient<ILaptopChargingHandler, LaptopChargingHandler>()
-            .AddTransient<ILaptopScheduler, LaptopScheduler>()
+            .AddTransient<ILaptopShutdownScheduler, LaptopScheduler>()
             .AddTransient<ILgDisplay, LgDisplay>()
             .AddTransient<IDesktop, Desktop>()
             .AddTransient<ILaptop, Laptop>();
