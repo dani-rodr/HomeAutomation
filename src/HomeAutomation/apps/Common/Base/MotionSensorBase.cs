@@ -47,12 +47,12 @@ public abstract class MotionSensorBase(
             .. HandleDailyRestart(),
         ];
 
-    protected override IEnumerable<IDisposable> GetToggleableAutomations()
-    {
-        yield return SmartPresence
-            .OnOccupied()
-            .Subscribe(_ => MotionCalibrator.LogMotionTrigger(Zones, Logger));
-    }
+    protected override IEnumerable<IDisposable> GetToggleableAutomations() =>
+        [
+            SmartPresence
+                .OnOccupied(new(StartImmediately: false, AllowFromUnavailable: false))
+                .Subscribe(_ => MotionCalibrator.LogMotionTrigger(Zones, Logger)),
+        ];
 
     private static IEnumerable<Ld2410ZoneData> InitializeZoneEntities(
         string deviceName,
