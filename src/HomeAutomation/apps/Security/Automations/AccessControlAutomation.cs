@@ -17,7 +17,21 @@ public class AccessControlAutomation(
     private volatile bool _wasHouseEmpty = false;
     private volatile bool _suppressUnlocks = false;
 
-    protected override IEnumerable<IDisposable> GetAutomations()
+    protected override IEnumerable<IDisposable> GetAutomations() =>
+        [
+            .. GetPersonAccessAutomations(),
+            .. GetDoorAutoLockAutomations(),
+            .. GetLockSuppressionDelayAutomation(),
+            entities
+                .House.OnCleared()
+                .Subscribe(_ =>
+                {
+                    Logger.LogInformation("House became empty.");
+                    _wasHouseEmpty = true;
+                }),
+        ];
+
+    private IEnumerable<IDisposable> GetPersonAccessAutomations()
     {
         Logger.LogInformation("AccessControlAutomation initialized with person controllers");
 
@@ -39,22 +53,23 @@ public class AccessControlAutomation(
                 _lock.Unlock();
             });
         }
-        yield return _door.OnClosed().Subscribe(_ => _doorRecentlyClosed = true);
-        yield return _door
-            .OnClosed(new(Minutes: DOOR_CLOSE_WINDOW_DELAY))
-            .Subscribe(_ => _doorRecentlyClosed = false);
-        yield return entities
-            .House.OnCleared()
-            .Subscribe(_ =>
-            {
-                Logger.LogInformation("House became empty.");
-                _wasHouseEmpty = true;
-            });
-        yield return entities.House.OnOccupied().Subscribe(_ => _suppressUnlocks = true);
-        yield return entities
-            .House.OnOccupied(new(Minutes: UNLOCK_SUPPRESION_DELAY))
-            .Subscribe(_ => _suppressUnlocks = false);
     }
+
+    private IEnumerable<IDisposable> GetDoorAutoLockAutomations() =>
+        [
+            _door.OnClosed().Subscribe(_ => _doorRecentlyClosed = true),
+            _door
+                .OnClosed(new(Minutes: DOOR_CLOSE_WINDOW_DELAY))
+                .Subscribe(_ => _doorRecentlyClosed = false),
+        ];
+
+    private IEnumerable<IDisposable> GetLockSuppressionDelayAutomation() =>
+        [
+            entities.House.OnOccupied().Subscribe(_ => _suppressUnlocks = true),
+            entities
+                .House.OnOccupied(new(Minutes: UNLOCK_SUPPRESION_DELAY))
+                .Subscribe(_ => _suppressUnlocks = false),
+        ];
 
     private void OnHomeTriggerActivated(IPersonController person, string triggerEntityId)
     {
