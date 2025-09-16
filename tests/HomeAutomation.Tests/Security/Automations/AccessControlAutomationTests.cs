@@ -84,6 +84,10 @@ public class AccessControlAutomationTests : IDisposable
         // Assert - Should unlock door and set Person 1 home
         _mockHaContext.ShouldHaveCalledLockUnlock(_entities.Lock.EntityId);
         _mockPerson1Controller.Verify(p => p.SetHome(), Times.Once);
+
+        _mockHaContext.ClearServiceCalls();
+        _mockHaContext.SimulateStateChange(_entities.Door.EntityId, "on", "off");
+        _mockHaContext.ShouldHaveCalledLockLock(_entities.Lock.EntityId);
     }
 
     [Fact]
@@ -98,6 +102,10 @@ public class AccessControlAutomationTests : IDisposable
         // Assert - Should unlock door and set Person 1 home
         _mockHaContext.ShouldHaveCalledLockUnlock(_entities.Lock.EntityId);
         _mockPerson1Controller.Verify(p => p.SetHome(), Times.Once);
+
+        _mockHaContext.ClearServiceCalls();
+        _mockHaContext.SimulateStateChange(_entities.Door.EntityId, "on", "off");
+        _mockHaContext.ShouldHaveCalledLockLock(_entities.Lock.EntityId);
     }
 
     [Fact]

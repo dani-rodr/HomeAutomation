@@ -13,6 +13,7 @@ public class AccessControlAutomation(
     private const int LOCK_ON_AWAY_DELAY = 0;
     private const int DOOR_CLOSE_WINDOW_DELAY = 5;
     private const int UNLOCK_SUPPRESION_DELAY = 10;
+    private volatile bool _autoLockOnDoorClose = false;
     private volatile bool _doorRecentlyClosed = false;
     private volatile bool _wasHouseEmpty = false;
     private volatile bool _suppressUnlocks = false;
@@ -63,6 +64,10 @@ public class AccessControlAutomation(
                 {
                     Logger.LogInformation("Door closed. Marking door as recently closed.");
                     _doorRecentlyClosed = true;
+                    if (_autoLockOnDoorClose)
+                    {
+                        _lock.Lock();
+                    }
                 }),
             _door
                 .OnClosed(new(Minutes: DOOR_CLOSE_WINDOW_DELAY))
@@ -114,7 +119,7 @@ public class AccessControlAutomation(
         {
             Logger.LogInformation("House was empty. Unlocking once for {PersonName}", person.Name);
             _lock.Unlock();
-
+            _autoLockOnDoorClose = true;
             _wasHouseEmpty = false;
 
             return;
@@ -130,7 +135,12 @@ public class AccessControlAutomation(
         }
 
         _lock.Unlock();
-        Logger.LogInformation("House occupied. Unlocking for {PersonName}", person.Name);
+        _autoLockOnDoorClose = true;
+        Logger.LogInformation(
+            "House occupied. Unlocking for {PersonName}, Setting Auto Lock on Door Closed : {value}",
+            person.Name,
+            _autoLockOnDoorClose
+        );
     }
 
     private void OnDeparture(IPersonController person, string triggerEntityId)
