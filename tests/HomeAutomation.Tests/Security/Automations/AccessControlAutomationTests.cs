@@ -88,6 +88,11 @@ public class AccessControlAutomationTests : IDisposable
         _mockHaContext.ClearServiceCalls();
         _mockHaContext.SimulateStateChange(_entities.Door.EntityId, "on", "off");
         _mockHaContext.ShouldHaveCalledLockLock(_entities.Lock.EntityId);
+
+        _mockHaContext.ClearServiceCalls();
+        _mockHaContext.SimulateStateChange(_entities.Door.EntityId, "off", "on");
+        _mockHaContext.SimulateStateChange(_entities.Door.EntityId, "on", "off");
+        _mockHaContext.ShouldNeverHaveCalledLock(_entities.Lock.EntityId);
     }
 
     [Fact]
@@ -106,6 +111,11 @@ public class AccessControlAutomationTests : IDisposable
         _mockHaContext.ClearServiceCalls();
         _mockHaContext.SimulateStateChange(_entities.Door.EntityId, "on", "off");
         _mockHaContext.ShouldHaveCalledLockLock(_entities.Lock.EntityId);
+
+        _mockHaContext.ClearServiceCalls();
+        _mockHaContext.SimulateStateChange(_entities.Door.EntityId, "off", "on");
+        _mockHaContext.SimulateStateChange(_entities.Door.EntityId, "on", "off");
+        _mockHaContext.ShouldNeverHaveCalledLock(_entities.Lock.EntityId);
     }
 
     [Fact]

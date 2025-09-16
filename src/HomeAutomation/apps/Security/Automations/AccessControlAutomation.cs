@@ -67,6 +67,7 @@ public class AccessControlAutomation(
                     if (_autoLockOnDoorClose)
                     {
                         _lock.Lock();
+                        _autoLockOnDoorClose = false;
                     }
                 }),
             _door
