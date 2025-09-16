@@ -57,18 +57,46 @@ public class AccessControlAutomation(
 
     private IEnumerable<IDisposable> GetDoorAutoLockAutomations() =>
         [
-            _door.OnClosed().Subscribe(_ => _doorRecentlyClosed = true),
+            _door
+                .OnClosed()
+                .Subscribe(_ =>
+                {
+                    Logger.LogInformation("Door closed. Marking door as recently closed.");
+                    _doorRecentlyClosed = true;
+                }),
             _door
                 .OnClosed(new(Minutes: DOOR_CLOSE_WINDOW_DELAY))
-                .Subscribe(_ => _doorRecentlyClosed = false),
+                .Subscribe(_ =>
+                {
+                    Logger.LogInformation(
+                        "Door has been closed for {Delay} minutes. Clearing 'recently closed' flag.",
+                        DOOR_CLOSE_WINDOW_DELAY
+                    );
+                    _doorRecentlyClosed = false;
+                }),
         ];
 
     private IEnumerable<IDisposable> GetLockSuppressionDelayAutomation() =>
         [
-            entities.House.OnOccupied().Subscribe(_ => _suppressUnlocks = true),
+            entities
+                .House.OnOccupied(new(StartImmediately: false))
+                .Subscribe(_ =>
+                {
+                    Logger.LogInformation(
+                        "House occupied. Suppressing unlocks for {Delay} minutes.",
+                        UNLOCK_SUPPRESION_DELAY
+                    );
+                    _suppressUnlocks = true;
+                }),
             entities
                 .House.OnOccupied(new(Minutes: UNLOCK_SUPPRESION_DELAY))
-                .Subscribe(_ => _suppressUnlocks = false),
+                .Subscribe(_ =>
+                {
+                    Logger.LogInformation(
+                        "Unlock suppression window expired. Re-enabling unlocks."
+                    );
+                    _suppressUnlocks = false;
+                }),
         ];
 
     private void OnArrival(IPersonController person, string triggerEntityId)
