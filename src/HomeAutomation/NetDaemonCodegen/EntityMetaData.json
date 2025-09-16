@@ -1104,16 +1104,6 @@
           "cSharpName": "AcFanModeToggle"
         },
         {
-          "id": "button.air_fryer_time_decrease",
-          "friendlyName": "Air Fryer Time Decrease",
-          "cSharpName": "AirFryerTimeDecrease"
-        },
-        {
-          "id": "button.air_fryer_time_increase",
-          "friendlyName": "Air Fryer Time Increase",
-          "cSharpName": "AirFryerTimeIncrease"
-        },
-        {
           "id": "button.bathroom_lights_restart",
           "friendlyName": "Bathroom Lights Restart",
           "cSharpName": "BathroomLightsRestart"
@@ -4205,6 +4195,16 @@
           "cSharpName": "PocoF4GtDetectedActivity"
         },
         {
+          "id": "sensor.poco_f4_gt_last_notification",
+          "friendlyName": "POCO F4 GT Last notification",
+          "cSharpName": "PocoF4GtLastNotification"
+        },
+        {
+          "id": "sensor.poco_f4_gt_last_removed_notification",
+          "friendlyName": "POCO F4 GT Last removed notification",
+          "cSharpName": "PocoF4GtLastRemovedNotification"
+        },
+        {
           "id": "sensor.poco_f4_gt_last_update_trigger",
           "friendlyName": "POCO F4 GT Last update trigger",
           "cSharpName": "PocoF4GtLastUpdateTrigger"
@@ -4218,11 +4218,6 @@
           "id": "sensor.poco_f4_gt_screen_brightness",
           "friendlyName": "POCO F4 GT Screen brightness",
           "cSharpName": "PocoF4GtScreenBrightness"
-        },
-        {
-          "id": "sensor.poco_f4_gt_wi_fi_ip_address",
-          "friendlyName": "POCO F4 GT Wi-Fi IP address",
-          "cSharpName": "PocoF4GtWiFiIpAddress"
         },
         {
           "id": "sensor.real_debrid_download_link",
@@ -4970,6 +4965,201 @@
           "jsonName": "automatic",
           "cSharpName": "Automatic",
           "clrType": "System.Boolean"
+        },
+        {
+          "jsonName": "android.appInfo",
+          "cSharpName": "Android_appInfo",
+          "clrType": "System.String"
+        },
+        {
+          "jsonName": "android.contains.customView",
+          "cSharpName": "Android_contains_customView",
+          "clrType": "System.Boolean"
+        },
+        {
+          "jsonName": "android.infoText",
+          "cSharpName": "Android_infoText",
+          "clrType": "System.String"
+        },
+        {
+          "jsonName": "android.largeIcon",
+          "cSharpName": "Android_largeIcon",
+          "clrType": "System.String"
+        },
+        {
+          "jsonName": "android.progress",
+          "cSharpName": "Android_progress",
+          "clrType": "System.Double"
+        },
+        {
+          "jsonName": "android.progressIndeterminate",
+          "cSharpName": "Android_progressIndeterminate",
+          "clrType": "System.Boolean"
+        },
+        {
+          "jsonName": "android.progressMax",
+          "cSharpName": "Android_progressMax",
+          "clrType": "System.Double"
+        },
+        {
+          "jsonName": "android.reduced.images",
+          "cSharpName": "Android_reduced_images",
+          "clrType": "System.Boolean"
+        },
+        {
+          "jsonName": "android.remoteInputHistory",
+          "cSharpName": "Android_remoteInputHistory",
+          "clrType": "System.String"
+        },
+        {
+          "jsonName": "android.showChronometer",
+          "cSharpName": "Android_showChronometer",
+          "clrType": "System.Boolean"
+        },
+        {
+          "jsonName": "android.showWhen",
+          "cSharpName": "Android_showWhen",
+          "clrType": "System.Boolean"
+        },
+        {
+          "jsonName": "android.subText",
+          "cSharpName": "Android_subText",
+          "clrType": "System.String"
+        },
+        {
+          "jsonName": "android.template",
+          "cSharpName": "Android_template",
+          "clrType": "System.String"
+        },
+        {
+          "jsonName": "android.text",
+          "cSharpName": "Android_text",
+          "clrType": "System.String"
+        },
+        {
+          "jsonName": "android.title",
+          "cSharpName": "Android_title",
+          "clrType": "System.String"
+        },
+        {
+          "jsonName": "androidx.core.app.extra.COMPAT_TEMPLATE",
+          "cSharpName": "Androidx_core_app_extra_COMPATTEMPLATE",
+          "clrType": "System.String"
+        },
+        {
+          "jsonName": "category",
+          "cSharpName": "Category",
+          "clrType": "System.String"
+        },
+        {
+          "jsonName": "channel_id",
+          "cSharpName": "ChannelId",
+          "clrType": "System.String"
+        },
+        {
+          "jsonName": "group_id",
+          "cSharpName": "GroupId",
+          "clrType": "System.String"
+        },
+        {
+          "jsonName": "is_clearable",
+          "cSharpName": "IsClearable",
+          "clrType": "System.Boolean"
+        },
+        {
+          "jsonName": "is_ongoing",
+          "cSharpName": "IsOngoing",
+          "clrType": "System.Boolean"
+        },
+        {
+          "jsonName": "package",
+          "cSharpName": "Package",
+          "clrType": "System.String"
+        },
+        {
+          "jsonName": "post_time",
+          "cSharpName": "PostTime",
+          "clrType": "System.Double"
+        },
+        {
+          "jsonName": "android.compactActions",
+          "cSharpName": "Android_compactActions",
+          "clrType": "System.Collections.Generic.IReadOnlyList\u00601[System.Double]"
+        },
+        {
+          "jsonName": "android.mediaRemoteDevice",
+          "cSharpName": "Android_mediaRemoteDevice",
+          "clrType": "System.String"
+        },
+        {
+          "jsonName": "android.mediaRemoteIcon",
+          "cSharpName": "Android_mediaRemoteIcon",
+          "clrType": "System.Double"
+        },
+        {
+          "jsonName": "android.substName",
+          "cSharpName": "Android_substName",
+          "clrType": "System.String"
+        },
+        {
+          "jsonName": "Resolution",
+          "cSharpName": "Resolution",
+          "clrType": "System.String"
+        },
+        {
+          "jsonName": "Width",
+          "cSharpName": "Width",
+          "clrType": "System.Double"
+        },
+        {
+          "jsonName": "Height",
+          "cSharpName": "Height",
+          "clrType": "System.Double"
+        },
+        {
+          "jsonName": "VirtualResolution",
+          "cSharpName": "VirtualResolution",
+          "clrType": "System.String"
+        },
+        {
+          "jsonName": "VirtualWidth",
+          "cSharpName": "VirtualWidth",
+          "clrType": "System.Double"
+        },
+        {
+          "jsonName": "VirtualHeight",
+          "cSharpName": "VirtualHeight",
+          "clrType": "System.Double"
+        },
+        {
+          "jsonName": "BitsPerPixel",
+          "cSharpName": "BitsPerPixel",
+          "clrType": "System.Double"
+        },
+        {
+          "jsonName": "PrimaryDisplay",
+          "cSharpName": "PrimaryDisplay",
+          "clrType": "System.Boolean"
+        },
+        {
+          "jsonName": "WorkingArea",
+          "cSharpName": "WorkingArea",
+          "clrType": "System.String"
+        },
+        {
+          "jsonName": "WorkingAreaWidth",
+          "cSharpName": "WorkingAreaWidth",
+          "clrType": "System.Double"
+        },
+        {
+          "jsonName": "WorkingAreaHeight",
+          "cSharpName": "WorkingAreaHeight",
+          "clrType": "System.Double"
+        },
+        {
+          "jsonName": "RotatedDegrees",
+          "cSharpName": "RotatedDegrees",
+          "clrType": "System.Double"
         }
       ]
     },
@@ -7550,6 +7740,11 @@
           "id": "update.card_mod_update",
           "friendlyName": "card-mod update",
           "cSharpName": "CardModUpdate"
+        },
+        {
+          "id": "update.cloudflared_update",
+          "friendlyName": "Cloudflared Update",
+          "cSharpName": "CloudflaredUpdate"
         },
         {
           "id": "update.desk_motion_sensor_firmware",
