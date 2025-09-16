@@ -51,6 +51,7 @@ public abstract class MotionSensorBase(
         [
             SmartPresence
                 .OnOccupied(new(StartImmediately: false, AllowFromUnavailable: false))
+                .Where(_ => MasterSwitch.IsOn())
                 .Subscribe(_ => MotionCalibrator.LogMotionTrigger(Zones, Logger)),
         ];
 
