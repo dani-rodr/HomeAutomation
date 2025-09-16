@@ -10,7 +10,7 @@ public class AccessControlAutomation(
     private readonly BinarySensorEntity _door = entities.Door;
     private readonly LockEntity _lock = entities.Lock;
 
-    private const int LOCK_ON_AWAY_DELAY = 60;
+    private const int LOCK_ON_AWAY_DELAY = 0;
     private const int DOOR_CLOSE_WINDOW_DELAY = 5;
     private const int UNLOCK_SUPPRESION_DELAY = 10;
     private volatile bool _doorRecentlyClosed = false;
@@ -37,21 +37,21 @@ public class AccessControlAutomation(
 
         foreach (var person in _personControllers)
         {
-            yield return person.ArrivedHome.Subscribe(triggerId =>
-                OnHomeTriggerActivated(person, triggerId)
-            );
-            yield return person.LeftHome.Subscribe(triggerId =>
-                OnAwayTriggerActivated(person, triggerId)
-            );
-            yield return person.DirectUnlock.Subscribe(triggerId =>
-            {
-                Logger.LogInformation(
-                    "{PersonName} direct unlock trigger activated: {TriggerEntity}",
-                    person.Name,
-                    triggerId
-                );
-                _lock.Unlock();
-            });
+            yield return person.OnArrived().Subscribe(triggerId => OnArrival(person, triggerId));
+            yield return person
+                .OnDeparted(new(Seconds: LOCK_ON_AWAY_DELAY))
+                .Subscribe(triggerId => OnDeparture(person, triggerId));
+            yield return person
+                .OnUnlocked()
+                .Subscribe(triggerId =>
+                {
+                    Logger.LogInformation(
+                        "{PersonName} direct unlock trigger activated: {TriggerEntity}",
+                        person.Name,
+                        triggerId
+                    );
+                    _lock.Unlock();
+                });
         }
     }
 
@@ -71,7 +71,7 @@ public class AccessControlAutomation(
                 .Subscribe(_ => _suppressUnlocks = false),
         ];
 
-    private void OnHomeTriggerActivated(IPersonController person, string triggerEntityId)
+    private void OnArrival(IPersonController person, string triggerEntityId)
     {
         Logger.LogInformation(
             "{PersonName} home trigger activated: {TriggerEntity}",
@@ -105,7 +105,7 @@ public class AccessControlAutomation(
         Logger.LogInformation("House occupied. Unlocking for {PersonName}", person.Name);
     }
 
-    private void OnAwayTriggerActivated(IPersonController person, string triggerEntityId)
+    private void OnDeparture(IPersonController person, string triggerEntityId)
     {
         Logger.LogInformation(
             "{PersonName} away trigger activated after {LockDelay}s delay: {TriggerEntity}",

@@ -2,6 +2,27 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace HomeAutomation.apps.Helpers.Extensions.Entities;
 
+public record BinaryDuration(
+    bool StartImmediately = true,
+    bool AllowFromUnavailable = true,
+    int Days = 0,
+    int Hours = 0,
+    int Minutes = 0,
+    int Seconds = 0,
+    int Milliseconds = 0,
+    Func<EntityState<BinarySensorAttributes>?, bool>? Condition = null
+)
+    : DurationOptions<EntityState<BinarySensorAttributes>>(
+        StartImmediately,
+        AllowFromUnavailable,
+        Days,
+        Hours,
+        Minutes,
+        Seconds,
+        Milliseconds,
+        Condition
+    );
+
 public static class BinaryEntityExtensions
 {
     public static IObservable<

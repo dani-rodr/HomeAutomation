@@ -8,9 +8,9 @@ public interface IPersonController : IAutomation
     void SetHome();
     void SetAway();
     string Name { get; }
-    IObservable<string> ArrivedHome { get; }
-    IObservable<string> LeftHome { get; }
-    IObservable<string> DirectUnlock { get; }
+    IObservable<string> OnArrived(BinaryDuration? duration = null);
+    IObservable<string> OnDeparted(BinaryDuration? duration = null);
+    IObservable<string> OnUnlocked(BinaryDuration? duration = null);
 }
 
 public class PersonController(IPersonEntities entities, IServices services, ILogger logger)
@@ -22,24 +22,25 @@ public class PersonController(IPersonEntities entities, IServices services, ILog
     private readonly ButtonEntity _toggle = entities.ToggleLocation;
     private readonly Subject<string> _arrivedHomeSubject = new();
     private readonly Subject<string> _leftHomeSubject = new();
-    private const int AWAY_DELAY = 60;
 
-    public IObservable<string> ArrivedHome =>
+    public IObservable<string> OnArrived(BinaryDuration? duration = null) =>
         entities
-            .HomeTriggers.OnTurnedOn()
+            .HomeTriggers.OnTurnedOn(duration)
             .Where(_ => _person.IsAway())
             .Select(trigger => trigger.Entity.EntityId)
             .Merge(_arrivedHomeSubject);
 
-    public IObservable<string> LeftHome =>
+    public IObservable<string> OnDeparted(BinaryDuration? duration = null) =>
         entities
-            .AwayTriggers.OnTurnedOff(new(Seconds: AWAY_DELAY))
+            .AwayTriggers.OnTurnedOff(duration)
             .Where(_ => _person.IsHome())
             .Select(trigger => trigger.Entity.EntityId)
             .Merge(_leftHomeSubject);
 
-    public IObservable<string> DirectUnlock =>
-        entities.DirectUnlockTriggers.OnTurnedOn().Select(trigger => trigger.Entity.EntityId);
+    public IObservable<string> OnUnlocked(BinaryDuration? duration = null) =>
+        entities
+            .DirectUnlockTriggers.OnTurnedOn(duration)
+            .Select(trigger => trigger.Entity.EntityId);
 
     public string Name => _person.Attributes?.FriendlyName ?? "Unknown";
 

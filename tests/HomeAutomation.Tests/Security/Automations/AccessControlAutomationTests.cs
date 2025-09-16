@@ -720,15 +720,17 @@ public class AccessControlAutomationTests : IDisposable
         // Setup observables based on person number
         if (index == 1)
         {
-            mock.SetupGet(p => p.ArrivedHome).Returns(_person1ArrivedHome);
-            mock.SetupGet(p => p.LeftHome).Returns(_person1LeftHome);
-            mock.SetupGet(p => p.DirectUnlock).Returns(_person1DirectUnlock);
+            mock.Setup(p => p.OnArrived(It.IsAny<BinaryDuration?>())).Returns(_person1ArrivedHome);
+            mock.Setup(p => p.OnDeparted(It.IsAny<BinaryDuration?>())).Returns(_person1LeftHome);
+            mock.Setup(p => p.OnUnlocked(It.IsAny<BinaryDuration?>()))
+                .Returns(_person1DirectUnlock);
         }
         else
         {
-            mock.SetupGet(p => p.ArrivedHome).Returns(_person2ArrivedHome);
-            mock.SetupGet(p => p.LeftHome).Returns(_person2LeftHome);
-            mock.SetupGet(p => p.DirectUnlock).Returns(Observable.Never<string>()); // Person 2 has no direct unlock
+            mock.Setup(p => p.OnArrived(It.IsAny<BinaryDuration?>())).Returns(_person2ArrivedHome);
+            mock.Setup(p => p.OnDeparted(It.IsAny<BinaryDuration?>())).Returns(_person2LeftHome);
+            mock.Setup(p => p.OnUnlocked(It.IsAny<BinaryDuration?>()))
+                .Returns(Observable.Never<string>()); // Person 2 has no direct unlock
         }
 
         return mock;

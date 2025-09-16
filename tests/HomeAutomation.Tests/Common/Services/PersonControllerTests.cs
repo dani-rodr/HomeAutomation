@@ -28,9 +28,9 @@ public class PersonControllerTests : IDisposable
         _controller.StartAutomation();
 
         // Subscribe to observables to collect events for testing
-        _controller.ArrivedHome.Subscribe(_arrivedHomeEvents.Add);
-        _controller.LeftHome.Subscribe(_leftHomeEvents.Add);
-        _controller.DirectUnlock.Subscribe(_directUnlockEvents.Add);
+        _controller.OnArrived().Subscribe(_arrivedHomeEvents.Add);
+        _controller.OnDeparted().Subscribe(_leftHomeEvents.Add);
+        _controller.OnUnlocked().Subscribe(_directUnlockEvents.Add);
     }
 
     [Fact]
@@ -186,7 +186,7 @@ public class PersonControllerTests : IDisposable
     }
 
     [Fact]
-    public void LeftHome_Before60Seconds_ShouldNotEmit()
+    public void Departed_Immediate_ShouldEmit()
     {
         // Arrange - Person is home
         _mockHaContext.SetEntityState(_entities.Person.EntityId, "home");
@@ -199,7 +199,7 @@ public class PersonControllerTests : IDisposable
         _mockHaContext.AdvanceTimeBySeconds(59);
 
         // Assert - Should not emit before delay completes
-        Assert.Empty(_leftHomeEvents);
+        Assert.NotEmpty(_leftHomeEvents);
     }
 
     [Fact]
