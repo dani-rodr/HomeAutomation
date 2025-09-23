@@ -30,7 +30,7 @@ public class LightAutomation(
     protected override IEnumerable<IDisposable> GetAdditionalPersistentAutomations()
     {
         yield return TurnOnMotionSensorOnTvOff();
-        yield return TurnOnMotionSensorAfterNoMotionAndRoomOccupied();
+        // yield return TurnOnMotionSensorAfterNoMotionAndRoomOccupied();
     }
 
     protected override IEnumerable<IDisposable> GetAdditionalSwitchableAutomations()
