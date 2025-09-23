@@ -86,12 +86,7 @@ public class LightAutomationTests : IDisposable
         // Assert - Verify exact call counts for the sequence
         _mockHaContext.ShouldHaveCalledLightExactly(_entities.Light.EntityId, "turn_on", 2);
         _mockHaContext.ShouldHaveCalledLightExactly(_entities.Light.EntityId, "turn_off", 1);
-        _mockHaContext.ShouldHaveCalledSwitchExactly(
-            _entities.PantryAutomation.EntityId,
-            "turn_on",
-            1
-        );
-        _mockHaContext.ShouldHaveServiceCallCount(4); // on, off, on
+        _mockHaContext.ShouldHaveServiceCallCount(3); // on, off, on
     }
 
     #endregion

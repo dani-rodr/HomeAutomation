@@ -6,9 +6,8 @@ namespace HomeAutomation.apps.Helpers;
 
 public static class ServiceCollectionExtensions
 {
-    public static IServiceCollection AddHomeEntitiesAndServices(this IServiceCollection services)
-    {
-        return services
+    public static IServiceCollection AddHomeEntitiesAndServices(this IServiceCollection services) =>
+        services
             .AddTransient<IEventHandler, HaEventHandler>()
             .AddTransient<Devices>()
             .AddTransient<ILockingEntities, LockingEntities>()
@@ -27,44 +26,37 @@ public static class ServiceCollectionExtensions
             .AddTransient<AthenaEntities>()
             .AddAreaEntities()
             .AddMotionSensors();
-    }
 
-    private static IServiceCollection AddAreaEntities(this IServiceCollection services)
-    {
-        return services
+    private static IServiceCollection AddAreaEntities(this IServiceCollection services) =>
+        services
             .AddBedroomEntities()
             .AddDeskEntities()
             .AddBathroomEntities()
             .AddKitchenEntities()
             .AddLivingRoomEntities()
-            .AddPantryEntities();
-    }
+            .AddPantryEntities()
+            .AddCrossAreaEntities();
 
-    private static IServiceCollection AddMotionSensors(this IServiceCollection services)
-    {
-        return services
+    private static IServiceCollection AddMotionSensors(this IServiceCollection services) =>
+        services
             .AddTransient<Area.Bathroom.Devices.MotionSensor>()
             .AddTransient<Area.Bedroom.Devices.MotionSensor>()
             .AddTransient<Area.LivingRoom.Devices.MotionSensor>()
             .AddTransient<Area.Kitchen.Devices.MotionSensor>()
             .AddTransient<Area.Desk.Devices.MotionSensor>()
             .AddTransient<Area.Pantry.Devices.MotionSensor>();
-    }
 
-    private static IServiceCollection AddBedroomEntities(this IServiceCollection services)
-    {
-        return services
+    private static IServiceCollection AddBedroomEntities(this IServiceCollection services) =>
+        services
             .AddTransient<IBedroomLightEntities, BedroomLightEntities>()
             .AddTransient<IBedroomFanEntities, BedroomFanEntities>()
             .AddTransient<IClimateEntities, BedroomClimateEntities>()
             .AddTransient<IClimateSchedulerEntities, ClimateSchedulerEntities>()
             .AddTransient<IAcTemperatureCalculator, AcTemperatureCalculator>()
             .AddTransient<IClimateScheduler, ClimateScheduler>();
-    }
 
-    private static IServiceCollection AddDeskEntities(this IServiceCollection services)
-    {
-        return services
+    private static IServiceCollection AddDeskEntities(this IServiceCollection services) =>
+        services
             .AddTransient<IDeskLightEntities, DeskLightEntities>()
             .AddTransient<ILgDisplayEntities, LgDisplayEntities>()
             .AddTransient<IDesktopEntities, DeskDesktopEntities>()
@@ -76,33 +68,27 @@ public static class ServiceCollectionExtensions
             .AddTransient<ILgDisplay, LgDisplay>()
             .AddTransient<IDesktop, Desktop>()
             .AddTransient<ILaptop, Laptop>();
-    }
 
-    private static IServiceCollection AddBathroomEntities(this IServiceCollection services)
-    {
-        return services.AddTransient<IBathroomLightEntities, BathroomLightEntities>();
-    }
+    private static IServiceCollection AddBathroomEntities(this IServiceCollection services) =>
+        services.AddTransient<IBathroomLightEntities, BathroomLightEntities>();
 
-    private static IServiceCollection AddKitchenEntities(this IServiceCollection services)
-    {
-        return services
+    private static IServiceCollection AddKitchenEntities(this IServiceCollection services) =>
+        services
             .AddTransient<IKitchenLightEntities, KitchenLightEntities>()
             .AddTransient<ICookingEntities, KitchenCookingEntities>();
-    }
 
-    private static IServiceCollection AddLivingRoomEntities(this IServiceCollection services)
-    {
-        return services
+    private static IServiceCollection AddLivingRoomEntities(this IServiceCollection services) =>
+        services
             .AddTransient<ILivingRoomLightEntities, LivingRoomLightEntities>()
             .AddTransient<ILivingRoomFanEntities, LivingRoomFanEntities>()
             .AddTransient<IAirQualityEntities, AirQualityEntities>()
             .AddTransient<ITabletEntities, LivingRoomTabletEntities>()
             .AddTransient<ITclDisplayEntities, TclDisplayEntities>()
             .AddTransient<ITclDisplay, TclDisplay>();
-    }
 
-    private static IServiceCollection AddPantryEntities(this IServiceCollection services)
-    {
-        return services.AddTransient<IPantryLightEntities, PantryLightEntities>();
-    }
+    private static IServiceCollection AddPantryEntities(this IServiceCollection services) =>
+        services.AddTransient<IPantryLightEntities, PantryLightEntities>();
+
+    private static IServiceCollection AddCrossAreaEntities(this IServiceCollection services) =>
+        services.AddTransient<ICrossAreaEntities, CrossAreaEntities>();
 }

@@ -1,15 +1,32 @@
 using System.Linq;
-using System.Reactive.Disposables;
 
 namespace HomeAutomation.apps.Common.Base;
+
+using BinaryStream = IObservable<
+    StateChange<BinarySensorEntity, EntityState<BinarySensorAttributes>>
+>;
+
+public interface IMotionSensor
+{
+    BinaryStream OnOccupied(BinaryDuration? options = null);
+    BinaryStream OnCleared(BinaryDuration? options = null);
+}
 
 public abstract class MotionSensorBase(
     ITypedEntityFactory factory,
     IMotionSensorRestartScheduler scheduler,
     string deviceName,
     ILogger logger
-) : ToggleableAutomation(factory.Create<SwitchEntity>(deviceName, "auto_calibrate"), logger)
+)
+    : ToggleableAutomation(factory.Create<SwitchEntity>(deviceName, "auto_calibrate"), logger),
+        IMotionSensor
 {
+    public BinaryStream OnOccupied(BinaryDuration? options = null) =>
+        SmartPresence.OnOccupied(options);
+
+    public BinaryStream OnCleared(BinaryDuration? options = null) =>
+        SmartPresence.OnCleared(options);
+
     private readonly BinarySensorEntity SmartPresence = factory.Create<BinarySensorEntity>(
         deviceName,
         "smart_presence"

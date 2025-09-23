@@ -32,7 +32,6 @@ public interface IBedroomLightEntities : ILightAutomationEntities
 {
     SwitchEntity RightSideEmptySwitch { get; }
     SwitchEntity LeftSideFanSwitch { get; }
-    SwitchEntity PantryAutomation { get; }
 }
 
 public interface ILivingRoomLightEntities : ILightAutomationEntities
@@ -172,4 +171,9 @@ public interface IAccessControlAutomationEntities
     BinarySensorEntity Door { get; }
     BinarySensorEntity House { get; }
     LockEntity Lock { get; }
+}
+
+public interface ICrossAreaEntities
+{
+    SwitchEntity PantryAutomation { get; }
 }

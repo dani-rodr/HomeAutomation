@@ -12,7 +12,6 @@ public class BedroomLightEntities(Devices devices) : IBedroomLightEntities
     public SwitchEntity RightSideEmptySwitch => _area.ExtraControl!.RightSideEmptySwitch!;
     public SwitchEntity LeftSideFanSwitch => _area.FanControl!;
     public ButtonEntity Restart => _area.MotionControl;
-    public SwitchEntity PantryAutomation => devices.Pantry.LightControl!.Automation;
 }
 
 public class LivingRoomLightEntities(Devices devices) : ILivingRoomLightEntities
@@ -264,4 +263,9 @@ public class AccessControlAutomationEntities(Devices devices) : IAccessControlAu
     public BinarySensorEntity Door => _lockControl.Door;
     public LockEntity Lock => _lockControl.Lock;
     public BinarySensorEntity House => _lockControl.HouseStatus;
+}
+
+public class CrossAreaEntities(Devices devices) : ICrossAreaEntities
+{
+    public SwitchEntity PantryAutomation => devices.Pantry.LightControl.Automation;
 }
