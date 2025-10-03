@@ -90,7 +90,6 @@ public class BedroomClimateEntities(Devices devices) : IClimateEntities
     public ClimateEntity AirConditioner => _area.ClimateControl!;
     public BinarySensorEntity MotionSensor => _area.MotionControl;
     public BinarySensorEntity Door => _area.ContactSensor!;
-    public SwitchEntity FanAutomation => _area.FanControl!.Automation;
     public BinarySensorEntity HouseMotionSensor => devices.Global.MotionControl;
     public ButtonEntity AcFanModeToggle => _area.ClimateControl!;
     public SwitchEntity Fan => _area.FanControl!;

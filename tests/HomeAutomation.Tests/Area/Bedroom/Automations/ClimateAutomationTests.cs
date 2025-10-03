@@ -835,7 +835,7 @@ public class ClimateAutomationTests : IDisposable
         scenario.Should().NotBeEmpty("Test scenario should be documented");
     }
 
-    [Theory]
+    [Theory(Skip = "Fan activation feature removed")]
     [InlineData(true, "Fan should be activated when setting.ActivateFan is true")]
     [InlineData(false, "Fan should not be activated when setting.ActivateFan is false")]
     public void ClimateAutomation_FanActivation_Should_Follow_Setting(

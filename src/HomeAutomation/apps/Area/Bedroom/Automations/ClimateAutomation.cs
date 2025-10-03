@@ -193,31 +193,10 @@ public class ClimateAutomation(
             setting.ActivateFan
         );
         SetAcTemperatureAndMode(targetTemp, setting.Mode);
-        ConditionallyActivateFan(setting.ActivateFan, targetTemp);
     }
 
     private void SetAcTemperatureAndMode(int temperature, string hvacMode)
     {
         _ac.SetTemperature(temperature: temperature, hvacMode: hvacMode);
-    }
-
-    private void ConditionallyActivateFan(bool activateFan, int targetTemp)
-    {
-        var isHot = _ac.Attributes?.CurrentTemperature >= targetTemp;
-        if (activateFan)
-        {
-            if (isHot)
-            {
-                entities.Fan.TurnOn();
-            }
-            entities.FanAutomation.TurnOn();
-            return;
-        }
-        if (_motionSensor.IsClear())
-        {
-            entities.Fan.TurnOff();
-            entities.FanAutomation.TurnOff();
-            return;
-        }
     }
 }
