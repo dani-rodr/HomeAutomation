@@ -52,6 +52,7 @@ public class AccessControlAutomation(
                         triggerId
                     );
                     _lock.Unlock();
+                    person.SetHome();
                 });
         }
     }

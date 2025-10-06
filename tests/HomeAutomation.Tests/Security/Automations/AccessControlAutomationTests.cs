@@ -726,6 +726,11 @@ public class AccessControlAutomationTests : IDisposable
 
         // Assert - Should unlock door immediately
         _mockHaContext.ShouldHaveCalledLockUnlock(_entities.Lock.EntityId);
+        _mockPerson1Controller.Verify(
+            p => p.SetHome(),
+            Times.Once,
+            "Should set Person 1 home when home trigger activates"
+        );
     }
 
     #region Helper Methods
