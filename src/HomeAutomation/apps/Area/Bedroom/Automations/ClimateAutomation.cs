@@ -192,11 +192,6 @@ public class ClimateAutomation(
             setting.Mode,
             setting.ActivateFan
         );
-        SetAcTemperatureAndMode(targetTemp, setting.Mode);
-    }
-
-    private void SetAcTemperatureAndMode(int temperature, string hvacMode)
-    {
-        _ac.SetTemperature(temperature: temperature, hvacMode: hvacMode);
+        _ac.SetTemperature(temperature: targetTemp, hvacMode: setting.Mode);
     }
 }

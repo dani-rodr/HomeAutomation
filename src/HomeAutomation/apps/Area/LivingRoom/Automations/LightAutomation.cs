@@ -30,7 +30,6 @@ public class LightAutomation(
     protected override IEnumerable<IDisposable> GetAdditionalPersistentAutomations()
     {
         yield return TurnOnMotionSensorOnTvOff();
-        // yield return TurnOnMotionSensorAfterNoMotionAndRoomOccupied();
     }
 
     protected override IEnumerable<IDisposable> GetAdditionalSwitchableAutomations()
@@ -40,16 +39,6 @@ public class LightAutomation(
     }
 
     private void TurnOnLights(StateChange e) => dimmingController.OnMotionDetected(Light);
-
-    private IDisposable TurnOnMotionSensorAfterNoMotionAndRoomOccupied()
-    {
-        return MotionSensor
-            .OnCleared(new(Minutes: 2))
-            .Where(_ =>
-                entities.BedroomDoor.IsClosed() && entities.BedroomMotionSensor.IsOccupied()
-            )
-            .Subscribe(_ => MasterSwitch.TurnOn());
-    }
 
     private IDisposable TurnOnMotionSensorOnTvOff()
     {

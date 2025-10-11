@@ -106,7 +106,7 @@ public class FanAutomationTests : IDisposable
     }
 
     [Fact]
-    public void CeilingFanOffFor15Minutes_Should_SetShouldActivateFanTrue()
+    public void CeilingFanOffFor15Minutes_Should_SetShouldNotActivateFans()
     {
         // This tests the ceiling fan being off for 15 minutes automatically re-enabling activation
 
@@ -119,7 +119,7 @@ public class FanAutomationTests : IDisposable
         _mockHaContext.AdvanceTimeByMinutes(15);
 
         // Assert
-        _mockHaContext.ShouldHaveCalledSwitchExactly(_entities.MasterSwitch.EntityId, "turn_on", 1);
+        _mockHaContext.ShouldHaveCalledSwitchExactly(_entities.MasterSwitch.EntityId, "turn_on", 0);
     }
 
     [Fact]

@@ -10,6 +10,7 @@ public class AirQualityAutomation(
     private readonly SwitchEntity _supportingFan = entities.SupportingFan;
     private bool _activateSupportingFan = false;
     private bool _isCleaningAir = false;
+    private bool _wasSalaAutomationTurnOff = false;
     private const int CLEAN_AIR_THRESHOLD = 7;
     private const int DIRTY_AIR_THRESHOLD = 75;
 
@@ -61,12 +62,16 @@ public class AirQualityAutomation(
         if (_isCleaningAir && !_activateSupportingFan)
         {
             Logger.LogInformation(
-                "Exiting cleaning mode – turning off supporting fan and re-enabling living room switch"
+                "Exiting cleaning mode - turning off supporting fan and re-enabling living room switch"
             );
             _supportingFan.TurnOff();
             _isCleaningAir = false;
             _activateSupportingFan = false;
-            entities.LivingRoomFanAutomation.TurnOn();
+            if (_wasSalaAutomationTurnOff)
+            {
+                entities.LivingRoomFanAutomation.TurnOn();
+                _wasSalaAutomationTurnOff = true;
+            }
         }
     }
 
@@ -74,17 +79,21 @@ public class AirQualityAutomation(
     {
         if (_activateSupportingFan)
         {
-            Logger.LogDebug("Supporting fan manually activated – skipping automatic override");
+            Logger.LogDebug("Supporting fan manually activated - skipping automatic override");
             return;
         }
 
         Logger.LogInformation(
-            "Entering cleaning mode – turning on supporting fan and disabling living room switch"
+            "Entering cleaning mode - turning on supporting fan and disabling living room switch"
         );
         _supportingFan.TurnOn();
         _isCleaningAir = true;
         _activateSupportingFan = false;
-        entities.LivingRoomFanAutomation.TurnOff();
+        if (entities.LivingRoomFanAutomation.IsOn())
+        {
+            _wasSalaAutomationTurnOff = true;
+            entities.LivingRoomFanAutomation.TurnOff();
+        }
     }
 
     private IDisposable SubscribeToManualFanOperation() =>
@@ -94,7 +103,7 @@ public class AirQualityAutomation(
             .Subscribe(e =>
             {
                 _activateSupportingFan = true;
-                Logger.LogInformation("Manual fan operation detected – override flag enabled");
+                Logger.LogInformation("Manual fan operation detected - override flag enabled");
             });
 
     private IDisposable SubscribeToSupportingFanIdle() =>
@@ -103,7 +112,7 @@ public class AirQualityAutomation(
             .Subscribe(_ =>
             {
                 _activateSupportingFan = false;
-                Logger.LogInformation("Supporting fan idle for 10 minutes – override flag cleared");
+                Logger.LogInformation("Supporting fan idle for 10 minutes - override flag cleared");
             });
 
     private IDisposable SubscribeToFanStateChanges() =>
@@ -114,12 +123,12 @@ public class AirQualityAutomation(
                 if (MainFan.IsOn())
                 {
                     _ledStatus.TurnOn();
-                    Logger.LogDebug("Main fan turned ON – LED status ON");
+                    Logger.LogDebug("Main fan turned ON - LED status ON");
                 }
                 else
                 {
                     _ledStatus.TurnOff();
-                    Logger.LogDebug("Main fan turned OFF – LED status OFF");
+                    Logger.LogDebug("Main fan turned OFF - LED status OFF");
                 }
             });
 }

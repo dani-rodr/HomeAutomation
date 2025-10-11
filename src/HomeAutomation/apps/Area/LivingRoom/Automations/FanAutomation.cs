@@ -1,3 +1,5 @@
+using System.Reactive.Disposables;
+
 namespace HomeAutomation.apps.Area.LivingRoom.Automations;
 
 public class FanAutomation(ILivingRoomFanEntities entities, ILogger<FanAutomation> logger)
@@ -34,4 +36,6 @@ public class FanAutomation(ILivingRoomFanEntities entities, ILogger<FanAutomatio
         yield return MotionSensor.OnOccupied(new(Seconds: 3)).Subscribe(TurnOnFans);
         yield return MotionSensor.OnCleared(new(Minutes: 1)).Subscribe(TurnOffFans);
     }
+
+    protected override IDisposable GetIdleOperationAutomations() => Disposable.Empty;
 }
