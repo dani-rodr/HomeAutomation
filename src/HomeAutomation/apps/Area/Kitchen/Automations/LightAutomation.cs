@@ -7,7 +7,7 @@ public class LightAutomation(IKitchenLightEntities entities, ILogger<LightAutoma
 
     protected override int SensorWaitTime => 20;
     protected override int SensorActiveDelayValue => 20;
-    protected override int SensorInactiveDelayValue => 1;
+    protected override int SensorInactiveDelayValue => 3;
 
     protected override IEnumerable<IDisposable> GetLightAutomations() =>
         [
