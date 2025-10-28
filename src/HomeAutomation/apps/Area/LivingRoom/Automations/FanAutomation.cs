@@ -38,4 +38,9 @@ public class FanAutomation(ILivingRoomFanEntities entities, ILogger<FanAutomatio
     }
 
     protected override IDisposable GetIdleOperationAutomations() => Disposable.Empty;
+
+    protected override IEnumerable<IDisposable> GetPersistentAutomations()
+    {
+        yield return GetMasterSwitchAutomations();
+    }
 }

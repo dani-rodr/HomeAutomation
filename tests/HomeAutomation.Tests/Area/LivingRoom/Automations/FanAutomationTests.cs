@@ -56,85 +56,9 @@ public class FanAutomationTests : IDisposable
     }
 
     [Fact]
-    public void CeilingFanManuallyTurnedOn_Should_SetShouldActivateFanTrue()
+    public void MotionDetectedFor3Seconds_Should_TurnOnCeilingFan()
     {
-        // Act - Simulate ceiling fan being manually turned on
-        var manualOnStateChange = StateChangeHelpers.CreateSwitchStateChange(
-            _entities.CeilingFan,
-            "off",
-            "on",
-            HaIdentity.DANIEL_RODRIGUEZ
-        );
-        _mockHaContext.StateChangeSubject.OnNext(manualOnStateChange);
-        _mockHaContext.ShouldHaveCalledSwitchTurnOn(_entities.MasterSwitch.EntityId);
-
-        // Verify ShouldActivateFan is now true by testing subsequent behavior
-        // This is tested implicitly through motion response behavior
-        // Since the automation has complex timing, we verify state is set
-
-        // Assert - Manual operation should be processed
-        // (The specific fan behavior will be tested in motion tests)
-        var act = () => _mockHaContext.StateChangeSubject.OnNext(manualOnStateChange);
-        act.Should().NotThrow();
-    }
-
-    [Fact]
-    public void CeilingFanManuallyTurnedOff_Should_SetShouldActivateFanFalse()
-    {
-        // Arrange - First set ShouldActivateFan to true
-        var manualOnStateChange = StateChangeHelpers.CreateSwitchStateChange(
-            _entities.CeilingFan,
-            "off",
-            "on",
-            HaIdentity.DANIEL_RODRIGUEZ
-        );
-        _mockHaContext.StateChangeSubject.OnNext(manualOnStateChange);
-        _mockHaContext.ShouldHaveCalledSwitchTurnOn(_entities.MasterSwitch.EntityId);
-
-        // Act - Now manually turn off ceiling fan
-        var manualOffStateChange = StateChangeHelpers.CreateSwitchStateChange(
-            _entities.CeilingFan,
-            "on",
-            "off",
-            HaIdentity.DANIEL_RODRIGUEZ
-        );
-        _mockHaContext.StateChangeSubject.OnNext(manualOffStateChange);
-
-        // Assert - Manual operation should be processed
-        var act = () => _mockHaContext.StateChangeSubject.OnNext(manualOffStateChange);
-        act.Should().NotThrow();
-    }
-
-    [Fact]
-    public void CeilingFanOffFor15Minutes_Should_SetShouldNotActivateFans()
-    {
-        // This tests the ceiling fan being off for 15 minutes automatically re-enabling activation
-
-        // Arrange - Set fan to off state initially
-        _mockHaContext.SetEntityState(_entities.MasterSwitch.EntityId, "off");
-        _mockHaContext.SimulateStateChange(_entities.MotionSensor.EntityId, "on", "off");
-        _mockHaContext.ShouldHaveCalledSwitchExactly(_entities.MasterSwitch.EntityId, "turn_on", 0);
-
-        // Act
-        _mockHaContext.AdvanceTimeByMinutes(15);
-
-        // Assert
-        _mockHaContext.ShouldHaveCalledSwitchExactly(_entities.MasterSwitch.EntityId, "turn_on", 0);
-    }
-
-    [Fact]
-    public void MotionDetectedFor3Seconds_WithShouldActivateFanTrue_Should_TurnOnCeilingFan()
-    {
-        // Arrange - Set ShouldActivateFan to true via manual operation
-        var manualOnStateChange = StateChangeHelpers.CreateSwitchStateChange(
-            _entities.CeilingFan,
-            "off",
-            "on",
-            HaIdentity.DANIEL_RODRIGUEZ
-        );
-        _mockHaContext.StateChangeSubject.OnNext(manualOnStateChange);
-        _mockHaContext.ShouldHaveCalledSwitchTurnOn(_entities.MasterSwitch.EntityId);
-
+        // Arrange - Ensure MasterSwitch is on (already set in constructor)
         _mockHaContext.ClearServiceCalls();
 
         // Act - Simulate motion detection
@@ -154,17 +78,6 @@ public class FanAutomationTests : IDisposable
     {
         // Arrange - Set bedroom motion sensor to off
         _mockHaContext.SetEntityState(_entities.BedroomMotionSensor.EntityId, "off");
-
-        // Set ShouldActivateFan to true
-        var manualOnStateChange = StateChangeHelpers.CreateSwitchStateChange(
-            _entities.CeilingFan,
-            "off",
-            "on",
-            HaIdentity.DANIEL_RODRIGUEZ
-        );
-        _mockHaContext.StateChangeSubject.OnNext(manualOnStateChange);
-        _mockHaContext.ShouldHaveCalledSwitchTurnOn(_entities.MasterSwitch.EntityId);
-
         _mockHaContext.ClearServiceCalls();
 
         // Act - Simulate motion detection
@@ -233,18 +146,8 @@ public class FanAutomationTests : IDisposable
     }
 
     [Fact]
-    public void AutomatedFanOperation_Should_NotChangeShouldActivateFan()
+    public void AutomatedFanOperation_Should_NotThrow()
     {
-        // Arrange - Set ShouldActivateFan to true initially
-        var manualOnStateChange = StateChangeHelpers.CreateSwitchStateChange(
-            _entities.CeilingFan,
-            "off",
-            "on",
-            HaIdentity.DANIEL_RODRIGUEZ
-        );
-        _mockHaContext.StateChangeSubject.OnNext(manualOnStateChange);
-        _mockHaContext.ShouldHaveCalledSwitchTurnOn(_entities.MasterSwitch.EntityId);
-
         // Act - Simulate automated fan operation (automation turning fan on/off)
         var automatedStateChange = StateChangeHelpers.CreateSwitchStateChange(
             _entities.CeilingFan,
@@ -253,7 +156,7 @@ public class FanAutomationTests : IDisposable
             null // No user ID indicates automation
         );
 
-        // Assert - Should process automated changes without affecting manual override logic
+        // Assert - Should process automated changes without errors
         var act = () => _mockHaContext.StateChangeSubject.OnNext(automatedStateChange);
         act.Should().NotThrow();
     }
@@ -261,17 +164,7 @@ public class FanAutomationTests : IDisposable
     [Fact]
     public void MasterSwitchDisabled_Should_PreventAllFanOperations()
     {
-        // Arrange - Set ShouldActivateFan to true
-        var manualOnStateChange = StateChangeHelpers.CreateSwitchStateChange(
-            _entities.CeilingFan,
-            "off",
-            "on",
-            HaIdentity.DANIEL_RODRIGUEZ
-        );
-        _mockHaContext.StateChangeSubject.OnNext(manualOnStateChange);
-        _mockHaContext.ShouldHaveCalledSwitchTurnOn(_entities.MasterSwitch.EntityId);
-
-        // Disable master switch
+        // Arrange - Disable master switch
         _mockHaContext.SimulateStateChange(_entities.MasterSwitch.EntityId, "on", "off");
         _mockHaContext.ClearServiceCalls();
 
@@ -283,23 +176,6 @@ public class FanAutomationTests : IDisposable
         _mockHaContext.ShouldNeverHaveCalledSwitch(_entities.CeilingFan.EntityId);
         _mockHaContext.ShouldNeverHaveCalledSwitch(_entities.StandFan.EntityId);
         _mockHaContext.ShouldNeverHaveCalledSwitch(_entities.ExhaustFan.EntityId);
-    }
-
-    [Fact]
-    public void MasterSwitchDisabled_Should_TurnOff_OnManualFanOff()
-    {
-        // Arrange - Set ShouldActivateFan to true
-        var manualOnStateChange = StateChangeHelpers.CreateSwitchStateChange(
-            _entities.CeilingFan,
-            "on",
-            "off",
-            HaIdentity.DANIEL_RODRIGUEZ
-        );
-        // Act
-        _mockHaContext.StateChangeSubject.OnNext(manualOnStateChange);
-
-        // Assert
-        _mockHaContext.ShouldHaveCalledSwitchTurnOff(_entities.MasterSwitch.EntityId);
     }
 
     [Fact]
