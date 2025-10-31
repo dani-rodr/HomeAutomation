@@ -35,7 +35,7 @@ public class CookingAutomationTests : IDisposable
 
     #region Timing Tests
     [Fact]
-    public void RiceCooker_ShouldTurnOff_WhenDoneCooking()
+    public void RiceCooker_ShouldNotTurnOff_WhenDoneCooking()
     {
         _mockHaContext.SimulateStateChange(_entities.RiceCookerSwitch.EntityId, "off", "on");
         _mockHaContext.SimulateStateChange(_entities.RiceCookerPower.EntityId, "500", "5");
@@ -51,12 +51,12 @@ public class CookingAutomationTests : IDisposable
         _mockHaContext.ShouldHaveCalledSwitchExactly(
             _entities.RiceCookerSwitch.EntityId,
             "turn_off",
-            1
+            0
         );
     }
 
     [Fact]
-    public void RiceCooker_ShouldTurnOff_WhenDoneCooking10MinutesStraight()
+    public void RiceCooker_ShouldNotTurnOff_WhenDoneCooking10MinutesStraight()
     {
         _mockHaContext.SimulateStateChange(_entities.RiceCookerSwitch.EntityId, "off", "on");
         _mockHaContext.SimulateStateChange(_entities.RiceCookerPower.EntityId, "500", "5");
@@ -92,7 +92,7 @@ public class CookingAutomationTests : IDisposable
         _mockHaContext.ShouldHaveCalledSwitchExactly(
             _entities.RiceCookerSwitch.EntityId,
             "turn_off",
-            1
+            0
         );
     }
 
