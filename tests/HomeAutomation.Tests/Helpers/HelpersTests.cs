@@ -826,7 +826,7 @@ public class HelpersTests : IDisposable
 
     [Theory]
     [InlineData("sunny", true)]
-    [InlineData("partlycloudy", true)]
+    [InlineData("partlycloudy", false)]
     [InlineData("cloudy", false)]
     [InlineData("rainy", false)]
     public void WeatherEntity_IsSunny_Should_CheckSunnyStates(string state, bool expected)

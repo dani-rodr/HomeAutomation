@@ -20,7 +20,7 @@ public static class WeatherEntityExtensions
         weather.StateInvariant() is HaEntityStates.DRY;
 
     public static bool IsSunny([NotNullWhen(true)] this WeatherEntity? weather) =>
-        weather.StateInvariant() is HaEntityStates.SUNNY or HaEntityStates.PARTLY_CLOUDY;
+        weather.StateInvariant() is HaEntityStates.SUNNY;
 
     public static bool IsRainy([NotNullWhen(true)] this WeatherEntity? weather) =>
         weather.StateInvariant()
