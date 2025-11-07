@@ -70,9 +70,9 @@ public abstract class FanAutomationBase : ToggleableAutomation
             .Where(_ => MasterSwitch.IsOff())
             .Subscribe(_ => MasterSwitch.TurnOn());
 
-    protected IDisposable GetMasterSwitchAutomations() =>
+    protected virtual IDisposable GetMasterSwitchAutomations() =>
         MasterSwitch
-            .OnTurnedOn()
+            .OnTurnedOn(new(StartImmediately: false))
             .Subscribe(e =>
             {
                 if (MotionSensor.IsOn())

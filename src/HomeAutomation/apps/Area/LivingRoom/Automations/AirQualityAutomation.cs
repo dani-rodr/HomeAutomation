@@ -1,3 +1,5 @@
+using System.Reactive.Disposables;
+
 namespace HomeAutomation.apps.Area.LivingRoom.Automations;
 
 public class AirQualityAutomation(
@@ -10,7 +12,7 @@ public class AirQualityAutomation(
     private readonly SwitchEntity _supportingFan = entities.SupportingFan;
     private bool _activateSupportingFan = false;
     private bool _isCleaningAir = false;
-    private bool _wasSalaAutomationTurnOff = false;
+    private bool _wasSalaFanAutomationTurnedOff = false;
     private const int CLEAN_AIR_THRESHOLD = 7;
     private const int DIRTY_AIR_THRESHOLD = 75;
 
@@ -21,6 +23,8 @@ public class AirQualityAutomation(
         yield return SubscribeToManualFanOperation();
         yield return SubscribeToSupportingFanIdle();
     }
+
+    protected override IDisposable GetMasterSwitchAutomations() => Disposable.Empty;
 
     protected override void RunInitialActions()
     {
@@ -67,10 +71,10 @@ public class AirQualityAutomation(
             _supportingFan.TurnOff();
             _isCleaningAir = false;
             _activateSupportingFan = false;
-            if (_wasSalaAutomationTurnOff)
+            if (_wasSalaFanAutomationTurnedOff)
             {
                 entities.LivingRoomFanAutomation.TurnOn();
-                _wasSalaAutomationTurnOff = true;
+                _wasSalaFanAutomationTurnedOff = false;
             }
         }
     }
@@ -91,7 +95,7 @@ public class AirQualityAutomation(
         _activateSupportingFan = false;
         if (entities.LivingRoomFanAutomation.IsOn())
         {
-            _wasSalaAutomationTurnOff = true;
+            _wasSalaFanAutomationTurnedOff = true;
             entities.LivingRoomFanAutomation.TurnOff();
         }
     }
