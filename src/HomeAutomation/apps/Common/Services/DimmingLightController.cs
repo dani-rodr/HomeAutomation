@@ -24,7 +24,9 @@ public class DimmingLightController(
 
     public async Task OnMotionStoppedAsync(LightEntity light)
     {
-        var shouldDim = ShouldDimLights();
+        CancelPendingTurnOff();
+
+        var shouldDim = ShouldDimLights(light);
 
         logger.LogDebug(
             "Motion stopped for {EntityId} - ShouldDim={ShouldDim} (SensorDelay={CurrentDelay}, ActiveValue={ActiveValue})",
@@ -43,15 +45,17 @@ public class DimmingLightController(
             light.TurnOff();
             return;
         }
+        await TurnOffLightsOnDelay(light);
+    }
 
+    private async Task TurnOffLightsOnDelay(LightEntity light)
+    {
         logger.LogDebug(
             "Motion stopped for {EntityId} - starting dimming sequence: {Brightness}% for {DelaySeconds}s",
             light.EntityId,
             _dimBrightnessPct,
             _dimDelaySeconds
         );
-
-        CancelPendingTurnOff();
 
         _lightTurnOffCancellationToken = new CancellationTokenSource();
         var token = _lightTurnOffCancellationToken.Token;
@@ -70,21 +74,19 @@ public class DimmingLightController(
                 .Timer(TimeSpan.FromSeconds(_dimDelaySeconds), SchedulerProvider.Current)
                 .TakeUntil(token.AsObservable())
                 .ToTask(token);
-            if (!token.IsCancellationRequested)
-            {
-                logger.LogDebug(
-                    "Dimming sequence completed for {EntityId} - turning off light",
-                    light.EntityId
-                );
-                light.TurnOff();
-            }
-            else
+            if (token.IsCancellationRequested)
             {
                 logger.LogDebug(
                     "Dimming sequence cancelled for {EntityId} (new motion detected)",
                     light.EntityId
                 );
+                return;
             }
+            logger.LogDebug(
+                "Dimming sequence completed for {EntityId} - turning off light",
+                light.EntityId
+            );
+            light.TurnOff();
         }
         catch (TaskCanceledException)
         {
@@ -95,8 +97,13 @@ public class DimmingLightController(
         }
     }
 
-    private bool ShouldDimLights()
+    private bool ShouldDimLights(LightEntity light)
     {
+        if (light.IsOff())
+        {
+            logger.LogDebug("Light {EntityId} is already off - skipping dimming", light.EntityId);
+            return false;
+        }
         bool shouldDimWhenStateIsUnknown = !sensorDelay.State.HasValue;
         return shouldDimWhenStateIsUnknown || sensorDelay.State == _sensorActiveDelayValue;
     }

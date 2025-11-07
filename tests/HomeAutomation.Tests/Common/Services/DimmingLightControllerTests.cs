@@ -194,6 +194,34 @@ public class DimmingLightControllerTests : IDisposable
     }
 
     [Fact]
+    public async Task OnMotionStoppedAsync_WhenLightAlreadyOff_Should_SkipDimmingButStillCallTurnOff()
+    {
+        // Arrange - Enable dimming conditions (sensor delay matches active delay)
+        _mockHaContext.SetEntityState(_sensorDelay.EntityId, "5");
+        _controller.SetSensorActiveDelayValue(5);
+        _controller.SetDimParameters(brightnessPct: 80, delaySeconds: 1);
+
+        // Set light to "off" state (the key condition being tested)
+        _mockHaContext.SetEntityState(_light.EntityId, "off");
+        _mockHaContext.ClearServiceCalls();
+
+        // Act - Call OnMotionStoppedAsync on an already-off light
+        await _controller.OnMotionStoppedAsync(_light);
+
+        // Assert - Should turn off (redundant but harmless), but NO dimming
+        _mockHaContext.ShouldHaveCalledLightTurnOff(_light.EntityId);
+        _mockHaContext.ClearServiceCalls();
+
+        // Verify NO turn_on calls were made (no dimming sequence)
+        var lightCalls = _mockHaContext.GetServiceCalls("light").ToList();
+        var turnOnCalls = lightCalls.Where(call => call.Service == "turn_on").ToList();
+        turnOnCalls.Should().BeEmpty("Should skip dimming when light is already off");
+
+        _mockHaContext.AdvanceTimeBy(TimeSpan.FromSeconds(6));
+        _mockHaContext.ShouldHaveCalledLightExactly(_light.EntityId, "turn_off", 0);
+    }
+
+    [Fact]
     public async Task DefaultConfiguration_Should_WorkCorrectly()
     {
         // Arrange - Use (sensor active delay: 1, brightness: 80%, delay: 5s)
