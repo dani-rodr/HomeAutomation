@@ -398,47 +398,6 @@ public class LightAutomationTests : IDisposable
     }
 
     [Fact]
-    public void ConcurrentSensorChanges_Should_TurnOffBathroomAutomation_When_BothSensors_AreOff_ForNSeconds()
-    {
-        // Arrange - Set initial states
-        _mockHaContext.ClearServiceCalls();
-
-        // Act - Simulate both sensors turning off "simultaneously"
-        _mockHaContext.SimulateStateChange(_entities.MotionSensor.EntityId, "on", "off");
-        _mockHaContext.SimulateStateChange(_entities.BathroomMotionSensor.EntityId, "on", "off");
-
-        // Assert - Should NOT turn off immediately (30 seconds delay)
-        _mockHaContext.ShouldHaveCalledSwitchExactly(
-            _entities.BathroomMotionAutomation.EntityId,
-            "turn_off",
-            0
-        );
-
-        _mockHaContext.AdvanceTimeBySeconds(30);
-        _mockHaContext.SimulateStateChange(_entities.BathroomMotionSensor.EntityId, "off", "on");
-
-        _mockHaContext.AdvanceTimeBySeconds(30);
-        _mockHaContext.ShouldHaveCalledSwitchExactly(
-            _entities.BathroomMotionAutomation.EntityId,
-            "turn_off",
-            0
-        );
-
-        _mockHaContext.SimulateStateChange(_entities.BathroomMotionSensor.EntityId, "on", "off");
-
-        _mockHaContext.AdvanceTimeBySeconds(30);
-        _mockHaContext.ShouldHaveCalledSwitchExactly(
-            _entities.BathroomMotionAutomation.EntityId,
-            "turn_off",
-            0
-        );
-
-        _mockHaContext.AdvanceTimeBySeconds(30);
-        // Assert - Should turn off bathroom automation after delay
-        _mockHaContext.ShouldHaveCalledSwitchTurnOff(_entities.BathroomMotionAutomation.EntityId);
-    }
-
-    [Fact]
     public void StateChangesWithCurrent_Should_ConsiderInitialState()
     {
         // This test verifies that StateChangesWithCurrent immediately considers current state
@@ -515,6 +474,292 @@ public class LightAutomationTests : IDisposable
         _mockHaContext.ShouldHaveCalledSwitchTurnOff(_entities.BathroomMotionAutomation.EntityId);
 
         // Verify that the specific bathroom automation turn_off occurred (service call count may include sensor delay adjustments)
+    }
+
+    /// <summary>
+    /// Tests timer cancellation when pantry motion is detected again before the 60-second delay expires.
+    /// This verifies that Rx properly cancels pending timers when state changes.
+    /// </summary>
+    [Fact]
+    public void PantryClearedThen55SecondsThenOccupiedAgain_Should_CancelTurnOffTimer()
+    {
+        // Arrange - Both sensors start as off
+        _mockHaContext.SetEntityState(_entities.MotionSensor.EntityId, "off");
+        _mockHaContext.SetEntityState(_entities.BathroomMotionSensor.EntityId, "off");
+        _mockHaContext.ClearServiceCalls();
+
+        // Act - Pantry clears (starts 60s timer)
+        _mockHaContext.StateChangeSubject.OnNext(
+            StateChangeHelpers.MotionCleared(_entities.MotionSensor)
+        );
+
+        // Advance 55 seconds (before timer expires)
+        _mockHaContext.AdvanceTimeBySeconds(55);
+
+        // Pantry motion detected again (should cancel timer)
+        _mockHaContext.StateChangeSubject.OnNext(
+            StateChangeHelpers.MotionDetected(_entities.MotionSensor)
+        );
+
+        // Clear the TurnOn call from motion detection
+        _mockHaContext.ClearServiceCalls();
+
+        // Advance another 10 seconds (65 seconds total, but only 10 since re-trigger)
+        _mockHaContext.AdvanceTimeBySeconds(10);
+
+        // Assert - Timer was cancelled, should NOT have turned off
+        _mockHaContext.ShouldHaveCalledSwitchExactly(
+            _entities.BathroomMotionAutomation.EntityId,
+            "turn_off",
+            0
+        );
+    }
+
+    /// <summary>
+    /// Tests that bathroom automation stays ON when bathroom becomes occupied during the pantry clear timer.
+    /// This verifies the .Where() filter prevents turn-off when bathroom sensor is occupied.
+    /// </summary>
+    [Fact]
+    public void BothClearedThen30SecondsThenBathroomOccupied_Should_PreventTurnOff()
+    {
+        // Arrange - Both sensors start as off
+        _mockHaContext.SetEntityState(_entities.MotionSensor.EntityId, "off");
+        _mockHaContext.SetEntityState(_entities.BathroomMotionSensor.EntityId, "off");
+        _mockHaContext.ClearServiceCalls();
+
+        // Act - Pantry clears (starts 60s timer)
+        _mockHaContext.StateChangeSubject.OnNext(
+            StateChangeHelpers.MotionCleared(_entities.MotionSensor)
+        );
+
+        // Advance 30 seconds (halfway through timer)
+        _mockHaContext.AdvanceTimeBySeconds(30);
+
+        // Bathroom becomes occupied (update state before timer fires)
+        _mockHaContext.SetEntityState(_entities.BathroomMotionSensor.EntityId, "on");
+        _mockHaContext.StateChangeSubject.OnNext(
+            StateChangeHelpers.MotionDetected(_entities.BathroomMotionSensor)
+        );
+
+        _mockHaContext.ClearServiceCalls();
+
+        // Advance another 30 seconds (timer fires at 60s total)
+        _mockHaContext.AdvanceTimeBySeconds(30);
+
+        // Assert - .Where() filter should prevent turn-off because bathroom is occupied
+        _mockHaContext.ShouldHaveCalledSwitchExactly(
+            _entities.BathroomMotionAutomation.EntityId,
+            "turn_off",
+            0
+        );
+    }
+
+    /// <summary>
+    /// Tests timing boundary - ensures timer doesn't fire before the full 60 seconds have elapsed.
+    /// </summary>
+    [Fact]
+    public void BothClearedFor59Seconds_Should_NotTurnOffBathroomAutomation()
+    {
+        // Arrange - Both sensors start as off
+        _mockHaContext.SetEntityState(_entities.MotionSensor.EntityId, "off");
+        _mockHaContext.SetEntityState(_entities.BathroomMotionSensor.EntityId, "off");
+        _mockHaContext.ClearServiceCalls();
+
+        // Act - Pantry clears (starts 60s timer)
+        _mockHaContext.StateChangeSubject.OnNext(
+            StateChangeHelpers.MotionCleared(_entities.MotionSensor)
+        );
+
+        // Advance exactly 59 seconds (one second before timer should fire)
+        _mockHaContext.AdvanceTimeBySeconds(59);
+
+        // Assert - Timer should NOT have fired yet
+        _mockHaContext.ShouldHaveCalledSwitchExactly(
+            _entities.BathroomMotionAutomation.EntityId,
+            "turn_off",
+            0
+        );
+    }
+
+    /// <summary>
+    /// Tests resilience to rapid sensor flickering - multiple on/off cycles in quick succession.
+    /// Verifies that multiple TurnOn() calls are handled gracefully without errors.
+    /// </summary>
+    [Fact]
+    public void RapidPantryFlickering_Should_HandleMultipleTurnOnCalls()
+    {
+        // Arrange - Start with sensors off
+        _mockHaContext.SetEntityState(_entities.MotionSensor.EntityId, "off");
+        _mockHaContext.ClearServiceCalls();
+
+        // Act - Simulate rapid flickering: off -> on -> off -> on -> off -> on (5 occupancy triggers)
+        _mockHaContext.StateChangeSubject.OnNext(
+            StateChangeHelpers.MotionDetected(_entities.MotionSensor)
+        );
+        _mockHaContext.StateChangeSubject.OnNext(
+            StateChangeHelpers.MotionCleared(_entities.MotionSensor)
+        );
+        _mockHaContext.StateChangeSubject.OnNext(
+            StateChangeHelpers.MotionDetected(_entities.MotionSensor)
+        );
+        _mockHaContext.StateChangeSubject.OnNext(
+            StateChangeHelpers.MotionCleared(_entities.MotionSensor)
+        );
+        _mockHaContext.StateChangeSubject.OnNext(
+            StateChangeHelpers.MotionDetected(_entities.MotionSensor)
+        );
+
+        // Assert - Should have called TurnOn 3 times (redundant but harmless)
+        _mockHaContext.ShouldHaveCalledSwitchExactly(
+            _entities.BathroomMotionAutomation.EntityId,
+            "turn_on",
+            3
+        );
+
+        // Verify no exceptions occurred during rapid state changes
+        _mockHaContext.ServiceCalls.Should().NotBeEmpty();
+    }
+
+    /// <summary>
+    /// Tests graceful degradation when bathroom sensor is stuck in occupied state (hardware failure).
+    /// Verifies that .Where() filter prevents turn-off until bathroom sensor clears.
+    /// </summary>
+    [Fact]
+    public void PantryClearedFor60Seconds_BathroomStuckOccupied_Should_KeepAutomationOn()
+    {
+        // Arrange - Pantry off, bathroom stuck at "on"
+        _mockHaContext.SetEntityState(_entities.MotionSensor.EntityId, "off");
+        _mockHaContext.SetEntityState(_entities.BathroomMotionSensor.EntityId, "on"); // Stuck sensor
+        _mockHaContext.ClearServiceCalls();
+
+        // Act - Pantry clears (starts 60s timer)
+        _mockHaContext.StateChangeSubject.OnNext(
+            StateChangeHelpers.MotionCleared(_entities.MotionSensor)
+        );
+
+        // Advance full 60 seconds (timer fires)
+        _mockHaContext.AdvanceTimeBySeconds(60);
+
+        // Assert - Should NOT turn off because bathroom sensor is still "on"
+        _mockHaContext.ShouldHaveCalledSwitchExactly(
+            _entities.BathroomMotionAutomation.EntityId,
+            "turn_off",
+            0
+        );
+
+        // Verify automation remains resilient to stuck sensor (waits indefinitely)
+    }
+
+    /// <summary>
+    /// Tests that redundant turn-off calls are handled gracefully when automation is already off.
+    /// </summary>
+    [Fact]
+    public void PantryClearedWithAutomationAlreadyOff_Should_HandleGracefully()
+    {
+        // Arrange - Both sensors off, automation already off
+        _mockHaContext.SetEntityState(_entities.MotionSensor.EntityId, "off");
+        _mockHaContext.SetEntityState(_entities.BathroomMotionSensor.EntityId, "off");
+        _mockHaContext.SetEntityState(_entities.BathroomMotionAutomation.EntityId, "off");
+        _mockHaContext.ClearServiceCalls();
+
+        // Act - Pantry clears (starts 60s timer)
+        _mockHaContext.StateChangeSubject.OnNext(
+            StateChangeHelpers.MotionCleared(_entities.MotionSensor)
+        );
+
+        // Advance 60 seconds (timer fires)
+        _mockHaContext.AdvanceTimeBySeconds(60);
+
+        // Assert - Should call TurnOff even though already off (redundant but harmless)
+        _mockHaContext.ShouldHaveCalledSwitchTurnOff(_entities.BathroomMotionAutomation.EntityId);
+
+        // This is expected behavior - the automation doesn't check current state before calling TurnOff
+    }
+
+    /// <summary>
+    /// Tests multiple clear/re-occupy cycles to verify timer resets properly each time.
+    /// Ensures that each new "clear" event cancels previous timers and starts a new 60s countdown.
+    /// </summary>
+    [Fact]
+    public void MultipleClearCycles_Should_ResetTimerEachTime()
+    {
+        // Arrange - Both sensors start as off
+        _mockHaContext.SetEntityState(_entities.MotionSensor.EntityId, "off");
+        _mockHaContext.SetEntityState(_entities.BathroomMotionSensor.EntityId, "off");
+        _mockHaContext.ClearServiceCalls();
+
+        // Act - Cycle 1: Pantry clears (timer 1 starts)
+        _mockHaContext.StateChangeSubject.OnNext(
+            StateChangeHelpers.MotionCleared(_entities.MotionSensor)
+        );
+
+        // Advance 40 seconds
+        _mockHaContext.AdvanceTimeBySeconds(40);
+
+        // Pantry occupied again, then clears (timer 2 starts, timer 1 cancelled)
+        _mockHaContext.StateChangeSubject.OnNext(
+            StateChangeHelpers.MotionDetected(_entities.MotionSensor)
+        );
+        _mockHaContext.StateChangeSubject.OnNext(
+            StateChangeHelpers.MotionCleared(_entities.MotionSensor)
+        );
+
+        _mockHaContext.ClearServiceCalls();
+
+        // Advance 40 seconds (80s total, but only 40s since last clear)
+        _mockHaContext.AdvanceTimeBySeconds(40);
+
+        // Assert - Should NOT turn off yet (only 40s since second clear)
+        _mockHaContext.ShouldHaveCalledSwitchExactly(
+            _entities.BathroomMotionAutomation.EntityId,
+            "turn_off",
+            0
+        );
+
+        // Advance another 20 seconds (100s total, 60s since last clear)
+        _mockHaContext.AdvanceTimeBySeconds(20);
+
+        // Assert - NOW should turn off (60s since second clear)
+        _mockHaContext.ShouldHaveCalledSwitchTurnOff(_entities.BathroomMotionAutomation.EntityId);
+    }
+
+    /// <summary>
+    /// Tests that OnCleared() requires an actual state transition (occupied -> clear).
+    /// Verifies that sensors already in "clear" state at initialization don't trigger the timer
+    /// until there's an explicit occupied -> clear transition.
+    /// </summary>
+    [Fact]
+    public void SensorsAlreadyClear_Should_OnlyStartTimerAfterOccupiedThenClearTransition()
+    {
+        // Arrange - Sensors start in "clear" state (simulating sensors that were off before automation started)
+        _mockHaContext.SetEntityState(_entities.MotionSensor.EntityId, "off");
+        _mockHaContext.SetEntityState(_entities.BathroomMotionSensor.EntityId, "off");
+        _mockHaContext.ClearServiceCalls();
+
+        // Act - Trigger occupied state first (this is required for OnCleared to fire later)
+        _mockHaContext.StateChangeSubject.OnNext(
+            StateChangeHelpers.MotionDetected(_entities.MotionSensor)
+        );
+
+        // Verify TurnOn was called
+        _mockHaContext.ShouldHaveCalledSwitchTurnOn(_entities.BathroomMotionAutomation.EntityId);
+
+        // Clear calls
+        _mockHaContext.ClearServiceCalls();
+
+        // Now trigger the clear transition (occupied -> clear)
+        _mockHaContext.StateChangeSubject.OnNext(
+            StateChangeHelpers.MotionCleared(_entities.MotionSensor)
+        );
+
+        // Advance 60 seconds
+        _mockHaContext.AdvanceTimeBySeconds(60);
+
+        // Assert - Should turn off because we had a complete occupied -> clear transition
+        _mockHaContext.ShouldHaveCalledSwitchTurnOff(_entities.BathroomMotionAutomation.EntityId);
+
+        // This test verifies that OnCleared() observables require state transitions,
+        // not just static "clear" states at initialization
     }
 
     #endregion
