@@ -21,6 +21,7 @@ public class LightAutomation(
     protected override IEnumerable<IDisposable> GetLightAutomations()
     {
         yield return entities.LivingRoomDoor.OnOpened().Subscribe(TurnOnLights);
+        yield return Light.OnTurnedOn().Subscribe(_ => entities.KitchenMotionAutomation.TurnOn());
         yield return MotionSensor.OnOccupied().Subscribe(TurnOnLights);
         yield return MotionSensor
             .OnCleared()

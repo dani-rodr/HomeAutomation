@@ -35,6 +35,7 @@ public class LivingRoomLightEntities(Devices devices) : ILivingRoomLightEntities
     public SwitchEntity PantryMotionAutomation => _pantry.LightControl;
     public BinarySensorEntity PantryMotionSensor => _pantry.MotionControl;
     public BinarySensorEntity KitchenMotionSensor => _kitchen.MotionControl;
+    public SwitchEntity KitchenMotionAutomation => _kitchen.LightControl;
 }
 
 public class BathroomLightEntities(Devices devices) : IBathroomLightEntities

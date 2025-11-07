@@ -42,6 +42,7 @@ public interface ILivingRoomLightEntities : ILightAutomationEntities
     BinarySensorEntity BedroomMotionSensor { get; }
     MediaPlayerEntity TclTv { get; }
     BinarySensorEntity KitchenMotionSensor { get; }
+    SwitchEntity KitchenMotionAutomation { get; }
     LightEntity PantryLights { get; }
     SwitchEntity PantryMotionAutomation { get; }
     BinarySensorEntity PantryMotionSensor { get; }

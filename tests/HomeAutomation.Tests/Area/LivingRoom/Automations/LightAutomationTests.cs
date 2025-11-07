@@ -625,5 +625,8 @@ public class LightAutomationTests : IDisposable
         public ButtonEntity Restart => new(haContext, "button.restart");
 
         public BinarySensorEntity LivingRoomDoor => new(haContext, "binary_sensor.door_wrapper");
+
+        public SwitchEntity KitchenMotionAutomation =>
+            new(haContext, "switch.kitchen_motion_sensor");
     }
 }
