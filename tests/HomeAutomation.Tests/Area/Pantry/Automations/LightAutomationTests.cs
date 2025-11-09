@@ -62,6 +62,8 @@ public class LightAutomationTests : IDisposable
     [Fact]
     public void MiScalePresenceDetected_Should_TurnOnMirrorLight()
     {
+        _mockHaContext.SetEntityState(_entities.MotionSensor.EntityId, "on");
+
         // Act - Simulate MiScale presence sensor turning on
         var stateChange = StateChangeHelpers.PresenceDetected(_entities.MiScalePresenceSensor);
         _mockHaContext.StateChangeSubject.OnNext(stateChange);

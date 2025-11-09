@@ -15,7 +15,6 @@ public class LightAutomation(IPantryLightEntities entities, ILogger<LightAutomat
 
     protected override IEnumerable<IDisposable> GetLightAutomations()
     {
-        var mirrorLight = entities.MirrorLight;
         yield return MotionSensor.OnOccupied().Subscribe(_ => Light.TurnOn());
         yield return MotionSensor
             .OnCleared()
@@ -29,6 +28,7 @@ public class LightAutomation(IPantryLightEntities entities, ILogger<LightAutomat
         [
             entities
                 .MiScalePresenceSensor.OnOccupied()
+                .Where(_ => MotionSensor.IsOccupied())
                 .Subscribe(_ => entities.MirrorLight.TurnOn()),
             MotionSensor
                 .OnCleared()
