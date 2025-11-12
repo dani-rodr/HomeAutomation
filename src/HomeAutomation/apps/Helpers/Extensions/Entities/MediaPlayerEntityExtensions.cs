@@ -14,5 +14,5 @@ public static class MediaPlayerEntityExtensions
         entity.StateInvariant() is HaEntityStates.IDLE;
 
     public static bool IsOff([NotNullWhen(true)] this MediaPlayerEntity? entity) =>
-        entity.StateInvariant() is HaEntityStates.OFF;
+        entity.StateInvariant() is HaEntityStates.OFF or HaEntityStates.UNAVAILABLE;
 }

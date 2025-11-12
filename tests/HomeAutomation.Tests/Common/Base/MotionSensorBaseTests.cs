@@ -119,7 +119,7 @@ public class MotionSensorBaseTests
     {
         // Arrange - Set up zone entities with test data
         SetupZoneTestData();
-        
+
         // Set initial states - MasterSwitch unavailable, SmartPresence occupied
         _mockHaContext.SetEntityState(_masterSwitch.EntityId, "unavailable");
         _mockHaContext.SetEntityState(_smartPresence.EntityId, "on"); // Occupied
@@ -137,14 +137,21 @@ public class MotionSensorBaseTests
 
         // Assert - LogMotionTrigger should NOT be called because MasterSwitch is off
         _logger.Verify(
-            x => x.Log(
-                LogLevel.Information,
-                It.IsAny<EventId>(),
-                It.Is<It.IsAnyType>((v, t) => v.ToString()!.Contains("MoveEnergy") && v.ToString()!.Contains("MoveThreshold")),
-                It.IsAny<Exception>(),
-                It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
+            x =>
+                x.Log(
+                    LogLevel.Information,
+                    It.IsAny<EventId>(),
+                    It.Is<It.IsAnyType>(
+                        (v, t) =>
+                            v.ToString()!.Contains("MoveEnergy")
+                            && v.ToString()!.Contains("MoveThreshold")
+                    ),
+                    It.IsAny<Exception>(),
+                    It.IsAny<Func<It.IsAnyType, Exception?, string>>()
+                ),
             Times.Never,
-            "LogMotionTrigger should not be called when MasterSwitch transitions to off");
+            "LogMotionTrigger should not be called when MasterSwitch transitions to off"
+        );
     }
 
     [Fact]
@@ -152,7 +159,7 @@ public class MotionSensorBaseTests
     {
         // Arrange - Set up zone entities with test data
         SetupZoneTestData();
-        
+
         // Set initial states - MasterSwitch on, SmartPresence clear
         _mockHaContext.SetEntityState(_masterSwitch.EntityId, "on");
         _mockHaContext.SetEntityState(_smartPresence.EntityId, "off");
@@ -163,7 +170,7 @@ public class MotionSensorBaseTests
 
         // Act - Start the automation and enable toggleable automations
         _sut.StartAutomation();
-        
+
         // Simulate master switch change to enable automation (from off to on to trigger automation enable)
         _mockHaContext.SimulateStateChange(_masterSwitch.EntityId, "off", "on");
         _logger.Reset(); // Clear initialization logging
@@ -173,14 +180,21 @@ public class MotionSensorBaseTests
 
         // Assert - LogMotionTrigger should be called because MasterSwitch is on
         _logger.Verify(
-            x => x.Log(
-                LogLevel.Information,
-                It.IsAny<EventId>(),
-                It.Is<It.IsAnyType>((v, t) => v.ToString()!.Contains("g0_move_energy") && v.ToString()!.Contains("MoveThreshold")),
-                It.IsAny<Exception>(),
-                It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
+            x =>
+                x.Log(
+                    LogLevel.Information,
+                    It.IsAny<EventId>(),
+                    It.Is<It.IsAnyType>(
+                        (v, t) =>
+                            v.ToString()!.Contains("g0_move_energy")
+                            && v.ToString()!.Contains("MoveThreshold")
+                    ),
+                    It.IsAny<Exception>(),
+                    It.IsAny<Func<It.IsAnyType, Exception?, string>>()
+                ),
             Times.AtLeastOnce,
-            "LogMotionTrigger should be called when SmartPresence becomes occupied and MasterSwitch is on");
+            "LogMotionTrigger should be called when SmartPresence becomes occupied and MasterSwitch is on"
+        );
     }
 
     [Fact]
@@ -188,7 +202,7 @@ public class MotionSensorBaseTests
     {
         // Arrange - Set up zone entities with test data
         SetupZoneTestData();
-        
+
         // Set initial states - MasterSwitch off, SmartPresence clear
         _mockHaContext.SetEntityState(_masterSwitch.EntityId, "off");
         _mockHaContext.SetEntityState(_smartPresence.EntityId, "off");
@@ -206,14 +220,21 @@ public class MotionSensorBaseTests
 
         // Assert - LogMotionTrigger should NOT be called because MasterSwitch is off
         _logger.Verify(
-            x => x.Log(
-                LogLevel.Information,
-                It.IsAny<EventId>(),
-                It.Is<It.IsAnyType>((v, t) => v.ToString()!.Contains("MoveEnergy") && v.ToString()!.Contains("MoveThreshold")),
-                It.IsAny<Exception>(),
-                It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
+            x =>
+                x.Log(
+                    LogLevel.Information,
+                    It.IsAny<EventId>(),
+                    It.Is<It.IsAnyType>(
+                        (v, t) =>
+                            v.ToString()!.Contains("MoveEnergy")
+                            && v.ToString()!.Contains("MoveThreshold")
+                    ),
+                    It.IsAny<Exception>(),
+                    It.IsAny<Func<It.IsAnyType, Exception?, string>>()
+                ),
             Times.Never,
-            "LogMotionTrigger should not be called when MasterSwitch is off");
+            "LogMotionTrigger should not be called when MasterSwitch is off"
+        );
     }
 
     [Fact]
@@ -233,7 +254,7 @@ public class MotionSensorBaseTests
         // Test: auto_calibrate turns on -> engineering mode should turn on
         _mockHaContext.SimulateStateChange(_masterSwitch.EntityId, "off", "on");
         _mockHaContext.ShouldHaveCalledSwitchTurnOn(_engineeringMode.EntityId);
-        
+
         _mockHaContext.ClearServiceCalls();
 
         // Test: auto_calibrate turns off -> engineering mode should turn off

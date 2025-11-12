@@ -266,6 +266,49 @@ public class LgDisplayTests : IDisposable
         selectedSource.Should().Be("HDMI 1", "PC should map to HDMI 1");
     }
 
+    [Fact]
+    public void ShowLaptop_WhenDisplayUnavailable_ShouldQueueSource_ThenSelectOnPowerOn()
+    {
+        // Arrange: Set media player state to unavailable
+        _mockHaContext.SetEntityState(_entities.MediaPlayer.EntityId, HaEntityStates.UNAVAILABLE);
+
+        // Act: Attempt to show Laptop (should queue the source instead of selecting it)
+        _lgDisplay.ShowLaptop();
+
+        // Assert: WOL magic packet should be sent to wake the display
+        _mockHaContext.ShouldHaveCalledService("wake_on_lan", "send_magic_packet");
+
+        // Assert: No media_player.select_source should be called yet
+        _mockHaContext
+            .ServiceCalls.Where(call => call.Service == "select_source")
+            .Should()
+            .BeEmpty(
+                "source should be queued, not applied while display is unavailable to avoid 'did not match any entities' error"
+            );
+
+        // Act: Simulate display becoming available (unavailable -> on transition)
+        _mockHaContext.SimulateStateChange(
+            _entities.MediaPlayer.EntityId,
+            HaEntityStates.UNAVAILABLE,
+            "on"
+        );
+
+        // Assert: Now the queued source should be selected
+        var selectSourceCall = _mockHaContext.ServiceCalls.FirstOrDefault(call =>
+            call.Service == "select_source"
+        );
+
+        selectSourceCall.Should().NotBeNull("queued source should be selected once available");
+
+        var selectedSource = selectSourceCall!
+            .Data?.GetType()
+            .GetProperty("Source")
+            ?.GetValue(selectSourceCall.Data)
+            ?.ToString();
+
+        selectedSource.Should().Be("HDMI 3", "Laptop should map to HDMI 3");
+    }
+
     #endregion
 
     #region Toast Notification Tests
