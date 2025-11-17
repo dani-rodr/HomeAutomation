@@ -11,7 +11,7 @@ public class StartupApp : AppBase<StartupApp>
         services.BrowserMod.Notification(
             new() { Message = "NetDaemonApp has started", ActionText = "Dismiss" }
         );
-        logger.LogDebug("NetDaemonApp has started");
+        logger.LogDebug("NetDaemon V6 has started");
 
         services.PersistentNotification.Create(
             new PersistentNotificationCreateParameters
