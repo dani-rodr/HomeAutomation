@@ -18,7 +18,7 @@ public class StartupApp : AppBase<StartupApp>
             {
                 Title = "NetDaemon",
                 Message =
-                    "Automation Started : View [Logs](/hassio/addon/c6a2317c_netdaemon5/logs)",
+                    "Automation Started : View [Logs](/hassio/addon/c6a2317c_netdaemon6/logs)",
                 NotificationId = "netdaemon_start",
             }
         );

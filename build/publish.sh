@@ -16,7 +16,7 @@ port=$(jq -r '.HomeAssistant.Port' "$APPSETTINGS")
 token=$(jq -r '.HomeAssistant.Token' "$APPSETTINGS_DEV")
 
 # CHANGE ME
-slug='c6a2317c_netdaemon5'
+slug='c6a2317c_netdaemon6'
 version="${slug##*_}"
 addon_json="{\"addon\": \"$slug\"}"
 

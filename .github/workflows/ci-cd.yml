@@ -163,7 +163,7 @@ jobs:
 
       - name: Deploy via rsync
         if: steps.changes.outputs.changed == 'true'
-        run: rsync -az --delete -e "ssh -o StrictHostKeyChecking=no" publish_output/ root@${{ secrets.HA_IP }}:/config/${{ secrets.HA_VERSION }}/
+        run: rsync -az --delete -e "ssh -o StrictHostKeyChecking=no" publish_output/ root@${{ secrets.HA_IP }}:/config/netdaemon6/
 
       - name: Restart NetDaemon addon
         if: steps.changes.outputs.changed == 'true'
