@@ -163,7 +163,7 @@ jobs:
 
       - name: Deploy via rsync
         if: steps.changes.outputs.changed == 'true'
-        run: rsync -az --delete -e "ssh -o StrictHostKeyChecking=no" publish_output/ root@${{ secrets.HA_IP }}:/config/${{ secrets.HA_VERSION }}/
+        run: rsync -az --delete -e "ssh -o StrictHostKeyChecking=no" publish_output/ root@${{ secrets.HA_IP }}:/config/netdaemon6/
 
       - name: Restart NetDaemon addon
         if: steps.changes.outputs.changed == 'true'
@@ -171,7 +171,7 @@ jobs:
           curl -s -X POST \
             -H "Authorization: Bearer ${{ secrets.HA_TOKEN }}" \
             -H "Content-Type: application/json" \
-            -d '{"addon": "${{ secrets.HA_SLUG }}"}' \
+            -d '{"addon": "c6a2317c_netdaemon6"}' \
             http://${{ secrets.HA_IP }}:${{ secrets.HA_PORT }}/api/services/hassio/addon_restart
 
       - name: Notify mobile app of deployment
