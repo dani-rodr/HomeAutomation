@@ -89,7 +89,7 @@ public static class HaIdentity
 
     public static bool IsPhysicallyOperated(string? userId) => string.IsNullOrEmpty(userId);
 
-    public static bool IsAutomated(string? userId) => userId is SUPERVISOR or NODERED;
+    public static bool IsSystemOperated(string? userId) => userId is SUPERVISOR or NODERED;
 }
 
 public static class NFC_ID

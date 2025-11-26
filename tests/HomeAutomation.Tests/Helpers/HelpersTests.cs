@@ -323,14 +323,14 @@ public class HelpersTests : IDisposable
     [InlineData("", false)]
     [InlineData(null, false)]
     [InlineData("unknown_automation", false)]
-    public void IsAutomated_Should_FilterAutomatedOperationsCorrectly(
+    public void IsSystemOperated_Should_FilterAutomatedOperationsCorrectly(
         string? userId,
         bool shouldMatch
     )
     {
         // Arrange
         var results = new List<StateChange>();
-        using var disposable = _light.OnChanges().IsAutomated().Subscribe(results.Add);
+        using var disposable = _light.OnChanges().IsSystemOperated().Subscribe(results.Add);
 
         // Act
         _mockHaContext.SimulateStateChange(_light.EntityId, "off", "on", userId);
@@ -541,7 +541,7 @@ public class HelpersTests : IDisposable
     [InlineData(HaIdentity.NODERED, true)]
     [InlineData(HaIdentity.DANIEL_RODRIGUEZ, false)]
     [InlineData("", false)]
-    public void StateChange_IsAutomated_Should_CheckAutomatedOperation(
+    public void StateChange_IsSystemOperated_Should_CheckAutomatedOperation(
         string? userId,
         bool expected
     )
@@ -550,7 +550,7 @@ public class HelpersTests : IDisposable
         var result = false;
         using var automation = _motionSensor
             .OnTurnedOn()
-            .IsAutomated()
+            .IsSystemOperated()
             .Subscribe(_ => result = true);
 
         // Act

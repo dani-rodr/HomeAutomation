@@ -233,10 +233,8 @@ public class LightAutomationTests : IDisposable
     public void PantryMotionDetected_Should_TurnOnBathroomAutomation()
     {
         // Arrange - Set initial state for master switch, these automations should be persistent
-        _mockHaContext.SetEntityState(_entities.MasterSwitch.EntityId, "off");
-        // Act - Simulate pantry motion sensor turning on
-        var stateChange = StateChangeHelpers.MotionDetected(_entities.MotionSensor);
-        _mockHaContext.StateChangeSubject.OnNext(stateChange);
+        _mockHaContext.SimulateStateChange(_entities.MasterSwitch.EntityId, "on", "off");
+        _mockHaContext.SimulateStateChange(_entities.MotionSensor.EntityId, "off", "on");
 
         // Assert - Should turn on bathroom automation
         _mockHaContext.ShouldHaveCalledSwitchTurnOn(_entities.BathroomMotionAutomation.EntityId);

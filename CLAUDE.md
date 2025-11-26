@@ -344,8 +344,8 @@ if (HaIdentity.IsManuallyOperated(evt.UserId()))
     // User manually controlled the device
 }
 
-// Check if action was automated
-if (HaIdentity.IsAutomated(evt.UserId()))
+// Check if action was system operated
+if (HaIdentity.IsSystemOperated(evt.UserId()))
 {
     // Action triggered by automation
 }

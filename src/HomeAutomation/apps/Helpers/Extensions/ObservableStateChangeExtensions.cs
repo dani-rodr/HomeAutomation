@@ -13,8 +13,8 @@ public static class ObservableStateChangeExtensions
         return shouldCheckImmediately ? entity.StateChangesWithCurrent() : entity.StateChanges();
     }
 
-    public static IObservable<StateChange> IsAutomated(this IObservable<StateChange> stream) =>
-        stream.Where(s => HaIdentity.IsAutomated(s.UserId()));
+    public static IObservable<StateChange> IsSystemOperated(this IObservable<StateChange> stream) =>
+        stream.Where(s => HaIdentity.IsSystemOperated(s.UserId()));
 
     public static IObservable<StateChange> IsPhysicallyOperated(
         this IObservable<StateChange> source
