@@ -66,18 +66,28 @@ public class LightAutomation(IPantryLightEntities entities, ILogger<LightAutomat
                 );
                 entities.BathroomMotionAutomation.TurnOn();
             });
-        var turnOffDelay = 60;
-        yield return MotionSensor
+        yield return DeactivateWhenBothSensorsClear(MotionSensor, entities.BathroomMotionSensor);
+
+        yield return DeactivateWhenBothSensorsClear(entities.BathroomMotionSensor, MotionSensor);
+    }
+
+    IDisposable DeactivateWhenBothSensorsClear(
+        BinarySensorEntity triggerSensor,
+        BinarySensorEntity otherSensor,
+        int turnOffDelay = 60
+    ) =>
+        triggerSensor
             .OnCleared(new(Seconds: turnOffDelay))
-            .Where(_ => entities.BathroomMotionSensor.IsClear())
+            .Where(_ => otherSensor.IsClear())
             .Subscribe(_ =>
             {
                 Logger.LogDebug(
-                    "Pantry sensor remained off for {turnOffDelay} seconds and bathroom sensor is also off - deactivating bathroom automation {EntityId}",
+                    "{Trigger} remained off for {turnOffDelay} seconds and {Other} is also off - deactivating bathroom automation {EntityId}",
+                    triggerSensor.EntityId,
                     turnOffDelay,
+                    otherSensor.EntityId,
                     entities.BathroomMotionAutomation.EntityId
                 );
                 entities.BathroomMotionAutomation.TurnOff();
             });
-    }
 }

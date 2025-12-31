@@ -41,13 +41,4 @@ public static class EntityExtensions
 
     public static bool IsUnknown(this EntityState? state) =>
         state?.State?.ToLowerInvariant() is HaEntityStates.UNKNOWN;
-
-    public static bool IsSystemOperated(this Entity? entity) =>
-        HaIdentity.IsSystemOperated(entity?.EntityState?.Context?.UserId);
-
-    public static bool IsPhysicallyOperated(this Entity? entity) =>
-        HaIdentity.IsPhysicallyOperated(entity?.EntityState?.Context?.UserId);
-
-    public static bool IsManuallyOperated(this Entity? entity) =>
-        HaIdentity.IsManuallyOperated(entity?.EntityState?.Context?.UserId);
 }
