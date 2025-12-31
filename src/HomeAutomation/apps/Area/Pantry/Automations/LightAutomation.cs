@@ -1,3 +1,5 @@
+using System.Linq;
+
 namespace HomeAutomation.apps.Area.Pantry.Automations;
 
 public class LightAutomation(IPantryLightEntities entities, ILogger<LightAutomation> logger)
@@ -7,22 +9,19 @@ public class LightAutomation(IPantryLightEntities entities, ILogger<LightAutomat
     protected override int SensorActiveDelayValue => 5;
 
     protected override IEnumerable<IDisposable> GetAdditionalPersistentAutomations() =>
+        [.. AutoTogglePantryMotionSensor(), .. AutoToggleBathroomMotionSensor()];
+
+    protected override IEnumerable<IDisposable> GetLightAutomations() =>
         [
-            .. AutoTogglePantryMotionSensor(),
-            .. AutoToggleBathroomMotionSensor(),
+            MotionSensor.OnOccupied().Subscribe(_ => Light.TurnOn()),
+            MotionSensor
+                .OnCleared()
+                .Subscribe(_ =>
+                {
+                    Light.TurnOff();
+                }),
             .. GetMirrorLightAutomations(),
         ];
-
-    protected override IEnumerable<IDisposable> GetLightAutomations()
-    {
-        yield return MotionSensor.OnOccupied().Subscribe(_ => Light.TurnOn());
-        yield return MotionSensor
-            .OnCleared()
-            .Subscribe(_ =>
-            {
-                Light.TurnOff();
-            });
-    }
 
     private IEnumerable<IDisposable> GetMirrorLightAutomations() =>
         [
