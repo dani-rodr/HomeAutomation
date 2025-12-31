@@ -40,7 +40,7 @@ public class LightAutomation(IPantryLightEntities entities, ILogger<LightAutomat
     private IEnumerable<IDisposable> AutoTogglePantryMotionSensor()
     {
         yield return entities
-            .BedroomDoor.OnChanges()
+            .BedroomDoor.OnChanges(new(StartImmediately: false))
             .Subscribe(e =>
             {
                 if (e.Entity.IsOpen())
