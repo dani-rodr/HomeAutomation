@@ -74,17 +74,6 @@ public class LightAutomationTests : IDisposable
     }
 
     [Fact]
-    public void RoomDoorClosed_Should_TurnOnMasterSwitch()
-    {
-        // Act - Simulate room door closing (IsOff means closed)
-        var stateChange = StateChangeHelpers.DoorClosed(_entities.BedroomDoor);
-        _mockHaContext.StateChangeSubject.OnNext(stateChange);
-
-        // Assert - Switch assertions work too using entity ID
-        _mockHaContext.ShouldHaveCalledSwitchTurnOn(_entities.MasterSwitch.EntityId);
-    }
-
-    [Fact]
     public void MasterSwitchEnabled_WithMotionOn_Should_TurnOnLight()
     {
         // Arrange - Set motion sensor to be "on" already
@@ -218,9 +207,6 @@ public class LightAutomationTests : IDisposable
             );
             _mockHaContext.StateChangeSubject.OnNext(
                 StateChangeHelpers.PresenceDetected(_entities.MiScalePresenceSensor)
-            );
-            _mockHaContext.StateChangeSubject.OnNext(
-                StateChangeHelpers.DoorClosed(_entities.BedroomDoor)
             );
         };
 
@@ -785,8 +771,6 @@ public class LightAutomationTests : IDisposable
         public BinarySensorEntity MiScalePresenceSensor =>
             new(haContext, "binary_sensor.esp32_presence_bedroom_mi_scale_presence");
         public LightEntity MirrorLight => new(haContext, "light.controller_rgb_df1c0d");
-        public BinarySensorEntity BedroomDoor =>
-            new(haContext, "binary_sensor.contact_sensor_door");
         public ButtonEntity Restart => new(haContext, "button.restart");
 
         public SwitchEntity BathroomMotionAutomation =>
