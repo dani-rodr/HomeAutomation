@@ -47,7 +47,7 @@ public static class ObservableStateChangeExtensions
         var stream = entity.GetStateChange(options.StartImmediately);
         if (!options.AllowFromUnavailable)
         {
-            stream = stream.Where(src => src.Old.IsAvailable());
+            stream = stream.Where(src => src.Old.IsAvailable() && src.Old?.State != src.New?.State);
         }
         return stream.WhenIsFor(options.SafeCondition, options.TimeSpan);
     }
