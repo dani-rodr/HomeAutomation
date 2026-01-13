@@ -10,16 +10,13 @@ public class LightAutomation(IBedroomLightEntities entities, ILogger<LightAutoma
     protected override int SensorActiveDelayValue => 45;
 
     protected override IEnumerable<IDisposable> GetAdditionalPersistentAutomations() =>
-        [.. GetLightSwitchAutomations(), .. GetSensorDelayAutomations(), GetPantryAutomation()];
+        [.. GetLightSwitchAutomations(), .. GetSensorDelayAutomations()];
 
     protected override IEnumerable<IDisposable> GetLightAutomations() =>
         [
             MotionSensor.OnOccupied().Subscribe(_ => Light.TurnOn()),
             MotionSensor.OnCleared().Subscribe(_ => Light.TurnOff()),
         ];
-
-    private IDisposable GetPantryAutomation() =>
-        MotionSensor.OnCleared().Subscribe(_ => entities.PantryAutomation.TurnOn());
 
     private IEnumerable<IDisposable> GetLightSwitchAutomations()
     {

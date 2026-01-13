@@ -32,7 +32,6 @@ public interface IBedroomLightEntities : ILightAutomationEntities
 {
     SwitchEntity RightSideEmptySwitch { get; }
     SwitchEntity LeftSideFanSwitch { get; }
-    SwitchEntity PantryAutomation { get; }
 }
 
 public interface ILivingRoomLightEntities : ILightAutomationEntities
