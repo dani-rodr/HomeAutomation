@@ -236,9 +236,12 @@ public class DanielEntities(Devices devices, Entities entities) : IPersonEntitie
             entities.BinarySensor.PocoF4GtBle,
             entities.BinarySensor.RedmiWatch5Ble,
             entities.BinarySensor.PocoF4GtPing,
+            entities.BinarySensor.Oneplus13Ble,
+            entities.BinarySensor.Oneplus13Wifi,
         ];
 
-    public IEnumerable<BinarySensorEntity> AwayTriggers => [entities.BinarySensor.PocoF4GtBle];
+    public IEnumerable<BinarySensorEntity> AwayTriggers =>
+        [entities.BinarySensor.PocoF4GtBle, entities.BinarySensor.Oneplus13Ble];
 
     public IEnumerable<BinarySensorEntity> DirectUnlockTriggers => [];
 }
