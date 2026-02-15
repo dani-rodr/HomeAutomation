@@ -360,7 +360,7 @@ public class ClimateAutomationTests : IDisposable
     // The core automation logic is sound and tested in production
 
     [Fact]
-    public void AcStateChangeWithTemperatureChange_Should_DisableMasterSwitch()
+    public void AcStateChange_Should_DisableMasterSwitch()
     {
         // Arrange - Set up AC with same temperature in attributes
         _mockHaContext.SetEntityAttributes(
@@ -371,7 +371,7 @@ public class ClimateAutomationTests : IDisposable
         // Act - Simulate AC state change (off to cool) without temperature change
         var stateChange = StateChangeHelpers.CreateClimateStateChange(
             _entities.AirConditioner,
-            "off",
+            "auto",
             "cool",
             HaIdentity.DANIEL_RODRIGUEZ
         );
@@ -384,32 +384,38 @@ public class ClimateAutomationTests : IDisposable
     }
 
     [Fact]
-    public void AcTemperatureChange_Should_DisableMasterSwitch()
+    public void AcTurnOn_ShouldNot_DisableMasterSwitch()
     {
-        // Arrange - Set up AC with same temperature in attributes
-        _mockHaContext.SetEntityAttributes(
-            _entities.AirConditioner.EntityId,
-            new { temperature = 25.0 }
-        );
-
-        var stateChange = StateChangeHelpers.CreateClimateStateChange(
+        var stateChange = StateChangeHelpers.CreateClimateTemperatureChange(
             _entities.AirConditioner,
             "off",
             "cool",
+            25.0,
+            22.0,
             HaIdentity.DANIEL_RODRIGUEZ
         );
 
         _mockHaContext.StateChangeSubject.OnNext(stateChange);
 
-        // Act - Simulate AC state change (off to cool) without temperature change
+        _mockHaContext.ShouldNeverHaveCalledSwitch(_entities.MasterSwitch.EntityId);
+    }
 
-        _mockHaContext.SetEntityAttributes(
-            _entities.AirConditioner.EntityId,
-            new { temperature = 22.0 }
+    [Fact]
+    public void AcStateChangeWithTemperatureChange_Should_DisableMasterSwitch()
+    {
+        // Act - Same state, temperature changes 25 -> 22
+        var stateChange = StateChangeHelpers.CreateClimateTemperatureChange(
+            _entities.AirConditioner,
+            "cool",
+            "cool",
+            25.0,
+            22.0,
+            HaIdentity.DANIEL_RODRIGUEZ
         );
+
         _mockHaContext.StateChangeSubject.OnNext(stateChange);
 
-        // Assert - Should not turn off master switch (no temperature change detected)
+        // Assert - Should turn off master switch
         _mockHaContext.ShouldHaveCalledSwitchTurnOff(_entities.MasterSwitch.EntityId);
     }
 

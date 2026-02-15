@@ -1,3 +1,5 @@
+using System.Text.Json;
+
 namespace HomeAutomation.Tests.Infrastructure;
 
 /// <summary>
@@ -41,6 +43,54 @@ public static class StateChangeHelpers
             }
         );
     }
+
+    private static StateChange CreateStateChangeWithAttributes(
+        IEntityCore entity,
+        string oldState,
+        string newState,
+        object? oldAttributes = null,
+        object? newAttributes = null,
+        string? userId = null
+    ) =>
+        new StateChange(
+            (Entity)entity,
+            new EntityState
+            {
+                EntityId = entity.EntityId,
+                State = oldState,
+                AttributesJson = oldAttributes != null ? ToJsonElement(oldAttributes) : null,
+            },
+            new EntityState
+            {
+                EntityId = entity.EntityId,
+                State = newState,
+                AttributesJson = newAttributes != null ? ToJsonElement(newAttributes) : null,
+                Context = userId != null ? new Context { UserId = userId } : null,
+            }
+        );
+
+    private static JsonElement ToJsonElement(object obj)
+    {
+        var json = JsonSerializer.Serialize(obj);
+        return JsonSerializer.Deserialize<JsonElement>(json);
+    }
+
+    public static StateChange CreateClimateTemperatureChange(
+        ClimateEntity climateEntity,
+        string oldState,
+        string newState,
+        double oldTemperature,
+        double newTemperature,
+        string? userId = null
+    ) =>
+        CreateStateChangeWithAttributes(
+            climateEntity,
+            oldState,
+            newState,
+            new { temperature = oldTemperature },
+            new { temperature = newTemperature },
+            userId
+        );
 
     /// <summary>
     /// Creates a StateChange for a motion sensor turning on
