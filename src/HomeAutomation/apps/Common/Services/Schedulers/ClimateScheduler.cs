@@ -119,9 +119,9 @@ public class ClimateScheduler : IClimateScheduler
         {
             [TimeBlock.Sunrise] = new(
                 NormalTemp: 25,
-                PowerSavingTemp: 27,
+                PowerSavingTemp: 26,
                 CoolTemp: 24,
-                PassiveTemp: 27,
+                PassiveTemp: 26,
                 Mode: HaEntityStates.COOL,
                 ActivateFan: true,
                 HourStart: _entities.SunRising.ToLocalHour(),
@@ -130,9 +130,9 @@ public class ClimateScheduler : IClimateScheduler
 
             [TimeBlock.Sunset] = new(
                 NormalTemp: 25,
-                PowerSavingTemp: 27,
+                PowerSavingTemp: 26,
                 CoolTemp: 23,
-                PassiveTemp: 27,
+                PassiveTemp: 26,
                 Mode: HaEntityStates.COOL,
                 ActivateFan: false,
                 HourStart: _entities.SunSetting.ToLocalHour(),

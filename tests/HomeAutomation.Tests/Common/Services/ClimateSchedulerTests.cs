@@ -58,9 +58,9 @@ public class ClimateSchedulerTests : IDisposable
         setting!.Mode.Should().Be("cool", "Sunrise period uses cool mode");
         setting.ActivateFan.Should().BeTrue("Sunrise period can activate fan");
         setting.NormalTemp.Should().Be(25, "Sunrise NormalTemp should be 25°C");
-        setting.PowerSavingTemp.Should().Be(27, "Sunrise PowerSavingTemp should be 27°C");
+        setting.PowerSavingTemp.Should().Be(26, "Sunrise PowerSavingTemp should be 27°C");
         setting.CoolTemp.Should().Be(24, "Sunrise CoolTemp should be 24°C");
-        setting.PassiveTemp.Should().Be(27, "Sunrise PassiveTemp should be 27°C");
+        setting.PassiveTemp.Should().Be(26, "Sunrise PassiveTemp should be 27°C");
     }
 
     [Fact]
@@ -75,9 +75,9 @@ public class ClimateSchedulerTests : IDisposable
         setting!.Mode.Should().Be("cool", "Sunset period uses cool mode");
         setting.ActivateFan.Should().BeFalse("Sunset period doesn't activate fan");
         setting.NormalTemp.Should().Be(25, "Sunset NormalTemp should be 25°C");
-        setting.PowerSavingTemp.Should().Be(27, "Sunset PowerSavingTemp should be 27°C");
+        setting.PowerSavingTemp.Should().Be(26, "Sunset PowerSavingTemp should be 27°C");
         setting.CoolTemp.Should().Be(23, "Sunset CoolTemp should be 23°C");
-        setting.PassiveTemp.Should().Be(27, "Sunset PassiveTemp should be 27°C");
+        setting.PassiveTemp.Should().Be(26, "Sunset PassiveTemp should be 27°C");
     }
 
     [Fact]
