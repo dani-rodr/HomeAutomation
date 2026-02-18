@@ -42,7 +42,8 @@ public class Devices(Entities entities)
             ClimateControl: new(
                 entities.Switch.AcAutomation,
                 entities.Climate.Ac,
-                entities.Button.AcFanModeToggle
+                entities.Button.AcFanModeToggle,
+                entities.InputBoolean.AcPowerSavingMode
             ),
             ExtraControl: new(RightSideEmptySwitch: entities.Switch.Sonoff1002352c401)
         );

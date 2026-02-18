@@ -11,6 +11,7 @@ public class ClimateAutomation(
     private readonly ClimateEntity _ac = entities.AirConditioner;
     private readonly BinarySensorEntity _motionSensor = entities.MotionSensor;
     private readonly BinarySensorEntity _doorSensor = entities.Door;
+    private readonly InputBooleanEntity _powerSavingMode = entities.PowerSavingMode;
 
     protected override IEnumerable<IDisposable> GetPersistentAutomations()
     {
@@ -74,6 +75,7 @@ public class ClimateAutomation(
         yield return _doorSensor.OnOpened(new(Minutes: 5)).Subscribe(ApplyTimeBasedAcSetting);
         yield return _motionSensor.OnCleared(new(Minutes: 10)).Subscribe(ApplyTimeBasedAcSetting);
         yield return _motionSensor.OnOccupied().Subscribe(ApplyTimeBasedAcSetting);
+        yield return _powerSavingMode.OnChanges().Subscribe(ApplyTimeBasedAcSetting);
     }
 
     private void ApplyTimeBasedAcSetting(StateChange e)
