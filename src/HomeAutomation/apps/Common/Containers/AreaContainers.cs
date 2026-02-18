@@ -91,13 +91,21 @@ public record MediaControl(
     public static implicit operator SwitchEntity(MediaControl control) => control.Automation;
 }
 
-public record ClimateControl(SwitchEntity Automation, ClimateEntity Ac, ButtonEntity FanModeToggle)
+public record ClimateControl(
+    SwitchEntity Automation,
+    ClimateEntity Ac,
+    ButtonEntity FanModeToggle,
+    InputBooleanEntity PowerSavingMode
+)
 {
     public static implicit operator SwitchEntity(ClimateControl control) => control.Automation;
 
     public static implicit operator ClimateEntity(ClimateControl control) => control.Ac;
 
     public static implicit operator ButtonEntity(ClimateControl control) => control.FanModeToggle;
+
+    public static implicit operator InputBooleanEntity(ClimateControl control) =>
+        control.PowerSavingMode;
 }
 
 public record CookingControl(

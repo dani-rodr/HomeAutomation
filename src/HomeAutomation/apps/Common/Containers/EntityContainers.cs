@@ -94,6 +94,7 @@ public class BedroomClimateEntities(Devices devices) : IClimateEntities
     public BinarySensorEntity HouseMotionSensor => devices.Global.MotionControl;
     public ButtonEntity AcFanModeToggle => _area.ClimateControl!;
     public SwitchEntity Fan => _area.FanControl!;
+    public InputBooleanEntity PowerSavingMode => throw new NotImplementedException();
 }
 
 public class ClimateSchedulerEntities(Devices devices) : IClimateSchedulerEntities

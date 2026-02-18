@@ -921,5 +921,7 @@ public class ClimateAutomationTests : IDisposable
             new(haContext, "binary_sensor.house_motion_sensors");
         public ButtonEntity AcFanModeToggle => new(haContext, "button.bedroom_ac_fan_mode_toggle");
         public SwitchEntity Fan => new(haContext, "switch.bedroom_fan");
+        public InputBooleanEntity PowerSavingMode =>
+            new(haContext, "input_boolean.power_saving_mode");
     }
 }
