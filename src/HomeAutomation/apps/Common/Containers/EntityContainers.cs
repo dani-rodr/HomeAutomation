@@ -234,9 +234,7 @@ public class DanielEntities(Devices devices, Entities entities) : IPersonEntitie
 
     public IEnumerable<BinarySensorEntity> HomeTriggers =>
         [
-            entities.BinarySensor.PocoF4GtBle,
             entities.BinarySensor.RedmiWatch5Ble,
-            entities.BinarySensor.PocoF4GtPing,
             entities.BinarySensor.Oneplus13Ble,
             entities.BinarySensor.Oneplus13Wifi,
         ];
