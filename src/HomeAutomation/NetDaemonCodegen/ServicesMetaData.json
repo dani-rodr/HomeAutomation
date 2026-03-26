@@ -1,4 +1,55 @@
 {
+  "persistent_notification": {
+    "create": {
+      "fields": {
+        "message": {
+          "required": true,
+          "example": "Please check your configuration.yaml.",
+          "selector": {
+            "text": {
+              "multiple": false,
+              "multiline": false
+            }
+          }
+        },
+        "title": {
+          "example": "Test notification",
+          "selector": {
+            "text": {
+              "multiple": false,
+              "multiline": false
+            }
+          }
+        },
+        "notification_id": {
+          "example": 1234,
+          "selector": {
+            "text": {
+              "multiple": false,
+              "multiline": false
+            }
+          }
+        }
+      }
+    },
+    "dismiss": {
+      "fields": {
+        "notification_id": {
+          "required": true,
+          "example": 1234,
+          "selector": {
+            "text": {
+              "multiple": false,
+              "multiline": false
+            }
+          }
+        }
+      }
+    },
+    "dismiss_all": {
+      "fields": {}
+    }
+  },
   "homeassistant": {
     "save_persistent_states": {
       "fields": {}
@@ -94,6 +145,114 @@
     "reload_all": {
       "fields": {}
     },
+    "remove_label_from_area": {
+      "name": "Remove a label from an area \uD83D\uDC7B",
+      "description": "Removes a label to an area. If multiple labels or multiple areas are provided, all combinations will be removed.",
+      "fields": {
+        "label_id": {
+          "name": "Label ID",
+          "description": "The ID(s) of the label(s) to remove from the area(s).",
+          "required": true,
+          "selector": {
+            "label": {
+              "multiple": true
+            }
+          }
+        },
+        "area_id": {
+          "name": "Area ID",
+          "description": "The ID(s) of the area(s) to remove the label(s) from.",
+          "required": true,
+          "selector": {
+            "area": {
+              "multiple": true,
+              "reorder": false
+            }
+          }
+        }
+      }
+    },
+    "set_area_aliases": {
+      "name": "Sets aliases for an area \uD83D\uDC7B",
+      "description": "Sets aliases for an area. Overwrite and removed any existing aliases, fully replacing them with the new ones.",
+      "fields": {
+        "area_id": {
+          "name": "Area ID",
+          "description": "The ID of the area to set the aliases for.",
+          "required": true,
+          "selector": {
+            "area": {
+              "multiple": false,
+              "reorder": false
+            }
+          }
+        },
+        "aliases": {
+          "name": "Aliases",
+          "description": "The aliases to set for the area.",
+          "required": true,
+          "selector": {
+            "object": {
+              "multiple": false
+            }
+          }
+        }
+      }
+    },
+    "add_device_to_area": {
+      "name": "Add a device to an area \uD83D\uDC7B",
+      "description": "Adds an device to an area. Please note, if the device is already in an area, it will be removed from the previous area.",
+      "fields": {
+        "area_id": {
+          "name": "Area ID",
+          "description": "The ID of the area to add the device to.",
+          "required": true,
+          "selector": {
+            "area": {
+              "multiple": false,
+              "reorder": false
+            }
+          }
+        },
+        "device_id": {
+          "name": "Device ID",
+          "description": "The ID of the device(s) to add to the area.",
+          "required": true,
+          "selector": {
+            "device": {
+              "multiple": true
+            }
+          }
+        }
+      }
+    },
+    "remove_alias_from_area": {
+      "name": "Remove an alias from an area \uD83D\uDC7B",
+      "description": "Removes an alias from an area.",
+      "fields": {
+        "area_id": {
+          "name": "Area ID",
+          "description": "The ID of the area to remove the alias from.",
+          "required": true,
+          "selector": {
+            "area": {
+              "multiple": false,
+              "reorder": false
+            }
+          }
+        },
+        "alias": {
+          "name": "Alias",
+          "description": "The alias (or list of aliasses) to remove from the area.",
+          "required": true,
+          "selector": {
+            "object": {
+              "multiple": false
+            }
+          }
+        }
+      }
+    },
     "add_alias_to_floor": {
       "name": "Add an alias to a floor \uD83D\uDC7B",
       "description": "Adds an alias to a floor.",
@@ -120,110 +279,24 @@
         }
       }
     },
-    "add_label_to_area": {
-      "name": "Add a label to an area \uD83D\uDC7B",
-      "description": "Adds a label to an area. If multiple labels or multiple areas are provided, all combinations will be added.",
+    "add_entity_to_area": {
+      "name": "Add an entity to an area \uD83D\uDC7B",
+      "description": "Adds an entity to an area. Please note, if the enity is already in an area, it will be removed from the previous area. This will override the area the device, that provides this entity, is in.",
       "fields": {
-        "label_id": {
-          "name": "Label ID",
-          "description": "The ID(s) of the label(s) to add the area(s).",
-          "required": true,
-          "selector": {
-            "label": {
-              "multiple": true
-            }
-          }
-        },
         "area_id": {
           "name": "Area ID",
-          "description": "The ID(s) of the area(s) to add the label(s) to.",
+          "description": "The ID of the area to add the entity to.",
           "required": true,
           "selector": {
             "area": {
-              "multiple": true
-            }
-          }
-        }
-      }
-    },
-    "restart": {
-      "name": "Restart \uD83D\uDC7B",
-      "description": "Restart the Home Assistant action.",
-      "fields": {
-        "safe_mode": {
-          "name": "Safe mode",
-          "description": "If the restart should be done in safe mode. This will disable all custom integrations and frontend modules.",
-          "required": false,
-          "selector": {
-            "boolean": {}
-          }
-        },
-        "force": {
-          "name": "Force restart",
-          "description": "Force the restart. WARNING! This will not gracefully shutdown Home Assistant, it will skip configuration checks and ignore running database migrations. Only use this if you know what you are doing.",
-          "required": false,
-          "selector": {
-            "boolean": {}
-          }
-        }
-      }
-    },
-    "enable_config_entry": {
-      "name": "Enable an integration \uD83D\uDC7B",
-      "description": "Enables an integration configuration entry.",
-      "fields": {
-        "config_entry_id": {
-          "name": "Config entry",
-          "description": "The integration configuration entry to enable.",
-          "required": true,
-          "selector": {
-            "config_entry": {}
-          }
-        }
-      }
-    },
-    "enable_entity": {
-      "name": "Enable an entity \uD83D\uDC7B",
-      "description": "Enables an entity (or entities) on the fly.",
-      "fields": {
-        "entity_id": {
-          "name": "Entity",
-          "description": "The entity/entities to enable.",
-          "required": true,
-          "selector": {
-            "entity": {
-              "multiple": true,
+              "multiple": false,
               "reorder": false
-            }
-          }
-        }
-      }
-    },
-    "list_orphaned_database_entities": {
-      "name": "List all orphaned database entities \uD83D\uDC7B",
-      "description": "Lists all orphaned database entities unclaimed by any integration.",
-      "fields": {},
-      "response": {
-        "optional": false
-      }
-    },
-    "remove_label_from_entity": {
-      "name": "Remove a label from an entity \uD83D\uDC7B",
-      "description": "Removes a label from an entity. If multiple labels or multiple entities are provided, all combinations will be removed.",
-      "fields": {
-        "label_id": {
-          "name": "Label ID",
-          "description": "The ID(s) of the label(s) to remove from the entity/entities.",
-          "required": true,
-          "selector": {
-            "label": {
-              "multiple": true
             }
           }
         },
         "entity_id": {
           "name": "Entity ID",
-          "description": "The ID(s) of the entity/entities to remove the label(s) from.",
+          "description": "The ID of the entity (or entities) to add to the area.",
           "required": true,
           "selector": {
             "entity": {
@@ -234,156 +307,45 @@
         }
       }
     },
-    "create_floor": {
-      "name": "Create a floor \uD83D\uDC7B",
-      "description": "Creates a new floor on the fly.",
+    "ignore_all_discovered": {
+      "name": "Ignore all currently discovered devices \uD83D\uDC7B",
+      "description": "Ignore all currently discovered devices that are shown on the integrations dashboard. This will not ignore devices that are discovered after this.",
       "fields": {
-        "name": {
-          "name": "Name",
-          "description": "The name of the floor to create.",
-          "required": true,
+        "domain": {
+          "name": "Integration domain",
+          "description": "The integration domain to ignore all discovered devices for. If not provided, all domains will be considered to be ignored.",
+          "required": false,
           "selector": {
             "text": {
-              "multiline": false,
-              "multiple": false
-            }
-          }
-        },
-        "icon": {
-          "name": "Icon",
-          "description": "Icon to use for the floor.",
-          "required": false,
-          "selector": {
-            "icon": {
-              "placeholder": "mdi:texture-box"
-            }
-          }
-        },
-        "level": {
-          "name": "Level",
-          "description": "The level the floor is on in your home.",
-          "required": false,
-          "selector": {
-            "number": {
-              "step": 1.0,
-              "mode": "box"
-            }
-          }
-        },
-        "aliases": {
-          "name": "Aliases",
-          "description": "A list of aliases for the floor. This is useful if you want to use the floor in a different language or different nickname.",
-          "selector": {
-            "object": {
-              "multiple": false
+              "multiple": false,
+              "multiline": false
             }
           }
         }
       }
     },
-    "remove_alias_from_area": {
-      "name": "Remove an alias from an area \uD83D\uDC7B",
-      "description": "Removes an alias from an area.",
+    "add_alias_to_area": {
+      "name": "Add an alias to an area \uD83D\uDC7B",
+      "description": "Adds an alias to an area.",
       "fields": {
         "area_id": {
           "name": "Area ID",
-          "description": "The ID of the area to remove the alias from.",
+          "description": "The ID of the area to add the alias to.",
           "required": true,
           "selector": {
             "area": {
-              "multiple": false
+              "multiple": false,
+              "reorder": false
             }
           }
         },
         "alias": {
           "name": "Alias",
-          "description": "The alias (or list of aliasses) to remove from the area.",
+          "description": "The alias (or list of aliasses) to add to the area.",
           "required": true,
           "selector": {
             "object": {
               "multiple": false
-            }
-          }
-        }
-      }
-    },
-    "add_label_to_device": {
-      "name": "Add a label to a device \uD83D\uDC7B",
-      "description": "Adds a label to a device. If multiple labels or multiple devices are provided, all combinations will be added.",
-      "fields": {
-        "label_id": {
-          "name": "Label ID",
-          "description": "The ID(s) of the label(s) to add the device(s).",
-          "required": true,
-          "selector": {
-            "label": {
-              "multiple": true
-            }
-          }
-        },
-        "device_id": {
-          "name": "Device ID",
-          "description": "The ID(s) of the device(s) to add the label(s) to.",
-          "required": true,
-          "selector": {
-            "device": {
-              "multiple": true
-            }
-          }
-        }
-      }
-    },
-    "remove_alias_from_floor": {
-      "name": "Remove an alias from a floor \uD83D\uDC7B",
-      "description": "Removes an alias from a floor.",
-      "fields": {
-        "floor_id": {
-          "name": "Floor ID",
-          "description": "The ID of the floor to remove the alias from.",
-          "required": true,
-          "selector": {
-            "floor": {
-              "multiple": false
-            }
-          }
-        },
-        "alias": {
-          "name": "Alias",
-          "description": "The alias (or list of aliasses) to remove from the floor.",
-          "required": true,
-          "selector": {
-            "object": {
-              "multiple": false
-            }
-          }
-        }
-      }
-    },
-    "disable_polling": {
-      "name": "Disable polling for updates \uD83D\uDC7B",
-      "description": "Disables polling for updates for an integration configuration entry.",
-      "fields": {
-        "config_entry_id": {
-          "name": "Config entry",
-          "description": "The integration configuration entry to disable polling for.",
-          "required": true,
-          "selector": {
-            "config_entry": {}
-          }
-        }
-      }
-    },
-    "disable_device": {
-      "name": "Disable a device \uD83D\uDC7B",
-      "description": "Disables a device on the fly.",
-      "fields": {
-        "device_id": {
-          "name": "Device",
-          "description": "The device(s) to disable.",
-          "required": true,
-          "selector": {
-            "device": {
-              "multiple": true
             }
           }
         }
@@ -423,57 +385,49 @@
         }
       }
     },
-    "disable_entity": {
-      "name": "Disable an entity \uD83D\uDC7B",
-      "description": "Disables an entity (or entities) on the fly.",
+    "create_area": {
+      "name": "Create an area \uD83D\uDC7B",
+      "description": "Creates a new area on the fly.",
       "fields": {
-        "entity_id": {
-          "name": "Entity",
-          "description": "The entity/entities to disable.",
+        "name": {
+          "name": "Name",
+          "description": "The name of the area to create.",
           "required": true,
           "selector": {
-            "entity": {
-              "multiple": true,
-              "reorder": false
-            }
-          }
-        }
-      }
-    },
-    "add_entity_to_area": {
-      "name": "Add an entity to an area \uD83D\uDC7B",
-      "description": "Adds an entity to an area. Please note, if the enity is already in an area, it will be removed from the previous area. This will override the area the device, that provides this entity, is in.",
-      "fields": {
-        "area_id": {
-          "name": "Area ID",
-          "description": "The ID of the area to add the entity to.",
-          "required": true,
-          "selector": {
-            "area": {
-              "multiple": false
+            "text": {
+              "multiple": false,
+              "multiline": false
             }
           }
         },
-        "entity_id": {
-          "name": "Entity ID",
-          "description": "The ID of the entity (or entities) to add to the area.",
-          "required": true,
+        "icon": {
+          "name": "Icon",
+          "description": "Icon to use for the area.",
+          "required": false,
           "selector": {
-            "entity": {
-              "multiple": true,
-              "reorder": false
+            "icon": {
+              "placeholder": "mdi:texture-box"
+            }
+          }
+        },
+        "aliases": {
+          "name": "Aliases",
+          "description": "A list of aliases for the area. This is useful if you want to use the area in a different language or different nickname.",
+          "selector": {
+            "object": {
+              "multiple": false
             }
           }
         }
       }
     },
-    "remove_label_from_device": {
-      "name": "Remove a label from a device \uD83D\uDC7B",
-      "description": "Removes a label from a device. If multiple labels or multiple devices are provided, all combinations will be removed.",
+    "add_label_to_device": {
+      "name": "Add a label to a device \uD83D\uDC7B",
+      "description": "Adds a label to a device. If multiple labels or multiple devices are provided, all combinations will be added.",
       "fields": {
         "label_id": {
           "name": "Label ID",
-          "description": "The ID(s) of the label(s) to remove from the device(s).",
+          "description": "The ID(s) of the label(s) to add the device(s).",
           "required": true,
           "selector": {
             "label": {
@@ -483,27 +437,11 @@
         },
         "device_id": {
           "name": "Device ID",
-          "description": "The ID(s) of the device(s) to remove the label(s) from.",
+          "description": "The ID(s) of the device(s) to add the label(s) to.",
           "required": true,
           "selector": {
             "device": {
               "multiple": true
-            }
-          }
-        }
-      }
-    },
-    "delete_area": {
-      "name": "Delete an area \uD83D\uDC7B",
-      "description": "Deletes a new area on the fly.",
-      "fields": {
-        "area_id": {
-          "name": "Area ID",
-          "description": "The ID of the area to delete.",
-          "required": true,
-          "selector": {
-            "area": {
-              "multiple": false
             }
           }
         }
@@ -525,72 +463,6 @@
         }
       }
     },
-    "disable_config_entry": {
-      "name": "Disable an integration \uD83D\uDC7B",
-      "description": "Disables an integration configuration entry.",
-      "fields": {
-        "config_entry_id": {
-          "name": "Config entry",
-          "description": "The integration configuration entry to disable.",
-          "required": true,
-          "selector": {
-            "config_entry": {}
-          }
-        }
-      }
-    },
-    "set_floor_aliases": {
-      "name": "Sets aliases for a floor \uD83D\uDC7B",
-      "description": "Sets aliases for a floor. Overwrite and removed any existing aliases, fully replacing them with the new ones.",
-      "fields": {
-        "floor_id": {
-          "name": "Floor ID",
-          "description": "The ID of the floor to set the aliases for.",
-          "required": true,
-          "selector": {
-            "floor": {
-              "multiple": false
-            }
-          }
-        },
-        "aliases": {
-          "name": "Aliases",
-          "description": "The aliases to set for the floor.",
-          "required": true,
-          "selector": {
-            "object": {
-              "multiple": false
-            }
-          }
-        }
-      }
-    },
-    "remove_label_from_area": {
-      "name": "Remove a label from an area \uD83D\uDC7B",
-      "description": "Removes a label to an area. If multiple labels or multiple areas are provided, all combinations will be removed.",
-      "fields": {
-        "label_id": {
-          "name": "Label ID",
-          "description": "The ID(s) of the label(s) to remove from the area(s).",
-          "required": true,
-          "selector": {
-            "label": {
-              "multiple": true
-            }
-          }
-        },
-        "area_id": {
-          "name": "Area ID",
-          "description": "The ID(s) of the area(s) to remove the label(s) from.",
-          "required": true,
-          "selector": {
-            "area": {
-              "multiple": true
-            }
-          }
-        }
-      }
-    },
     "enable_polling": {
       "name": "Enable polling for updates \uD83D\uDC7B",
       "description": "Enables polling for updates for an integration configuration entry.",
@@ -605,82 +477,27 @@
         }
       }
     },
-    "enable_device": {
-      "name": "Enable a device \uD83D\uDC7B",
-      "description": "Enables a device on the fly.",
+    "enable_config_entry": {
+      "name": "Enable an integration \uD83D\uDC7B",
+      "description": "Enables an integration configuration entry.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Config entry",
+          "description": "The integration configuration entry to enable.",
+          "required": true,
+          "selector": {
+            "config_entry": {}
+          }
+        }
+      }
+    },
+    "disable_device": {
+      "name": "Disable a device \uD83D\uDC7B",
+      "description": "Disables a device on the fly.",
       "fields": {
         "device_id": {
           "name": "Device",
-          "description": "The device(s) to enable.",
-          "required": true,
-          "selector": {
-            "device": {
-              "multiple": true
-            }
-          }
-        }
-      }
-    },
-    "remove_area_from_floor": {
-      "name": "Remove an area from a floor \uD83D\uDC7B",
-      "description": "Removes an area from a floor. As an area can only be on one floor, this call doesn\u0027t need to specify the floor.",
-      "fields": {
-        "area_id": {
-          "name": "Area ID",
-          "description": "The ID of the area to remove the floor from.",
-          "required": true,
-          "selector": {
-            "area": {
-              "multiple": true
-            }
-          }
-        }
-      }
-    },
-    "add_label_to_entity": {
-      "name": "Add a label to an entity \uD83D\uDC7B",
-      "description": "Adds a label to an entity. If multiple labels or multiple entities are provided, all combinations will be added.",
-      "fields": {
-        "label_id": {
-          "name": "Label ID",
-          "description": "The ID(s) of the label(s) to add the entity/entities.",
-          "required": true,
-          "selector": {
-            "label": {
-              "multiple": true
-            }
-          }
-        },
-        "entity_id": {
-          "name": "Entity ID",
-          "description": "The ID(s) of the entity/entities to add the label(s) to.",
-          "required": true,
-          "selector": {
-            "entity": {
-              "multiple": true,
-              "reorder": false
-            }
-          }
-        }
-      }
-    },
-    "add_device_to_area": {
-      "name": "Add a device to an area \uD83D\uDC7B",
-      "description": "Adds an device to an area. Please note, if the device is already in an area, it will be removed from the previous area.",
-      "fields": {
-        "area_id": {
-          "name": "Area ID",
-          "description": "The ID of the area to add the device to.",
-          "required": true,
-          "selector": {
-            "area": {
-              "multiple": false
-            }
-          }
-        },
-        "device_id": {
-          "name": "Device ID",
-          "description": "The ID of the device(s) to add to the area.",
+          "description": "The device(s) to disable.",
           "required": true,
           "selector": {
             "device": {
@@ -710,38 +527,6 @@
           "required": true,
           "selector": {
             "area": {
-              "multiple": true
-            }
-          }
-        }
-      }
-    },
-    "delete_label": {
-      "name": "Delete a label \uD83D\uDC7B",
-      "description": "Deletes a label on the fly.",
-      "fields": {
-        "label_id": {
-          "name": "Label ID",
-          "description": "The ID of the label to delete.",
-          "required": true,
-          "selector": {
-            "label": {
-              "multiple": false
-            }
-          }
-        }
-      }
-    },
-    "unhide_entity": {
-      "name": "Unhide an entity \uD83D\uDC7B",
-      "description": "Unhides an entity (or entities) on the fly.",
-      "fields": {
-        "entity_id": {
-          "name": "Entity",
-          "description": "The entity/entities to unhide.",
-          "required": true,
-          "selector": {
-            "entity": {
               "multiple": true,
               "reorder": false
             }
@@ -749,90 +534,47 @@
         }
       }
     },
-    "remove_device_from_area": {
-      "name": "Remove a device from an area \uD83D\uDC7B",
-      "description": "Removes a device from an area. As a device can only be in one area, this call doesn\u0027t need to specify the area.",
+    "create_floor": {
+      "name": "Create a floor \uD83D\uDC7B",
+      "description": "Creates a new floor on the fly.",
       "fields": {
-        "device_id": {
-          "name": "Device ID",
-          "description": "The ID of the device to remove the area from.",
+        "name": {
+          "name": "Name",
+          "description": "The name of the floor to create.",
           "required": true,
           "selector": {
-            "device": {
-              "multiple": true
-            }
-          }
-        }
-      }
-    },
-    "delete_all_orphaned_entities": {
-      "name": "Delete all orphaned entities \uD83D\uDC7B",
-      "description": "Deletes all orphaned entities that no longer have an integration that claim/provide them. Please note, if the integration was just removed, it might need a restart for Home Assistant to realize they are orphaned.\n**WARNING** Entities might have been marked orphaned because an integration is offline or not working since Home Assistant started. Calling this action will delete those entities as well.",
-      "fields": {}
-    },
-    "add_alias_to_area": {
-      "name": "Add an alias to an area \uD83D\uDC7B",
-      "description": "Adds an alias to an area.",
-      "fields": {
-        "area_id": {
-          "name": "Area ID",
-          "description": "The ID of the area to add the alias to.",
-          "required": true,
-          "selector": {
-            "area": {
-              "multiple": false
+            "text": {
+              "multiple": false,
+              "multiline": false
             }
           }
         },
-        "alias": {
-          "name": "Alias",
-          "description": "The alias (or list of aliasses) to add to the area.",
-          "required": true,
+        "icon": {
+          "name": "Icon",
+          "description": "Icon to use for the floor.",
+          "required": false,
           "selector": {
-            "object": {
-              "multiple": false
+            "icon": {
+              "placeholder": "mdi:texture-box"
             }
           }
-        }
-      }
-    },
-    "set_area_aliases": {
-      "name": "Sets aliases for an area \uD83D\uDC7B",
-      "description": "Sets aliases for an area. Overwrite and removed any existing aliases, fully replacing them with the new ones.",
-      "fields": {
-        "area_id": {
-          "name": "Area ID",
-          "description": "The ID of the area to set the aliases for.",
-          "required": true,
+        },
+        "level": {
+          "name": "Level",
+          "description": "The level the floor is on in your home.",
+          "required": false,
           "selector": {
-            "area": {
-              "multiple": false
+            "number": {
+              "step": 1.0,
+              "mode": "box"
             }
           }
         },
         "aliases": {
           "name": "Aliases",
-          "description": "The aliases to set for the area.",
-          "required": true,
+          "description": "A list of aliases for the floor. This is useful if you want to use the floor in a different language or different nickname.",
           "selector": {
             "object": {
-              "multiple": false
-            }
-          }
-        }
-      }
-    },
-    "ignore_all_discovered": {
-      "name": "Ignore all currently discovered devices \uD83D\uDC7B",
-      "description": "Ignore all currently discovered devices that are shown on the integrations dashboard. This will not ignore devices that are discovered after this.",
-      "fields": {
-        "domain": {
-          "name": "Integration domain",
-          "description": "The integration domain to ignore all discovered devices for. If not provided, all domains will be considered to be ignored.",
-          "required": false,
-          "selector": {
-            "text": {
-              "multiline": false,
               "multiple": false
             }
           }
@@ -849,8 +591,8 @@
           "required": true,
           "selector": {
             "entity": {
-              "reorder": false,
-              "multiple": false
+              "multiple": false,
+              "reorder": false
             }
           }
         },
@@ -860,47 +602,46 @@
           "required": true,
           "selector": {
             "text": {
-              "multiline": false,
-              "multiple": false
+              "multiple": false,
+              "multiline": false
             }
           }
         }
       }
     },
-    "create_area": {
-      "name": "Create an area \uD83D\uDC7B",
-      "description": "Creates a new area on the fly.",
+    "restart": {
+      "name": "Restart \uD83D\uDC7B",
+      "description": "Restart the Home Assistant action.",
       "fields": {
-        "name": {
-          "name": "Name",
-          "description": "The name of the area to create.",
-          "required": true,
-          "selector": {
-            "text": {
-              "multiline": false,
-              "multiple": false
-            }
-          }
-        },
-        "icon": {
-          "name": "Icon",
-          "description": "Icon to use for the area.",
+        "safe_mode": {
+          "name": "Safe mode",
+          "description": "If the restart should be done in safe mode. This will disable all custom integrations and frontend modules.",
           "required": false,
           "selector": {
-            "icon": {
-              "placeholder": "mdi:texture-box"
-            }
+            "boolean": {}
           }
         },
-        "aliases": {
-          "name": "Aliases",
-          "description": "A list of aliases for the area. This is useful if you want to use the area in a different language or different nickname.",
+        "force": {
+          "name": "Force restart",
+          "description": "Force the restart. WARNING! This will not gracefully shutdown Home Assistant, it will skip configuration checks and ignore running database migrations. Only use this if you know what you are doing.",
+          "required": false,
           "selector": {
-            "object": {
-              "multiple": false
-            }
+            "boolean": {}
           }
         }
+      }
+    },
+    "delete_all_orphaned_entities": {
+      "name": "Delete all orphaned entities \uD83D\uDC7B",
+      "description": "Deletes all orphaned entities that no longer have an integration that claim/provide them. Please note, if the integration was just removed, it might need a restart for Home Assistant to realize they are orphaned.\n**WARNING** Entities might have been marked orphaned because an integration is offline or not working since Home Assistant started. Calling this action will delete those entities as well.",
+      "fields": {}
+    },
+    "list_orphaned_database_entities": {
+      "name": "List all orphaned database entities \uD83D\uDC7B",
+      "description": "Lists all orphaned database entities unclaimed by any integration.",
+      "fields": {},
+      "response": {
+        "optional": false
       }
     },
     "create_label": {
@@ -913,8 +654,8 @@
           "required": true,
           "selector": {
             "text": {
-              "multiline": false,
-              "multiple": false
+              "multiple": false,
+              "multiline": false
             }
           }
         },
@@ -924,8 +665,8 @@
           "required": true,
           "selector": {
             "text": {
-              "multiline": false,
-              "multiple": false
+              "multiple": false,
+              "multiline": false
             }
           }
         },
@@ -1046,6 +787,162 @@
         }
       }
     },
+    "remove_alias_from_floor": {
+      "name": "Remove an alias from a floor \uD83D\uDC7B",
+      "description": "Removes an alias from a floor.",
+      "fields": {
+        "floor_id": {
+          "name": "Floor ID",
+          "description": "The ID of the floor to remove the alias from.",
+          "required": true,
+          "selector": {
+            "floor": {
+              "multiple": false
+            }
+          }
+        },
+        "alias": {
+          "name": "Alias",
+          "description": "The alias (or list of aliasses) to remove from the floor.",
+          "required": true,
+          "selector": {
+            "object": {
+              "multiple": false
+            }
+          }
+        }
+      }
+    },
+    "remove_label_from_entity": {
+      "name": "Remove a label from an entity \uD83D\uDC7B",
+      "description": "Removes a label from an entity. If multiple labels or multiple entities are provided, all combinations will be removed.",
+      "fields": {
+        "label_id": {
+          "name": "Label ID",
+          "description": "The ID(s) of the label(s) to remove from the entity/entities.",
+          "required": true,
+          "selector": {
+            "label": {
+              "multiple": true
+            }
+          }
+        },
+        "entity_id": {
+          "name": "Entity ID",
+          "description": "The ID(s) of the entity/entities to remove the label(s) from.",
+          "required": true,
+          "selector": {
+            "entity": {
+              "multiple": true,
+              "reorder": false
+            }
+          }
+        }
+      }
+    },
+    "delete_label": {
+      "name": "Delete a label \uD83D\uDC7B",
+      "description": "Deletes a label on the fly.",
+      "fields": {
+        "label_id": {
+          "name": "Label ID",
+          "description": "The ID of the label to delete.",
+          "required": true,
+          "selector": {
+            "label": {
+              "multiple": false
+            }
+          }
+        }
+      }
+    },
+    "delete_area": {
+      "name": "Delete an area \uD83D\uDC7B",
+      "description": "Deletes a new area on the fly.",
+      "fields": {
+        "area_id": {
+          "name": "Area ID",
+          "description": "The ID of the area to delete.",
+          "required": true,
+          "selector": {
+            "area": {
+              "multiple": false,
+              "reorder": false
+            }
+          }
+        }
+      }
+    },
+    "add_label_to_entity": {
+      "name": "Add a label to an entity \uD83D\uDC7B",
+      "description": "Adds a label to an entity. If multiple labels or multiple entities are provided, all combinations will be added.",
+      "fields": {
+        "label_id": {
+          "name": "Label ID",
+          "description": "The ID(s) of the label(s) to add the entity/entities.",
+          "required": true,
+          "selector": {
+            "label": {
+              "multiple": true
+            }
+          }
+        },
+        "entity_id": {
+          "name": "Entity ID",
+          "description": "The ID(s) of the entity/entities to add the label(s) to.",
+          "required": true,
+          "selector": {
+            "entity": {
+              "multiple": true,
+              "reorder": false
+            }
+          }
+        }
+      }
+    },
+    "remove_label_from_device": {
+      "name": "Remove a label from a device \uD83D\uDC7B",
+      "description": "Removes a label from a device. If multiple labels or multiple devices are provided, all combinations will be removed.",
+      "fields": {
+        "label_id": {
+          "name": "Label ID",
+          "description": "The ID(s) of the label(s) to remove from the device(s).",
+          "required": true,
+          "selector": {
+            "label": {
+              "multiple": true
+            }
+          }
+        },
+        "device_id": {
+          "name": "Device ID",
+          "description": "The ID(s) of the device(s) to remove the label(s) from.",
+          "required": true,
+          "selector": {
+            "device": {
+              "multiple": true
+            }
+          }
+        }
+      }
+    },
+    "disable_entity": {
+      "name": "Disable an entity \uD83D\uDC7B",
+      "description": "Disables an entity (or entities) on the fly.",
+      "fields": {
+        "entity_id": {
+          "name": "Entity",
+          "description": "The entity/entities to disable.",
+          "required": true,
+          "selector": {
+            "entity": {
+              "multiple": true,
+              "reorder": false
+            }
+          }
+        }
+      }
+    },
     "rename_entity": {
       "name": "Rename an entity \uD83D\uDC7B",
       "description": "Renames an entity (or entities) on the fly.",
@@ -1067,63 +964,222 @@
           "required": true,
           "selector": {
             "text": {
-              "multiline": false,
+              "multiple": false,
+              "multiline": false
+            }
+          }
+        }
+      }
+    },
+    "unhide_entity": {
+      "name": "Unhide an entity \uD83D\uDC7B",
+      "description": "Unhides an entity (or entities) on the fly.",
+      "fields": {
+        "entity_id": {
+          "name": "Entity",
+          "description": "The entity/entities to unhide.",
+          "required": true,
+          "selector": {
+            "entity": {
+              "multiple": true,
+              "reorder": false
+            }
+          }
+        }
+      }
+    },
+    "disable_config_entry": {
+      "name": "Disable an integration \uD83D\uDC7B",
+      "description": "Disables an integration configuration entry.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Config entry",
+          "description": "The integration configuration entry to disable.",
+          "required": true,
+          "selector": {
+            "config_entry": {}
+          }
+        }
+      }
+    },
+    "add_label_to_area": {
+      "name": "Add a label to an area \uD83D\uDC7B",
+      "description": "Adds a label to an area. If multiple labels or multiple areas are provided, all combinations will be added.",
+      "fields": {
+        "label_id": {
+          "name": "Label ID",
+          "description": "The ID(s) of the label(s) to add the area(s).",
+          "required": true,
+          "selector": {
+            "label": {
+              "multiple": true
+            }
+          }
+        },
+        "area_id": {
+          "name": "Area ID",
+          "description": "The ID(s) of the area(s) to add the label(s) to.",
+          "required": true,
+          "selector": {
+            "area": {
+              "multiple": true,
+              "reorder": false
+            }
+          }
+        }
+      }
+    },
+    "set_floor_aliases": {
+      "name": "Sets aliases for a floor \uD83D\uDC7B",
+      "description": "Sets aliases for a floor. Overwrite and removed any existing aliases, fully replacing them with the new ones.",
+      "fields": {
+        "floor_id": {
+          "name": "Floor ID",
+          "description": "The ID of the floor to set the aliases for.",
+          "required": true,
+          "selector": {
+            "floor": {
               "multiple": false
             }
+          }
+        },
+        "aliases": {
+          "name": "Aliases",
+          "description": "The aliases to set for the floor.",
+          "required": true,
+          "selector": {
+            "object": {
+              "multiple": false
+            }
+          }
+        }
+      }
+    },
+    "remove_area_from_floor": {
+      "name": "Remove an area from a floor \uD83D\uDC7B",
+      "description": "Removes an area from a floor. As an area can only be on one floor, this call doesn\u0027t need to specify the floor.",
+      "fields": {
+        "area_id": {
+          "name": "Area ID",
+          "description": "The ID of the area to remove the floor from.",
+          "required": true,
+          "selector": {
+            "area": {
+              "multiple": true,
+              "reorder": false
+            }
+          }
+        }
+      }
+    },
+    "remove_device_from_area": {
+      "name": "Remove a device from an area \uD83D\uDC7B",
+      "description": "Removes a device from an area. As a device can only be in one area, this call doesn\u0027t need to specify the area.",
+      "fields": {
+        "device_id": {
+          "name": "Device ID",
+          "description": "The ID of the device to remove the area from.",
+          "required": true,
+          "selector": {
+            "device": {
+              "multiple": true
+            }
+          }
+        }
+      }
+    },
+    "enable_device": {
+      "name": "Enable a device \uD83D\uDC7B",
+      "description": "Enables a device on the fly.",
+      "fields": {
+        "device_id": {
+          "name": "Device",
+          "description": "The device(s) to enable.",
+          "required": true,
+          "selector": {
+            "device": {
+              "multiple": true
+            }
+          }
+        }
+      }
+    },
+    "enable_entity": {
+      "name": "Enable an entity \uD83D\uDC7B",
+      "description": "Enables an entity (or entities) on the fly.",
+      "fields": {
+        "entity_id": {
+          "name": "Entity",
+          "description": "The entity/entities to enable.",
+          "required": true,
+          "selector": {
+            "entity": {
+              "multiple": true,
+              "reorder": false
+            }
+          }
+        }
+      }
+    },
+    "disable_polling": {
+      "name": "Disable polling for updates \uD83D\uDC7B",
+      "description": "Disables polling for updates for an integration configuration entry.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Config entry",
+          "description": "The integration configuration entry to disable polling for.",
+          "required": true,
+          "selector": {
+            "config_entry": {}
           }
         }
       }
     }
   },
-  "persistent_notification": {
-    "create": {
+  "system_log": {
+    "clear": {
+      "fields": {}
+    },
+    "write": {
       "fields": {
         "message": {
           "required": true,
-          "example": "Please check your configuration.yaml.",
+          "example": "Something went wrong",
           "selector": {
             "text": {
-              "multiline": false,
-              "multiple": false
+              "multiple": false,
+              "multiline": false
             }
           }
         },
-        "title": {
-          "example": "Test notification",
+        "level": {
+          "default": "error",
           "selector": {
-            "text": {
-              "multiline": false,
-              "multiple": false
+            "select": {
+              "options": [
+                "debug",
+                "info",
+                "warning",
+                "error",
+                "critical"
+              ],
+              "translation_key": "level",
+              "sort": false,
+              "multiple": false,
+              "custom_value": false
             }
           }
         },
-        "notification_id": {
-          "example": 1234,
+        "logger": {
+          "example": "mycomponent.myplatform",
           "selector": {
             "text": {
-              "multiline": false,
-              "multiple": false
+              "multiple": false,
+              "multiline": false
             }
           }
         }
       }
-    },
-    "dismiss": {
-      "fields": {
-        "notification_id": {
-          "required": true,
-          "example": 1234,
-          "selector": {
-            "text": {
-              "multiline": false,
-              "multiple": false
-            }
-          }
-        }
-      }
-    },
-    "dismiss_all": {
-      "fields": {}
     }
   },
   "logger": {
@@ -1151,52 +1207,6 @@
     },
     "set_level": {
       "fields": {}
-    }
-  },
-  "system_log": {
-    "clear": {
-      "fields": {}
-    },
-    "write": {
-      "fields": {
-        "message": {
-          "required": true,
-          "example": "Something went wrong",
-          "selector": {
-            "text": {
-              "multiline": false,
-              "multiple": false
-            }
-          }
-        },
-        "level": {
-          "default": "error",
-          "selector": {
-            "select": {
-              "options": [
-                "debug",
-                "info",
-                "warning",
-                "error",
-                "critical"
-              ],
-              "translation_key": "level",
-              "sort": false,
-              "multiple": false,
-              "custom_value": false
-            }
-          }
-        },
-        "logger": {
-          "example": "mycomponent.myplatform",
-          "selector": {
-            "text": {
-              "multiline": false,
-              "multiple": false
-            }
-          }
-        }
-      }
     }
   },
   "frontend": {
@@ -1341,7 +1351,8 @@
                 "hour",
                 "day",
                 "week",
-                "month"
+                "month",
+                "year"
               ],
               "sort": false,
               "multiple": false,
@@ -1399,8 +1410,8 @@
           "required": true,
           "selector": {
             "entity": {
-              "reorder": false,
-              "multiple": false
+              "multiple": false,
+              "reorder": false
             }
           }
         },
@@ -1410,8 +1421,8 @@
           "required": false,
           "selector": {
             "text": {
-              "multiline": false,
-              "multiple": false
+              "multiple": false,
+              "multiline": false
             }
           }
         },
@@ -1421,8 +1432,8 @@
           "required": true,
           "selector": {
             "text": {
-              "multiline": false,
-              "multiple": false
+              "multiple": false,
+              "multiline": false
             }
           }
         },
@@ -1432,8 +1443,8 @@
           "required": false,
           "selector": {
             "text": {
-              "multiline": false,
-              "multiple": false
+              "multiple": false,
+              "multiline": false
             }
           }
         },
@@ -1511,6 +1522,58 @@
         }
       }
     },
+    "app_start": {
+      "fields": {
+        "app": {
+          "required": true,
+          "example": "core_ssh",
+          "selector": {
+            "app": {}
+          }
+        }
+      }
+    },
+    "app_stop": {
+      "fields": {
+        "app": {
+          "required": true,
+          "example": "core_ssh",
+          "selector": {
+            "app": {}
+          }
+        }
+      }
+    },
+    "app_restart": {
+      "fields": {
+        "app": {
+          "required": true,
+          "example": "core_ssh",
+          "selector": {
+            "app": {}
+          }
+        }
+      }
+    },
+    "app_stdin": {
+      "fields": {
+        "app": {
+          "required": true,
+          "example": "core_ssh",
+          "selector": {
+            "app": {}
+          }
+        },
+        "input": {
+          "required": true,
+          "selector": {
+            "object": {
+              "multiple": false
+            }
+          }
+        }
+      }
+    },
     "host_shutdown": {
       "fields": {}
     },
@@ -1523,8 +1586,8 @@
           "example": "Backup 1",
           "selector": {
             "text": {
-              "multiline": false,
-              "multiple": false
+              "multiple": false,
+              "multiline": false
             }
           }
         },
@@ -1532,8 +1595,8 @@
           "example": "password",
           "selector": {
             "text": {
-              "multiline": false,
-              "multiple": false
+              "multiple": false,
+              "multiline": false
             }
           }
         },
@@ -1570,6 +1633,18 @@
             "boolean": {}
           }
         },
+        "apps": {
+          "example": [
+            "core_ssh",
+            "core_samba",
+            "core_mosquitto"
+          ],
+          "selector": {
+            "object": {
+              "multiple": false
+            }
+          }
+        },
         "addons": {
           "example": [
             "core_ssh",
@@ -1597,8 +1672,8 @@
           "example": "Partial backup 1",
           "selector": {
             "text": {
-              "multiline": false,
-              "multiple": false
+              "multiple": false,
+              "multiline": false
             }
           }
         },
@@ -1606,8 +1681,8 @@
           "example": "password",
           "selector": {
             "text": {
-              "multiline": false,
-              "multiple": false
+              "multiple": false,
+              "multiline": false
             }
           }
         },
@@ -1631,8 +1706,8 @@
           "required": true,
           "selector": {
             "text": {
-              "multiline": false,
-              "multiple": false
+              "multiple": false,
+              "multiline": false
             }
           }
         },
@@ -1640,8 +1715,8 @@
           "example": "password",
           "selector": {
             "text": {
-              "multiline": false,
-              "multiple": false
+              "multiple": false,
+              "multiline": false
             }
           }
         }
@@ -1653,8 +1728,8 @@
           "required": true,
           "selector": {
             "text": {
-              "multiline": false,
-              "multiple": false
+              "multiple": false,
+              "multiline": false
             }
           }
         },
@@ -1667,6 +1742,18 @@
           "example": [
             "homeassistant",
             "share"
+          ],
+          "selector": {
+            "object": {
+              "multiple": false
+            }
+          }
+        },
+        "apps": {
+          "example": [
+            "core_ssh",
+            "core_samba",
+            "core_mosquitto"
           ],
           "selector": {
             "object": {
@@ -1690,58 +1777,8 @@
           "example": "password",
           "selector": {
             "text": {
-              "multiline": false,
-              "multiple": false
-            }
-          }
-        }
-      }
-    }
-  },
-  "ffmpeg": {
-    "start": {
-      "fields": {
-        "entity_id": {
-          "selector": {
-            "entity": {
-              "integration": "ffmpeg",
-              "domain": [
-                "binary_sensor"
-              ],
-              "reorder": false,
-              "multiple": false
-            }
-          }
-        }
-      }
-    },
-    "stop": {
-      "fields": {
-        "entity_id": {
-          "selector": {
-            "entity": {
-              "integration": "ffmpeg",
-              "domain": [
-                "binary_sensor"
-              ],
-              "reorder": false,
-              "multiple": false
-            }
-          }
-        }
-      }
-    },
-    "restart": {
-      "fields": {
-        "entity_id": {
-          "selector": {
-            "entity": {
-              "integration": "ffmpeg",
-              "domain": [
-                "binary_sensor"
-              ],
-              "reorder": false,
-              "multiple": false
+              "multiple": false,
+              "multiline": false
             }
           }
         }
@@ -1756,8 +1793,8 @@
           "example": "1.0.0",
           "selector": {
             "text": {
-              "multiline": false,
-              "multiple": false
+              "multiple": false,
+              "multiline": false
             }
           }
         },
@@ -2052,7 +2089,7 @@
           "selector": {
             "number": {
               "min": 0.0,
-              "max": 9.223372036854776e18,
+              "max": 9.223372036854776e+18,
               "step": 0.01,
               "mode": "box"
             }
@@ -2108,8 +2145,8 @@
           "example": "video1",
           "selector": {
             "text": {
-              "multiline": false,
-              "multiple": false
+              "multiple": false,
+              "multiline": false
             }
           }
         }
@@ -2133,8 +2170,8 @@
           "example": "Music",
           "selector": {
             "text": {
-              "multiline": false,
-              "multiple": false
+              "multiple": false,
+              "multiline": false
             }
           }
         }
@@ -2218,8 +2255,8 @@
           "example": "music",
           "selector": {
             "text": {
-              "multiline": false,
-              "multiple": false
+              "multiple": false,
+              "multiline": false
             }
           }
         },
@@ -2228,8 +2265,8 @@
           "example": "A:ALBUMARTIST/Beatles",
           "selector": {
             "text": {
-              "multiline": false,
-              "multiple": false
+              "multiple": false,
+              "multiline": false
             }
           }
         }
@@ -2257,8 +2294,8 @@
           "example": "Beatles",
           "selector": {
             "text": {
-              "multiline": false,
-              "multiple": false
+              "multiple": false,
+              "multiline": false
             }
           }
         },
@@ -2267,8 +2304,8 @@
           "example": "music",
           "selector": {
             "text": {
-              "multiline": false,
-              "multiple": false
+              "multiple": false,
+              "multiline": false
             }
           }
         },
@@ -2277,8 +2314,8 @@
           "example": "A:ALBUMARTIST/Beatles",
           "selector": {
             "text": {
-              "multiline": false,
-              "multiple": false
+              "multiple": false,
+              "multiline": false
             }
           }
         },
@@ -2438,8 +2475,8 @@
           "example": "/tmp/snapshot_{{ entity_id.name }}.jpg",
           "selector": {
             "text": {
-              "multiline": false,
-              "multiple": false
+              "multiple": false,
+              "multiline": false
             }
           }
         }
@@ -2463,8 +2500,8 @@
               "domain": [
                 "media_player"
               ],
-              "reorder": false,
-              "multiple": false
+              "multiple": false,
+              "reorder": false
             }
           }
         },
@@ -2499,8 +2536,8 @@
           "example": "/tmp/snapshot_{{ entity_id.name }}.mp4",
           "selector": {
             "text": {
-              "multiline": false,
-              "multiple": false
+              "multiple": false,
+              "multiline": false
             }
           }
         },
@@ -2537,6 +2574,56 @@
             ]
           }
         ]
+      }
+    }
+  },
+  "ffmpeg": {
+    "start": {
+      "fields": {
+        "entity_id": {
+          "selector": {
+            "entity": {
+              "integration": "ffmpeg",
+              "domain": [
+                "binary_sensor"
+              ],
+              "multiple": false,
+              "reorder": false
+            }
+          }
+        }
+      }
+    },
+    "stop": {
+      "fields": {
+        "entity_id": {
+          "selector": {
+            "entity": {
+              "integration": "ffmpeg",
+              "domain": [
+                "binary_sensor"
+              ],
+              "multiple": false,
+              "reorder": false
+            }
+          }
+        }
+      }
+    },
+    "restart": {
+      "fields": {
+        "entity_id": {
+          "selector": {
+            "entity": {
+              "integration": "ffmpeg",
+              "domain": [
+                "binary_sensor"
+              ],
+              "multiple": false,
+              "reorder": false
+            }
+          }
+        }
       }
     }
   },
@@ -2586,8 +2673,8 @@
           "required": true,
           "selector": {
             "text": {
-              "multiline": false,
-              "multiple": false
+              "multiple": false,
+              "multiline": false
             }
           }
         },
@@ -2595,8 +2682,8 @@
           "example": "NL",
           "selector": {
             "text": {
-              "multiline": false,
-              "multiple": false
+              "multiple": false,
+              "multiline": false
             }
           }
         },
@@ -2610,8 +2697,8 @@
           "example": "my_conversation_1",
           "selector": {
             "text": {
-              "multiline": false,
-              "multiple": false
+              "multiple": false,
+              "multiline": false
             }
           }
         }
@@ -2626,8 +2713,8 @@
           "example": "NL",
           "selector": {
             "text": {
-              "multiline": false,
-              "multiple": false
+              "multiple": false,
+              "multiline": false
             }
           }
         },
@@ -2648,8 +2735,8 @@
           "example": "aa:bb:cc:dd:ee:ff",
           "selector": {
             "text": {
-              "multiline": false,
-              "multiple": false
+              "multiple": false,
+              "multiline": false
             }
           }
         },
@@ -2657,8 +2744,8 @@
           "example": "192.168.255.255",
           "selector": {
             "text": {
-              "multiline": false,
-              "multiple": false
+              "multiple": false,
+              "multiline": false
             }
           }
         },
@@ -2705,8 +2792,8 @@
               "domain": [
                 "media_player"
               ],
-              "reorder": false,
-              "multiple": false
+              "multiple": false,
+              "reorder": false
             }
           }
         },
@@ -2715,8 +2802,8 @@
           "required": true,
           "selector": {
             "text": {
-              "multiline": false,
-              "multiple": false
+              "multiple": false,
+              "multiline": false
             }
           }
         },
@@ -2730,8 +2817,8 @@
           "example": "ru",
           "selector": {
             "text": {
-              "multiline": false,
-              "multiple": false
+              "multiple": false,
+              "multiline": false
             }
           }
         },
@@ -2807,8 +2894,8 @@
           "required": true,
           "selector": {
             "text": {
-              "multiline": false,
-              "multiple": false
+              "multiple": false,
+              "multiline": false
             }
           }
         },
@@ -2816,8 +2903,8 @@
           "example": "rtsp://rtsp:12345678@192.168.1.123:554/av_stream/ch0",
           "selector": {
             "text": {
-              "multiline": false,
-              "multiple": false
+              "multiple": false,
+              "multiline": false
             }
           }
         },
@@ -2828,8 +2915,8 @@
               "domain": [
                 "camera"
               ],
-              "reorder": false,
-              "multiple": false
+              "multiple": false,
+              "reorder": false
             }
           }
         },
@@ -2870,8 +2957,8 @@
               "domain": [
                 "media_player"
               ],
-              "reorder": false,
-              "multiple": false
+              "multiple": false,
+              "reorder": false
             }
           }
         },
@@ -2879,8 +2966,8 @@
           "example": "rtsp://rtsp:12345678@192.168.1.123:554/av_stream/ch0",
           "selector": {
             "text": {
-              "multiline": false,
-              "multiple": false
+              "multiple": false,
+              "multiline": false
             }
           }
         },
@@ -2891,8 +2978,8 @@
               "domain": [
                 "camera"
               ],
-              "reorder": false,
-              "multiple": false
+              "multiple": false,
+              "reorder": false
             }
           }
         },
@@ -2912,8 +2999,8 @@
           "example": "http://192.168.1.123:8123",
           "selector": {
             "text": {
-              "multiline": false,
-              "multiple": false
+              "multiple": false,
+              "multiline": false
             }
           }
         }
@@ -3046,8 +3133,8 @@
           "example": "away",
           "selector": {
             "text": {
-              "multiline": false,
-              "multiple": false
+              "multiple": false,
+              "multiline": false
             }
           }
         }
@@ -3183,8 +3270,8 @@
           "example": "low",
           "selector": {
             "text": {
-              "multiline": false,
-              "multiple": false
+              "multiple": false,
+              "multiline": false
             }
           }
         }
@@ -3209,8 +3296,8 @@
           "example": "on",
           "selector": {
             "text": {
-              "multiline": false,
-              "multiple": false
+              "multiple": false,
+              "multiline": false
             }
           }
         }
@@ -3235,8 +3322,8 @@
           "example": "on",
           "selector": {
             "text": {
-              "multiline": false,
-              "multiple": false
+              "multiple": false,
+              "multiline": false
             }
           }
         }
@@ -3461,8 +3548,8 @@
           },
           "selector": {
             "text": {
-              "multiline": false,
-              "multiple": false
+              "multiple": false,
+              "multiline": false
             }
           }
         }
@@ -3653,8 +3740,8 @@
           "example": "auto",
           "selector": {
             "text": {
-              "multiline": false,
-              "multiple": false
+              "multiple": false,
+              "multiline": false
             }
           }
         }
@@ -3786,8 +3873,8 @@
           },
           "selector": {
             "text": {
-              "multiline": false,
-              "multiple": false
+              "multiple": false,
+              "multiline": false
             }
           }
         },
@@ -4041,27 +4128,6 @@
                 }
               }
             },
-            "color_temp": {
-              "filter": {
-                "attribute": {
-                  "supported_color_modes": [
-                    "color_temp",
-                    "hs",
-                    "xy",
-                    "rgb",
-                    "rgbw",
-                    "rgbww"
-                  ]
-                }
-              },
-              "selector": {
-                "color_temp": {
-                  "unit": "mired",
-                  "min": 153,
-                  "max": 500
-                }
-              }
-            },
             "brightness": {
               "filter": {
                 "attribute": {
@@ -4127,8 +4193,8 @@
               "example": "relax",
               "selector": {
                 "text": {
-                  "multiline": false,
-                  "multiple": false
+                  "multiple": false,
+                  "multiline": false
                 }
               }
             },
@@ -4305,8 +4371,8 @@
           },
           "selector": {
             "text": {
-              "multiline": false,
-              "multiple": false
+              "multiple": false,
+              "multiline": false
             }
           }
         },
@@ -4560,27 +4626,6 @@
                 }
               }
             },
-            "color_temp": {
-              "filter": {
-                "attribute": {
-                  "supported_color_modes": [
-                    "color_temp",
-                    "hs",
-                    "xy",
-                    "rgb",
-                    "rgbw",
-                    "rgbww"
-                  ]
-                }
-              },
-              "selector": {
-                "color_temp": {
-                  "unit": "mired",
-                  "min": 153,
-                  "max": 500
-                }
-              }
-            },
             "brightness": {
               "filter": {
                 "attribute": {
@@ -4623,8 +4668,8 @@
               "example": "relax",
               "selector": {
                 "text": {
-                  "multiline": false,
-                  "multiple": false
+                  "multiple": false,
+                  "multiline": false
                 }
               }
             },
@@ -4668,8 +4713,8 @@
           "example": 1234,
           "selector": {
             "text": {
-              "multiline": false,
-              "multiple": false
+              "multiple": false,
+              "multiline": false
             }
           }
         }
@@ -4690,8 +4735,8 @@
           "example": 1234,
           "selector": {
             "text": {
-              "multiline": false,
-              "multiple": false
+              "multiple": false,
+              "multiline": false
             }
           }
         }
@@ -4712,8 +4757,8 @@
           "example": 1234,
           "selector": {
             "text": {
-              "multiline": false,
-              "multiple": false
+              "multiple": false,
+              "multiline": false
             }
           }
         }
@@ -4740,8 +4785,8 @@
           "required": true,
           "selector": {
             "text": {
-              "multiline": false,
-              "multiple": false
+              "multiple": false,
+              "multiline": false
             }
           }
         }
@@ -4756,9 +4801,9 @@
         ]
       }
     },
-    "min": {
-      "name": "Set minimum value \uD83D\uDC7B",
-      "description": "Set a number entity to its minimum value.",
+    "max": {
+      "name": "Set maximum value \uD83D\uDC7B",
+      "description": "Set a number entity to its maximum value.",
       "fields": {},
       "target": {
         "entity": [
@@ -4796,20 +4841,6 @@
         ]
       }
     },
-    "max": {
-      "name": "Set maximum value \uD83D\uDC7B",
-      "description": "Set a number entity to its maximum value.",
-      "fields": {},
-      "target": {
-        "entity": [
-          {
-            "domain": [
-              "number"
-            ]
-          }
-        ]
-      }
-    },
     "decrement": {
       "name": "Decrease value \uD83D\uDC7B",
       "description": "Decrease a number entity value by a certain amount.",
@@ -4826,6 +4857,20 @@
           }
         }
       },
+      "target": {
+        "entity": [
+          {
+            "domain": [
+              "number"
+            ]
+          }
+        ]
+      }
+    },
+    "min": {
+      "name": "Set minimum value \uD83D\uDC7B",
+      "description": "Set a number entity to its minimum value.",
+      "fields": {},
       "target": {
         "entity": [
           {
@@ -5010,6 +5055,31 @@
         ]
       }
     },
+    "clean_area": {
+      "fields": {
+        "cleaning_area_id": {
+          "required": true,
+          "selector": {
+            "area": {
+              "multiple": true,
+              "reorder": true
+            }
+          }
+        }
+      },
+      "target": {
+        "entity": [
+          {
+            "domain": [
+              "vacuum"
+            ],
+            "supported_features": [
+              16384
+            ]
+          }
+        ]
+      }
+    },
     "locate": {
       "fields": {},
       "target": {
@@ -5047,8 +5117,8 @@
           "example": "low",
           "selector": {
             "text": {
-              "multiline": false,
-              "multiple": false
+              "multiple": false,
+              "multiline": false
             }
           }
         }
@@ -5070,8 +5140,8 @@
           "example": "set_dnd_timer",
           "selector": {
             "text": {
-              "multiline": false,
-              "multiple": false
+              "multiple": false,
+              "multiline": false
             }
           }
         },
@@ -5247,8 +5317,8 @@
           "example": "eco",
           "selector": {
             "text": {
-              "multiline": false,
-              "multiple": false
+              "multiple": false,
+              "multiline": false
             }
           }
         }
@@ -5270,8 +5340,8 @@
           "example": "eco",
           "selector": {
             "text": {
-              "multiline": false,
-              "multiple": false
+              "multiple": false,
+              "multiline": false
             }
           }
         }
@@ -5293,8 +5363,8 @@
         "agent_user_id": {
           "selector": {
             "text": {
-              "multiline": false,
-              "multiple": false
+              "multiple": false,
+              "multiline": false
             }
           }
         }
@@ -5344,8 +5414,8 @@
           "example": "all_lights",
           "selector": {
             "text": {
-              "multiline": false,
-              "multiple": false
+              "multiple": false,
+              "multiline": false
             }
           }
         },
@@ -5407,79 +5477,43 @@
       }
     }
   },
-  "group": {
-    "reload": {
-      "fields": {}
-    },
-    "set": {
+  "logbook": {
+    "log": {
       "fields": {
-        "object_id": {
-          "required": true,
-          "example": "test_group",
-          "selector": {
-            "text": {
-              "multiline": false,
-              "multiple": false
-            }
-          }
-        },
         "name": {
-          "example": "My test group",
+          "required": true,
+          "example": "Kitchen",
           "selector": {
             "text": {
-              "multiline": false,
-              "multiple": false
+              "multiple": false,
+              "multiline": false
             }
           }
         },
-        "icon": {
-          "example": "mdi:camera",
-          "selector": {
-            "icon": {}
-          }
-        },
-        "entities": {
-          "example": "domain.entity_id1, domain.entity_id2",
-          "selector": {
-            "entity": {
-              "multiple": true,
-              "reorder": false
-            }
-          }
-        },
-        "add_entities": {
-          "example": "domain.entity_id1, domain.entity_id2",
-          "selector": {
-            "entity": {
-              "multiple": true,
-              "reorder": false
-            }
-          }
-        },
-        "remove_entities": {
-          "example": "domain.entity_id1, domain.entity_id2",
-          "selector": {
-            "entity": {
-              "multiple": true,
-              "reorder": false
-            }
-          }
-        },
-        "all": {
-          "selector": {
-            "boolean": {}
-          }
-        }
-      }
-    },
-    "remove": {
-      "fields": {
-        "object_id": {
+        "message": {
           "required": true,
-          "example": "test_group",
+          "example": "is being used",
           "selector": {
-            "object": {
-              "multiple": false
+            "text": {
+              "multiple": false,
+              "multiline": false
+            }
+          }
+        },
+        "entity_id": {
+          "selector": {
+            "entity": {
+              "multiple": false,
+              "reorder": false
+            }
+          }
+        },
+        "domain": {
+          "example": "light",
+          "selector": {
+            "text": {
+              "multiple": false,
+              "multiline": false
             }
           }
         }
@@ -5567,42 +5601,78 @@
       }
     }
   },
-  "logbook": {
-    "log": {
+  "group": {
+    "reload": {
+      "fields": {}
+    },
+    "set": {
       "fields": {
+        "object_id": {
+          "required": true,
+          "example": "test_group",
+          "selector": {
+            "text": {
+              "multiple": false,
+              "multiline": false
+            }
+          }
+        },
         "name": {
-          "required": true,
-          "example": "Kitchen",
+          "example": "My test group",
           "selector": {
             "text": {
-              "multiline": false,
-              "multiple": false
+              "multiple": false,
+              "multiline": false
             }
           }
         },
-        "message": {
-          "required": true,
-          "example": "is being used",
+        "icon": {
+          "example": "mdi:camera",
           "selector": {
-            "text": {
-              "multiline": false,
-              "multiple": false
-            }
+            "icon": {}
           }
         },
-        "entity_id": {
+        "entities": {
+          "example": "domain.entity_id1, domain.entity_id2",
           "selector": {
             "entity": {
-              "reorder": false,
-              "multiple": false
+              "multiple": true,
+              "reorder": false
             }
           }
         },
-        "domain": {
-          "example": "light",
+        "add_entities": {
+          "example": "domain.entity_id1, domain.entity_id2",
           "selector": {
-            "text": {
-              "multiline": false,
+            "entity": {
+              "multiple": true,
+              "reorder": false
+            }
+          }
+        },
+        "remove_entities": {
+          "example": "domain.entity_id1, domain.entity_id2",
+          "selector": {
+            "entity": {
+              "multiple": true,
+              "reorder": false
+            }
+          }
+        },
+        "all": {
+          "selector": {
+            "boolean": {}
+          }
+        }
+      }
+    },
+    "remove": {
+      "fields": {
+        "object_id": {
+          "required": true,
+          "example": "test_group",
+          "selector": {
+            "object": {
               "multiple": false
             }
           }
@@ -5613,6 +5683,30 @@
   "zone": {
     "reload": {
       "fields": {}
+    },
+    "delete": {
+      "name": "Delete a zone \uD83D\uDC7B",
+      "description": "Delete a zone. This works only with zones created and managed via the UI. Zones created and managed in YAML cannot be managed by Spook.",
+      "fields": {
+        "entity_id": {
+          "name": "Entity ID",
+          "description": "The ID of the entity (or entities) to remove.",
+          "required": true,
+          "selector": {
+            "entity": {
+              "multiple": true,
+              "filter": [
+                {
+                  "domain": [
+                    "zone"
+                  ]
+                }
+              ],
+              "reorder": false
+            }
+          }
+        }
+      }
     },
     "update": {
       "name": "Update a zone \uD83D\uDC7B",
@@ -5631,8 +5725,8 @@
                   ]
                 }
               ],
-              "reorder": false,
-              "multiple": false
+              "multiple": false,
+              "reorder": false
             }
           }
         },
@@ -5642,8 +5736,8 @@
           "required": false,
           "selector": {
             "text": {
-              "multiline": false,
-              "multiple": false
+              "multiple": false,
+              "multiline": false
             }
           }
         },
@@ -5702,30 +5796,6 @@
         }
       }
     },
-    "delete": {
-      "name": "Delete a zone \uD83D\uDC7B",
-      "description": "Delete a zone. This works only with zones created and managed via the UI. Zones created and managed in YAML cannot be managed by Spook.",
-      "fields": {
-        "entity_id": {
-          "name": "Entity ID",
-          "description": "The ID of the entity (or entities) to remove.",
-          "required": true,
-          "selector": {
-            "entity": {
-              "multiple": true,
-              "filter": [
-                {
-                  "domain": [
-                    "zone"
-                  ]
-                }
-              ],
-              "reorder": false
-            }
-          }
-        }
-      }
-    },
     "create": {
       "name": "Create a zone \uD83D\uDC7B",
       "description": "Create a new zone in Home Assistant on the fly.",
@@ -5736,8 +5806,8 @@
           "required": true,
           "selector": {
             "text": {
-              "multiline": false,
-              "multiple": false
+              "multiple": false,
+              "multiline": false
             }
           }
         },
@@ -5797,6 +5867,64 @@
       }
     }
   },
+  "input_boolean": {
+    "reload": {
+      "fields": {}
+    },
+    "turn_on": {
+      "fields": {},
+      "target": {
+        "entity": [
+          {
+            "domain": [
+              "input_boolean"
+            ]
+          }
+        ]
+      }
+    },
+    "turn_off": {
+      "fields": {},
+      "target": {
+        "entity": [
+          {
+            "domain": [
+              "input_boolean"
+            ]
+          }
+        ]
+      }
+    },
+    "toggle": {
+      "fields": {},
+      "target": {
+        "entity": [
+          {
+            "domain": [
+              "input_boolean"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "input_button": {
+    "reload": {
+      "fields": {}
+    },
+    "press": {
+      "fields": {},
+      "target": {
+        "entity": [
+          {
+            "domain": [
+              "input_button"
+            ]
+          }
+        ]
+      }
+    }
+  },
   "input_number": {
     "reload": {
       "fields": {}
@@ -5808,7 +5936,7 @@
           "selector": {
             "number": {
               "min": 0.0,
-              "max": 9.223372036854776e18,
+              "max": 9.223372036854776e+18,
               "step": 0.001,
               "mode": "box"
             }
@@ -5825,9 +5953,9 @@
         ]
       }
     },
-    "min": {
-      "name": "Set minimum value \uD83D\uDC7B",
-      "description": "Set an input number entity to its minimum value.",
+    "max": {
+      "name": "Set maximum value \uD83D\uDC7B",
+      "description": "Set an input number entity to its maximum value.",
       "fields": {},
       "target": {
         "entity": [
@@ -5865,20 +5993,6 @@
         ]
       }
     },
-    "max": {
-      "name": "Set maximum value \uD83D\uDC7B",
-      "description": "Set an input number entity to its maximum value.",
-      "fields": {},
-      "target": {
-        "entity": [
-          {
-            "domain": [
-              "input_number"
-            ]
-          }
-        ]
-      }
-    },
     "decrement": {
       "name": "Decrease value \uD83D\uDC7B",
       "description": "Decrease an input number entity value by a certain amount.",
@@ -5904,6 +6018,20 @@
           }
         ]
       }
+    },
+    "min": {
+      "name": "Set minimum value \uD83D\uDC7B",
+      "description": "Set an input number entity to its minimum value.",
+      "fields": {},
+      "target": {
+        "entity": [
+          {
+            "domain": [
+              "input_number"
+            ]
+          }
+        ]
+      }
     }
   },
   "timer": {
@@ -5915,9 +6043,8 @@
         "duration": {
           "example": "00:01:00 or 60",
           "selector": {
-            "text": {
-              "multiline": false,
-              "multiple": false
+            "duration": {
+              "enable_second": true
             }
           }
         }
@@ -5975,9 +6102,9 @@
           "required": true,
           "example": "00:01:00, 60 or -60",
           "selector": {
-            "text": {
-              "multiline": false,
-              "multiple": false
+            "duration": {
+              "allow_negative": true,
+              "enable_second": true
             }
           }
         }
@@ -6003,8 +6130,8 @@
           "example": "00:01:00, 60",
           "selector": {
             "text": {
-              "multiline": false,
-              "multiple": false
+              "multiple": false,
+              "multiline": false
             }
           }
         }
@@ -6014,47 +6141,6 @@
           {
             "domain": [
               "timer"
-            ]
-          }
-        ]
-      }
-    }
-  },
-  "input_boolean": {
-    "reload": {
-      "fields": {}
-    },
-    "turn_on": {
-      "fields": {},
-      "target": {
-        "entity": [
-          {
-            "domain": [
-              "input_boolean"
-            ]
-          }
-        ]
-      }
-    },
-    "turn_off": {
-      "fields": {},
-      "target": {
-        "entity": [
-          {
-            "domain": [
-              "input_boolean"
-            ]
-          }
-        ]
-      }
-    },
-    "toggle": {
-      "fields": {},
-      "target": {
-        "entity": [
-          {
-            "domain": [
-              "input_boolean"
             ]
           }
         ]
@@ -6176,31 +6262,6 @@
         ]
       }
     },
-    "random": {
-      "name": "Select random option \uD83D\uDC7B",
-      "description": "Select an random option for an input_select entity.",
-      "fields": {
-        "options": {
-          "name": "Options",
-          "description": "Limits the options to select from. If not provided, all options will be considered.",
-          "required": false,
-          "selector": {
-            "object": {
-              "multiple": false
-            }
-          }
-        }
-      },
-      "target": {
-        "entity": [
-          {
-            "domain": [
-              "input_select"
-            ]
-          }
-        ]
-      }
-    },
     "shuffle": {
       "name": "Shuffle options \uD83D\uDC7B",
       "description": "Shuffles the list of selectable options for an \u0060input_select\u0060 entity. This is not persistent and will be undone once reloaded or Home Assistant restarts.",
@@ -6228,19 +6289,27 @@
           }
         ]
       }
-    }
-  },
-  "input_button": {
-    "reload": {
-      "fields": {}
     },
-    "press": {
-      "fields": {},
+    "random": {
+      "name": "Select random option \uD83D\uDC7B",
+      "description": "Select an random option for an input_select entity.",
+      "fields": {
+        "options": {
+          "name": "Options",
+          "description": "Limits the options to select from. If not provided, all options will be considered.",
+          "required": false,
+          "selector": {
+            "object": {
+              "multiple": false
+            }
+          }
+        }
+      },
       "target": {
         "entity": [
           {
             "domain": [
-              "input_button"
+              "input_select"
             ]
           }
         ]
@@ -6268,8 +6337,8 @@
                   ]
                 }
               ],
-              "reorder": false,
-              "multiple": false
+              "multiple": false,
+              "reorder": false
             }
           }
         },
@@ -6310,8 +6379,8 @@
                   ]
                 }
               ],
-              "reorder": false,
-              "multiple": false
+              "multiple": false,
+              "reorder": false
             }
           }
         },
@@ -6343,8 +6412,8 @@
           "example": "FF:FF:FF:FF:FF:FF",
           "selector": {
             "text": {
-              "multiline": false,
-              "multiple": false
+              "multiple": false,
+              "multiline": false
             }
           }
         },
@@ -6352,8 +6421,8 @@
           "example": "phonedave",
           "selector": {
             "text": {
-              "multiline": false,
-              "multiple": false
+              "multiple": false,
+              "multiline": false
             }
           }
         },
@@ -6361,8 +6430,8 @@
           "example": "Dave",
           "selector": {
             "text": {
-              "multiline": false,
-              "multiple": false
+              "multiple": false,
+              "multiline": false
             }
           }
         },
@@ -6370,8 +6439,8 @@
           "example": "home",
           "selector": {
             "text": {
-              "multiline": false,
-              "multiple": false
+              "multiple": false,
+              "multiline": false
             }
           }
         },
@@ -6415,8 +6484,8 @@
           "example": "/homeassistant/hello",
           "selector": {
             "text": {
-              "multiline": false,
-              "multiple": false
+              "multiple": false,
+              "multiline": false
             }
           }
         },
@@ -6463,8 +6532,8 @@
           "example": "OpenZWave/#",
           "selector": {
             "text": {
-              "multiline": false,
-              "multiple": false
+              "multiple": false,
+              "multiline": false
             }
           }
         },
@@ -6486,677 +6555,20 @@
       "fields": {}
     }
   },
-  "template": {
+  "schedule": {
     "reload": {
       "fields": {}
-    }
-  },
-  "sonoff": {
-    "send_command": {
-      "fields": {
-        "device": {
-          "name": "Device",
-          "description": "Device ID to send command to.",
-          "example": "1000123456"
-        },
-        "cmd": {
-          "name": "Command",
-          "description": "A single command to send.",
-          "example": "switch"
-        }
-      },
-      "description": "Sends a command to a device.",
-      "name": "Send Command"
-    }
-  },
-  "automation": {
-    "trigger": {
-      "fields": {
-        "skip_condition": {
-          "default": true,
-          "selector": {
-            "boolean": {}
-          }
-        }
-      },
-      "target": {
-        "entity": [
-          {
-            "domain": [
-              "automation"
-            ]
-          }
-        ]
-      }
     },
-    "toggle": {
+    "get_schedule": {
       "fields": {},
       "target": {
         "entity": [
           {
             "domain": [
-              "automation"
+              "schedule"
             ]
           }
         ]
-      }
-    },
-    "turn_on": {
-      "fields": {},
-      "target": {
-        "entity": [
-          {
-            "domain": [
-              "automation"
-            ]
-          }
-        ]
-      }
-    },
-    "turn_off": {
-      "fields": {
-        "stop_actions": {
-          "default": true,
-          "selector": {
-            "boolean": {}
-          }
-        }
-      },
-      "target": {
-        "entity": [
-          {
-            "domain": [
-              "automation"
-            ]
-          }
-        ]
-      }
-    },
-    "reload": {
-      "fields": {}
-    }
-  },
-  "alarm_control_panel": {
-    "alarm_disarm": {
-      "fields": {
-        "code": {
-          "example": "1234",
-          "selector": {
-            "text": {
-              "multiline": false,
-              "multiple": false
-            }
-          }
-        }
-      },
-      "target": {
-        "entity": [
-          {
-            "domain": [
-              "alarm_control_panel"
-            ]
-          }
-        ]
-      }
-    },
-    "alarm_arm_home": {
-      "fields": {
-        "code": {
-          "example": "1234",
-          "selector": {
-            "text": {
-              "multiline": false,
-              "multiple": false
-            }
-          }
-        }
-      },
-      "target": {
-        "entity": [
-          {
-            "domain": [
-              "alarm_control_panel"
-            ],
-            "supported_features": [
-              1
-            ]
-          }
-        ]
-      }
-    },
-    "alarm_arm_away": {
-      "fields": {
-        "code": {
-          "example": "1234",
-          "selector": {
-            "text": {
-              "multiline": false,
-              "multiple": false
-            }
-          }
-        }
-      },
-      "target": {
-        "entity": [
-          {
-            "domain": [
-              "alarm_control_panel"
-            ],
-            "supported_features": [
-              2
-            ]
-          }
-        ]
-      }
-    },
-    "alarm_arm_night": {
-      "fields": {
-        "code": {
-          "example": "1234",
-          "selector": {
-            "text": {
-              "multiline": false,
-              "multiple": false
-            }
-          }
-        }
-      },
-      "target": {
-        "entity": [
-          {
-            "domain": [
-              "alarm_control_panel"
-            ],
-            "supported_features": [
-              4
-            ]
-          }
-        ]
-      }
-    },
-    "alarm_arm_vacation": {
-      "fields": {
-        "code": {
-          "example": "1234",
-          "selector": {
-            "text": {
-              "multiline": false,
-              "multiple": false
-            }
-          }
-        }
-      },
-      "target": {
-        "entity": [
-          {
-            "domain": [
-              "alarm_control_panel"
-            ],
-            "supported_features": [
-              32
-            ]
-          }
-        ]
-      }
-    },
-    "alarm_arm_custom_bypass": {
-      "fields": {
-        "code": {
-          "example": "1234",
-          "selector": {
-            "text": {
-              "multiline": false,
-              "multiple": false
-            }
-          }
-        }
-      },
-      "target": {
-        "entity": [
-          {
-            "domain": [
-              "alarm_control_panel"
-            ],
-            "supported_features": [
-              16
-            ]
-          }
-        ]
-      }
-    },
-    "alarm_trigger": {
-      "fields": {
-        "code": {
-          "example": "1234",
-          "selector": {
-            "text": {
-              "multiline": false,
-              "multiple": false
-            }
-          }
-        }
-      },
-      "target": {
-        "entity": [
-          {
-            "domain": [
-              "alarm_control_panel"
-            ],
-            "supported_features": [
-              8
-            ]
-          }
-        ]
-      }
-    }
-  },
-  "remote": {
-    "turn_off": {
-      "fields": {},
-      "target": {
-        "entity": [
-          {
-            "domain": [
-              "remote"
-            ]
-          }
-        ]
-      }
-    },
-    "turn_on": {
-      "fields": {
-        "activity": {
-          "example": "BedroomTV",
-          "filter": {
-            "supported_features": [
-              4
-            ]
-          },
-          "selector": {
-            "text": {
-              "multiline": false,
-              "multiple": false
-            }
-          }
-        }
-      },
-      "target": {
-        "entity": [
-          {
-            "domain": [
-              "remote"
-            ]
-          }
-        ]
-      }
-    },
-    "toggle": {
-      "fields": {},
-      "target": {
-        "entity": [
-          {
-            "domain": [
-              "remote"
-            ]
-          }
-        ]
-      }
-    },
-    "send_command": {
-      "fields": {
-        "device": {
-          "example": "32756745",
-          "selector": {
-            "text": {
-              "multiline": false,
-              "multiple": false
-            }
-          }
-        },
-        "command": {
-          "required": true,
-          "example": "Play",
-          "selector": {
-            "object": {
-              "multiple": false
-            }
-          }
-        },
-        "num_repeats": {
-          "default": 1,
-          "selector": {
-            "number": {
-              "min": 0.0,
-              "max": 255.0,
-              "step": 1.0,
-              "mode": "slider"
-            }
-          }
-        },
-        "delay_secs": {
-          "default": 0.4,
-          "selector": {
-            "number": {
-              "min": 0.0,
-              "max": 60.0,
-              "step": 0.1,
-              "unit_of_measurement": "seconds",
-              "mode": "slider"
-            }
-          }
-        },
-        "hold_secs": {
-          "default": 0,
-          "selector": {
-            "number": {
-              "min": 0.0,
-              "max": 60.0,
-              "step": 0.1,
-              "unit_of_measurement": "seconds",
-              "mode": "slider"
-            }
-          }
-        }
-      },
-      "target": {
-        "entity": [
-          {
-            "domain": [
-              "remote"
-            ]
-          }
-        ]
-      }
-    },
-    "learn_command": {
-      "fields": {
-        "device": {
-          "example": "television",
-          "selector": {
-            "text": {
-              "multiline": false,
-              "multiple": false
-            }
-          }
-        },
-        "command": {
-          "example": "Turn on",
-          "selector": {
-            "object": {
-              "multiple": false
-            }
-          }
-        },
-        "command_type": {
-          "default": "ir",
-          "selector": {
-            "select": {
-              "options": [
-                "ir",
-                "rf"
-              ],
-              "sort": false,
-              "multiple": false,
-              "custom_value": false
-            }
-          }
-        },
-        "alternative": {
-          "selector": {
-            "boolean": {}
-          }
-        },
-        "timeout": {
-          "selector": {
-            "number": {
-              "min": 0.0,
-              "max": 60.0,
-              "step": 5.0,
-              "unit_of_measurement": "seconds",
-              "mode": "slider"
-            }
-          }
-        }
-      },
-      "target": {
-        "entity": [
-          {
-            "domain": [
-              "remote"
-            ]
-          }
-        ]
-      }
-    },
-    "delete_command": {
-      "fields": {
-        "device": {
-          "example": "television",
-          "selector": {
-            "text": {
-              "multiline": false,
-              "multiple": false
-            }
-          }
-        },
-        "command": {
-          "required": true,
-          "example": "Mute",
-          "selector": {
-            "object": {
-              "multiple": false
-            }
-          }
-        }
-      },
-      "target": {
-        "entity": [
-          {
-            "domain": [
-              "remote"
-            ]
-          }
-        ]
-      }
-    }
-  },
-  "google_generative_ai_conversation": {
-    "generate_content": {
-      "fields": {
-        "prompt": {
-          "required": true,
-          "selector": {
-            "text": {
-              "multiline": true,
-              "multiple": false
-            }
-          }
-        },
-        "filenames": {
-          "required": false,
-          "selector": {
-            "text": {
-              "multiple": true,
-              "multiline": false
-            }
-          }
-        }
-      },
-      "description_placeholders": {
-        "example_image_path": "/config/www/image.jpg"
-      },
-      "response": {
-        "optional": false
-      }
-    }
-  },
-  "downloader": {
-    "download_file": {
-      "fields": {
-        "url": {
-          "required": true,
-          "example": "http://example.org/myfile",
-          "selector": {
-            "text": {
-              "multiline": false,
-              "multiple": false
-            }
-          }
-        },
-        "subdir": {
-          "example": "download_dir",
-          "selector": {
-            "text": {
-              "multiline": false,
-              "multiple": false
-            }
-          }
-        },
-        "filename": {
-          "example": "my_file_name",
-          "selector": {
-            "text": {
-              "multiline": false,
-              "multiple": false
-            }
-          }
-        },
-        "overwrite": {
-          "default": false,
-          "selector": {
-            "boolean": {}
-          }
-        }
-      }
-    }
-  },
-  "counter": {
-    "increment": {
-      "fields": {},
-      "target": {
-        "entity": [
-          {
-            "domain": [
-              "counter"
-            ]
-          }
-        ]
-      }
-    },
-    "decrement": {
-      "fields": {},
-      "target": {
-        "entity": [
-          {
-            "domain": [
-              "counter"
-            ]
-          }
-        ]
-      }
-    },
-    "reset": {
-      "fields": {},
-      "target": {
-        "entity": [
-          {
-            "domain": [
-              "counter"
-            ]
-          }
-        ]
-      }
-    },
-    "set_value": {
-      "fields": {
-        "value": {
-          "required": true,
-          "selector": {
-            "number": {
-              "min": 0.0,
-              "max": 9.223372036854776e18,
-              "mode": "box",
-              "step": 1.0
-            }
-          }
-        }
-      },
-      "target": {
-        "entity": [
-          {
-            "domain": [
-              "counter"
-            ]
-          }
-        ]
-      }
-    }
-  },
-  "utility_meter": {
-    "reset": {
-      "fields": {},
-      "target": {
-        "entity": [
-          {
-            "domain": [
-              "select"
-            ],
-            "integration": "utility_meter"
-          }
-        ]
-      }
-    },
-    "calibrate": {
-      "fields": {
-        "value": {
-          "example": "100",
-          "required": true,
-          "selector": {
-            "text": {
-              "multiline": false,
-              "multiple": false
-            }
-          }
-        }
-      },
-      "target": {
-        "entity": [
-          {
-            "domain": [
-              "sensor"
-            ],
-            "integration": "utility_meter"
-          }
-        ]
-      }
-    }
-  },
-  "file": {
-    "read_file": {
-      "fields": {
-        "file_name": {
-          "example": "www/my_file.json",
-          "selector": {
-            "text": {
-              "multiline": false,
-              "multiple": false
-            }
-          }
-        },
-        "file_encoding": {
-          "example": "JSON",
-          "selector": {
-            "select": {
-              "options": [
-                "JSON",
-                "YAML"
-              ],
-              "sort": false,
-              "multiple": false,
-              "custom_value": false
-            }
-          }
-        }
       },
       "response": {
         "optional": false
@@ -7295,8 +6707,8 @@
           "description": "ID of the popup-card to use as a template for the popup",
           "selector": {
             "text": {
-              "multiline": false,
-              "multiple": false
+              "multiple": false,
+              "multiline": false
             }
           }
         },
@@ -7305,9 +6717,30 @@
           "description": "Popup title",
           "selector": {
             "text": {
-              "multiline": false,
-              "multiple": false
+              "multiple": false,
+              "multiline": false
             }
+          }
+        },
+        "adaptive": {
+          "name": "Use adaptive dialog",
+          "description": "Use adaptive dialog instead of standard dialog.",
+          "selector": {
+            "boolean": {}
+          }
+        },
+        "adaptive_allow_mode_change": {
+          "name": "Allow adaptive mode change",
+          "description": "Allow adaptive dialog to continually change between standard and adaptive mode based on screen size instead of only on open. This can be used to make the popup responsive to screen size changes while open but may cause issues with content or styles.",
+          "selector": {
+            "boolean": {}
+          }
+        },
+        "adaptive_force_bottom_sheet": {
+          "name": "Force bottom sheet in adaptive mode",
+          "description": "Force the popup to always open as a bottom sheet when in adaptive mode.",
+          "selector": {
+            "boolean": {}
           }
         },
         "content": {
@@ -7420,8 +6853,8 @@
           "description": "Text of the right button",
           "selector": {
             "text": {
-              "multiline": false,
-              "multiple": false
+              "multiple": false,
+              "multiline": false
             }
           }
         },
@@ -7476,8 +6909,8 @@
           "description": "Text of the left button",
           "selector": {
             "text": {
-              "multiline": false,
-              "multiple": false
+              "multiple": false,
+              "multiline": false
             }
           }
         },
@@ -7583,8 +7016,8 @@
           "description": "Tag for managing multiple popups",
           "selector": {
             "text": {
-              "multiline": false,
-              "multiple": false
+              "multiple": false,
+              "multiline": false
             }
           }
         }
@@ -7630,8 +7063,8 @@
           "description": "",
           "selector": {
             "text": {
-              "multiline": false,
-              "multiple": false
+              "multiple": false,
+              "multiline": false
             }
           }
         },
@@ -7727,8 +7160,8 @@
           "description": "Tag for popup to close when using multiple popups",
           "selector": {
             "text": {
-              "multiline": false,
-              "multiple": false
+              "multiple": false,
+              "multiline": false
             }
           }
         }
@@ -7782,8 +7215,8 @@
           "description": "Tag for popup to set style for when using multiple popups",
           "selector": {
             "text": {
-              "multiline": false,
-              "multiple": false
+              "multiple": false,
+              "multiline": false
             }
           }
         },
@@ -7864,8 +7297,8 @@
           "required": true,
           "selector": {
             "text": {
-              "multiline": false,
-              "multiple": false
+              "multiple": false,
+              "multiline": false
             }
           }
         },
@@ -7884,8 +7317,8 @@
           "description": "Text of optional action button",
           "selector": {
             "text": {
-              "multiline": false,
-              "multiple": false
+              "multiple": false,
+              "multiline": false
             }
           }
         },
@@ -7940,8 +7373,8 @@
           "description": "Target path",
           "selector": {
             "text": {
-              "multiline": false,
-              "multiple": false
+              "multiple": false,
+              "multiline": false
             }
           }
         }
@@ -8007,8 +7440,8 @@
           "description": "New Browser ID for the browser",
           "selector": {
             "text": {
-              "multiline": false,
-              "multiple": false
+              "multiple": false,
+              "multiline": false
             }
           }
         },
@@ -8069,8 +7502,8 @@
           "description": "Name of theme or \u0027auto\u0027",
           "selector": {
             "text": {
-              "multiline": false,
-              "multiple": false
+              "multiple": false,
+              "multiline": false
             }
           }
         },
@@ -8146,8 +7579,8 @@
           "description": "Text to print",
           "selector": {
             "text": {
-              "multiline": false,
-              "multiple": false
+              "multiple": false,
+              "multiline": false
             }
           }
         }
@@ -8241,7 +7674,8 @@
                 {
                   "integration": "browser_mod"
                 }
-              ]
+              ],
+              "reorder": false
             }
           }
         }
@@ -8250,24 +7684,415 @@
       "name": "deregister_browser"
     }
   },
-  "schedule": {
+  "input_datetime": {
     "reload": {
       "fields": {}
     },
-    "get_schedule": {
+    "set_datetime": {
+      "fields": {
+        "date": {
+          "example": "\u00222019-04-20\u0022",
+          "selector": {
+            "text": {
+              "multiple": false,
+              "multiline": false
+            }
+          }
+        },
+        "time": {
+          "example": "\u002205:04:20\u0022",
+          "selector": {
+            "time": {}
+          }
+        },
+        "datetime": {
+          "example": "\u00222019-04-20 05:04:20\u0022",
+          "selector": {
+            "text": {
+              "multiple": false,
+              "multiline": false
+            }
+          }
+        },
+        "timestamp": {
+          "selector": {
+            "number": {
+              "min": 0.0,
+              "max": 9.223372036854776e+18,
+              "mode": "box",
+              "step": 1.0
+            }
+          }
+        }
+      },
+      "target": {
+        "entity": [
+          {
+            "domain": [
+              "input_datetime"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "file": {
+    "read_file": {
+      "fields": {
+        "file_name": {
+          "example": "www/my_file.json",
+          "selector": {
+            "text": {
+              "multiple": false,
+              "multiline": false
+            }
+          }
+        },
+        "file_encoding": {
+          "example": "JSON",
+          "selector": {
+            "select": {
+              "options": [
+                "JSON",
+                "YAML"
+              ],
+              "sort": false,
+              "multiple": false,
+              "custom_value": false
+            }
+          }
+        }
+      },
+      "response": {
+        "optional": false
+      }
+    }
+  },
+  "automation": {
+    "trigger": {
+      "fields": {
+        "skip_condition": {
+          "default": true,
+          "selector": {
+            "boolean": {}
+          }
+        }
+      },
+      "target": {
+        "entity": [
+          {
+            "domain": [
+              "automation"
+            ]
+          }
+        ]
+      }
+    },
+    "toggle": {
       "fields": {},
       "target": {
         "entity": [
           {
             "domain": [
-              "schedule"
+              "automation"
             ]
           }
         ]
+      }
+    },
+    "turn_on": {
+      "fields": {},
+      "target": {
+        "entity": [
+          {
+            "domain": [
+              "automation"
+            ]
+          }
+        ]
+      }
+    },
+    "turn_off": {
+      "fields": {
+        "stop_actions": {
+          "default": true,
+          "selector": {
+            "boolean": {}
+          }
+        }
+      },
+      "target": {
+        "entity": [
+          {
+            "domain": [
+              "automation"
+            ]
+          }
+        ]
+      }
+    },
+    "reload": {
+      "fields": {}
+    }
+  },
+  "counter": {
+    "increment": {
+      "fields": {},
+      "target": {
+        "entity": [
+          {
+            "domain": [
+              "counter"
+            ]
+          }
+        ]
+      }
+    },
+    "decrement": {
+      "fields": {},
+      "target": {
+        "entity": [
+          {
+            "domain": [
+              "counter"
+            ]
+          }
+        ]
+      }
+    },
+    "reset": {
+      "fields": {},
+      "target": {
+        "entity": [
+          {
+            "domain": [
+              "counter"
+            ]
+          }
+        ]
+      }
+    },
+    "set_value": {
+      "fields": {
+        "value": {
+          "required": true,
+          "selector": {
+            "number": {
+              "min": 0.0,
+              "max": 9.223372036854776e+18,
+              "mode": "box",
+              "step": 1.0
+            }
+          }
+        }
+      },
+      "target": {
+        "entity": [
+          {
+            "domain": [
+              "counter"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "utility_meter": {
+    "reset": {
+      "fields": {},
+      "target": {
+        "entity": [
+          {
+            "domain": [
+              "select"
+            ],
+            "integration": "utility_meter"
+          }
+        ]
+      }
+    },
+    "calibrate": {
+      "fields": {
+        "value": {
+          "example": "100",
+          "required": true,
+          "selector": {
+            "text": {
+              "multiple": false,
+              "multiline": false
+            }
+          }
+        }
+      },
+      "target": {
+        "entity": [
+          {
+            "domain": [
+              "sensor"
+            ],
+            "integration": "utility_meter"
+          }
+        ]
+      }
+    }
+  },
+  "adguard": {
+    "add_url": {
+      "fields": {
+        "name": {
+          "required": true,
+          "example": "Example",
+          "selector": {
+            "text": {
+              "multiple": false,
+              "multiline": false
+            }
+          }
+        },
+        "url": {
+          "required": true,
+          "example": "https://www.example.com/filter/1.txt",
+          "selector": {
+            "text": {
+              "multiple": false,
+              "multiline": false
+            }
+          }
+        }
+      }
+    },
+    "remove_url": {
+      "fields": {
+        "url": {
+          "required": true,
+          "example": "https://www.example.com/filter/1.txt",
+          "selector": {
+            "text": {
+              "multiple": false,
+              "multiline": false
+            }
+          }
+        }
+      }
+    },
+    "enable_url": {
+      "fields": {
+        "url": {
+          "required": true,
+          "example": "https://www.example.com/filter/1.txt",
+          "selector": {
+            "text": {
+              "multiple": false,
+              "multiline": false
+            }
+          }
+        }
+      }
+    },
+    "disable_url": {
+      "fields": {
+        "url": {
+          "required": true,
+          "example": "https://www.example.com/filter/1.txt",
+          "selector": {
+            "text": {
+              "multiple": false,
+              "multiline": false
+            }
+          }
+        }
+      }
+    },
+    "refresh": {
+      "fields": {
+        "force": {
+          "default": false,
+          "selector": {
+            "boolean": {}
+          }
+        }
+      }
+    }
+  },
+  "input_text": {
+    "reload": {
+      "fields": {}
+    },
+    "set_value": {
+      "fields": {
+        "value": {
+          "required": true,
+          "example": "This is an example text",
+          "selector": {
+            "text": {
+              "multiple": false,
+              "multiline": false
+            }
+          }
+        }
+      },
+      "target": {
+        "entity": [
+          {
+            "domain": [
+              "input_text"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "google_generative_ai_conversation": {
+    "generate_content": {
+      "fields": {
+        "prompt": {
+          "required": true,
+          "selector": {
+            "text": {
+              "multiline": true,
+              "multiple": false
+            }
+          }
+        },
+        "filenames": {
+          "required": false,
+          "selector": {
+            "text": {
+              "multiple": true,
+              "multiline": false
+            }
+          }
+        }
+      },
+      "description_placeholders": {
+        "example_image_path": "/config/www/image.jpg"
       },
       "response": {
         "optional": false
       }
+    }
+  },
+  "template": {
+    "reload": {
+      "fields": {}
+    }
+  },
+  "sonoff": {
+    "send_command": {
+      "fields": {
+        "device": {
+          "name": "Device",
+          "description": "Device ID to send command to.",
+          "example": "1000123456"
+        },
+        "cmd": {
+          "name": "Command",
+          "description": "A single command to send.",
+          "example": "switch"
+        }
+      },
+      "description": "Sends a command to a device.",
+      "name": "Send Command"
     }
   },
   "androidtv": {
@@ -8278,8 +8103,8 @@
           "example": "HOME",
           "selector": {
             "text": {
-              "multiline": false,
-              "multiple": false
+              "multiple": false,
+              "multiline": false
             }
           }
         }
@@ -8315,8 +8140,8 @@
           "example": "/storage/emulated/0/Download/example.txt",
           "selector": {
             "text": {
-              "multiline": false,
-              "multiple": false
+              "multiple": false,
+              "multiline": false
             }
           }
         },
@@ -8325,8 +8150,8 @@
           "example": "/config/www/example.txt",
           "selector": {
             "text": {
-              "multiline": false,
-              "multiple": false
+              "multiple": false,
+              "multiline": false
             }
           }
         }
@@ -8349,8 +8174,8 @@
           "example": "/storage/emulated/0/Download/example.txt",
           "selector": {
             "text": {
-              "multiline": false,
-              "multiple": false
+              "multiple": false,
+              "multiline": false
             }
           }
         },
@@ -8359,8 +8184,8 @@
           "example": "/config/www/example.txt",
           "selector": {
             "text": {
-              "multiline": false,
-              "multiple": false
+              "multiple": false,
+              "multiline": false
             }
           }
         }
@@ -8377,6 +8202,488 @@
       }
     }
   },
+  "alarm_control_panel": {
+    "alarm_disarm": {
+      "fields": {
+        "code": {
+          "example": "1234",
+          "selector": {
+            "text": {
+              "multiple": false,
+              "multiline": false
+            }
+          }
+        }
+      },
+      "target": {
+        "entity": [
+          {
+            "domain": [
+              "alarm_control_panel"
+            ]
+          }
+        ]
+      }
+    },
+    "alarm_arm_home": {
+      "fields": {
+        "code": {
+          "example": "1234",
+          "selector": {
+            "text": {
+              "multiple": false,
+              "multiline": false
+            }
+          }
+        }
+      },
+      "target": {
+        "entity": [
+          {
+            "domain": [
+              "alarm_control_panel"
+            ],
+            "supported_features": [
+              1
+            ]
+          }
+        ]
+      }
+    },
+    "alarm_arm_away": {
+      "fields": {
+        "code": {
+          "example": "1234",
+          "selector": {
+            "text": {
+              "multiple": false,
+              "multiline": false
+            }
+          }
+        }
+      },
+      "target": {
+        "entity": [
+          {
+            "domain": [
+              "alarm_control_panel"
+            ],
+            "supported_features": [
+              2
+            ]
+          }
+        ]
+      }
+    },
+    "alarm_arm_night": {
+      "fields": {
+        "code": {
+          "example": "1234",
+          "selector": {
+            "text": {
+              "multiple": false,
+              "multiline": false
+            }
+          }
+        }
+      },
+      "target": {
+        "entity": [
+          {
+            "domain": [
+              "alarm_control_panel"
+            ],
+            "supported_features": [
+              4
+            ]
+          }
+        ]
+      }
+    },
+    "alarm_arm_vacation": {
+      "fields": {
+        "code": {
+          "example": "1234",
+          "selector": {
+            "text": {
+              "multiple": false,
+              "multiline": false
+            }
+          }
+        }
+      },
+      "target": {
+        "entity": [
+          {
+            "domain": [
+              "alarm_control_panel"
+            ],
+            "supported_features": [
+              32
+            ]
+          }
+        ]
+      }
+    },
+    "alarm_arm_custom_bypass": {
+      "fields": {
+        "code": {
+          "example": "1234",
+          "selector": {
+            "text": {
+              "multiple": false,
+              "multiline": false
+            }
+          }
+        }
+      },
+      "target": {
+        "entity": [
+          {
+            "domain": [
+              "alarm_control_panel"
+            ],
+            "supported_features": [
+              16
+            ]
+          }
+        ]
+      }
+    },
+    "alarm_trigger": {
+      "fields": {
+        "code": {
+          "example": "1234",
+          "selector": {
+            "text": {
+              "multiple": false,
+              "multiline": false
+            }
+          }
+        }
+      },
+      "target": {
+        "entity": [
+          {
+            "domain": [
+              "alarm_control_panel"
+            ],
+            "supported_features": [
+              8
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "remote": {
+    "turn_off": {
+      "fields": {},
+      "target": {
+        "entity": [
+          {
+            "domain": [
+              "remote"
+            ]
+          }
+        ]
+      }
+    },
+    "turn_on": {
+      "fields": {
+        "activity": {
+          "example": "BedroomTV",
+          "filter": {
+            "supported_features": [
+              4
+            ]
+          },
+          "selector": {
+            "text": {
+              "multiple": false,
+              "multiline": false
+            }
+          }
+        }
+      },
+      "target": {
+        "entity": [
+          {
+            "domain": [
+              "remote"
+            ]
+          }
+        ]
+      }
+    },
+    "toggle": {
+      "fields": {},
+      "target": {
+        "entity": [
+          {
+            "domain": [
+              "remote"
+            ]
+          }
+        ]
+      }
+    },
+    "send_command": {
+      "fields": {
+        "device": {
+          "example": "32756745",
+          "selector": {
+            "text": {
+              "multiple": false,
+              "multiline": false
+            }
+          }
+        },
+        "command": {
+          "required": true,
+          "example": "Play",
+          "selector": {
+            "object": {
+              "multiple": false
+            }
+          }
+        },
+        "num_repeats": {
+          "default": 1,
+          "selector": {
+            "number": {
+              "min": 0.0,
+              "max": 255.0,
+              "step": 1.0,
+              "mode": "slider"
+            }
+          }
+        },
+        "delay_secs": {
+          "default": 0.4,
+          "selector": {
+            "number": {
+              "min": 0.0,
+              "max": 60.0,
+              "step": 0.1,
+              "unit_of_measurement": "seconds",
+              "mode": "slider"
+            }
+          }
+        },
+        "hold_secs": {
+          "default": 0,
+          "selector": {
+            "number": {
+              "min": 0.0,
+              "max": 60.0,
+              "step": 0.1,
+              "unit_of_measurement": "seconds",
+              "mode": "slider"
+            }
+          }
+        }
+      },
+      "target": {
+        "entity": [
+          {
+            "domain": [
+              "remote"
+            ]
+          }
+        ]
+      }
+    },
+    "learn_command": {
+      "fields": {
+        "device": {
+          "example": "television",
+          "selector": {
+            "text": {
+              "multiple": false,
+              "multiline": false
+            }
+          }
+        },
+        "command": {
+          "example": "Turn on",
+          "selector": {
+            "object": {
+              "multiple": false
+            }
+          }
+        },
+        "command_type": {
+          "default": "ir",
+          "selector": {
+            "select": {
+              "options": [
+                "ir",
+                "rf"
+              ],
+              "sort": false,
+              "multiple": false,
+              "custom_value": false
+            }
+          }
+        },
+        "alternative": {
+          "selector": {
+            "boolean": {}
+          }
+        },
+        "timeout": {
+          "selector": {
+            "number": {
+              "min": 0.0,
+              "max": 60.0,
+              "step": 5.0,
+              "unit_of_measurement": "seconds",
+              "mode": "slider"
+            }
+          }
+        }
+      },
+      "target": {
+        "entity": [
+          {
+            "domain": [
+              "remote"
+            ]
+          }
+        ]
+      }
+    },
+    "delete_command": {
+      "fields": {
+        "device": {
+          "example": "television",
+          "selector": {
+            "text": {
+              "multiple": false,
+              "multiline": false
+            }
+          }
+        },
+        "command": {
+          "required": true,
+          "example": "Mute",
+          "selector": {
+            "object": {
+              "multiple": false
+            }
+          }
+        }
+      },
+      "target": {
+        "entity": [
+          {
+            "domain": [
+              "remote"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "webostv": {
+    "button": {
+      "fields": {
+        "entity_id": {
+          "required": true,
+          "selector": {
+            "entity": {
+              "integration": "webostv",
+              "domain": [
+                "media_player"
+              ],
+              "multiple": false,
+              "reorder": false
+            }
+          }
+        },
+        "button": {
+          "required": true,
+          "example": "LEFT",
+          "selector": {
+            "text": {
+              "multiple": false,
+              "multiline": false
+            }
+          }
+        }
+      }
+    },
+    "command": {
+      "fields": {
+        "entity_id": {
+          "required": true,
+          "selector": {
+            "entity": {
+              "integration": "webostv",
+              "domain": [
+                "media_player"
+              ],
+              "multiple": false,
+              "reorder": false
+            }
+          }
+        },
+        "command": {
+          "required": true,
+          "example": "system.launcher/open",
+          "selector": {
+            "text": {
+              "multiple": false,
+              "multiline": false
+            }
+          }
+        },
+        "payload": {
+          "example": "target: https://www.google.com",
+          "advanced": true,
+          "selector": {
+            "object": {
+              "multiple": false
+            }
+          }
+        }
+      },
+      "response": {
+        "optional": true
+      }
+    },
+    "select_sound_output": {
+      "fields": {
+        "entity_id": {
+          "required": true,
+          "selector": {
+            "entity": {
+              "integration": "webostv",
+              "domain": [
+                "media_player"
+              ],
+              "multiple": false,
+              "reorder": false
+            }
+          }
+        },
+        "sound_output": {
+          "required": true,
+          "example": "external_speaker",
+          "selector": {
+            "text": {
+              "multiple": false,
+              "multiline": false
+            }
+          }
+        }
+      },
+      "response": {
+        "optional": true
+      }
+    }
+  },
   "cast": {
     "show_lovelace_view": {
       "fields": {
@@ -8388,8 +8695,8 @@
               "domain": [
                 "media_player"
               ],
-              "reorder": false,
-              "multiple": false
+              "multiple": false,
+              "reorder": false
             }
           }
         },
@@ -8397,8 +8704,8 @@
           "example": "lovelace-cast",
           "selector": {
             "text": {
-              "multiline": false,
-              "multiple": false
+              "multiple": false,
+              "multiline": false
             }
           }
         },
@@ -8407,91 +8714,11 @@
           "example": "downstairs",
           "selector": {
             "text": {
-              "multiline": false,
-              "multiple": false
+              "multiple": false,
+              "multiline": false
             }
           }
         }
-      }
-    }
-  },
-  "input_text": {
-    "reload": {
-      "fields": {}
-    },
-    "set_value": {
-      "fields": {
-        "value": {
-          "required": true,
-          "example": "This is an example text",
-          "selector": {
-            "text": {
-              "multiline": false,
-              "multiple": false
-            }
-          }
-        }
-      },
-      "target": {
-        "entity": [
-          {
-            "domain": [
-              "input_text"
-            ]
-          }
-        ]
-      }
-    }
-  },
-  "input_datetime": {
-    "reload": {
-      "fields": {}
-    },
-    "set_datetime": {
-      "fields": {
-        "date": {
-          "example": "\u00222019-04-20\u0022",
-          "selector": {
-            "text": {
-              "multiline": false,
-              "multiple": false
-            }
-          }
-        },
-        "time": {
-          "example": "\u002205:04:20\u0022",
-          "selector": {
-            "time": {}
-          }
-        },
-        "datetime": {
-          "example": "\u00222019-04-20 05:04:20\u0022",
-          "selector": {
-            "text": {
-              "multiline": false,
-              "multiple": false
-            }
-          }
-        },
-        "timestamp": {
-          "selector": {
-            "number": {
-              "min": 0.0,
-              "max": 9.223372036854776e18,
-              "mode": "box",
-              "step": 1.0
-            }
-          }
-        }
-      },
-      "target": {
-        "entity": [
-          {
-            "domain": [
-              "input_datetime"
-            ]
-          }
-        ]
       }
     }
   },
@@ -8502,8 +8729,8 @@
           "required": true,
           "selector": {
             "text": {
-              "multiline": false,
-              "multiple": false
+              "multiple": false,
+              "multiline": false
             }
           }
         },
@@ -8511,8 +8738,8 @@
           "required": false,
           "selector": {
             "text": {
-              "multiline": false,
-              "multiple": false
+              "multiple": false,
+              "multiline": false
             }
           },
           "filter": {
@@ -8539,8 +8766,8 @@
           "example": "The garage door has been open for 10 minutes.",
           "selector": {
             "text": {
-              "multiline": false,
-              "multiple": false
+              "multiple": false,
+              "multiline": false
             }
           }
         },
@@ -8548,8 +8775,8 @@
           "example": "Your Garage Door Friend",
           "selector": {
             "text": {
-              "multiline": false,
-              "multiple": false
+              "multiple": false,
+              "multiline": false
             }
           }
         },
@@ -8749,6 +8976,37 @@
         }
       }
     },
+    "mobile_app_oneplus13": {
+      "name": "Send a notification via mobile_app_oneplus13",
+      "description": "Sends a notification message using the mobile_app_oneplus13 integration.",
+      "fields": {
+        "message": {
+          "required": true,
+          "example": "The garage door has been open for 10 minutes.",
+          "selector": {
+            "text": null
+          }
+        },
+        "title": {
+          "example": "Your Garage Door Friend",
+          "selector": {
+            "text": null
+          }
+        },
+        "target": {
+          "example": "platform specific",
+          "selector": {
+            "object": null
+          }
+        },
+        "data": {
+          "example": "platform specific",
+          "selector": {
+            "object": null
+          }
+        }
+      }
+    },
     "notify": {
       "name": "Send a notification with notify",
       "description": "Sends a notification message using the notify service.",
@@ -8809,354 +9067,6 @@
             "object": null
           }
         }
-      }
-    },
-    "mobile_app_oneplus13": {
-      "name": "Send a notification via mobile_app_oneplus13",
-      "description": "Sends a notification message using the mobile_app_oneplus13 integration.",
-      "fields": {
-        "message": {
-          "required": true,
-          "example": "The garage door has been open for 10 minutes.",
-          "selector": {
-            "text": null
-          }
-        },
-        "title": {
-          "example": "Your Garage Door Friend",
-          "selector": {
-            "text": null
-          }
-        },
-        "target": {
-          "example": "platform specific",
-          "selector": {
-            "object": null
-          }
-        },
-        "data": {
-          "example": "platform specific",
-          "selector": {
-            "object": null
-          }
-        }
-      }
-    }
-  },
-  "adguard": {
-    "add_url": {
-      "fields": {
-        "name": {
-          "required": true,
-          "example": "Example",
-          "selector": {
-            "text": {
-              "multiline": false,
-              "multiple": false
-            }
-          }
-        },
-        "url": {
-          "required": true,
-          "example": "https://www.example.com/filter/1.txt",
-          "selector": {
-            "text": {
-              "multiline": false,
-              "multiple": false
-            }
-          }
-        }
-      }
-    },
-    "remove_url": {
-      "fields": {
-        "url": {
-          "required": true,
-          "example": "https://www.example.com/filter/1.txt",
-          "selector": {
-            "text": {
-              "multiline": false,
-              "multiple": false
-            }
-          }
-        }
-      }
-    },
-    "enable_url": {
-      "fields": {
-        "url": {
-          "required": true,
-          "example": "https://www.example.com/filter/1.txt",
-          "selector": {
-            "text": {
-              "multiline": false,
-              "multiple": false
-            }
-          }
-        }
-      }
-    },
-    "disable_url": {
-      "fields": {
-        "url": {
-          "required": true,
-          "example": "https://www.example.com/filter/1.txt",
-          "selector": {
-            "text": {
-              "multiline": false,
-              "multiple": false
-            }
-          }
-        }
-      }
-    },
-    "refresh": {
-      "fields": {
-        "force": {
-          "default": false,
-          "selector": {
-            "boolean": {}
-          }
-        }
-      }
-    }
-  },
-  "ai_task": {
-    "generate_data": {
-      "fields": {
-        "task_name": {
-          "example": "home summary",
-          "required": true,
-          "selector": {
-            "text": {
-              "multiline": false,
-              "multiple": false
-            }
-          }
-        },
-        "instructions": {
-          "example": "Generate a funny notification that the garage door was left open",
-          "required": true,
-          "selector": {
-            "text": {
-              "multiline": true,
-              "multiple": false
-            }
-          }
-        },
-        "entity_id": {
-          "required": false,
-          "selector": {
-            "entity": {
-              "filter": [
-                {
-                  "domain": [
-                    "ai_task"
-                  ],
-                  "supported_features": [
-                    1
-                  ]
-                }
-              ],
-              "reorder": false,
-              "multiple": false
-            }
-          }
-        },
-        "structure": {
-          "required": false,
-          "example": "{ \u0022name\u0022: { \u0022selector\u0022: { \u0022text\u0022: }, \u0022description\u0022: \u0022Name of the user\u0022, \u0022required\u0022: \u0022True\u0022 } } }, \u0022age\u0022: { \u0022selector\u0022: { \u0022number\u0022: }, \u0022description\u0022: \u0022Age of the user\u0022 } }",
-          "selector": {
-            "object": {
-              "multiple": false
-            }
-          }
-        },
-        "attachments": {
-          "required": false,
-          "selector": {
-            "media": {
-              "accept": [
-                "*"
-              ],
-              "multiple": true
-            }
-          }
-        }
-      },
-      "response": {
-        "optional": false
-      }
-    },
-    "generate_image": {
-      "fields": {
-        "task_name": {
-          "example": "picture of a dog",
-          "required": true,
-          "selector": {
-            "text": {
-              "multiline": false,
-              "multiple": false
-            }
-          }
-        },
-        "instructions": {
-          "example": "Generate a high quality square image of a dog on transparent background",
-          "required": true,
-          "selector": {
-            "text": {
-              "multiline": true,
-              "multiple": false
-            }
-          }
-        },
-        "entity_id": {
-          "required": true,
-          "selector": {
-            "entity": {
-              "filter": [
-                {
-                  "domain": [
-                    "ai_task"
-                  ],
-                  "supported_features": [
-                    4
-                  ]
-                }
-              ],
-              "reorder": false,
-              "multiple": false
-            }
-          }
-        },
-        "attachments": {
-          "required": false,
-          "selector": {
-            "media": {
-              "accept": [
-                "*"
-              ],
-              "multiple": true
-            }
-          }
-        }
-      },
-      "response": {
-        "optional": false
-      }
-    }
-  },
-  "humidifier": {
-    "turn_on": {
-      "fields": {},
-      "target": {
-        "entity": [
-          {
-            "domain": [
-              "humidifier"
-            ]
-          }
-        ]
-      }
-    },
-    "turn_off": {
-      "fields": {},
-      "target": {
-        "entity": [
-          {
-            "domain": [
-              "humidifier"
-            ]
-          }
-        ]
-      }
-    },
-    "toggle": {
-      "fields": {},
-      "target": {
-        "entity": [
-          {
-            "domain": [
-              "humidifier"
-            ]
-          }
-        ]
-      }
-    },
-    "set_mode": {
-      "fields": {
-        "mode": {
-          "required": true,
-          "example": "away",
-          "selector": {
-            "text": {
-              "multiline": false,
-              "multiple": false
-            }
-          }
-        }
-      },
-      "target": {
-        "entity": [
-          {
-            "domain": [
-              "humidifier"
-            ],
-            "supported_features": [
-              1
-            ]
-          }
-        ]
-      }
-    },
-    "set_humidity": {
-      "fields": {
-        "humidity": {
-          "required": true,
-          "selector": {
-            "number": {
-              "min": 0.0,
-              "max": 100.0,
-              "unit_of_measurement": "%",
-              "step": 1.0,
-              "mode": "slider"
-            }
-          }
-        }
-      },
-      "target": {
-        "entity": [
-          {
-            "domain": [
-              "humidifier"
-            ]
-          }
-        ]
-      }
-    }
-  },
-  "text": {
-    "set_value": {
-      "fields": {
-        "value": {
-          "required": true,
-          "example": "Hello world!",
-          "selector": {
-            "text": {
-              "multiline": false,
-              "multiple": false
-            }
-          }
-        }
-      },
-      "target": {
-        "entity": [
-          {
-            "domain": [
-              "text"
-            ]
-          }
-        ]
       }
     }
   },
@@ -9348,101 +9258,242 @@
       }
     }
   },
-  "webostv": {
-    "button": {
+  "ai_task": {
+    "generate_data": {
       "fields": {
-        "entity_id": {
+        "task_name": {
+          "example": "home summary",
           "required": true,
-          "selector": {
-            "entity": {
-              "integration": "webostv",
-              "domain": [
-                "media_player"
-              ],
-              "reorder": false,
-              "multiple": false
-            }
-          }
-        },
-        "button": {
-          "required": true,
-          "example": "LEFT",
           "selector": {
             "text": {
-              "multiline": false,
-              "multiple": false
-            }
-          }
-        }
-      }
-    },
-    "command": {
-      "fields": {
-        "entity_id": {
-          "required": true,
-          "selector": {
-            "entity": {
-              "integration": "webostv",
-              "domain": [
-                "media_player"
-              ],
-              "reorder": false,
-              "multiple": false
+              "multiple": false,
+              "multiline": false
             }
           }
         },
-        "command": {
+        "instructions": {
+          "example": "Generate a funny notification that the garage door was left open",
           "required": true,
-          "example": "system.launcher/open",
           "selector": {
             "text": {
-              "multiline": false,
+              "multiline": true,
               "multiple": false
             }
           }
         },
-        "payload": {
-          "example": "target: https://www.google.com",
-          "advanced": true,
+        "entity_id": {
+          "required": false,
+          "selector": {
+            "entity": {
+              "filter": [
+                {
+                  "domain": [
+                    "ai_task"
+                  ],
+                  "supported_features": [
+                    1
+                  ]
+                }
+              ],
+              "multiple": false,
+              "reorder": false
+            }
+          }
+        },
+        "structure": {
+          "required": false,
+          "example": "{ \u0022name\u0022: { \u0022selector\u0022: { \u0022text\u0022: }, \u0022description\u0022: \u0022Name of the user\u0022, \u0022required\u0022: \u0022True\u0022 } } }, \u0022age\u0022: { \u0022selector\u0022: { \u0022number\u0022: }, \u0022description\u0022: \u0022Age of the user\u0022 } }",
           "selector": {
             "object": {
               "multiple": false
             }
           }
+        },
+        "attachments": {
+          "required": false,
+          "selector": {
+            "media": {
+              "accept": [
+                "*"
+              ],
+              "multiple": true
+            }
+          }
         }
       },
       "response": {
-        "optional": true
+        "optional": false
       }
     },
-    "select_sound_output": {
+    "generate_image": {
       "fields": {
-        "entity_id": {
+        "task_name": {
+          "example": "picture of a dog",
           "required": true,
           "selector": {
-            "entity": {
-              "integration": "webostv",
-              "domain": [
-                "media_player"
-              ],
-              "reorder": false,
+            "text": {
+              "multiple": false,
+              "multiline": false
+            }
+          }
+        },
+        "instructions": {
+          "example": "Generate a high quality square image of a dog on transparent background",
+          "required": true,
+          "selector": {
+            "text": {
+              "multiline": true,
               "multiple": false
             }
           }
         },
-        "sound_output": {
+        "entity_id": {
           "required": true,
-          "example": "external_speaker",
           "selector": {
-            "text": {
-              "multiline": false,
-              "multiple": false
+            "entity": {
+              "filter": [
+                {
+                  "domain": [
+                    "ai_task"
+                  ],
+                  "supported_features": [
+                    4
+                  ]
+                }
+              ],
+              "multiple": false,
+              "reorder": false
+            }
+          }
+        },
+        "attachments": {
+          "required": false,
+          "selector": {
+            "media": {
+              "accept": [
+                "*"
+              ],
+              "multiple": true
             }
           }
         }
       },
       "response": {
-        "optional": true
+        "optional": false
+      }
+    }
+  },
+  "humidifier": {
+    "turn_on": {
+      "fields": {},
+      "target": {
+        "entity": [
+          {
+            "domain": [
+              "humidifier"
+            ]
+          }
+        ]
+      }
+    },
+    "turn_off": {
+      "fields": {},
+      "target": {
+        "entity": [
+          {
+            "domain": [
+              "humidifier"
+            ]
+          }
+        ]
+      }
+    },
+    "toggle": {
+      "fields": {},
+      "target": {
+        "entity": [
+          {
+            "domain": [
+              "humidifier"
+            ]
+          }
+        ]
+      }
+    },
+    "set_mode": {
+      "fields": {
+        "mode": {
+          "required": true,
+          "example": "away",
+          "selector": {
+            "text": {
+              "multiple": false,
+              "multiline": false
+            }
+          }
+        }
+      },
+      "target": {
+        "entity": [
+          {
+            "domain": [
+              "humidifier"
+            ],
+            "supported_features": [
+              1
+            ]
+          }
+        ]
+      }
+    },
+    "set_humidity": {
+      "fields": {
+        "humidity": {
+          "required": true,
+          "selector": {
+            "number": {
+              "min": 0.0,
+              "max": 100.0,
+              "unit_of_measurement": "%",
+              "step": 1.0,
+              "mode": "slider"
+            }
+          }
+        }
+      },
+      "target": {
+        "entity": [
+          {
+            "domain": [
+              "humidifier"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "text": {
+    "set_value": {
+      "fields": {
+        "value": {
+          "required": true,
+          "example": "Hello world!",
+          "selector": {
+            "text": {
+              "multiple": false,
+              "multiline": false
+            }
+          }
+        }
+      },
+      "target": {
+        "entity": [
+          {
+            "domain": [
+              "text"
+            ]
+          }
+        ]
       }
     }
   },
@@ -9485,112 +9536,6 @@
       }
     }
   },
-  "calendar": {
-    "create_event": {
-      "fields": {
-        "summary": {
-          "required": true,
-          "example": "Department Party",
-          "selector": {
-            "text": {
-              "multiline": false,
-              "multiple": false
-            }
-          }
-        },
-        "description": {
-          "example": "Meeting to provide technical review for \u0027Phoenix\u0027 design.",
-          "selector": {
-            "text": {
-              "multiline": false,
-              "multiple": false
-            }
-          }
-        },
-        "start_date_time": {
-          "example": "2022-03-22 20:00:00",
-          "selector": {
-            "datetime": {}
-          }
-        },
-        "end_date_time": {
-          "example": "2022-03-22 22:00:00",
-          "selector": {
-            "datetime": {}
-          }
-        },
-        "start_date": {
-          "example": "2022-03-22",
-          "selector": {
-            "date": {}
-          }
-        },
-        "end_date": {
-          "example": "2022-03-23",
-          "selector": {
-            "date": {}
-          }
-        },
-        "in": {
-          "example": "{\u0022days\u0022: 2} or {\u0022weeks\u0022: 2}"
-        },
-        "location": {
-          "example": "Conference Room - F123, Bldg. 002",
-          "selector": {
-            "text": {
-              "multiline": false,
-              "multiple": false
-            }
-          }
-        }
-      },
-      "target": {
-        "entity": [
-          {
-            "domain": [
-              "calendar"
-            ],
-            "supported_features": [
-              1
-            ]
-          }
-        ]
-      }
-    },
-    "get_events": {
-      "fields": {
-        "start_date_time": {
-          "example": "2022-03-22 20:00:00",
-          "selector": {
-            "datetime": {}
-          }
-        },
-        "end_date_time": {
-          "example": "2022-03-22 22:00:00",
-          "selector": {
-            "datetime": {}
-          }
-        },
-        "duration": {
-          "selector": {
-            "duration": {}
-          }
-        }
-      },
-      "target": {
-        "entity": [
-          {
-            "domain": [
-              "calendar"
-            ]
-          }
-        ]
-      },
-      "response": {
-        "optional": false
-      }
-    }
-  },
   "siren": {
     "turn_on": {
       "fields": {
@@ -9604,8 +9549,8 @@
           "required": false,
           "selector": {
             "text": {
-              "multiline": false,
-              "multiple": false
+              "multiple": false,
+              "multiline": false
             }
           }
         },
@@ -9636,8 +9581,8 @@
           "required": false,
           "selector": {
             "text": {
-              "multiline": false,
-              "multiple": false
+              "multiple": false,
+              "multiline": false
             }
           }
         }
@@ -9683,226 +9628,6 @@
             ]
           }
         ]
-      }
-    }
-  },
-  "ssh": {
-    "execute_command": {
-      "fields": {
-        "command": {
-          "name": "Command",
-          "description": "The command to execute.",
-          "required": true,
-          "selector": {
-            "text": {
-              "multiline": false,
-              "multiple": false
-            }
-          }
-        },
-        "timeout": {
-          "name": "Timeout",
-          "description": "The timeout of the command.",
-          "selector": {
-            "number": {
-              "min": 0.0,
-              "max": 60.0,
-              "unit_of_measurement": "s",
-              "step": 1.0,
-              "mode": "slider"
-            }
-          }
-        },
-        "variables": {
-          "name": "Variables",
-          "description": "Variables to pass to the command. Example: A variable \u0060name\u0060 can be used inside the command as \u0060@{name}\u0060.",
-          "selector": {
-            "object": {
-              "multiple": false
-            }
-          }
-        }
-      },
-      "description": "Execute a command on the selected devices.",
-      "name": "Execute command",
-      "target": {
-        "device": [
-          {
-            "integration": "ssh"
-          }
-        ],
-        "entity": [
-          {
-            "integration": "ssh"
-          }
-        ]
-      },
-      "response": {
-        "optional": true
-      }
-    },
-    "run_action": {
-      "fields": {
-        "key": {
-          "name": "Key",
-          "description": "The key of the action command.",
-          "required": true,
-          "selector": {
-            "text": {
-              "multiline": false,
-              "multiple": false
-            }
-          }
-        },
-        "variables": {
-          "name": "Variables",
-          "description": "Variables to pass to the command.",
-          "selector": {
-            "object": {
-              "multiple": false
-            }
-          }
-        }
-      },
-      "description": "Run an action on the selected devices.",
-      "name": "Run action",
-      "target": {
-        "device": [
-          {
-            "integration": "ssh"
-          }
-        ],
-        "entity": [
-          {
-            "integration": "ssh"
-          }
-        ]
-      },
-      "response": {
-        "optional": true
-      }
-    },
-    "poll_sensor": {
-      "fields": {},
-      "description": "Poll one or more sensors.",
-      "name": "Poll sensor",
-      "target": {
-        "device": [
-          {
-            "integration": "ssh"
-          }
-        ],
-        "entity": [
-          {
-            "integration": "ssh",
-            "domain": [
-              "binary_sensor",
-              "number",
-              "select",
-              "sensor",
-              "switch",
-              "text",
-              "update"
-            ]
-          }
-        ]
-      },
-      "response": {
-        "optional": true
-      }
-    },
-    "set_value": {
-      "fields": {
-        "values": {
-          "name": "Values",
-          "description": "Values in the same order as the target entities.",
-          "required": true,
-          "selector": {
-            "object": {
-              "multiple": false
-            }
-          }
-        }
-      },
-      "description": "Set the value of one or more controllable sensors.",
-      "name": "Set value",
-      "target": {
-        "device": [],
-        "entity": [
-          {
-            "integration": "ssh",
-            "domain": [
-              "number",
-              "select",
-              "switch",
-              "text",
-              "update"
-            ]
-          }
-        ]
-      },
-      "response": {
-        "optional": true
-      }
-    },
-    "turn_on": {
-      "fields": {},
-      "description": "Turn the selected devices on.",
-      "name": "Turn on",
-      "target": {
-        "device": [
-          {
-            "integration": "ssh"
-          }
-        ],
-        "entity": [
-          {
-            "integration": "ssh"
-          }
-        ]
-      },
-      "response": {
-        "optional": true
-      }
-    },
-    "turn_off": {
-      "fields": {},
-      "description": "Turn the selected devices off.",
-      "name": "Turn off",
-      "target": {
-        "device": [
-          {
-            "integration": "ssh"
-          }
-        ],
-        "entity": [
-          {
-            "integration": "ssh"
-          }
-        ]
-      },
-      "response": {
-        "optional": true
-      }
-    },
-    "restart": {
-      "fields": {},
-      "description": "Restart the selected devices.",
-      "name": "Restart",
-      "target": {
-        "device": [
-          {
-            "integration": "ssh"
-          }
-        ],
-        "entity": [
-          {
-            "integration": "ssh"
-          }
-        ]
-      },
-      "response": {
-        "optional": true
       }
     }
   },
@@ -10173,27 +9898,87 @@
       }
     }
   },
-  "spook": {
-    "random_fail": {
-      "fields": {},
-      "description": "Performing this action will randomly fail.",
-      "name": "Random fail \uD83D\uDC7B"
+  "watchman": {
+    "report": {
+      "fields": {
+        "parse_config": {
+          "example": true,
+          "default": false,
+          "required": false,
+          "selector": {
+            "boolean": {}
+          }
+        },
+        "advanced_options": {
+          "collapsed": true,
+          "fields": {
+            "action": {
+              "example": "persistent_notification.create",
+              "required": false,
+              "advanced": true,
+              "selector": {
+                "text": {
+                  "multiple": false,
+                  "multiline": false
+                }
+              }
+            },
+            "data": {
+              "example": "title: Watchman Report",
+              "required": false,
+              "advanced": true
+            },
+            "chunk_size": {
+              "example": 3500,
+              "required": false,
+              "advanced": true,
+              "selector": {
+                "number": {
+                  "min": 0.0,
+                  "max": 100000.0,
+                  "mode": "box",
+                  "step": 1.0
+                }
+              }
+            },
+            "create_file": {
+              "example": true,
+              "default": true,
+              "required": false,
+              "selector": {
+                "boolean": {}
+              }
+            }
+          }
+        }
+      },
+      "description": "Run watchman report",
+      "name": "Report",
+      "response": {
+        "optional": true
+      }
     },
-    "boo": {
-      "fields": {},
-      "description": "Calling this action spooks Home Assistant. Performing this action will always fail.",
-      "name": "Boo! \uD83D\uDC7B"
+    "set_ignored_labels": {
+      "fields": {
+        "labels": {
+          "name": "Labels",
+          "description": "List of labels to ignore.",
+          "required": true,
+          "selector": {
+            "label": {
+              "multiple": true
+            }
+          }
+        }
+      },
+      "description": "Overwrite the list of labels to ignore.",
+      "name": "Set ignored labels"
     }
   },
   "repairs": {
     "unignore_all": {
       "name": "Unignore all issues \uD83D\uDC7B",
       "description": "Unignore all issues currently raised in Home Assistant Repairs.",
-      "fields": {}
-    },
-    "ignore_all": {
-      "name": "Ignore all issues \uD83D\uDC7B",
-      "description": "Ignore all issues currently raised in Home Assistant Repairs.",
       "fields": {}
     },
     "remove": {
@@ -10206,8 +9991,8 @@
           "required": true,
           "selector": {
             "text": {
-              "multiline": false,
-              "multiple": false
+              "multiple": false,
+              "multiline": false
             }
           }
         }
@@ -10223,8 +10008,8 @@
           "required": true,
           "selector": {
             "text": {
-              "multiline": false,
-              "multiple": false
+              "multiple": false,
+              "multiline": false
             }
           }
         },
@@ -10245,8 +10030,8 @@
           "required": false,
           "selector": {
             "text": {
-              "multiline": false,
-              "multiple": false
+              "multiple": false,
+              "multiline": false
             }
           }
         },
@@ -10256,8 +10041,8 @@
           "required": false,
           "selector": {
             "text": {
-              "multiline": false,
-              "multiple": false
+              "multiple": false,
+              "multiline": false
             }
           }
         },
@@ -10296,6 +10081,11 @@
           }
         }
       }
+    },
+    "ignore_all": {
+      "name": "Ignore all issues \uD83D\uDC7B",
+      "description": "Ignore all issues currently raised in Home Assistant Repairs.",
+      "fields": {}
     }
   },
   "blueprint": {
@@ -10309,12 +10099,24 @@
           "required": true,
           "selector": {
             "text": {
-              "multiline": false,
-              "multiple": false
+              "multiple": false,
+              "multiline": false
             }
           }
         }
       }
+    }
+  },
+  "spook": {
+    "random_fail": {
+      "fields": {},
+      "description": "Performing this action will randomly fail.",
+      "name": "Random fail \uD83D\uDC7B"
+    },
+    "boo": {
+      "fields": {},
+      "description": "Calling this action spooks Home Assistant. Performing this action will always fail.",
+      "name": "Boo! \uD83D\uDC7B"
     }
   },
   "nodered": {
@@ -10325,8 +10127,8 @@
           "example": "1,2",
           "selector": {
             "text": {
-              "multiline": false,
-              "multiple": false
+              "multiple": false,
+              "multiline": false
             }
           }
         },
@@ -10397,6 +10199,226 @@
       }
     }
   },
+  "ssh": {
+    "execute_command": {
+      "fields": {
+        "command": {
+          "name": "Command",
+          "description": "The command to execute.",
+          "required": true,
+          "selector": {
+            "text": {
+              "multiple": false,
+              "multiline": false
+            }
+          }
+        },
+        "timeout": {
+          "name": "Timeout",
+          "description": "The timeout of the command.",
+          "selector": {
+            "number": {
+              "min": 0.0,
+              "max": 60.0,
+              "unit_of_measurement": "s",
+              "step": 1.0,
+              "mode": "slider"
+            }
+          }
+        },
+        "variables": {
+          "name": "Variables",
+          "description": "Variables to pass to the command. Example: A variable \u0060name\u0060 can be used inside the command as \u0060@{name}\u0060.",
+          "selector": {
+            "object": {
+              "multiple": false
+            }
+          }
+        }
+      },
+      "description": "Execute a command on the selected devices.",
+      "name": "Execute command",
+      "target": {
+        "device": [
+          {
+            "integration": "ssh"
+          }
+        ],
+        "entity": [
+          {
+            "integration": "ssh"
+          }
+        ]
+      },
+      "response": {
+        "optional": true
+      }
+    },
+    "run_action": {
+      "fields": {
+        "key": {
+          "name": "Key",
+          "description": "The key of the action command.",
+          "required": true,
+          "selector": {
+            "text": {
+              "multiple": false,
+              "multiline": false
+            }
+          }
+        },
+        "variables": {
+          "name": "Variables",
+          "description": "Variables to pass to the command.",
+          "selector": {
+            "object": {
+              "multiple": false
+            }
+          }
+        }
+      },
+      "description": "Run an action on the selected devices.",
+      "name": "Run action",
+      "target": {
+        "device": [
+          {
+            "integration": "ssh"
+          }
+        ],
+        "entity": [
+          {
+            "integration": "ssh"
+          }
+        ]
+      },
+      "response": {
+        "optional": true
+      }
+    },
+    "poll_sensor": {
+      "fields": {},
+      "description": "Poll one or more sensors.",
+      "name": "Poll sensor",
+      "target": {
+        "device": [
+          {
+            "integration": "ssh"
+          }
+        ],
+        "entity": [
+          {
+            "integration": "ssh",
+            "domain": [
+              "binary_sensor",
+              "number",
+              "select",
+              "sensor",
+              "switch",
+              "text",
+              "update"
+            ]
+          }
+        ]
+      },
+      "response": {
+        "optional": true
+      }
+    },
+    "set_value": {
+      "fields": {
+        "values": {
+          "name": "Values",
+          "description": "Values in the same order as the target entities.",
+          "required": true,
+          "selector": {
+            "object": {
+              "multiple": false
+            }
+          }
+        }
+      },
+      "description": "Set the value of one or more controllable sensors.",
+      "name": "Set value",
+      "target": {
+        "device": [],
+        "entity": [
+          {
+            "integration": "ssh",
+            "domain": [
+              "number",
+              "select",
+              "switch",
+              "text",
+              "update"
+            ]
+          }
+        ]
+      },
+      "response": {
+        "optional": true
+      }
+    },
+    "turn_on": {
+      "fields": {},
+      "description": "Turn the selected devices on.",
+      "name": "Turn on",
+      "target": {
+        "device": [
+          {
+            "integration": "ssh"
+          }
+        ],
+        "entity": [
+          {
+            "integration": "ssh"
+          }
+        ]
+      },
+      "response": {
+        "optional": true
+      }
+    },
+    "turn_off": {
+      "fields": {},
+      "description": "Turn the selected devices off.",
+      "name": "Turn off",
+      "target": {
+        "device": [
+          {
+            "integration": "ssh"
+          }
+        ],
+        "entity": [
+          {
+            "integration": "ssh"
+          }
+        ]
+      },
+      "response": {
+        "optional": true
+      }
+    },
+    "restart": {
+      "fields": {},
+      "description": "Restart the selected devices.",
+      "name": "Restart",
+      "target": {
+        "device": [
+          {
+            "integration": "ssh"
+          }
+        ],
+        "entity": [
+          {
+            "integration": "ssh"
+          }
+        ]
+      },
+      "response": {
+        "optional": true
+      }
+    }
+  },
   "tapo_control": {
     "save_preset": {
       "fields": {
@@ -10407,8 +10429,8 @@
           "name": "Name",
           "selector": {
             "text": {
-              "multiline": false,
-              "multiple": false
+              "multiple": false,
+              "multiline": false
             }
           }
         }
@@ -10435,8 +10457,8 @@
           "name": "Name",
           "selector": {
             "text": {
-              "multiline": false,
-              "multiple": false
+              "multiple": false,
+              "multiline": false
             }
           }
         }
