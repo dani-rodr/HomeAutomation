@@ -233,11 +233,7 @@ public class DanielEntities(Devices devices, Entities entities) : IPersonEntitie
     public CounterEntity Counter => devices.Global.PeopleControl!.Counter;
 
     public IEnumerable<BinarySensorEntity> HomeTriggers =>
-        [
-            entities.BinarySensor.RedmiWatch5Ble,
-            entities.BinarySensor.Oneplus13Ble,
-            entities.BinarySensor.Oneplus13Wifi,
-        ];
+        [entities.BinarySensor.RedmiWatch5Ble, entities.BinarySensor.Oneplus13Ble];
 
     public IEnumerable<BinarySensorEntity> AwayTriggers =>
         [entities.BinarySensor.PocoF4GtBle, entities.BinarySensor.Oneplus13Ble];
