@@ -2,7 +2,10 @@ using HomeAutomation.apps.Area.LivingRoom.Devices;
 
 namespace HomeAutomation.apps.Area.LivingRoom.Automations;
 
-public class LivingRoomLightEntities(LivingRoomDevices devices) : ILivingRoomLightEntities
+public class LivingRoomLightEntities(
+    LivingRoomLightDevices devices,
+    LivingRoomMediaDevices mediaDevices
+) : ILivingRoomLightEntities
 {
     public SwitchEntity MasterSwitch => devices.LightAutomation;
     public BinarySensorEntity MotionSensor => devices.MotionSensor;
@@ -12,7 +15,7 @@ public class LivingRoomLightEntities(LivingRoomDevices devices) : ILivingRoomLig
     public BinarySensorEntity BedroomDoor => devices.BedroomDoor;
     public BinarySensorEntity LivingRoomDoor => devices.LivingRoomDoor;
     public BinarySensorEntity BedroomMotionSensor => devices.BedroomMotionSensor;
-    public MediaPlayerEntity TclTv => devices.TclTv;
+    public MediaPlayerEntity TclTv => mediaDevices.TclTv;
     public BinarySensorEntity KitchenMotionSensor => devices.KitchenMotionSensor;
     public SwitchEntity KitchenMotionAutomation => devices.KitchenMotionAutomation;
     public LightEntity PantryLights => devices.PantryLights;

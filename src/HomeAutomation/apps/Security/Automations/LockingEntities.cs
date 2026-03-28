@@ -2,7 +2,7 @@ using HomeAutomation.apps.Security;
 
 namespace HomeAutomation.apps.Common.Security.Automations;
 
-public class LockingEntities(SecurityDevices devices) : ILockingEntities
+public class LockingEntities(LockDevices devices) : ILockingEntities
 {
     public LockEntity Lock => devices.Lock;
     public BinarySensorEntity Door => devices.Door;

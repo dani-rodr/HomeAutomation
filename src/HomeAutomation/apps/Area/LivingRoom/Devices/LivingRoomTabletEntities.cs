@@ -1,11 +1,14 @@
 namespace HomeAutomation.apps.Area.LivingRoom.Devices;
 
-public class LivingRoomTabletEntities(LivingRoomDevices devices) : ITabletEntities
+public class LivingRoomTabletEntities(
+    LivingRoomLightDevices devices,
+    LivingRoomMediaDevices mediaDevices
+) : ITabletEntities
 {
     public SwitchEntity MasterSwitch => devices.LightAutomation;
-    public BinarySensorEntity MotionSensor => devices.MotionSensor;
-    public LightEntity Light => devices.TabletLight;
-    public BinarySensorEntity TabletActive => devices.TabletActive;
-    public NumberEntity SensorDelay => devices.SensorDelay;
-    public ButtonEntity Restart => devices.Restart;
+    public BinarySensorEntity MotionSensor => mediaDevices.MotionSensor;
+    public LightEntity Light => mediaDevices.TabletLight;
+    public BinarySensorEntity TabletActive => mediaDevices.TabletActive;
+    public NumberEntity SensorDelay => mediaDevices.SensorDelay;
+    public ButtonEntity Restart => mediaDevices.Restart;
 }

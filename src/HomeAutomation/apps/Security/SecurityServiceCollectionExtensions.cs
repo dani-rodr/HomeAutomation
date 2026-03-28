@@ -10,6 +10,7 @@ public static class SecurityServiceCollectionExtensions
     public static IServiceCollection AddSecurityServices(this IServiceCollection services)
     {
         return services
+            .AddTransient<LockDevices>()
             .AddTransient<SecurityDevices>()
             .AddTransient<ILockingEntities, LockingEntities>()
             .AddTransient<IAccessControlAutomationEntities, AccessControlAutomationEntities>()

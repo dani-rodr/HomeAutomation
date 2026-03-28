@@ -2,7 +2,7 @@ using HomeAutomation.apps.Area.LivingRoom.Devices;
 
 namespace HomeAutomation.apps.Area.LivingRoom.Automations;
 
-public class AirQualityEntities(LivingRoomDevices devices) : IAirQualityEntities
+public class AirQualityEntities(LivingRoomAirQualityDevices devices) : IAirQualityEntities
 {
     public SwitchEntity MasterSwitch => devices.CleanAirAutomation;
     public BinarySensorEntity MotionSensor => devices.MotionSensor;

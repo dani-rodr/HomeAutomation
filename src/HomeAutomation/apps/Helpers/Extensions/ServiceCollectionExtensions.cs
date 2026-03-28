@@ -28,19 +28,13 @@ public static class ServiceCollectionExtensions
             .AddTransient<IPersonControllerFactory, PersonControllerFactory>()
             .AddTransient<IMotionSensorRestartScheduler, MotionSensorRestartScheduler>()
             .AddSecurityServices()
-            .AddAreaEntities()
+            .AddBedroomServices()
+            .AddDeskServices()
+            .AddBathroomServices()
+            .AddKitchenServices()
+            .AddLivingRoomServices()
+            .AddPantryServices()
             .AddMotionSensors();
-    }
-
-    private static IServiceCollection AddAreaEntities(this IServiceCollection services)
-    {
-        return services
-            .AddBedroomEntities()
-            .AddDeskEntities()
-            .AddBathroomEntities()
-            .AddKitchenEntities()
-            .AddLivingRoomEntities()
-            .AddPantryEntities();
     }
 
     private static IServiceCollection AddMotionSensors(this IServiceCollection services)
@@ -52,35 +46,5 @@ public static class ServiceCollectionExtensions
             .AddTransient<Area.Kitchen.Devices.MotionSensor>()
             .AddTransient<Area.Desk.Devices.MotionSensor>()
             .AddTransient<Area.Pantry.Devices.MotionSensor>();
-    }
-
-    private static IServiceCollection AddBedroomEntities(this IServiceCollection services)
-    {
-        return services.AddBedroomServices();
-    }
-
-    private static IServiceCollection AddDeskEntities(this IServiceCollection services)
-    {
-        return services.AddDeskServices();
-    }
-
-    private static IServiceCollection AddBathroomEntities(this IServiceCollection services)
-    {
-        return services.AddBathroomServices();
-    }
-
-    private static IServiceCollection AddKitchenEntities(this IServiceCollection services)
-    {
-        return services.AddKitchenServices();
-    }
-
-    private static IServiceCollection AddLivingRoomEntities(this IServiceCollection services)
-    {
-        return services.AddLivingRoomServices();
-    }
-
-    private static IServiceCollection AddPantryEntities(this IServiceCollection services)
-    {
-        return services.AddPantryServices();
     }
 }

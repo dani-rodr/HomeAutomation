@@ -1,6 +1,6 @@
 namespace HomeAutomation.apps.Area.LivingRoom.Devices;
 
-public class TclDisplayEntities(LivingRoomDevices devices) : ITclDisplayEntities
+public class TclDisplayEntities(LivingRoomMediaDevices devices) : ITclDisplayEntities
 {
     public MediaPlayerEntity MediaPlayer => devices.TclTv;
     public SwitchEntity MasterSwitch => devices.TvAutomation;

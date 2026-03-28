@@ -2,7 +2,7 @@ using HomeAutomation.apps.Area.LivingRoom.Devices;
 
 namespace HomeAutomation.apps.Area.LivingRoom.Automations;
 
-public class LivingRoomFanEntities(LivingRoomDevices devices) : ILivingRoomFanEntities
+public class LivingRoomFanEntities(LivingRoomFanDevices devices) : ILivingRoomFanEntities
 {
     public SwitchEntity MasterSwitch => devices.FanAutomation;
     public BinarySensorEntity MotionSensor => devices.SecondaryMotionSensor;

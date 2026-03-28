@@ -9,7 +9,10 @@ public static class LivingRoomServiceCollectionExtensions
     public static IServiceCollection AddLivingRoomServices(this IServiceCollection services)
     {
         return services
-            .AddTransient<LivingRoomDevices>()
+            .AddTransient<LivingRoomLightDevices>()
+            .AddTransient<LivingRoomFanDevices>()
+            .AddTransient<LivingRoomAirQualityDevices>()
+            .AddTransient<LivingRoomMediaDevices>()
             .AddTransient<ILivingRoomLightEntities, LivingRoomLightEntities>()
             .AddTransient<ILivingRoomFanEntities, LivingRoomFanEntities>()
             .AddTransient<IAirQualityEntities, AirQualityEntities>()
