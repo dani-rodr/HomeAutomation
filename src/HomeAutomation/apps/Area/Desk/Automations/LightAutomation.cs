@@ -1,3 +1,4 @@
+
 namespace HomeAutomation.apps.Area.Desk.Automations;
 
 public class LightAutomation(

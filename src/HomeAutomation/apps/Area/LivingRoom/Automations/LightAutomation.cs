@@ -1,3 +1,4 @@
+
 namespace HomeAutomation.apps.Area.LivingRoom.Automations;
 
 public class LightAutomation(

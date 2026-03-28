@@ -172,7 +172,6 @@ public class CookingAutomationTests : IDisposable
 
     #region Rice Cooker Safety Tests
 
-
     [Fact]
     public void InductionCooker_BoilingPowerStateChange_Should_TriggerSubscription()
     {

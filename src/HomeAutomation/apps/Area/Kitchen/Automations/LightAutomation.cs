@@ -1,3 +1,4 @@
+
 namespace HomeAutomation.apps.Area.Kitchen.Automations;
 
 public class LightAutomation(IKitchenLightEntities entities, ILogger<LightAutomation> logger)

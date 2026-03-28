@@ -1,3 +1,4 @@
+
 namespace HomeAutomation.apps.Area.Kitchen.Automations;
 
 public class CookingAutomation(ICookingEntities entities, ILogger<CookingAutomation> logger)
