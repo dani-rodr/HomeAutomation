@@ -9,8 +9,13 @@ using HomeAutomation.apps.Area.Kitchen;
 using HomeAutomation.apps.Area.Kitchen.Automations;
 using HomeAutomation.apps.Area.LivingRoom;
 using HomeAutomation.apps.Area.LivingRoom.Automations;
+using HomeAutomation.apps.Area.LivingRoom.Devices;
 using HomeAutomation.apps.Area.Pantry;
 using HomeAutomation.apps.Area.Pantry.Automations;
+using HomeAutomation.apps.Common.Security;
+using HomeAutomation.apps.Common.Security.Automations;
+using HomeAutomation.apps.Security.Automations;
+using HomeAutomation.apps.Security.People;
 using HomeAssistantGenerated;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reactive.Concurrency;
@@ -155,6 +160,8 @@ public class ServiceCollectionExtensionsTests
         var lightEntities = provider.GetRequiredService<ILivingRoomLightEntities>();
         var fanEntities = provider.GetRequiredService<ILivingRoomFanEntities>();
         var airQualityEntities = provider.GetRequiredService<IAirQualityEntities>();
+        var tabletEntities = provider.GetRequiredService<ITabletEntities>();
+        var tclDisplayEntities = provider.GetRequiredService<ITclDisplayEntities>();
 
         lightEntities.MasterSwitch.EntityId.Should().Be("switch.sala_motion_sensor");
         lightEntities.TclTv.EntityId.Should().Be("media_player.tcl65c755");
@@ -164,6 +171,10 @@ public class ServiceCollectionExtensionsTests
         airQualityEntities.Pm25Sensor.EntityId.Should().Be(
             "sensor.xiaomi_sg_753990712_cpa4_pm2_5_density_p_3_4"
         );
+        tabletEntities.Light.EntityId.Should().Be("light.mipad_screen");
+        tabletEntities.TabletActive.EntityId.Should().Be("binary_sensor.mipad");
+        tclDisplayEntities.MasterSwitch.EntityId.Should().Be("switch.tv_automation");
+        tclDisplayEntities.Light.EntityId.Should().Be("light.tv_backlight_3_lite");
     }
 
     [Fact]
@@ -201,6 +212,49 @@ public class ServiceCollectionExtensionsTests
         app.Should().NotBeNull();
     }
 
+    [Fact]
+    public void AddHomeEntitiesAndServices_ShouldResolveSecurityEntities()
+    {
+        using var provider = CreateServiceProvider();
+
+        var lockEntities = provider.GetRequiredService<ILockingEntities>();
+        var accessControlEntities = provider.GetRequiredService<IAccessControlAutomationEntities>();
+        var danielEntities = provider.GetRequiredService<DanielEntities>();
+        var athenaEntities = provider.GetRequiredService<AthenaEntities>();
+
+        lockEntities.MasterSwitch.EntityId.Should().Be("switch.lock_automation");
+        lockEntities.Lock.EntityId.Should().Be("lock.lock_wrapper");
+        lockEntities.Door.EntityId.Should().Be("binary_sensor.door_wrapper");
+        lockEntities.HouseStatus.EntityId.Should().Be("binary_sensor.house");
+        lockEntities.MotionSensor.EntityId.Should().Be("binary_sensor.house");
+
+        accessControlEntities.Door.EntityId.Should().Be("binary_sensor.door_wrapper");
+        accessControlEntities.Lock.EntityId.Should().Be("lock.lock_wrapper");
+        accessControlEntities.House.EntityId.Should().Be("binary_sensor.house");
+
+        danielEntities.Person.EntityId.Should().Be("person.daniel_rodriguez");
+        danielEntities.ToggleLocation.EntityId.Should().Be("button.manual_tracker_button_daniel");
+        danielEntities.HomeTriggers.Select(trigger => trigger.EntityId)
+            .Should()
+            .Contain(["binary_sensor.redmi_watch_5_ble", "binary_sensor.oneplus_13_ble"]);
+
+        athenaEntities.Person.EntityId.Should().Be("person.athena_bezos");
+        athenaEntities.ToggleLocation.EntityId.Should().Be("button.manual_tracker_button_athena");
+        athenaEntities.DirectUnlockTriggers.Select(trigger => trigger.EntityId)
+            .Should()
+            .ContainSingle("binary_sensor.baseus_tag_ble");
+    }
+
+    [Fact]
+    public void AddHomeEntitiesAndServices_ShouldResolveSecurityApp()
+    {
+        using var provider = CreateServiceProvider();
+
+        var app = provider.GetRequiredService<SecurityApp>();
+
+        app.Should().NotBeNull();
+    }
+
     private static ServiceProvider CreateServiceProvider()
     {
         var services = new ServiceCollection();
@@ -217,6 +271,7 @@ public class ServiceCollectionExtensionsTests
         services.AddTransient<KitchenApp>();
         services.AddTransient<LivingRoomApp>();
         services.AddTransient<PantryApp>();
+        services.AddTransient<SecurityApp>();
 
         return services.BuildServiceProvider();
     }

@@ -5,6 +5,7 @@ using HomeAutomation.apps.Area.Kitchen;
 using HomeAutomation.apps.Area.LivingRoom;
 using HomeAutomation.apps.Area.LivingRoom.Devices;
 using HomeAutomation.apps.Area.Pantry;
+using HomeAutomation.apps.Security;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace HomeAutomation.apps.Helpers;
@@ -16,7 +17,6 @@ public static class ServiceCollectionExtensions
         return services
             .AddTransient<IEventHandler, HaEventHandler>()
             .AddTransient<Devices>()
-            .AddTransient<ILockingEntities, LockingEntities>()
             .AddTransient<ITypedEntityFactory, EntityFactory>()
             .AddTransient<IServices, Services>()
             .AddTransient<INotificationServices, NotificationServices>()
@@ -27,9 +27,7 @@ public static class ServiceCollectionExtensions
             .AddTransient<IDimmingLightControllerFactory, DimmingLightControllerFactory>()
             .AddTransient<IPersonControllerFactory, PersonControllerFactory>()
             .AddTransient<IMotionSensorRestartScheduler, MotionSensorRestartScheduler>()
-            .AddTransient<IAccessControlAutomationEntities, AccessControlAutomationEntities>()
-            .AddTransient<DanielEntities>()
-            .AddTransient<AthenaEntities>()
+            .AddSecurityServices()
             .AddAreaEntities()
             .AddMotionSensors();
     }

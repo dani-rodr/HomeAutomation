@@ -29,4 +29,8 @@ public class LivingRoomDevices(Entities entities)
     public SwitchEntity LedStatus { get; } =
         entities.Switch.XiaomiSmartAirPurifier4CompactAirPurifierLedStatus;
     public SwitchEntity SupportingFan { get; } = entities.Switch.Sonoff10023810231;
+    public SwitchEntity TvAutomation { get; } = entities.Switch.TvAutomation;
+    public LightEntity TvBacklight { get; } = entities.Light.TvBacklight3Lite;
+    public LightEntity TabletLight { get; } = entities.Light.MipadScreen;
+    public BinarySensorEntity TabletActive { get; } = entities.BinarySensor.Mipad;
 }

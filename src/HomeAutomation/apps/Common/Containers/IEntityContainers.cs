@@ -41,25 +41,3 @@ public interface IDisplayEntities
 {
     MediaPlayerEntity MediaPlayer { get; }
 }
-
-public interface ITclDisplayEntities : IDisplayEntities, ILightAutomationEntities;
-
-public interface ITabletEntities : ILightAutomationEntities
-{
-    BinarySensorEntity TabletActive { get; }
-}
-
-public interface ILockingEntities : IMotionBase
-{
-    LockEntity Lock { get; }
-    BinarySensorEntity Door { get; }
-    BinarySensorEntity HouseStatus { get; }
-    SwitchEntity Flytrap { get; }
-}
-
-public interface IAccessControlAutomationEntities
-{
-    BinarySensorEntity Door { get; }
-    BinarySensorEntity House { get; }
-    LockEntity Lock { get; }
-}
