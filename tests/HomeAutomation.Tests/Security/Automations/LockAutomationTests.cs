@@ -1,5 +1,6 @@
 using HomeAutomation.apps.Common.Interface;
-using HomeAutomation.apps.Common.Security.Automations;
+using HomeAutomation.apps.Security.Automations;
+using HomeAutomation.apps.Security.Automations.Entities;
 
 namespace HomeAutomation.Tests.Security.Automations;
 

@@ -1,4 +1,4 @@
-using HomeAutomation.apps.Area.Desk.Devices;
+using HomeAutomation.apps.Area.Desk.Services.Entities;
 using HomeAutomation.apps.Common.Services;
 
 namespace HomeAutomation.Tests.Common.Services;

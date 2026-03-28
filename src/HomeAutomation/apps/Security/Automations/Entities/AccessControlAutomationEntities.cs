@@ -1,4 +1,4 @@
-namespace HomeAutomation.apps.Security.Automations;
+namespace HomeAutomation.apps.Security.Automations.Entities;
 
 public class AccessControlAutomationEntities(LockDevices devices) : IAccessControlAutomationEntities
 {

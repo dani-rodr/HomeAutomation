@@ -1,4 +1,6 @@
-namespace HomeAutomation.apps.Area.LivingRoom.Devices;
+using HomeAutomation.apps.Area.LivingRoom.Devices;
+
+namespace HomeAutomation.apps.Area.LivingRoom.Automations.Entities;
 
 public class LivingRoomTabletEntities(
     LivingRoomLightDevices devices,

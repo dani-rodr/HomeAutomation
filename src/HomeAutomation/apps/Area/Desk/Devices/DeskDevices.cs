@@ -1,6 +1,6 @@
 namespace HomeAutomation.apps.Area.Desk.Devices;
 
-public class DeskDevices(Entities entities)
+public class DeskDevices(HomeAssistantGenerated.Entities entities)
 {
     public BinarySensorEntity MotionSensor { get; } =
         entities.BinarySensor.DeskMotionSensorSmartPresence;

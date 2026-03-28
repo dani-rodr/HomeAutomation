@@ -1,3 +1,4 @@
+using HomeAutomation.apps.Area.Desk.Devices.Entities;
 using System.Linq;
 
 namespace HomeAutomation.apps.Area.Desk.Devices;

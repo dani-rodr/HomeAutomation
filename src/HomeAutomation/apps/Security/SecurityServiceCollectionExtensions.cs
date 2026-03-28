@@ -1,5 +1,4 @@
-using HomeAutomation.apps.Common.Security.Automations;
-using HomeAutomation.apps.Security.Automations;
+using HomeAutomation.apps.Security.Automations.Entities;
 using HomeAutomation.apps.Security.People;
 using Microsoft.Extensions.DependencyInjection;
 

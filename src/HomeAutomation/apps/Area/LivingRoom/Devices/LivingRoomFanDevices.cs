@@ -1,6 +1,6 @@
 namespace HomeAutomation.apps.Area.LivingRoom.Devices;
 
-public class LivingRoomFanDevices(Entities entities)
+public class LivingRoomFanDevices(HomeAssistantGenerated.Entities entities)
 {
     public SwitchEntity FanAutomation { get; } = entities.Switch.SalaFanAutomation;
     public BinarySensorEntity SecondaryMotionSensor { get; } =

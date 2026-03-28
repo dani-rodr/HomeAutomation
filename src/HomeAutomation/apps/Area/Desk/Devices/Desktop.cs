@@ -1,3 +1,5 @@
+using HomeAutomation.apps.Area.Desk.Devices.Entities;
+
 namespace HomeAutomation.apps.Area.Desk.Devices;
 
 public class Desktop(

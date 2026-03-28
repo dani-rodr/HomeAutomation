@@ -1,5 +1,7 @@
 using HomeAutomation.apps.Area.LivingRoom.Automations;
+using HomeAutomation.apps.Area.LivingRoom.Automations.Entities;
 using HomeAutomation.apps.Area.LivingRoom.Devices;
+using HomeAutomation.apps.Area.LivingRoom.Devices.Entities;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace HomeAutomation.apps.Area.LivingRoom;

@@ -1,4 +1,4 @@
-namespace HomeAutomation.apps.Area.LivingRoom.Devices;
+namespace HomeAutomation.apps.Area.LivingRoom.Devices.Entities;
 
 public class TclDisplayEntities(LivingRoomMediaDevices devices) : ITclDisplayEntities
 {

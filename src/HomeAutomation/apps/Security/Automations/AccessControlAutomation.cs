@@ -1,3 +1,5 @@
+using HomeAutomation.apps.Security.Automations.Entities;
+
 namespace HomeAutomation.apps.Security.Automations;
 
 public class AccessControlAutomation(

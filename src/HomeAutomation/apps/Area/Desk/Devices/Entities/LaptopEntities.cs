@@ -1,4 +1,4 @@
-namespace HomeAutomation.apps.Area.Desk.Devices;
+namespace HomeAutomation.apps.Area.Desk.Devices.Entities;
 
 public class LaptopEntities(DeskDevices devices) : ILaptopEntities
 {

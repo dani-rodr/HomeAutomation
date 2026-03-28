@@ -1,4 +1,5 @@
 using HomeAutomation.apps.Area.Desk.Devices;
+using HomeAutomation.apps.Area.Desk.Devices.Entities;
 using System.Text.Json;
 
 namespace HomeAutomation.Tests.Area.Desk.Devices;

@@ -1,5 +1,6 @@
 using HomeAutomation.apps.Area.Desk.Automations;
 using HomeAutomation.apps.Area.Desk.Devices;
+using HomeAutomation.apps.Area.Desk.Devices.Entities;
 using HomeAutomation.apps.Common.Interface;
 using System.Reactive.Disposables;
 

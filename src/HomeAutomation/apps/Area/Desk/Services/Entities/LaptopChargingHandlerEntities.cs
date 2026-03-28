@@ -1,4 +1,6 @@
-namespace HomeAutomation.apps.Area.Desk.Devices;
+using HomeAutomation.apps.Area.Desk.Devices;
+
+namespace HomeAutomation.apps.Area.Desk.Services.Entities;
 
 public class LaptopChargingHandlerEntities(DeskDevices devices) : IChargingHandlerEntities
 {

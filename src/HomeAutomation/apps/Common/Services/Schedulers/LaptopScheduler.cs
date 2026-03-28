@@ -1,4 +1,4 @@
-using HomeAutomation.apps.Area.Desk.Devices;
+using HomeAutomation.apps.Area.Desk.Services.Schedulers.Entities;
 using NetDaemon.Extensions.Scheduler;
 
 namespace HomeAutomation.apps.Common.Services.Schedulers;

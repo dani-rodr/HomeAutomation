@@ -1,6 +1,6 @@
 namespace HomeAutomation.apps.Area.LivingRoom.Devices;
 
-public class LivingRoomLightDevices(Entities entities)
+public class LivingRoomLightDevices(HomeAssistantGenerated.Entities entities)
 {
     public SwitchEntity LightAutomation { get; } = entities.Switch.SalaMotionSensor;
     public BinarySensorEntity MotionSensor { get; } =

@@ -1,6 +1,4 @@
-using HomeAutomation.apps.Security;
-
-namespace HomeAutomation.apps.Common.Security.Automations;
+namespace HomeAutomation.apps.Security.Automations.Entities;
 
 public class LockingEntities(LockDevices devices) : ILockingEntities
 {

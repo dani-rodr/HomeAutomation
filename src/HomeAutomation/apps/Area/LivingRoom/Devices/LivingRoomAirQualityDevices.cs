@@ -1,6 +1,6 @@
 namespace HomeAutomation.apps.Area.LivingRoom.Devices;
 
-public class LivingRoomAirQualityDevices(Entities entities)
+public class LivingRoomAirQualityDevices(HomeAssistantGenerated.Entities entities)
 {
     public SwitchEntity CleanAirAutomation { get; } = entities.Switch.CleanAir;
     public BinarySensorEntity MotionSensor { get; } =
