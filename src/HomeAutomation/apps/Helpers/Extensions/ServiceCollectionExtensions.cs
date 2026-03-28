@@ -5,6 +5,7 @@ using HomeAutomation.apps.Area.Kitchen;
 using HomeAutomation.apps.Area.LivingRoom;
 using HomeAutomation.apps.Area.LivingRoom.Devices;
 using HomeAutomation.apps.Area.Pantry;
+using HomeAutomation.apps.Common.Devices;
 using HomeAutomation.apps.Security;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -16,7 +17,7 @@ public static class ServiceCollectionExtensions
     {
         return services
             .AddTransient<IEventHandler, HaEventHandler>()
-            .AddTransient<Devices>()
+            .AddTransient<GlobalDevices>()
             .AddTransient<ITypedEntityFactory, EntityFactory>()
             .AddTransient<IServices, Services>()
             .AddTransient<INotificationServices, NotificationServices>()

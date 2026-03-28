@@ -33,4 +33,8 @@ public class LivingRoomDevices(Entities entities)
     public LightEntity TvBacklight { get; } = entities.Light.TvBacklight3Lite;
     public LightEntity TabletLight { get; } = entities.Light.MipadScreen;
     public BinarySensorEntity TabletActive { get; } = entities.BinarySensor.Mipad;
+    public SwitchEntity LockAutomation { get; } = entities.Switch.LockAutomation;
+    public LockEntity DoorLock { get; } = entities.Lock.LockWrapper;
+    public BinarySensorEntity HouseStatus { get; } = entities.BinarySensor.House;
+    public SwitchEntity Flytrap { get; } = entities.Switch.Flytrap;
 }

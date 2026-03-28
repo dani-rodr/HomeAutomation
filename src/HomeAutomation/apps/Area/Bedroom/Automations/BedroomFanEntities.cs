@@ -1,13 +1,10 @@
-using CommonArea = HomeAutomation.apps.Common.Containers.Area;
-using CommonDevices = HomeAutomation.apps.Common.Containers.Devices;
+using HomeAutomation.apps.Area.Bedroom.Devices;
 
 namespace HomeAutomation.apps.Area.Bedroom.Automations;
 
-public class BedroomFanEntities(CommonDevices devices) : IBedroomFanEntities
+public class BedroomFanEntities(BedroomDevices devices) : IBedroomFanEntities
 {
-    private readonly CommonArea _area = devices.Bedroom;
-
-    public SwitchEntity MasterSwitch => _area.FanControl!.Automation;
-    public BinarySensorEntity MotionSensor => _area.MotionControl;
-    public IEnumerable<SwitchEntity> Fans => _area.FanControl!.Fans.Values;
+    public SwitchEntity MasterSwitch => devices.FanAutomation;
+    public BinarySensorEntity MotionSensor => devices.MotionSensor;
+    public IEnumerable<SwitchEntity> Fans => [devices.MainFan];
 }
