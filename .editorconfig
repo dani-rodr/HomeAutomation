@@ -13,7 +13,7 @@ tab_width = 4
 
 # New line preferences
 end_of_line = crlf
-insert_final_newline = false
+insert_final_newline = true
 max_line_length = 120
 
 #### .NET Coding Conventions ####
@@ -22,6 +22,7 @@ max_line_length = 120
 dotnet_separate_import_directive_groups = false
 dotnet_sort_system_directives_first = false
 file_header_template = unset
+dotnet_diagnostic.IDE0005.severity = warning
 
 # this. and Me. preferences
 dotnet_style_qualification_for_event = false

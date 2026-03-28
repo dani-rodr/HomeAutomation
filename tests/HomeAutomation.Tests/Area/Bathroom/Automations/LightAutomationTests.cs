@@ -1,5 +1,4 @@
 using HomeAutomation.apps.Area.Bathroom.Automations;
-using HomeAutomation.apps.Common.Containers;
 using HomeAutomation.apps.Common.Interface;
 
 namespace HomeAutomation.Tests.Area.Bathroom.Automations;
@@ -278,7 +277,7 @@ public class LightAutomationTests : IDisposable
     /// Test wrapper that implements IMotionAutomationEntities interface
     /// Creates entities internally with the appropriate entity IDs for Bathroom
     /// </summary>
-    private class TestEntities(IHaContext haContext) : ILightAutomationEntities
+    private class TestEntities(IHaContext haContext) : IBathroomLightEntities
     {
         public SwitchEntity MasterSwitch => new(haContext, "switch.bathroom_motion_sensor");
         public BinarySensorEntity MotionSensor =>

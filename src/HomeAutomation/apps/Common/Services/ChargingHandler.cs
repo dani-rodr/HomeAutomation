@@ -1,3 +1,5 @@
+using HomeAutomation.apps.Area.Desk.Devices;
+
 namespace HomeAutomation.apps.Common.Services;
 
 public class ChargingHandler(IChargingHandlerEntities entities) : IChargingHandler

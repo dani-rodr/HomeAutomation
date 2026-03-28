@@ -1,7 +1,6 @@
-using System.Reflection;
 using HomeAutomation.apps.Area.Desk.Devices;
-using HomeAutomation.apps.Common.Containers;
 using HomeAutomation.apps.Common.Interface;
+using System.Reflection;
 
 namespace HomeAutomation.Tests.Area.Desk.Devices;
 

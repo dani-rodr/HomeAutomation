@@ -1,7 +1,7 @@
 namespace HomeAutomation.apps.Area.Bathroom.Automations;
 
 public class LightAutomation(
-    ILightAutomationEntities entities,
+    IBathroomLightEntities entities,
     IDimmingLightController dimmingController,
     ILogger<LightAutomation> logger
 ) : LightAutomationBase(entities, logger)

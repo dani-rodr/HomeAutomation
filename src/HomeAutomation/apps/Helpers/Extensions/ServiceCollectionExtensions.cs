@@ -1,5 +1,11 @@
-using HomeAutomation.apps.Area.Desk.Devices;
-using HomeAutomation.apps.Area.LivingRoom.Devices;
+using HomeAutomation.apps.Area.Bathroom;
+using HomeAutomation.apps.Area.Bedroom;
+using HomeAutomation.apps.Area.Desk;
+using HomeAutomation.apps.Area.Kitchen;
+using HomeAutomation.apps.Area.LivingRoom;
+using HomeAutomation.apps.Area.Pantry;
+using HomeAutomation.apps.Common.Devices;
+using HomeAutomation.apps.Security;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace HomeAutomation.apps.Helpers;
@@ -10,8 +16,7 @@ public static class ServiceCollectionExtensions
     {
         return services
             .AddTransient<IEventHandler, HaEventHandler>()
-            .AddTransient<Devices>()
-            .AddTransient<ILockingEntities, LockingEntities>()
+            .AddTransient<GlobalDevices>()
             .AddTransient<ITypedEntityFactory, EntityFactory>()
             .AddTransient<IServices, Services>()
             .AddTransient<INotificationServices, NotificationServices>()
@@ -22,9 +27,7 @@ public static class ServiceCollectionExtensions
             .AddTransient<IDimmingLightControllerFactory, DimmingLightControllerFactory>()
             .AddTransient<IPersonControllerFactory, PersonControllerFactory>()
             .AddTransient<IMotionSensorRestartScheduler, MotionSensorRestartScheduler>()
-            .AddTransient<IAccessControlAutomationEntities, AccessControlAutomationEntities>()
-            .AddTransient<DanielEntities>()
-            .AddTransient<AthenaEntities>()
+            .AddSecurityServices()
             .AddAreaEntities()
             .AddMotionSensors();
     }
@@ -53,56 +56,31 @@ public static class ServiceCollectionExtensions
 
     private static IServiceCollection AddBedroomEntities(this IServiceCollection services)
     {
-        return services
-            .AddTransient<IBedroomLightEntities, BedroomLightEntities>()
-            .AddTransient<IBedroomFanEntities, BedroomFanEntities>()
-            .AddTransient<IClimateEntities, BedroomClimateEntities>()
-            .AddTransient<IClimateSchedulerEntities, ClimateSchedulerEntities>()
-            .AddTransient<IAcTemperatureCalculator, AcTemperatureCalculator>()
-            .AddTransient<IClimateScheduler, ClimateScheduler>();
+        return services.AddBedroomServices();
     }
 
     private static IServiceCollection AddDeskEntities(this IServiceCollection services)
     {
-        return services
-            .AddTransient<IDeskLightEntities, DeskLightEntities>()
-            .AddTransient<ILgDisplayEntities, LgDisplayEntities>()
-            .AddTransient<IDesktopEntities, DeskDesktopEntities>()
-            .AddTransient<ILaptopEntities, LaptopEntities>()
-            .AddTransient<ILaptopSchedulerEntities, LaptopSchedulerEntities>()
-            .AddTransient<IChargingHandlerEntities, LaptopChargingHandlerEntities>()
-            .AddTransient<ILaptopChargingHandler, LaptopChargingHandler>()
-            .AddTransient<ILaptopShutdownScheduler, LaptopScheduler>()
-            .AddTransient<ILgDisplay, LgDisplay>()
-            .AddTransient<IDesktop, Desktop>()
-            .AddTransient<ILaptop, Laptop>();
+        return services.AddDeskServices();
     }
 
     private static IServiceCollection AddBathroomEntities(this IServiceCollection services)
     {
-        return services.AddTransient<IBathroomLightEntities, BathroomLightEntities>();
+        return services.AddBathroomServices();
     }
 
     private static IServiceCollection AddKitchenEntities(this IServiceCollection services)
     {
-        return services
-            .AddTransient<IKitchenLightEntities, KitchenLightEntities>()
-            .AddTransient<ICookingEntities, KitchenCookingEntities>();
+        return services.AddKitchenServices();
     }
 
     private static IServiceCollection AddLivingRoomEntities(this IServiceCollection services)
     {
-        return services
-            .AddTransient<ILivingRoomLightEntities, LivingRoomLightEntities>()
-            .AddTransient<ILivingRoomFanEntities, LivingRoomFanEntities>()
-            .AddTransient<IAirQualityEntities, AirQualityEntities>()
-            .AddTransient<ITabletEntities, LivingRoomTabletEntities>()
-            .AddTransient<ITclDisplayEntities, TclDisplayEntities>()
-            .AddTransient<ITclDisplay, TclDisplay>();
+        return services.AddLivingRoomServices();
     }
 
     private static IServiceCollection AddPantryEntities(this IServiceCollection services)
     {
-        return services.AddTransient<IPantryLightEntities, PantryLightEntities>();
+        return services.AddPantryServices();
     }
 }

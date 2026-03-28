@@ -15,6 +15,7 @@ dotnet test                         # Run all tests
 nd-codegen                          # Regenerate HA entities → HomeAssistantGenerated.cs
 dotnet csharpier format .           # Format (CSharpier)
 dotnet csharpier check .            # Check formatting
+dotnet format <project> --verify-no-changes   # Verify analyzer / editorconfig issues
 .\publish.ps1                       # Deploy to Home Assistant add-on
 .\test-coverage.ps1                 # Interactive test + coverage workflow
 ```
@@ -30,25 +31,31 @@ dotnet csharpier check .            # Check formatting
   /Area          ← Room automations (Bathroom, Bedroom, Kitchen, …)
   /Common
     /Base        ← AutomationBase → MotionAutomationBase, FanAutomationBase
-    /Containers  ← Entity container interfaces (IMotionAutomationEntities, …)
+    /Contracts   ← Truly shared contracts only
+    /Devices     ← Shared explicit facades like GlobalDevices
     /Interface   ← IAutomation
     /Services    ← DimmingLightController, HaEventHandler (composition)
+    /Security    ← Shared people / security contracts
   /Security      ← Locks, location, notifications
   /Helpers       ← Constants (HaIdentity, HaEntityStates), TimeRange
 ```
 
-### Entity Container Pattern
+### Feature-Local Entity Contracts
 
-Group HA entities behind an interface → inject one container instead of N entities → easy to mock in tests.
+Keep feature-specific entity contracts and mappers beside the consuming automation or device. Only keep truly cross-cutting contracts in `Common`.
 
 ```
-IMotionAutomationEntities           # base motion entities
-  ├─ IKitchenMotionEntities         # area-specific extensions
-  └─ ILivingRoomMotionEntities      # cross-area dependencies
-IFanAutomationEntities
-IClimateAutomationEntities
-ILivingRoomSharedEntities           # shared across multiple automations
+Area/Bathroom/Automations/IBathroomLightEntities.cs
+Area/Bathroom/Automations/BathroomLightEntities.cs
+Area/LivingRoom/Devices/ITclDisplayEntities.cs
+Area/LivingRoom/Devices/TclDisplayEntities.cs
+Common/Contracts/AutomationEntityInterfaces.cs   # IMotionBase, ILightAutomationEntities, IFanAutomationEntities
+Common/Devices/GlobalDevices.cs                  # shared whole-home entities
 ```
+
+- Prefer explicit device facades like `BathroomDevices`, `KitchenDevices`, `LivingRoomDevices`, `BedroomDevices`, `DeskDevices`, `SecurityDevices`, and `GlobalDevices`.
+- Avoid reintroducing generic `Common/Containers` catch-all files or nullable area capability bags.
+- Cross-area reads should use small collaborator contracts or explicit facade properties, not a global house graph.
 
 ### Composition over Inheritance
 
@@ -135,5 +142,17 @@ Wrap with try-catch + CancellationToken; never fire-and-forget async inside `Sub
 - **Generated code**: `HomeAssistantGenerated.cs` (run `nd-codegen` to refresh)
 - **Global usings**: `apps/GlobalUsings.cs` — add when ≥ 3 files share a namespace
 - **EditorConfig**: `.editorconfig` enforces style rules
+- **Final newline preference**: keep `insert_final_newline = true`
 - **HA connection**: `appsettings.json` → `homeassistant.local:8123`
 - **Dev token**: `appsettings.Development.json`
+
+---
+
+## Formatting & Diagnostics Preferences
+
+- **Primary formatter**: use `dotnet csharpier format .` for broad formatting changes.
+- **Verification**: use `dotnet csharpier check .` and `dotnet format <project> --verify-no-changes` to confirm formatter / analyzer cleanliness.
+- **Targeted fixes first**: if only imports or whitespace are failing, prefer `dotnet format --diagnostics IMPORTS WHITESPACE --include ...` over repo-wide churn.
+- **EditorConfig first**: if `dotnet format` suddenly reports many `FINALNEWLINE` diagnostics, inspect `.editorconfig` before mass-editing files.
+- **VSCode diagnostics**: if CLI build/test/format checks are clean but VSCode still shows problems, reload the C# language server or window before changing code.
+- **Transient compiler locks**: `CS2012` / `VBCSCompiler` file-lock errors can happen when build/test overlap; rerun sequentially before treating them as code issues.

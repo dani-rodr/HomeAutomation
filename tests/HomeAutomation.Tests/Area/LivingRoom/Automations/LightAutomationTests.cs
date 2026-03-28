@@ -1,5 +1,4 @@
 using HomeAutomation.apps.Area.LivingRoom.Automations;
-using HomeAutomation.apps.Common.Containers;
 using HomeAutomation.apps.Common.Interface;
 
 namespace HomeAutomation.Tests.Area.LivingRoom.Automations;

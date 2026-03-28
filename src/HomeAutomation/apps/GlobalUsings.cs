@@ -1,14 +1,9 @@
 // Common usings for NetDaemon apps
-global using System;
-global using System.Collections.Generic;
-global using System.Reactive.Concurrency;
-global using System.Reactive.Linq;
-global using System.Threading;
-global using System.Threading.Tasks;
 global using HomeAssistantGenerated;
 global using HomeAutomation.apps.Common.Base;
-global using HomeAutomation.apps.Common.Containers;
+global using HomeAutomation.apps.Common.Contracts;
 global using HomeAutomation.apps.Common.Interface;
+global using HomeAutomation.apps.Common.Security.People;
 global using HomeAutomation.apps.Common.Services;
 global using HomeAutomation.apps.Common.Services.Factories;
 global using HomeAutomation.apps.Common.Services.Schedulers;
@@ -19,3 +14,9 @@ global using Microsoft.Extensions.Logging;
 global using NetDaemon.AppModel;
 global using NetDaemon.HassModel;
 global using NetDaemon.HassModel.Entities;
+global using System;
+global using System.Collections.Generic;
+global using System.Reactive.Concurrency;
+global using System.Reactive.Linq;
+global using System.Threading;
+global using System.Threading.Tasks;
