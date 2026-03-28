@@ -28,12 +28,6 @@ public interface IFanAutomationEntities : IMotionBase
     IEnumerable<SwitchEntity> Fans { get; }
 }
 
-public interface IBedroomLightEntities : ILightAutomationEntities
-{
-    SwitchEntity RightSideEmptySwitch { get; }
-    SwitchEntity LeftSideFanSwitch { get; }
-}
-
 public interface ILivingRoomLightEntities : ILightAutomationEntities
 {
     BinarySensorEntity BedroomDoor { get; }
@@ -69,16 +63,6 @@ public interface IClimateSchedulerEntities
     InputBooleanEntity PowerSavingMode { get; }
 }
 
-public interface IClimateEntities : IMotionBase
-{
-    ClimateEntity AirConditioner { get; }
-    BinarySensorEntity Door { get; }
-    BinarySensorEntity HouseMotionSensor { get; }
-    ButtonEntity AcFanModeToggle { get; }
-    SwitchEntity Fan { get; }
-    InputBooleanEntity PowerSavingMode { get; }
-}
-
 public interface ILaptopEntities
 {
     SwitchEntity VirtualSwitch { get; }
@@ -106,8 +90,6 @@ public interface ITabletEntities : ILightAutomationEntities
 {
     BinarySensorEntity TabletActive { get; }
 }
-
-public interface IBedroomFanEntities : IFanAutomationEntities;
 
 public interface ILivingRoomFanEntities : IFanAutomationEntities
 {

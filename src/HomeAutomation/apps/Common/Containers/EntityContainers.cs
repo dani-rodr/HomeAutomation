@@ -2,19 +2,6 @@ using System.Linq;
 
 namespace HomeAutomation.apps.Common.Containers;
 
-public class BedroomLightEntities(Devices devices) : IBedroomLightEntities
-{
-    private readonly Area _area = devices.Bedroom;
-    public SwitchEntity MasterSwitch => _area.LightControl;
-    public BinarySensorEntity MotionSensor => _area.MotionControl;
-    public LightEntity Light => _area.LightControl;
-    public NumberEntity SensorDelay => _area.MotionControl;
-    public SwitchEntity RightSideEmptySwitch => _area.ExtraControl!.RightSideEmptySwitch!;
-    public SwitchEntity LeftSideFanSwitch => _area.FanControl!;
-    public ButtonEntity Restart => _area.MotionControl;
-    public SwitchEntity PantryAutomation => devices.Pantry.LightControl!.Automation;
-}
-
 public class LivingRoomLightEntities(Devices devices) : ILivingRoomLightEntities
 {
     private readonly Area _livingRoom = devices.LivingRoom;
@@ -62,19 +49,6 @@ public class AirQualityEntities(Devices devices) : IAirQualityEntities
     public SwitchEntity SupportingFan => _control.SupportingFan!;
 }
 
-public class BedroomClimateEntities(Devices devices) : IClimateEntities
-{
-    private readonly Area _area = devices.Bedroom;
-    public SwitchEntity MasterSwitch => _area.ClimateControl!;
-    public ClimateEntity AirConditioner => _area.ClimateControl!;
-    public BinarySensorEntity MotionSensor => _area.MotionControl;
-    public BinarySensorEntity Door => _area.ContactSensor!;
-    public BinarySensorEntity HouseMotionSensor => devices.Global.MotionControl;
-    public ButtonEntity AcFanModeToggle => _area.ClimateControl!;
-    public SwitchEntity Fan => _area.FanControl!;
-    public InputBooleanEntity PowerSavingMode => _area.ClimateControl!;
-}
-
 public class ClimateSchedulerEntities(Devices devices) : IClimateSchedulerEntities
 {
     private readonly WeatherControl _control = devices.Global.WeatherControl!;
@@ -90,14 +64,6 @@ public class DeskDesktopEntities(Devices devices) : IDesktopEntities
     private readonly PcControl _control = devices.Desk.PcControl!;
     public SwitchEntity Power => _control.Power;
     public InputButtonEntity RemotePcButton => _control.RemotePcButton;
-}
-
-public class BedroomFanEntities(Devices devices) : IBedroomFanEntities
-{
-    private readonly Area _area = devices.Bedroom;
-    public SwitchEntity MasterSwitch => _area.FanControl!.Automation;
-    public BinarySensorEntity MotionSensor => _area.MotionControl;
-    public IEnumerable<SwitchEntity> Fans => _area.FanControl!.Fans.Values;
 }
 
 public class LaptopEntities(Devices devices) : ILaptopEntities

@@ -1,4 +1,5 @@
 using HomeAutomation.apps.Area.Bathroom;
+using HomeAutomation.apps.Area.Bedroom;
 using HomeAutomation.apps.Area.Desk.Devices;
 using HomeAutomation.apps.Area.Kitchen;
 using HomeAutomation.apps.Area.LivingRoom.Devices;
@@ -55,13 +56,7 @@ public static class ServiceCollectionExtensions
 
     private static IServiceCollection AddBedroomEntities(this IServiceCollection services)
     {
-        return services
-            .AddTransient<IBedroomLightEntities, BedroomLightEntities>()
-            .AddTransient<IBedroomFanEntities, BedroomFanEntities>()
-            .AddTransient<IClimateEntities, BedroomClimateEntities>()
-            .AddTransient<IClimateSchedulerEntities, ClimateSchedulerEntities>()
-            .AddTransient<IAcTemperatureCalculator, AcTemperatureCalculator>()
-            .AddTransient<IClimateScheduler, ClimateScheduler>();
+        return services.AddBedroomServices();
     }
 
     private static IServiceCollection AddDeskEntities(this IServiceCollection services)

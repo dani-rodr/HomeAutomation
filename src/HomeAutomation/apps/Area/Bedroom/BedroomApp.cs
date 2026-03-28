@@ -1,5 +1,5 @@
-using HomeAutomation.apps.Area.Bathroom.Devices;
 using HomeAutomation.apps.Area.Bedroom.Automations;
+using HomeAutomation.apps.Area.Bedroom.Devices;
 
 namespace HomeAutomation.apps.Area.Bedroom;
 
