@@ -7,6 +7,10 @@ using HomeAutomation.apps.Area.Desk.Automations;
 using HomeAutomation.apps.Area.Desk.Devices;
 using HomeAutomation.apps.Area.Kitchen;
 using HomeAutomation.apps.Area.Kitchen.Automations;
+using HomeAutomation.apps.Area.LivingRoom;
+using HomeAutomation.apps.Area.LivingRoom.Automations;
+using HomeAutomation.apps.Area.Pantry;
+using HomeAutomation.apps.Area.Pantry.Automations;
 using HomeAssistantGenerated;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reactive.Concurrency;
@@ -143,6 +147,60 @@ public class ServiceCollectionExtensionsTests
         app.Should().NotBeNull();
     }
 
+    [Fact]
+    public void AddHomeEntitiesAndServices_ShouldResolveLivingRoomEntities()
+    {
+        using var provider = CreateServiceProvider();
+
+        var lightEntities = provider.GetRequiredService<ILivingRoomLightEntities>();
+        var fanEntities = provider.GetRequiredService<ILivingRoomFanEntities>();
+        var airQualityEntities = provider.GetRequiredService<IAirQualityEntities>();
+
+        lightEntities.MasterSwitch.EntityId.Should().Be("switch.sala_motion_sensor");
+        lightEntities.TclTv.EntityId.Should().Be("media_player.tcl65c755");
+        fanEntities.MasterSwitch.EntityId.Should().Be("switch.sala_fan_automation");
+        fanEntities.ExhaustFan.EntityId.Should().Be("switch.cozylife_955f");
+        airQualityEntities.MasterSwitch.EntityId.Should().Be("switch.clean_air");
+        airQualityEntities.Pm25Sensor.EntityId.Should().Be(
+            "sensor.xiaomi_sg_753990712_cpa4_pm2_5_density_p_3_4"
+        );
+    }
+
+    [Fact]
+    public void AddHomeEntitiesAndServices_ShouldResolveLivingRoomApp()
+    {
+        using var provider = CreateServiceProvider();
+
+        var app = provider.GetRequiredService<LivingRoomApp>();
+
+        app.Should().NotBeNull();
+    }
+
+    [Fact]
+    public void AddHomeEntitiesAndServices_ShouldResolvePantryLightEntities()
+    {
+        using var provider = CreateServiceProvider();
+
+        var entities = provider.GetRequiredService<IPantryLightEntities>();
+
+        entities.MasterSwitch.EntityId.Should().Be("switch.pantry_motion_sensor");
+        entities.MiScalePresenceSensor.EntityId.Should().Be(
+            "binary_sensor.bedroom_motion_sensor_mi_scale_presence"
+        );
+        entities.MirrorLight.EntityId.Should().Be("light.controller_rgb_df1c0d");
+        entities.BathroomMotionAutomation.EntityId.Should().Be("switch.bathroom_motion_sensor");
+    }
+
+    [Fact]
+    public void AddHomeEntitiesAndServices_ShouldResolvePantryApp()
+    {
+        using var provider = CreateServiceProvider();
+
+        var app = provider.GetRequiredService<PantryApp>();
+
+        app.Should().NotBeNull();
+    }
+
     private static ServiceProvider CreateServiceProvider()
     {
         var services = new ServiceCollection();
@@ -156,8 +214,9 @@ public class ServiceCollectionExtensionsTests
         services.AddTransient<BathroomApp>();
         services.AddTransient<BedroomApp>();
         services.AddTransient<DeskApp>();
-        services.AddTransient<DeskApp>();
         services.AddTransient<KitchenApp>();
+        services.AddTransient<LivingRoomApp>();
+        services.AddTransient<PantryApp>();
 
         return services.BuildServiceProvider();
     }

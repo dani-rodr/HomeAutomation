@@ -1,5 +1,4 @@
 using HomeAutomation.apps.Area.Pantry.Automations;
-using HomeAutomation.apps.Common.Containers;
 
 namespace HomeAutomation.Tests.Area.Pantry.Automations;
 

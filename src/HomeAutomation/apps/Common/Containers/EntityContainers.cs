@@ -1,42 +1,4 @@
-using System.Linq;
-
 namespace HomeAutomation.apps.Common.Containers;
-
-public class LivingRoomLightEntities(Devices devices) : ILivingRoomLightEntities
-{
-    private readonly Area _livingRoom = devices.LivingRoom;
-    private readonly Area _bedroom = devices.Bedroom;
-    private readonly Area _pantry = devices.Pantry;
-    private readonly Area _kitchen = devices.Kitchen;
-    public SwitchEntity MasterSwitch => _livingRoom.LightControl;
-    public BinarySensorEntity MotionSensor => _livingRoom.MotionControl;
-    public LightEntity Light => _livingRoom.LightControl;
-    public NumberEntity SensorDelay => _livingRoom.MotionControl;
-    public SwitchEntity LeftSideFanSwitch => _livingRoom.FanControl!;
-    public MediaPlayerEntity TclTv => _livingRoom.MediaControl!;
-    public ButtonEntity Restart => _livingRoom.MotionControl;
-    public BinarySensorEntity LivingRoomDoor => _livingRoom.ContactSensor!;
-    public BinarySensorEntity BedroomDoor => _bedroom.ContactSensor!;
-    public BinarySensorEntity BedroomMotionSensor => _bedroom.MotionControl;
-    public LightEntity PantryLights => _pantry.LightControl;
-    public SwitchEntity PantryMotionAutomation => _pantry.LightControl;
-    public BinarySensorEntity PantryMotionSensor => _pantry.MotionControl;
-    public BinarySensorEntity KitchenMotionSensor => _kitchen.MotionControl;
-    public SwitchEntity KitchenMotionAutomation => _kitchen.LightControl;
-}
-
-public class AirQualityEntities(Devices devices) : IAirQualityEntities
-{
-    private readonly Area _area = devices.LivingRoom;
-    private readonly AirPurifierControl _control = devices.LivingRoom.AirPurifierControl!;
-    public SwitchEntity MasterSwitch => _control.Automation;
-    public BinarySensorEntity MotionSensor => _area.MotionControl;
-    public IEnumerable<SwitchEntity> Fans => [_control.Fan, _area.FanControl!.Fans["StandFan"]];
-    public NumericSensorEntity Pm25Sensor => _control.Pm25Sensor;
-    public SwitchEntity LedStatus => _control.LedStatus;
-    public SwitchEntity LivingRoomFanAutomation => _area.FanControl!.Automation;
-    public SwitchEntity SupportingFan => _control.SupportingFan!;
-}
 
 public class ClimateSchedulerEntities(Devices devices) : IClimateSchedulerEntities
 {
@@ -59,16 +21,6 @@ public class TclDisplayEntities(Devices devices) : ITclDisplayEntities
     public ButtonEntity Restart => _area.MotionControl;
 }
 
-public class LivingRoomFanEntities(Devices devices) : ILivingRoomFanEntities
-{
-    private readonly Area _area = devices.LivingRoom;
-    public SwitchEntity MasterSwitch => _area.FanControl!.Automation;
-    public BinarySensorEntity MotionSensor => _area.SecondaryMotionControl!;
-    public IEnumerable<SwitchEntity> Fans => _area.FanControl!.Fans.Values;
-    public BinarySensorEntity BedroomMotionSensor => devices.Bedroom.MotionControl;
-    public SwitchEntity ExhaustFan => _area.FanControl!.ExhaustFan!;
-}
-
 public class LivingRoomTabletEntities(Devices devices) : ITabletEntities
 {
     private readonly Area _area = devices.LivingRoom;
@@ -78,21 +30,6 @@ public class LivingRoomTabletEntities(Devices devices) : ITabletEntities
     public BinarySensorEntity TabletActive => _area.MotionLightControl!;
     public NumberEntity SensorDelay => _area.MotionControl;
     public ButtonEntity Restart => _area.MotionControl;
-}
-
-public class PantryLightEntities(Devices devices) : IPantryLightEntities
-{
-    private readonly Area _area = devices.Pantry;
-    public SwitchEntity MasterSwitch => _area.LightControl;
-    public BinarySensorEntity MotionSensor => _area.MotionControl;
-    public LightEntity Light => _area.LightControl;
-    public NumberEntity SensorDelay => _area.MotionControl;
-    public BinarySensorEntity MiScalePresenceSensor => _area.MotionLightControl!;
-    public LightEntity MirrorLight => _area.MotionLightControl!;
-    public ButtonEntity Restart => _area.MotionControl;
-    public BinarySensorEntity BedroomDoor => devices.Bedroom.ContactSensor!;
-    public SwitchEntity BathroomMotionAutomation => devices.Bathroom.LightControl!.Automation;
-    public BinarySensorEntity BathroomMotionSensor => devices.Bathroom.MotionControl!;
 }
 
 public class LockingEntities(Devices devices) : ILockingEntities

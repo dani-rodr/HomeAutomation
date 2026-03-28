@@ -2,7 +2,9 @@ using HomeAutomation.apps.Area.Bathroom;
 using HomeAutomation.apps.Area.Bedroom;
 using HomeAutomation.apps.Area.Desk;
 using HomeAutomation.apps.Area.Kitchen;
+using HomeAutomation.apps.Area.LivingRoom;
 using HomeAutomation.apps.Area.LivingRoom.Devices;
+using HomeAutomation.apps.Area.Pantry;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace HomeAutomation.apps.Helpers;
@@ -76,17 +78,11 @@ public static class ServiceCollectionExtensions
 
     private static IServiceCollection AddLivingRoomEntities(this IServiceCollection services)
     {
-        return services
-            .AddTransient<ILivingRoomLightEntities, LivingRoomLightEntities>()
-            .AddTransient<ILivingRoomFanEntities, LivingRoomFanEntities>()
-            .AddTransient<IAirQualityEntities, AirQualityEntities>()
-            .AddTransient<ITabletEntities, LivingRoomTabletEntities>()
-            .AddTransient<ITclDisplayEntities, TclDisplayEntities>()
-            .AddTransient<ITclDisplay, TclDisplay>();
+        return services.AddLivingRoomServices();
     }
 
     private static IServiceCollection AddPantryEntities(this IServiceCollection services)
     {
-        return services.AddTransient<IPantryLightEntities, PantryLightEntities>();
+        return services.AddPantryServices();
     }
 }

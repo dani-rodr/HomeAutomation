@@ -28,27 +28,6 @@ public interface IFanAutomationEntities : IMotionBase
     IEnumerable<SwitchEntity> Fans { get; }
 }
 
-public interface ILivingRoomLightEntities : ILightAutomationEntities
-{
-    BinarySensorEntity BedroomDoor { get; }
-    BinarySensorEntity LivingRoomDoor { get; }
-    BinarySensorEntity BedroomMotionSensor { get; }
-    MediaPlayerEntity TclTv { get; }
-    BinarySensorEntity KitchenMotionSensor { get; }
-    SwitchEntity KitchenMotionAutomation { get; }
-    LightEntity PantryLights { get; }
-    SwitchEntity PantryMotionAutomation { get; }
-    BinarySensorEntity PantryMotionSensor { get; }
-}
-
-public interface IPantryLightEntities : ILightAutomationEntities
-{
-    BinarySensorEntity MiScalePresenceSensor { get; }
-    LightEntity MirrorLight { get; }
-    SwitchEntity BathroomMotionAutomation { get; }
-    BinarySensorEntity BathroomMotionSensor { get; }
-}
-
 public interface IClimateSchedulerEntities
 {
     SensorEntity SunRising { get; }
@@ -68,20 +47,6 @@ public interface ITclDisplayEntities : IDisplayEntities, ILightAutomationEntitie
 public interface ITabletEntities : ILightAutomationEntities
 {
     BinarySensorEntity TabletActive { get; }
-}
-
-public interface ILivingRoomFanEntities : IFanAutomationEntities
-{
-    BinarySensorEntity BedroomMotionSensor { get; }
-    SwitchEntity ExhaustFan { get; }
-}
-
-public interface IAirQualityEntities : IFanAutomationEntities
-{
-    NumericSensorEntity Pm25Sensor { get; }
-    SwitchEntity LedStatus { get; }
-    SwitchEntity LivingRoomFanAutomation { get; }
-    SwitchEntity SupportingFan { get; }
 }
 
 public interface ILockingEntities : IMotionBase
