@@ -1,5 +1,3 @@
-using System.Reactive;
-
 namespace HomeAutomation.apps.Common.Interface;
 
 public interface IEventHandler

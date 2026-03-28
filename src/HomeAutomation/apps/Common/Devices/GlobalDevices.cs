@@ -4,7 +4,8 @@ public class GlobalDevices(Entities entities)
 {
     public BinarySensorEntity HouseMotionSensor { get; } = entities.BinarySensor.House;
     public ButtonEntity Restart { get; } = entities.Button.RestartEsp32;
-    public NumberEntity MotionSensorDelay { get; } = entities.Number.SalaMotionSensorStillTargetDelay;
+    public NumberEntity MotionSensorDelay { get; } =
+        entities.Number.SalaMotionSensorStillTargetDelay;
     public SwitchEntity MotionSensorAutomation { get; } = entities.Switch.MotionSensors;
     public LightEntity Lights { get; } = entities.Light.Lights;
     public SensorEntity SunRising { get; } = entities.Sensor.SunNextRising;

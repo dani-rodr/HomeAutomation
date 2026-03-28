@@ -7,7 +7,8 @@ public class KitchenDevices(Entities entities)
     public NumberEntity SensorDelay { get; } = entities.Number.KitchenMotionSensorStillTargetDelay;
     public SwitchEntity LightAutomation { get; } = entities.Switch.KitchenMotionSensor;
     public LightEntity Lights { get; } = entities.Light.RgbLightStrip;
-    public BinarySensorEntity PowerPlug { get; } = entities.BinarySensor.SmartPlug3PowerExceedsThreshold;
+    public BinarySensorEntity PowerPlug { get; } =
+        entities.BinarySensor.SmartPlug3PowerExceedsThreshold;
     public NumericSensorEntity RiceCookerPower { get; } = entities.Sensor.RiceCookerPower;
     public SwitchEntity RiceCookerSwitch { get; } = entities.Switch.RiceCookerSocket1;
     public SensorEntity AirFryerStatus { get; } =

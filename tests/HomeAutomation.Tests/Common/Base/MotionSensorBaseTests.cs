@@ -290,5 +290,6 @@ public class MotionSensorBaseTests
         IMotionSensorRestartScheduler scheduler,
         string deviceName,
         ILogger logger
-    ) : MotionSensorBase(factory, scheduler, deviceName, logger) { }
+    ) : MotionSensorBase(factory, scheduler, deviceName, logger)
+    { }
 }

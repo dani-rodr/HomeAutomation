@@ -1,5 +1,3 @@
-using HomeAutomation.apps.Common.Security.People;
-
 namespace HomeAutomation.apps.Common.Services.Factories;
 
 public interface IPersonControllerFactory

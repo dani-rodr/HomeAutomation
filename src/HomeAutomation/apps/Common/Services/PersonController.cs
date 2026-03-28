@@ -1,6 +1,5 @@
 using System.Linq;
 using System.Reactive.Subjects;
-using HomeAutomation.apps.Common.Security.People;
 
 namespace HomeAutomation.apps.Common.Services;
 

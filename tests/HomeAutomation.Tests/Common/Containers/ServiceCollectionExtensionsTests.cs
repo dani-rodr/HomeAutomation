@@ -16,10 +16,7 @@ using HomeAutomation.apps.Common.Security;
 using HomeAutomation.apps.Common.Security.Automations;
 using HomeAutomation.apps.Security.Automations;
 using HomeAutomation.apps.Security.People;
-using HomeAssistantGenerated;
 using Microsoft.Extensions.DependencyInjection;
-using System.Reactive.Concurrency;
-using System.Linq;
 
 namespace HomeAutomation.Tests.Common.Containers;
 
@@ -35,7 +32,9 @@ public class ServiceCollectionExtensionsTests
         entities.MasterSwitch.EntityId.Should().Be("switch.bathroom_motion_sensor");
         entities.MotionSensor.EntityId.Should().Be("binary_sensor.bathroom_presence_sensors");
         entities.Light.EntityId.Should().Be("light.bathroom_lights");
-        entities.SensorDelay.EntityId.Should().Be("number.bathroom_motion_sensor_still_target_delay");
+        entities
+            .SensorDelay.EntityId.Should()
+            .Be("number.bathroom_motion_sensor_still_target_delay");
     }
 
     [Fact]
@@ -60,12 +59,17 @@ public class ServiceCollectionExtensionsTests
         lightEntities.MasterSwitch.EntityId.Should().Be("switch.bedroom_motion_sensor");
         lightEntities.MotionSensor.EntityId.Should().Be("binary_sensor.bedroom_presence_sensors");
         lightEntities.Light.EntityId.Should().Be("light.bed_lights");
-        lightEntities.SensorDelay.EntityId.Should().Be("number.bedroom_motion_sensor_still_target_delay");
+        lightEntities
+            .SensorDelay.EntityId.Should()
+            .Be("number.bedroom_motion_sensor_still_target_delay");
         lightEntities.RightSideEmptySwitch.EntityId.Should().Be("switch.sonoff_1002352c40_1");
         lightEntities.LeftSideFanSwitch.EntityId.Should().Be("switch.sonoff_100238104e_1");
 
         fanEntities.MasterSwitch.EntityId.Should().Be("switch.bedroom_fan_automation");
-        fanEntities.Fans.Select(fan => fan.EntityId).Should().ContainSingle("switch.sonoff_100238104e_1");
+        fanEntities
+            .Fans.Select(fan => fan.EntityId)
+            .Should()
+            .ContainSingle("switch.sonoff_100238104e_1");
 
         climateEntities.MasterSwitch.EntityId.Should().Be("switch.ac_automation");
         climateEntities.AirConditioner.EntityId.Should().Be("climate.ac");
@@ -96,9 +100,9 @@ public class ServiceCollectionExtensionsTests
         entities.MasterSwitch.EntityId.Should().Be("switch.cooking_automation");
         entities.InductionPower.EntityId.Should().Be("sensor.smart_plug_3_sonoff_s31_power");
         entities.InductionTurnOff.EntityId.Should().Be("button.induction_cooker_power");
-        entities.AirFryerStatus.EntityId.Should().Be(
-            "sensor.xiaomi_smart_air_fryer_pro_4l_air_fryer_operating_status"
-        );
+        entities
+            .AirFryerStatus.EntityId.Should()
+            .Be("sensor.xiaomi_smart_air_fryer_pro_4l_air_fryer_operating_status");
     }
 
     [Fact]
@@ -119,7 +123,9 @@ public class ServiceCollectionExtensionsTests
         var entities = provider.GetRequiredService<IDeskLightEntities>();
 
         entities.MasterSwitch.EntityId.Should().Be("switch.lg_tv_motion_sensor");
-        entities.MotionSensor.EntityId.Should().Be("binary_sensor.desk_motion_sensor_smart_presence");
+        entities
+            .MotionSensor.EntityId.Should()
+            .Be("binary_sensor.desk_motion_sensor_smart_presence");
         entities.Light.EntityId.Should().Be("light.lg_display");
         entities.SensorDelay.EntityId.Should().Be("number.desk_motion_sensor_still_target_delay");
         entities.SalaLights.EntityId.Should().Be("light.sala_lights");
@@ -168,9 +174,9 @@ public class ServiceCollectionExtensionsTests
         fanEntities.MasterSwitch.EntityId.Should().Be("switch.sala_fan_automation");
         fanEntities.ExhaustFan.EntityId.Should().Be("switch.cozylife_955f");
         airQualityEntities.MasterSwitch.EntityId.Should().Be("switch.clean_air");
-        airQualityEntities.Pm25Sensor.EntityId.Should().Be(
-            "sensor.xiaomi_sg_753990712_cpa4_pm2_5_density_p_3_4"
-        );
+        airQualityEntities
+            .Pm25Sensor.EntityId.Should()
+            .Be("sensor.xiaomi_sg_753990712_cpa4_pm2_5_density_p_3_4");
         tabletEntities.Light.EntityId.Should().Be("light.mipad_screen");
         tabletEntities.TabletActive.EntityId.Should().Be("binary_sensor.mipad");
         tclDisplayEntities.MasterSwitch.EntityId.Should().Be("switch.tv_automation");
@@ -195,9 +201,9 @@ public class ServiceCollectionExtensionsTests
         var entities = provider.GetRequiredService<IPantryLightEntities>();
 
         entities.MasterSwitch.EntityId.Should().Be("switch.pantry_motion_sensor");
-        entities.MiScalePresenceSensor.EntityId.Should().Be(
-            "binary_sensor.bedroom_motion_sensor_mi_scale_presence"
-        );
+        entities
+            .MiScalePresenceSensor.EntityId.Should()
+            .Be("binary_sensor.bedroom_motion_sensor_mi_scale_presence");
         entities.MirrorLight.EntityId.Should().Be("light.controller_rgb_df1c0d");
         entities.BathroomMotionAutomation.EntityId.Should().Be("switch.bathroom_motion_sensor");
     }
@@ -234,13 +240,15 @@ public class ServiceCollectionExtensionsTests
 
         danielEntities.Person.EntityId.Should().Be("person.daniel_rodriguez");
         danielEntities.ToggleLocation.EntityId.Should().Be("button.manual_tracker_button_daniel");
-        danielEntities.HomeTriggers.Select(trigger => trigger.EntityId)
+        danielEntities
+            .HomeTriggers.Select(trigger => trigger.EntityId)
             .Should()
             .Contain(["binary_sensor.redmi_watch_5_ble", "binary_sensor.oneplus_13_ble"]);
 
         athenaEntities.Person.EntityId.Should().Be("person.athena_bezos");
         athenaEntities.ToggleLocation.EntityId.Should().Be("button.manual_tracker_button_athena");
-        athenaEntities.DirectUnlockTriggers.Select(trigger => trigger.EntityId)
+        athenaEntities
+            .DirectUnlockTriggers.Select(trigger => trigger.EntityId)
             .Should()
             .ContainSingle("binary_sensor.baseus_tag_ble");
     }

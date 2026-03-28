@@ -1,6 +1,6 @@
-using System.Reactive.Disposables;
 using HomeAutomation.apps.Area.Desk.Devices;
 using NetDaemon.Extensions.Scheduler;
+using System.Reactive.Disposables;
 
 namespace HomeAutomation.apps.Common.Services;
 

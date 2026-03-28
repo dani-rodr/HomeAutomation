@@ -3,7 +3,11 @@ using HomeAutomation.apps.Common.Devices;
 
 namespace HomeAutomation.apps.Security;
 
-public class SecurityDevices(LivingRoomDevices livingRoomDevices, GlobalDevices globalDevices, Entities entities)
+public class SecurityDevices(
+    LivingRoomDevices livingRoomDevices,
+    GlobalDevices globalDevices,
+    Entities entities
+)
 {
     public SwitchEntity LockAutomation => livingRoomDevices.LockAutomation;
     public LockEntity Lock => livingRoomDevices.DoorLock;

@@ -3,7 +3,8 @@ using HomeAutomation.apps.Common.Devices;
 
 namespace HomeAutomation.apps.Area.Bedroom.Automations;
 
-public class BedroomClimateEntities(BedroomDevices devices, GlobalDevices globalDevices) : IClimateEntities
+public class BedroomClimateEntities(BedroomDevices devices, GlobalDevices globalDevices)
+    : IClimateEntities
 {
     public SwitchEntity MasterSwitch => devices.ClimateAutomation;
     public ClimateEntity AirConditioner => devices.AirConditioner;

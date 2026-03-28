@@ -3,7 +3,6 @@ using HomeAutomation.apps.Area.Bedroom;
 using HomeAutomation.apps.Area.Desk;
 using HomeAutomation.apps.Area.Kitchen;
 using HomeAutomation.apps.Area.LivingRoom;
-using HomeAutomation.apps.Area.LivingRoom.Devices;
 using HomeAutomation.apps.Area.Pantry;
 using HomeAutomation.apps.Common.Devices;
 using HomeAutomation.apps.Security;

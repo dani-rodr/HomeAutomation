@@ -2,7 +2,8 @@ namespace HomeAutomation.apps.Area.Desk.Devices;
 
 public class DeskDevices(Entities entities)
 {
-    public BinarySensorEntity MotionSensor { get; } = entities.BinarySensor.DeskMotionSensorSmartPresence;
+    public BinarySensorEntity MotionSensor { get; } =
+        entities.BinarySensor.DeskMotionSensorSmartPresence;
     public ButtonEntity Restart { get; } = entities.Button.DeskMotionSensorRestartEsp32;
     public NumberEntity SensorDelay { get; } = entities.Number.DeskMotionSensorStillTargetDelay;
     public SwitchEntity LightAutomation { get; } = entities.Switch.LgTvMotionSensor;

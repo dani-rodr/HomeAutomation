@@ -1,6 +1,3 @@
-using HomeAutomation.apps.Security;
-using HomeAutomation.apps.Common.Security.People;
-
 namespace HomeAutomation.apps.Security.People;
 
 public class DanielEntities(SecurityDevices devices) : IPersonEntities

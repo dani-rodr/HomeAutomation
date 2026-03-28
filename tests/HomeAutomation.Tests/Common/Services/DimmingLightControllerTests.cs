@@ -1,5 +1,5 @@
-using System.Text.Json;
 using HomeAutomation.apps.Common.Services;
+using System.Text.Json;
 
 namespace HomeAutomation.Tests.Common.Services;
 
