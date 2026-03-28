@@ -1,5 +1,4 @@
 using HomeAutomation.apps.Area.Kitchen.Automations;
-using HomeAutomation.apps.Common.Containers;
 
 namespace HomeAutomation.Tests.Area.Kitchen.Automations;
 

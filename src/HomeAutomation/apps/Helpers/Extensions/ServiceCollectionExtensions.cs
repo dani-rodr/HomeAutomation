@@ -1,4 +1,6 @@
+using HomeAutomation.apps.Area.Bathroom;
 using HomeAutomation.apps.Area.Desk.Devices;
+using HomeAutomation.apps.Area.Kitchen;
 using HomeAutomation.apps.Area.LivingRoom.Devices;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -80,14 +82,12 @@ public static class ServiceCollectionExtensions
 
     private static IServiceCollection AddBathroomEntities(this IServiceCollection services)
     {
-        return services.AddTransient<IBathroomLightEntities, BathroomLightEntities>();
+        return services.AddBathroomServices();
     }
 
     private static IServiceCollection AddKitchenEntities(this IServiceCollection services)
     {
-        return services
-            .AddTransient<IKitchenLightEntities, KitchenLightEntities>()
-            .AddTransient<ICookingEntities, KitchenCookingEntities>();
+        return services.AddKitchenServices();
     }
 
     private static IServiceCollection AddLivingRoomEntities(this IServiceCollection services)

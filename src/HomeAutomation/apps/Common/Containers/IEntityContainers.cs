@@ -55,27 +55,9 @@ public interface IPantryLightEntities : ILightAutomationEntities
     BinarySensorEntity BathroomMotionSensor { get; }
 }
 
-public interface IBathroomLightEntities : ILightAutomationEntities;
-
 public interface IDeskLightEntities : ILightAutomationEntities
 {
     LightEntity SalaLights { get; }
-}
-
-public interface IKitchenLightEntities : ILightAutomationEntities
-{
-    BinarySensorEntity PowerPlug { get; }
-}
-
-public interface ICookingEntities
-{
-    SwitchEntity MasterSwitch { get; }
-    NumericSensorEntity RiceCookerPower { get; }
-    SwitchEntity RiceCookerSwitch { get; }
-    SensorEntity AirFryerStatus { get; }
-    TimerEntity AirFryerTimer { get; }
-    ButtonEntity InductionTurnOff { get; }
-    NumericSensorEntity InductionPower { get; }
 }
 
 public interface IClimateSchedulerEntities

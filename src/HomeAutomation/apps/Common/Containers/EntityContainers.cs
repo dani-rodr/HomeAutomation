@@ -38,16 +38,6 @@ public class LivingRoomLightEntities(Devices devices) : ILivingRoomLightEntities
     public SwitchEntity KitchenMotionAutomation => _kitchen.LightControl;
 }
 
-public class BathroomLightEntities(Devices devices) : IBathroomLightEntities
-{
-    private readonly Area _area = devices.Bathroom;
-    public SwitchEntity MasterSwitch => _area.LightControl;
-    public BinarySensorEntity MotionSensor => _area.MotionControl;
-    public LightEntity Light => _area.LightControl;
-    public NumberEntity SensorDelay => _area.MotionControl;
-    public ButtonEntity Restart => _area.MotionControl;
-}
-
 public class DeskLightEntities(Devices devices) : IDeskLightEntities
 {
     private readonly Area _area = devices.Desk;
@@ -70,18 +60,6 @@ public class AirQualityEntities(Devices devices) : IAirQualityEntities
     public SwitchEntity LedStatus => _control.LedStatus;
     public SwitchEntity LivingRoomFanAutomation => _area.FanControl!.Automation;
     public SwitchEntity SupportingFan => _control.SupportingFan!;
-}
-
-public class KitchenCookingEntities(Devices devices) : ICookingEntities
-{
-    private readonly CookingControl _control = devices.Kitchen.CookingControl!;
-    public NumericSensorEntity RiceCookerPower => _control.RiceCookerPower;
-    public SwitchEntity RiceCookerSwitch => _control.RiceCookerSwitch;
-    public SensorEntity AirFryerStatus => _control.AirFryerStatus;
-    public ButtonEntity InductionTurnOff => _control.InductionTurnOff;
-    public NumericSensorEntity InductionPower => _control.InductionPower;
-    public SwitchEntity MasterSwitch => _control.Automation;
-    public TimerEntity AirFryerTimer => _control.AirFryerTimer;
 }
 
 public class BedroomClimateEntities(Devices devices) : IClimateEntities
@@ -190,17 +168,6 @@ public class PantryLightEntities(Devices devices) : IPantryLightEntities
     public BinarySensorEntity BedroomDoor => devices.Bedroom.ContactSensor!;
     public SwitchEntity BathroomMotionAutomation => devices.Bathroom.LightControl!.Automation;
     public BinarySensorEntity BathroomMotionSensor => devices.Bathroom.MotionControl!;
-}
-
-public class KitchenLightEntities(Devices devices) : IKitchenLightEntities
-{
-    private readonly Area _area = devices.Kitchen;
-    public SwitchEntity MasterSwitch => _area.LightControl;
-    public BinarySensorEntity MotionSensor => _area.MotionControl;
-    public LightEntity Light => _area.LightControl;
-    public NumberEntity SensorDelay => _area.MotionControl;
-    public BinarySensorEntity PowerPlug => _area.ExtraControl!.PowerPlug!;
-    public ButtonEntity Restart => _area.MotionControl;
 }
 
 public class LockingEntities(Devices devices) : ILockingEntities
