@@ -49,11 +49,6 @@ public interface IPantryLightEntities : ILightAutomationEntities
     BinarySensorEntity BathroomMotionSensor { get; }
 }
 
-public interface IDeskLightEntities : ILightAutomationEntities
-{
-    LightEntity SalaLights { get; }
-}
-
 public interface IClimateSchedulerEntities
 {
     SensorEntity SunRising { get; }
@@ -63,28 +58,12 @@ public interface IClimateSchedulerEntities
     InputBooleanEntity PowerSavingMode { get; }
 }
 
-public interface ILaptopEntities
-{
-    SwitchEntity VirtualSwitch { get; }
-    ButtonEntity WakeOnLanButton { get; }
-    SensorEntity Session { get; }
-    NumericSensorEntity BatteryLevel { get; }
-    ButtonEntity Lock { get; }
-    ButtonEntity Sleep { get; }
-    BinarySensorEntity MotionSensor { get; }
-}
-
 public interface IDisplayEntities
 {
     MediaPlayerEntity MediaPlayer { get; }
 }
 
 public interface ITclDisplayEntities : IDisplayEntities, ILightAutomationEntities;
-
-public interface ILgDisplayEntities : IDisplayEntities
-{
-    LightEntity Display { get; }
-}
 
 public interface ITabletEntities : ILightAutomationEntities
 {
@@ -105,29 +84,12 @@ public interface IAirQualityEntities : IFanAutomationEntities
     SwitchEntity SupportingFan { get; }
 }
 
-public interface IDesktopEntities
-{
-    SwitchEntity Power { get; }
-    InputButtonEntity RemotePcButton { get; }
-}
-
 public interface ILockingEntities : IMotionBase
 {
     LockEntity Lock { get; }
     BinarySensorEntity Door { get; }
     BinarySensorEntity HouseStatus { get; }
     SwitchEntity Flytrap { get; }
-}
-
-public interface ILaptopSchedulerEntities
-{
-    InputBooleanEntity ProjectNationWeek { get; }
-}
-
-public interface IChargingHandlerEntities
-{
-    NumericSensorEntity Level { get; }
-    SwitchEntity Power { get; }
 }
 
 public interface IAccessControlAutomationEntities

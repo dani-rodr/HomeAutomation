@@ -1,5 +1,4 @@
 using HomeAutomation.apps.Area.Desk.Automations;
-using HomeAutomation.apps.Common.Containers;
 using HomeAutomation.apps.Common.Interface;
 
 namespace HomeAutomation.Tests.Area.Desk.Automations;

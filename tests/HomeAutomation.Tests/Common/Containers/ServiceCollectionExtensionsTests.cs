@@ -2,6 +2,9 @@ using HomeAutomation.apps.Area.Bathroom;
 using HomeAutomation.apps.Area.Bathroom.Automations;
 using HomeAutomation.apps.Area.Bedroom;
 using HomeAutomation.apps.Area.Bedroom.Automations;
+using HomeAutomation.apps.Area.Desk;
+using HomeAutomation.apps.Area.Desk.Automations;
+using HomeAutomation.apps.Area.Desk.Devices;
 using HomeAutomation.apps.Area.Kitchen;
 using HomeAutomation.apps.Area.Kitchen.Automations;
 using HomeAssistantGenerated;
@@ -99,6 +102,47 @@ public class ServiceCollectionExtensionsTests
         app.Should().NotBeNull();
     }
 
+    [Fact]
+    public void AddHomeEntitiesAndServices_ShouldResolveDeskLightEntities()
+    {
+        using var provider = CreateServiceProvider();
+
+        var entities = provider.GetRequiredService<IDeskLightEntities>();
+
+        entities.MasterSwitch.EntityId.Should().Be("switch.lg_tv_motion_sensor");
+        entities.MotionSensor.EntityId.Should().Be("binary_sensor.desk_motion_sensor_smart_presence");
+        entities.Light.EntityId.Should().Be("light.lg_display");
+        entities.SensorDelay.EntityId.Should().Be("number.desk_motion_sensor_still_target_delay");
+        entities.SalaLights.EntityId.Should().Be("light.sala_lights");
+    }
+
+    [Fact]
+    public void AddHomeEntitiesAndServices_ShouldResolveDeskDeviceEntities()
+    {
+        using var provider = CreateServiceProvider();
+
+        var desktop = provider.GetRequiredService<IDesktopEntities>();
+        var laptop = provider.GetRequiredService<ILaptopEntities>();
+        var display = provider.GetRequiredService<ILgDisplayEntities>();
+
+        desktop.Power.EntityId.Should().Be("switch.daniel_pc");
+        desktop.RemotePcButton.EntityId.Should().Be("input_button.remote_pc");
+        laptop.VirtualSwitch.EntityId.Should().Be("switch.laptop");
+        laptop.MotionSensor.EntityId.Should().Be("binary_sensor.desk_motion_sensor_smart_presence");
+        display.MediaPlayer.EntityId.Should().Be("media_player.lg_webos_smart_tv");
+        display.Display.EntityId.Should().Be("light.lg_display");
+    }
+
+    [Fact]
+    public void AddHomeEntitiesAndServices_ShouldResolveDeskApp()
+    {
+        using var provider = CreateServiceProvider();
+
+        var app = provider.GetRequiredService<DeskApp>();
+
+        app.Should().NotBeNull();
+    }
+
     private static ServiceProvider CreateServiceProvider()
     {
         var services = new ServiceCollection();
@@ -111,6 +155,8 @@ public class ServiceCollectionExtensionsTests
         services.AddHomeEntitiesAndServices();
         services.AddTransient<BathroomApp>();
         services.AddTransient<BedroomApp>();
+        services.AddTransient<DeskApp>();
+        services.AddTransient<DeskApp>();
         services.AddTransient<KitchenApp>();
 
         return services.BuildServiceProvider();

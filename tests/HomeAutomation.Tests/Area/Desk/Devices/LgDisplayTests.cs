@@ -1,6 +1,5 @@
 using System.Text.Json;
 using HomeAutomation.apps.Area.Desk.Devices;
-using HomeAutomation.apps.Common.Containers;
 
 namespace HomeAutomation.Tests.Area.Desk.Devices;
 

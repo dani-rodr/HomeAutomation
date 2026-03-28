@@ -25,17 +25,6 @@ public class LivingRoomLightEntities(Devices devices) : ILivingRoomLightEntities
     public SwitchEntity KitchenMotionAutomation => _kitchen.LightControl;
 }
 
-public class DeskLightEntities(Devices devices) : IDeskLightEntities
-{
-    private readonly Area _area = devices.Desk;
-    public SwitchEntity MasterSwitch => _area.LightControl;
-    public BinarySensorEntity MotionSensor => _area.MotionControl;
-    public LightEntity Light => _area.LightControl;
-    public NumberEntity SensorDelay => _area.MotionControl;
-    public ButtonEntity Restart => _area.MotionControl;
-    public LightEntity SalaLights => devices.LivingRoom.LightControl;
-}
-
 public class AirQualityEntities(Devices devices) : IAirQualityEntities
 {
     private readonly Area _area = devices.LivingRoom;
@@ -57,36 +46,6 @@ public class ClimateSchedulerEntities(Devices devices) : IClimateSchedulerEntiti
     public SensorEntity SunMidnight => _control.SunMidnight;
     public WeatherEntity Weather => _control!.Weather;
     public InputBooleanEntity PowerSavingMode => _control.PowerSavingMode;
-}
-
-public class DeskDesktopEntities(Devices devices) : IDesktopEntities
-{
-    private readonly PcControl _control = devices.Desk.PcControl!;
-    public SwitchEntity Power => _control.Power;
-    public InputButtonEntity RemotePcButton => _control.RemotePcButton;
-}
-
-public class LaptopEntities(Devices devices) : ILaptopEntities
-{
-    private readonly Area _area = devices.Desk;
-    public SwitchEntity VirtualSwitch => _area.LaptopControl!.VirtualSwitch;
-
-    public ButtonEntity WakeOnLanButton => _area.LaptopControl!.WakeOnLanButton;
-
-    public SensorEntity Session => _area.LaptopControl!;
-    public NumericSensorEntity BatteryLevel => _area.LaptopControl!;
-
-    public ButtonEntity Lock => _area.LaptopControl!.Lock;
-    public ButtonEntity Sleep => _area.LaptopControl!.Sleep;
-
-    public BinarySensorEntity MotionSensor => _area.MotionControl;
-}
-
-public class LgDisplayEntities(Devices devices) : ILgDisplayEntities
-{
-    private readonly Area _area = devices.Desk;
-    public MediaPlayerEntity MediaPlayer => _area.MediaControl!;
-    public LightEntity Display => _area.LightControl;
 }
 
 public class TclDisplayEntities(Devices devices) : ITclDisplayEntities
@@ -145,18 +104,6 @@ public class LockingEntities(Devices devices) : ILockingEntities
     public SwitchEntity MasterSwitch => _control.Automation;
     public BinarySensorEntity MotionSensor => devices.Global.MotionControl;
     public SwitchEntity Flytrap => _control.Flytrap;
-}
-
-public class LaptopSchedulerEntities(Devices devices) : ILaptopSchedulerEntities
-{
-    public InputBooleanEntity ProjectNationWeek => devices.Desk.LaptopControl!.ProjectNationWeek;
-}
-
-public class LaptopChargingHandlerEntities(Devices devices) : IChargingHandlerEntities
-{
-    private readonly LaptopControl _control = devices.Desk.LaptopControl!;
-    public NumericSensorEntity Level => _control.Level;
-    public SwitchEntity Power => _control.PowerPlug;
 }
 
 public class DanielEntities(Devices devices, Entities entities) : IPersonEntities
