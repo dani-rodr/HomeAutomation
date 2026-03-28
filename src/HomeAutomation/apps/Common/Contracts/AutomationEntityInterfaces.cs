@@ -1,4 +1,4 @@
-namespace HomeAutomation.apps.Common.Containers;
+namespace HomeAutomation.apps.Common.Contracts;
 
 public interface IMotionBase
 {
@@ -16,15 +16,6 @@ public interface ILightAutomationEntities : IMotionBase
 public interface IFanAutomationEntities : IMotionBase
 {
     IEnumerable<SwitchEntity> Fans { get; }
-}
-
-public interface IClimateSchedulerEntities
-{
-    SensorEntity SunRising { get; }
-    SensorEntity SunSetting { get; }
-    SensorEntity SunMidnight { get; }
-    WeatherEntity Weather { get; }
-    InputBooleanEntity PowerSavingMode { get; }
 }
 
 public interface IDisplayEntities
