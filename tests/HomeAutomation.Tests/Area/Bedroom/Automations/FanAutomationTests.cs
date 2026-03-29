@@ -32,22 +32,21 @@ public class FanAutomationTests : AutomationTestBase<FanAutomation>
         _mockHaContext.SetEntityState(_entities.MotionSensor.EntityId, "off");
 
         _mockHaContext.SetEntityState(_entities.Fan.EntityId, "off");
-
     }
 
     [Fact]
     public void Construction_Should_InitializeWithShouldActivateFan()
     {
-        var stateChange = StateChangeHelpers.MotionDetected(_entities.MotionSensor);
-
-        _mockHaContext.StateChangeSubject.OnNext(stateChange);
+        _mockHaContext.EmitMotionDetected(_entities.MotionSensor);
 
         // With ShouldActivateFan = false, motion on should not turn on fan
 
         _mockHaContext.ShouldHaveCalledSwitchTurnOn(_entities.Fan.EntityId);
     }
 
-    [Fact(Skip = "Quarantined: fan automation logic under review | issue HA-TEST-2004 | expires 2026-06-30")]
+    [Fact(
+        Skip = "Quarantined: fan automation logic under review | issue HA-TEST-2004 | expires 2026-06-30"
+    )]
     public void FanManuallyTurnedOn_Should_SetShouldActivateFanTrue()
     {
         // Arrange - Simulate fan being manually turned on (this should set ShouldActivateFan = true)
@@ -61,7 +60,7 @@ public class FanAutomationTests : AutomationTestBase<FanAutomation>
 
         // Act - Simulate manual fan operation
 
-        _mockHaContext.StateChangeSubject.OnNext(manualOnStateChange);
+        _mockHaContext.EmitStateChange(manualOnStateChange);
 
         // Update fan state to reflect the manual operation
 
@@ -71,16 +70,16 @@ public class FanAutomationTests : AutomationTestBase<FanAutomation>
 
         // Now motion should activate fan because ShouldActivateFan = true
 
-        var motionDetected = StateChangeHelpers.MotionDetected(_entities.MotionSensor);
-
-        _mockHaContext.StateChangeSubject.OnNext(motionDetected);
+        _mockHaContext.EmitMotionDetected(_entities.MotionSensor);
 
         // Assert - Fan should turn on because ShouldActivateFan is now true
 
         _mockHaContext.ShouldHaveCalledSwitchTurnOn(_entities.Fan.EntityId);
     }
 
-    [Fact(Skip = "Quarantined: bedroom automation logic under review | issue HA-TEST-2002 | expires 2026-06-30")]
+    [Fact(
+        Skip = "Quarantined: bedroom automation logic under review | issue HA-TEST-2002 | expires 2026-06-30"
+    )]
     public void FanManuallyTurnedOff_Should_SetShouldActivateFanFalse()
     {
         // Arrange - First set ShouldActivateFan to true
@@ -92,7 +91,7 @@ public class FanAutomationTests : AutomationTestBase<FanAutomation>
             HaIdentity.DANIEL_RODRIGUEZ
         );
 
-        _mockHaContext.StateChangeSubject.OnNext(manualOnStateChange);
+        _mockHaContext.EmitStateChange(manualOnStateChange);
 
         _mockHaContext.SetEntityState(_entities.Fan.EntityId, "on");
 
@@ -107,7 +106,7 @@ public class FanAutomationTests : AutomationTestBase<FanAutomation>
 
         // Act - Simulate manual fan turn off
 
-        _mockHaContext.StateChangeSubject.OnNext(manualOffStateChange);
+        _mockHaContext.EmitStateChange(manualOffStateChange);
 
         _mockHaContext.SetEntityState(_entities.Fan.EntityId, "off");
 
@@ -115,16 +114,16 @@ public class FanAutomationTests : AutomationTestBase<FanAutomation>
 
         // Now motion should NOT activate fan because ShouldActivateFan = false
 
-        var motionDetected = StateChangeHelpers.MotionDetected(_entities.MotionSensor);
-
-        _mockHaContext.StateChangeSubject.OnNext(motionDetected);
+        _mockHaContext.EmitMotionDetected(_entities.MotionSensor);
 
         // Assert - Fan should NOT turn on because ShouldActivateFan is now false
 
         _mockHaContext.ShouldNeverHaveCalledSwitch(_entities.Fan.EntityId);
     }
 
-    [Fact(Skip = "Quarantined: fan automation logic under review | issue HA-TEST-2004 | expires 2026-06-30")]
+    [Fact(
+        Skip = "Quarantined: fan automation logic under review | issue HA-TEST-2004 | expires 2026-06-30"
+    )]
     public void MotionDetected_WithShouldActivateFanTrue_Should_TurnOnFan()
     {
         // Arrange - Set ShouldActivateFan to true by manual operation
@@ -136,7 +135,7 @@ public class FanAutomationTests : AutomationTestBase<FanAutomation>
             HaIdentity.DANIEL_RODRIGUEZ
         );
 
-        _mockHaContext.StateChangeSubject.OnNext(manualOnStateChange);
+        _mockHaContext.EmitStateChange(manualOnStateChange);
 
         _mockHaContext.SetEntityState(_entities.Fan.EntityId, "on");
 
@@ -144,9 +143,7 @@ public class FanAutomationTests : AutomationTestBase<FanAutomation>
 
         // Act - Simulate motion detection
 
-        var stateChange = StateChangeHelpers.MotionDetected(_entities.MotionSensor);
-
-        _mockHaContext.StateChangeSubject.OnNext(stateChange);
+        _mockHaContext.EmitMotionDetected(_entities.MotionSensor);
 
         // Assert - Fan should turn on
 
@@ -160,9 +157,7 @@ public class FanAutomationTests : AutomationTestBase<FanAutomation>
 
         // Act - Simulate motion detection
 
-        var stateChange = StateChangeHelpers.MotionDetected(_entities.MotionSensor);
-
-        _mockHaContext.StateChangeSubject.OnNext(stateChange);
+        _mockHaContext.EmitMotionDetected(_entities.MotionSensor);
 
         // Assert - Fan should turn on
 
@@ -174,16 +169,16 @@ public class FanAutomationTests : AutomationTestBase<FanAutomation>
     {
         // Act - Simulate motion cleared
 
-        var stateChange = StateChangeHelpers.MotionCleared(_entities.MotionSensor);
-
-        _mockHaContext.StateChangeSubject.OnNext(stateChange);
+        _mockHaContext.EmitMotionCleared(_entities.MotionSensor);
 
         // Assert - Fan should turn off regardless of ShouldActivateFan state
 
         _mockHaContext.ShouldHaveCalledSwitchTurnOff(_entities.Fan.EntityId);
     }
 
-    [Fact(Skip = "Quarantined: bedroom automation logic under review | issue HA-TEST-2002 | expires 2026-06-30")]
+    [Fact(
+        Skip = "Quarantined: bedroom automation logic under review | issue HA-TEST-2002 | expires 2026-06-30"
+    )]
     public void CompleteMotionCycle_WithManualActivation_Should_FollowExpectedPattern()
     {
         // Arrange - Set ShouldActivateFan to true
@@ -195,15 +190,13 @@ public class FanAutomationTests : AutomationTestBase<FanAutomation>
             HaIdentity.DANIEL_RODRIGUEZ
         );
 
-        _mockHaContext.StateChangeSubject.OnNext(manualOnStateChange);
+        _mockHaContext.EmitStateChange(manualOnStateChange);
 
         _mockHaContext.ClearServiceCalls();
 
         // Act & Assert - Motion on should turn on fan
 
-        var motionOn = StateChangeHelpers.MotionDetected(_entities.MotionSensor);
-
-        _mockHaContext.StateChangeSubject.OnNext(motionOn);
+        _mockHaContext.EmitMotionDetected(_entities.MotionSensor);
 
         _mockHaContext.ShouldHaveCalledSwitchTurnOn(_entities.Fan.EntityId);
 
@@ -211,14 +204,14 @@ public class FanAutomationTests : AutomationTestBase<FanAutomation>
 
         // Act & Assert - Motion off should turn off fan
 
-        var motionOff = StateChangeHelpers.MotionCleared(_entities.MotionSensor);
-
-        _mockHaContext.StateChangeSubject.OnNext(motionOff);
+        _mockHaContext.EmitMotionCleared(_entities.MotionSensor);
 
         _mockHaContext.ShouldHaveCalledSwitchTurnOff(_entities.Fan.EntityId);
     }
 
-    [Fact(Skip = "Quarantined: fan automation logic under review | issue HA-TEST-2004 | expires 2026-06-30")]
+    [Fact(
+        Skip = "Quarantined: fan automation logic under review | issue HA-TEST-2004 | expires 2026-06-30"
+    )]
     public void AutomatedFanOperation_Should_NotChangeShouldActivateFan()
     {
         // Arrange - Set ShouldActivateFan to true initially
@@ -230,7 +223,7 @@ public class FanAutomationTests : AutomationTestBase<FanAutomation>
             HaIdentity.DANIEL_RODRIGUEZ
         );
 
-        _mockHaContext.StateChangeSubject.OnNext(manualOnStateChange);
+        _mockHaContext.EmitStateChange(manualOnStateChange);
 
         _mockHaContext.ClearServiceCalls();
 
@@ -243,15 +236,13 @@ public class FanAutomationTests : AutomationTestBase<FanAutomation>
             null // No user ID indicates automation
         );
 
-        _mockHaContext.StateChangeSubject.OnNext(automatedStateChange);
+        _mockHaContext.EmitStateChange(automatedStateChange);
 
         _mockHaContext.ClearServiceCalls();
 
         // Verify ShouldActivateFan remains true by testing motion response
 
-        var motionDetected = StateChangeHelpers.MotionDetected(_entities.MotionSensor);
-
-        _mockHaContext.StateChangeSubject.OnNext(motionDetected);
+        _mockHaContext.EmitMotionDetected(_entities.MotionSensor);
 
         // Assert - Fan should still respond to motion (ShouldActivateFan still true)
 
@@ -270,7 +261,7 @@ public class FanAutomationTests : AutomationTestBase<FanAutomation>
             HaIdentity.DANIEL_RODRIGUEZ
         );
 
-        _mockHaContext.StateChangeSubject.OnNext(manualOnStateChange);
+        _mockHaContext.EmitStateChange(manualOnStateChange);
 
         // Disable master switch
 
@@ -280,16 +271,16 @@ public class FanAutomationTests : AutomationTestBase<FanAutomation>
 
         // Act - Try motion detection while automation is disabled
 
-        var motionDetected = StateChangeHelpers.MotionDetected(_entities.MotionSensor);
-
-        _mockHaContext.StateChangeSubject.OnNext(motionDetected);
+        _mockHaContext.EmitMotionDetected(_entities.MotionSensor);
 
         // Assert - No fan operations should occur
 
         _mockHaContext.ShouldNeverHaveCalledSwitch(_entities.Fan.EntityId);
     }
 
-    [Fact(Skip = "Quarantined: fan automation logic under review | issue HA-TEST-2004 | expires 2026-06-30")]
+    [Fact(
+        Skip = "Quarantined: fan automation logic under review | issue HA-TEST-2004 | expires 2026-06-30"
+    )]
     public void MultipleMotionEvents_Should_HandleCorrectly()
     {
         // Arrange - Set ShouldActivateFan to true
@@ -301,27 +292,19 @@ public class FanAutomationTests : AutomationTestBase<FanAutomation>
             HaIdentity.DANIEL_RODRIGUEZ
         );
 
-        _mockHaContext.StateChangeSubject.OnNext(manualOnStateChange);
+        _mockHaContext.EmitStateChange(manualOnStateChange);
 
         _mockHaContext.ClearServiceCalls();
 
         // Act - Multiple motion events
 
-        _mockHaContext.StateChangeSubject.OnNext(
-            StateChangeHelpers.MotionDetected(_entities.MotionSensor)
-        );
+        _mockHaContext.EmitMotionDetected(_entities.MotionSensor);
 
-        _mockHaContext.StateChangeSubject.OnNext(
-            StateChangeHelpers.MotionCleared(_entities.MotionSensor)
-        );
+        _mockHaContext.EmitMotionCleared(_entities.MotionSensor);
 
-        _mockHaContext.StateChangeSubject.OnNext(
-            StateChangeHelpers.MotionDetected(_entities.MotionSensor)
-        );
+        _mockHaContext.EmitMotionDetected(_entities.MotionSensor);
 
-        _mockHaContext.StateChangeSubject.OnNext(
-            StateChangeHelpers.MotionCleared(_entities.MotionSensor)
-        );
+        _mockHaContext.EmitMotionCleared(_entities.MotionSensor);
 
         // Assert - Should have 2 turn on and 2 turn off calls
 
@@ -339,21 +322,13 @@ public class FanAutomationTests : AutomationTestBase<FanAutomation>
 
         var act = () =>
         {
-            _mockHaContext.StateChangeSubject.OnNext(
-                StateChangeHelpers.MotionDetected(_entities.MotionSensor)
-            );
+            _mockHaContext.EmitMotionDetected(_entities.MotionSensor);
 
-            _mockHaContext.StateChangeSubject.OnNext(
-                StateChangeHelpers.MotionCleared(_entities.MotionSensor)
-            );
+            _mockHaContext.EmitMotionCleared(_entities.MotionSensor);
 
-            _mockHaContext.StateChangeSubject.OnNext(
-                StateChangeHelpers.SwitchTurnedOn(_entities.Fan)
-            );
+            _mockHaContext.EmitStateChange(StateChangeHelpers.SwitchTurnedOn(_entities.Fan));
 
-            _mockHaContext.StateChangeSubject.OnNext(
-                StateChangeHelpers.SwitchTurnedOff(_entities.Fan)
-            );
+            _mockHaContext.EmitStateChange(StateChangeHelpers.SwitchTurnedOff(_entities.Fan));
         };
 
         act.Should().NotThrow();

@@ -1,7 +1,6 @@
 using HomeAutomation.apps.Area.Kitchen.Automations.Entities;
 using HomeAutomation.apps.Area.Kitchen.Devices;
 using Microsoft.Extensions.DependencyInjection;
-
 using KitchenCookingEntityAdapter = HomeAutomation.apps.Area.Kitchen.Automations.Entities.CookingEntities;
 using KitchenLightEntityAdapter = HomeAutomation.apps.Area.Kitchen.Automations.Entities.LightEntities;
 

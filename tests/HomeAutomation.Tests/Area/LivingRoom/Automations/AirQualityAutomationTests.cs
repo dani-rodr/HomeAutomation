@@ -86,7 +86,9 @@ public class AirQualityAutomationTests : AutomationTestBase<AirQualityAutomation
         _mockHaContext.ShouldHaveCalledSwitchTurnOn(_entities.SupportingFan.EntityId);
     }
 
-    [Fact(Skip = "Quarantined: air quality automation logic under review | issue HA-TEST-2001 | expires 2026-06-30")]
+    [Fact(
+        Skip = "Quarantined: air quality automation logic under review | issue HA-TEST-2001 | expires 2026-06-30"
+    )]
     public void ExcellentAirQuality_Should_TurnOffMainFan()
     {
         // Arrange - Set air quality to excellent (below clean threshold)
@@ -101,14 +103,16 @@ public class AirQualityAutomationTests : AutomationTestBase<AirQualityAutomation
             excellentAirValue.ToString("F1")
         );
 
-        _mockHaContext.StateChangeSubject.OnNext(stateChange);
+        _mockHaContext.EmitStateChange(stateChange);
 
         // Assert - Main fan should turn off when air quality is excellent
 
         _mockHaContext.ShouldHaveCalledSwitchTurnOff(_entities.Fans.First().EntityId);
     }
 
-    [Fact(Skip = "Quarantined: air quality automation logic under review | issue HA-TEST-2001 | expires 2026-06-30")]
+    [Fact(
+        Skip = "Quarantined: air quality automation logic under review | issue HA-TEST-2001 | expires 2026-06-30"
+    )]
     public void ModerateAirQuality_Should_TurnOnMainFan_When_IsCleaningAir()
     {
         // Arrange - First simulate poor air quality to set IsCleaningAir to true
@@ -119,7 +123,7 @@ public class AirQualityAutomationTests : AutomationTestBase<AirQualityAutomation
             "100.0"
         );
 
-        _mockHaContext.StateChangeSubject.OnNext(poorAirStateChange);
+        _mockHaContext.EmitStateChange(poorAirStateChange);
 
         _mockHaContext.ClearServiceCalls(); // Clear the poor air quality actions
 
@@ -133,7 +137,7 @@ public class AirQualityAutomationTests : AutomationTestBase<AirQualityAutomation
             moderateAirValue.ToString("F1")
         );
 
-        _mockHaContext.StateChangeSubject.OnNext(stateChange);
+        _mockHaContext.EmitStateChange(stateChange);
 
         // Assert - Main fan should turn on and supporting fan should turn off when transitioning from cleaning state
 
@@ -142,7 +146,9 @@ public class AirQualityAutomationTests : AutomationTestBase<AirQualityAutomation
         _mockHaContext.ShouldHaveCalledSwitchTurnOff(_entities.Fans.Last().EntityId);
     }
 
-    [Fact(Skip = "Quarantined: air quality automation logic under review | issue HA-TEST-2001 | expires 2026-06-30")]
+    [Fact(
+        Skip = "Quarantined: air quality automation logic under review | issue HA-TEST-2001 | expires 2026-06-30"
+    )]
     public void PoorAirQuality_Should_ActivateSupportingFan()
     {
         // Arrange - Poor air quality (above dirty threshold)
@@ -157,7 +163,7 @@ public class AirQualityAutomationTests : AutomationTestBase<AirQualityAutomation
             poorAirValue.ToString("F1")
         );
 
-        _mockHaContext.StateChangeSubject.OnNext(stateChange);
+        _mockHaContext.EmitStateChange(stateChange);
 
         // Assert - Supporting fan should turn on for poor air quality
 
@@ -176,7 +182,7 @@ public class AirQualityAutomationTests : AutomationTestBase<AirQualityAutomation
             HaIdentity.DANIEL_RODRIGUEZ // Manual operation sets ShouldActivateFan to true
         );
 
-        _mockHaContext.StateChangeSubject.OnNext(manualStateChange);
+        _mockHaContext.EmitStateChange(manualStateChange);
 
         _mockHaContext.ClearServiceCalls();
 
@@ -190,7 +196,7 @@ public class AirQualityAutomationTests : AutomationTestBase<AirQualityAutomation
             poorAirValue.ToString("F1")
         );
 
-        _mockHaContext.StateChangeSubject.OnNext(stateChange);
+        _mockHaContext.EmitStateChange(stateChange);
 
         // Assert - Supporting fan should not be activated again when manually controlled
 
@@ -203,14 +209,16 @@ public class AirQualityAutomationTests : AutomationTestBase<AirQualityAutomation
     #region Fan Control and State Management Tests
 
 
-    [Fact(Skip = "Quarantined: air quality automation logic under review | issue HA-TEST-2001 | expires 2026-06-30")]
+    [Fact(
+        Skip = "Quarantined: air quality automation logic under review | issue HA-TEST-2001 | expires 2026-06-30"
+    )]
     public void MainFan_StateChange_Should_SyncLedStatus()
     {
         // Act - Simulate main fan turning on
 
         var fanOnStateChange = StateChangeHelpers.SwitchTurnedOn(_entities.Fans.First());
 
-        _mockHaContext.StateChangeSubject.OnNext(fanOnStateChange);
+        _mockHaContext.EmitStateChange(fanOnStateChange);
 
         // Assert - LED should turn on when fan turns on
 
@@ -224,7 +232,7 @@ public class AirQualityAutomationTests : AutomationTestBase<AirQualityAutomation
 
         var fanOffStateChange = StateChangeHelpers.SwitchTurnedOff(_entities.Fans.First());
 
-        _mockHaContext.StateChangeSubject.OnNext(fanOffStateChange);
+        _mockHaContext.EmitStateChange(fanOffStateChange);
 
         // Assert - LED should turn off when fan turns off
 
@@ -243,7 +251,7 @@ public class AirQualityAutomationTests : AutomationTestBase<AirQualityAutomation
             HaIdentity.DANIEL_RODRIGUEZ // Manual operation
         );
 
-        _mockHaContext.StateChangeSubject.OnNext(manualStateChange);
+        _mockHaContext.EmitStateChange(manualStateChange);
 
         // Assert - ShouldActivateFan should be set to true (verified indirectly by not activating supporting fan on poor air quality)
 
@@ -255,14 +263,16 @@ public class AirQualityAutomationTests : AutomationTestBase<AirQualityAutomation
             "100.0"
         );
 
-        _mockHaContext.StateChangeSubject.OnNext(poorAirStateChange);
+        _mockHaContext.EmitStateChange(poorAirStateChange);
 
         // Supporting fan should not be turned on again since it's manually controlled
 
         _mockHaContext.ShouldHaveCalledSwitchExactly(_entities.Fans.Last().EntityId, "turn_on", 0);
     }
 
-    [Theory(Skip = "Quarantined: air quality automation logic under review | issue HA-TEST-2001 | expires 2026-06-30")]
+    [Theory(
+        Skip = "Quarantined: air quality automation logic under review | issue HA-TEST-2001 | expires 2026-06-30"
+    )]
     [InlineData(5.0, "excellent")]
     [InlineData(25.0, "moderate")]
     [InlineData(100.0, "poor")]
@@ -279,7 +289,7 @@ public class AirQualityAutomationTests : AutomationTestBase<AirQualityAutomation
             pm25Value.ToString("F1")
         );
 
-        _mockHaContext.StateChangeSubject.OnNext(stateChange);
+        _mockHaContext.EmitStateChange(stateChange);
 
         // Assert based on quality level
 
@@ -311,7 +321,9 @@ public class AirQualityAutomationTests : AutomationTestBase<AirQualityAutomation
     #region Persistent Automation Tests
 
 
-    [Fact(Skip = "Quarantined: air quality automation logic under review | issue HA-TEST-2001 | expires 2026-06-30")]
+    [Fact(
+        Skip = "Quarantined: air quality automation logic under review | issue HA-TEST-2001 | expires 2026-06-30"
+    )]
     public void MotionSensor_OffFor15Minutes_With_MasterSwitchOff_Should_TurnOnMasterSwitch()
     {
         // Arrange - Set master switch to off
@@ -322,9 +334,7 @@ public class AirQualityAutomationTests : AutomationTestBase<AirQualityAutomation
 
         // Act - Simulate motion sensor being off for 15 minutes
 
-        var motionOffStateChange = StateChangeHelpers.MotionCleared(_entities.MotionSensor);
-
-        _mockHaContext.StateChangeSubject.OnNext(motionOffStateChange);
+        _mockHaContext.EmitMotionCleared(_entities.MotionSensor);
 
         // Assert - Master switch should turn on when motion is off for 15 minutes and master switch is off
 
@@ -338,9 +348,7 @@ public class AirQualityAutomationTests : AutomationTestBase<AirQualityAutomation
 
         // Act - Simulate motion sensor being off for 15 minutes
 
-        var motionOffStateChange = StateChangeHelpers.MotionCleared(_entities.MotionSensor);
-
-        _mockHaContext.StateChangeSubject.OnNext(motionOffStateChange);
+        _mockHaContext.EmitMotionCleared(_entities.MotionSensor);
 
         // Assert - Master switch should not be affected since it's already on
 
@@ -365,7 +373,7 @@ public class AirQualityAutomationTests : AutomationTestBase<AirQualityAutomation
             HaIdentity.DANIEL_RODRIGUEZ
         );
 
-        _mockHaContext.StateChangeSubject.OnNext(manualFanOnStateChange);
+        _mockHaContext.EmitStateChange(manualFanOnStateChange);
 
         // Assert - Master switch should turn on when fan is manually turned on
 
@@ -384,7 +392,7 @@ public class AirQualityAutomationTests : AutomationTestBase<AirQualityAutomation
             HaIdentity.DANIEL_RODRIGUEZ
         );
 
-        _mockHaContext.StateChangeSubject.OnNext(manualFanOffStateChange);
+        _mockHaContext.EmitStateChange(manualFanOffStateChange);
 
         // Assert - Master switch should turn off when fan is manually turned off
 
@@ -403,7 +411,7 @@ public class AirQualityAutomationTests : AutomationTestBase<AirQualityAutomation
             HaIdentity.SUPERVISOR // Automated operation
         );
 
-        _mockHaContext.StateChangeSubject.OnNext(automatedFanStateChange);
+        _mockHaContext.EmitStateChange(automatedFanStateChange);
 
         // Assert - Master switch should not be affected by automated operations
 
@@ -433,7 +441,7 @@ public class AirQualityAutomationTests : AutomationTestBase<AirQualityAutomation
             "100.0"
         );
 
-        _mockHaContext.StateChangeSubject.OnNext(poorAirStateChange);
+        _mockHaContext.EmitStateChange(poorAirStateChange);
 
         // Assert - No fan operations should occur when master switch is off
 
@@ -448,7 +456,9 @@ public class AirQualityAutomationTests : AutomationTestBase<AirQualityAutomation
     #region State Coordination Tests
 
 
-    [Fact(Skip = "Quarantined: air quality automation logic under review | issue HA-TEST-2001 | expires 2026-06-30")]
+    [Fact(
+        Skip = "Quarantined: air quality automation logic under review | issue HA-TEST-2001 | expires 2026-06-30"
+    )]
     public void ComplexAirQualitySequence_Should_HandleStateTransitions()
     {
         // Test a complete sequence: excellent -> poor -> moderate -> excellent
@@ -461,7 +471,7 @@ public class AirQualityAutomationTests : AutomationTestBase<AirQualityAutomation
             "5.0"
         );
 
-        _mockHaContext.StateChangeSubject.OnNext(excellentAir);
+        _mockHaContext.EmitStateChange(excellentAir);
 
         _mockHaContext.ShouldHaveCalledSwitchTurnOff(_entities.Fans.First().EntityId);
 
@@ -475,7 +485,7 @@ public class AirQualityAutomationTests : AutomationTestBase<AirQualityAutomation
             "100.0"
         );
 
-        _mockHaContext.StateChangeSubject.OnNext(poorAir);
+        _mockHaContext.EmitStateChange(poorAir);
 
         _mockHaContext.ShouldHaveCalledSwitchTurnOn(_entities.Fans.Last().EntityId);
 
@@ -489,7 +499,7 @@ public class AirQualityAutomationTests : AutomationTestBase<AirQualityAutomation
             "30.0"
         );
 
-        _mockHaContext.StateChangeSubject.OnNext(moderateAir);
+        _mockHaContext.EmitStateChange(moderateAir);
 
         _mockHaContext.ShouldHaveCalledSwitchTurnOn(_entities.Fans.First().EntityId);
 
@@ -505,12 +515,14 @@ public class AirQualityAutomationTests : AutomationTestBase<AirQualityAutomation
             "4.0"
         );
 
-        _mockHaContext.StateChangeSubject.OnNext(excellentAirAgain);
+        _mockHaContext.EmitStateChange(excellentAirAgain);
 
         _mockHaContext.ShouldHaveCalledSwitchTurnOff(_entities.Fans.First().EntityId);
     }
 
-    [Fact(Skip = "Quarantined: air quality automation logic under review | issue HA-TEST-2001 | expires 2026-06-30")]
+    [Fact(
+        Skip = "Quarantined: air quality automation logic under review | issue HA-TEST-2001 | expires 2026-06-30"
+    )]
     public void SupportingFan_OffFor10Minutes_Should_ResetShouldActivateFan()
     {
         // Arrange - First manually operate supporting fan to set ShouldActivateFan to true
@@ -522,13 +534,13 @@ public class AirQualityAutomationTests : AutomationTestBase<AirQualityAutomation
             HaIdentity.DANIEL_RODRIGUEZ
         );
 
-        _mockHaContext.StateChangeSubject.OnNext(manualOnStateChange);
+        _mockHaContext.EmitStateChange(manualOnStateChange);
 
         // Act - Simulate supporting fan being off for 10 minutes (resets ShouldActivateFan)
 
         var fanOffStateChange = StateChangeHelpers.SwitchTurnedOff(_entities.Fans.Last());
 
-        _mockHaContext.StateChangeSubject.OnNext(fanOffStateChange);
+        _mockHaContext.EmitStateChange(fanOffStateChange);
 
         _mockHaContext.ClearServiceCalls();
 
@@ -540,7 +552,7 @@ public class AirQualityAutomationTests : AutomationTestBase<AirQualityAutomation
             "100.0"
         );
 
-        _mockHaContext.StateChangeSubject.OnNext(poorAirStateChange);
+        _mockHaContext.EmitStateChange(poorAirStateChange);
 
         // Assert - Supporting fan should turn on again, indicating ShouldActivateFan was reset
 
@@ -553,7 +565,9 @@ public class AirQualityAutomationTests : AutomationTestBase<AirQualityAutomation
     #region Logging and Error Handling Tests
 
 
-    [Fact(Skip = "Quarantined: air quality automation logic under review | issue HA-TEST-2001 | expires 2026-06-30")]
+    [Fact(
+        Skip = "Quarantined: air quality automation logic under review | issue HA-TEST-2001 | expires 2026-06-30"
+    )]
     public void ExcellentAirQuality_Should_LogAppropriateMessage()
     {
         // Arrange
@@ -568,7 +582,7 @@ public class AirQualityAutomationTests : AutomationTestBase<AirQualityAutomation
             excellentValue.ToString("F1")
         );
 
-        _mockHaContext.StateChangeSubject.OnNext(stateChange);
+        _mockHaContext.EmitStateChange(stateChange);
 
         // Assert - Verify logging occurred with correct information level
 
@@ -585,7 +599,9 @@ public class AirQualityAutomationTests : AutomationTestBase<AirQualityAutomation
         );
     }
 
-    [Fact(Skip = "Quarantined: air quality automation logic under review | issue HA-TEST-2001 | expires 2026-06-30")]
+    [Fact(
+        Skip = "Quarantined: air quality automation logic under review | issue HA-TEST-2001 | expires 2026-06-30"
+    )]
     public void ModerateAirQuality_Should_LogAppropriateMessage()
     {
         // Arrange - First set poor air quality to get into cleaning state
@@ -596,7 +612,7 @@ public class AirQualityAutomationTests : AutomationTestBase<AirQualityAutomation
             "100.0"
         );
 
-        _mockHaContext.StateChangeSubject.OnNext(poorAirStateChange);
+        _mockHaContext.EmitStateChange(poorAirStateChange);
 
         double moderateValue = 30.0;
 
@@ -608,7 +624,7 @@ public class AirQualityAutomationTests : AutomationTestBase<AirQualityAutomation
             moderateValue.ToString("F1")
         );
 
-        _mockHaContext.StateChangeSubject.OnNext(stateChange);
+        _mockHaContext.EmitStateChange(stateChange);
 
         // Assert - Verify logging occurred with correct information level
 
@@ -625,7 +641,9 @@ public class AirQualityAutomationTests : AutomationTestBase<AirQualityAutomation
         );
     }
 
-    [Fact(Skip = "Quarantined: air quality automation logic under review | issue HA-TEST-2001 | expires 2026-06-30")]
+    [Fact(
+        Skip = "Quarantined: air quality automation logic under review | issue HA-TEST-2001 | expires 2026-06-30"
+    )]
     public void PoorAirQuality_Should_LogAppropriateMessage()
     {
         // Arrange
@@ -640,7 +658,7 @@ public class AirQualityAutomationTests : AutomationTestBase<AirQualityAutomation
             poorValue.ToString("F1")
         );
 
-        _mockHaContext.StateChangeSubject.OnNext(stateChange);
+        _mockHaContext.EmitStateChange(stateChange);
 
         // Assert - Verify logging occurred with correct information level
 
@@ -666,7 +684,7 @@ public class AirQualityAutomationTests : AutomationTestBase<AirQualityAutomation
 
         var act = () =>
         {
-            _mockHaContext.StateChangeSubject.OnNext(
+            _mockHaContext.EmitStateChange(
                 StateChangeHelpers.CreateNumericSensorStateChange(
                     _entities.Pm25Sensor,
                     "50.0",
@@ -674,7 +692,7 @@ public class AirQualityAutomationTests : AutomationTestBase<AirQualityAutomation
                 )
             );
 
-            _mockHaContext.StateChangeSubject.OnNext(
+            _mockHaContext.EmitStateChange(
                 StateChangeHelpers.CreateNumericSensorStateChange(
                     _entities.Pm25Sensor,
                     "5.0",
@@ -682,7 +700,7 @@ public class AirQualityAutomationTests : AutomationTestBase<AirQualityAutomation
                 )
             );
 
-            _mockHaContext.StateChangeSubject.OnNext(
+            _mockHaContext.EmitStateChange(
                 StateChangeHelpers.SwitchTurnedOn(_entities.Fans.First())
             );
         };
@@ -696,7 +714,9 @@ public class AirQualityAutomationTests : AutomationTestBase<AirQualityAutomation
     #region Edge Cases and Boundary Tests
 
 
-    [Theory(Skip = "Quarantined: air quality automation logic under review | issue HA-TEST-2001 | expires 2026-06-30")]
+    [Theory(
+        Skip = "Quarantined: air quality automation logic under review | issue HA-TEST-2001 | expires 2026-06-30"
+    )]
     [InlineData(7.0, "boundary_clean")] // Exactly at clean threshold
     [InlineData(7.1, "just_above_clean")] // Just above clean threshold
     [InlineData(75.0, "boundary_dirty")] // Exactly at dirty threshold
@@ -711,7 +731,7 @@ public class AirQualityAutomationTests : AutomationTestBase<AirQualityAutomation
             pm25Value.ToString("F1")
         );
 
-        _mockHaContext.StateChangeSubject.OnNext(stateChange);
+        _mockHaContext.EmitStateChange(stateChange);
 
         // Assert based on boundary scenario
 
@@ -766,7 +786,7 @@ public class AirQualityAutomationTests : AutomationTestBase<AirQualityAutomation
                 null!
             );
 
-            _mockHaContext.StateChangeSubject.OnNext(nullStateChange);
+            _mockHaContext.EmitStateChange(nullStateChange);
 
             // Test unavailable state
 
@@ -776,7 +796,7 @@ public class AirQualityAutomationTests : AutomationTestBase<AirQualityAutomation
                 HaEntityStates.UNAVAILABLE
             );
 
-            _mockHaContext.StateChangeSubject.OnNext(unavailableStateChange);
+            _mockHaContext.EmitStateChange(unavailableStateChange);
         };
 
         act.Should().NotThrow();

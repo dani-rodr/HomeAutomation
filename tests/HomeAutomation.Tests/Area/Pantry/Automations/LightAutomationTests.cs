@@ -33,9 +33,7 @@ public class LightAutomationTests : AutomationTestBase<LightAutomation>
     {
         // Act - Simulate motion sensor turning on
 
-        var stateChange = StateChangeHelpers.MotionDetected(_entities.MotionSensor);
-
-        _mockHaContext.StateChangeSubject.OnNext(stateChange);
+        _mockHaContext.EmitMotionDetected(_entities.MotionSensor);
 
         // Assert - Clean, one-line assertion using entity ID
 
@@ -47,9 +45,7 @@ public class LightAutomationTests : AutomationTestBase<LightAutomation>
     {
         // Act - Simulate motion sensor turning off
 
-        var stateChange = StateChangeHelpers.MotionCleared(_entities.MotionSensor);
-
-        _mockHaContext.StateChangeSubject.OnNext(stateChange);
+        _mockHaContext.EmitMotionCleared(_entities.MotionSensor);
 
         // Assert - Clean helper for common pattern using entity IDs
 
@@ -68,7 +64,7 @@ public class LightAutomationTests : AutomationTestBase<LightAutomation>
 
         var stateChange = StateChangeHelpers.PresenceDetected(_entities.MiScalePresenceSensor);
 
-        _mockHaContext.StateChangeSubject.OnNext(stateChange);
+        _mockHaContext.EmitStateChange(stateChange);
 
         // Assert - Clean syntax with negative assertions using entity IDs
 
@@ -152,27 +148,18 @@ public class LightAutomationTests : AutomationTestBase<LightAutomation>
 
         // Act - Motion on, off, on again
 
-        _mockHaContext.StateChangeSubject.OnNext(
-            StateChangeHelpers.MotionDetected(_entities.MotionSensor)
-        );
-
-        _mockHaContext.StateChangeSubject.OnNext(
-            StateChangeHelpers.MotionCleared(_entities.MotionSensor)
-        );
+        _mockHaContext.EmitMotionDetected(_entities.MotionSensor);
+        _mockHaContext.EmitMotionCleared(_entities.MotionSensor);
 
         // Trigger bathroom sensor state change to activate CombineLatest when both are off
 
-        _mockHaContext.StateChangeSubject.OnNext(
-            StateChangeHelpers.MotionCleared(_entities.BathroomMotionSensor)
-        );
+        _mockHaContext.EmitMotionCleared(_entities.BathroomMotionSensor);
 
         _mockHaContext.AdvanceTimeBySeconds(60);
 
         // Continue with final motion detection
 
-        _mockHaContext.StateChangeSubject.OnNext(
-            StateChangeHelpers.MotionDetected(_entities.MotionSensor)
-        );
+        _mockHaContext.EmitMotionDetected(_entities.MotionSensor);
 
         // Assert - Verify exact call counts for complex scenarios using entity IDs
 
@@ -239,15 +226,10 @@ public class LightAutomationTests : AutomationTestBase<LightAutomation>
 
         var act = () =>
         {
-            _mockHaContext.StateChangeSubject.OnNext(
-                StateChangeHelpers.MotionDetected(_entities.MotionSensor)
-            );
+            _mockHaContext.EmitMotionDetected(_entities.MotionSensor);
+            _mockHaContext.EmitMotionCleared(_entities.MotionSensor);
 
-            _mockHaContext.StateChangeSubject.OnNext(
-                StateChangeHelpers.MotionCleared(_entities.MotionSensor)
-            );
-
-            _mockHaContext.StateChangeSubject.OnNext(
+            _mockHaContext.EmitStateChange(
                 StateChangeHelpers.PresenceDetected(_entities.MiScalePresenceSensor)
             );
         };
@@ -287,15 +269,11 @@ public class LightAutomationTests : AutomationTestBase<LightAutomation>
 
         // Act - Trigger state change for pantry sensor (both are now off)
 
-        var pantryStateChange = StateChangeHelpers.MotionCleared(_entities.MotionSensor);
-
-        _mockHaContext.StateChangeSubject.OnNext(pantryStateChange);
+        _mockHaContext.EmitMotionCleared(_entities.MotionSensor);
 
         // Also trigger bathroom sensor state change to ensure CombineLatest works
 
-        var bathroomStateChange = StateChangeHelpers.MotionCleared(_entities.BathroomMotionSensor);
-
-        _mockHaContext.StateChangeSubject.OnNext(bathroomStateChange);
+        _mockHaContext.EmitMotionCleared(_entities.BathroomMotionSensor);
 
         // Assert - Should NOT turn off immediately (30 seconds delay)
 
@@ -325,13 +303,9 @@ public class LightAutomationTests : AutomationTestBase<LightAutomation>
 
         // Act - Trigger state changes
 
-        var pantryStateChange = StateChangeHelpers.MotionCleared(_entities.MotionSensor);
+        _mockHaContext.EmitMotionCleared(_entities.MotionSensor);
 
-        _mockHaContext.StateChangeSubject.OnNext(pantryStateChange);
-
-        var bathroomStateChange = StateChangeHelpers.MotionDetected(_entities.BathroomMotionSensor);
-
-        _mockHaContext.StateChangeSubject.OnNext(bathroomStateChange);
+        _mockHaContext.EmitMotionDetected(_entities.BathroomMotionSensor);
 
         // Assert - Should NOT turn off bathroom automation (bathroom sensor still on)
 
@@ -355,13 +329,9 @@ public class LightAutomationTests : AutomationTestBase<LightAutomation>
 
         // Act - Trigger state changes
 
-        var pantryStateChange = StateChangeHelpers.MotionDetected(_entities.MotionSensor);
+        _mockHaContext.EmitMotionDetected(_entities.MotionSensor);
 
-        _mockHaContext.StateChangeSubject.OnNext(pantryStateChange);
-
-        var bathroomStateChange = StateChangeHelpers.MotionCleared(_entities.BathroomMotionSensor);
-
-        _mockHaContext.StateChangeSubject.OnNext(bathroomStateChange);
+        _mockHaContext.EmitMotionCleared(_entities.BathroomMotionSensor);
 
         // Assert - Should NOT turn off bathroom automation (pantry sensor still on)
 
@@ -385,9 +355,7 @@ public class LightAutomationTests : AutomationTestBase<LightAutomation>
 
         // Act - Trigger any state change to activate CombineLatest logic
 
-        var stateChange = StateChangeHelpers.MotionDetected(_entities.MotionSensor);
-
-        _mockHaContext.StateChangeSubject.OnNext(stateChange);
+        _mockHaContext.EmitMotionDetected(_entities.MotionSensor);
 
         // Assert - Should turn on bathroom automation (motion detected) but never turn off (both sensors on)
 
@@ -405,17 +373,11 @@ public class LightAutomationTests : AutomationTestBase<LightAutomation>
     {
         // Act - Rapid sequence: pantry on, off, bathroom on, both off
 
-        _mockHaContext.StateChangeSubject.OnNext(
-            StateChangeHelpers.MotionDetected(_entities.MotionSensor)
-        );
+        _mockHaContext.EmitMotionDetected(_entities.MotionSensor);
 
-        _mockHaContext.StateChangeSubject.OnNext(
-            StateChangeHelpers.MotionCleared(_entities.MotionSensor)
-        );
+        _mockHaContext.EmitMotionCleared(_entities.MotionSensor);
 
-        _mockHaContext.StateChangeSubject.OnNext(
-            StateChangeHelpers.MotionDetected(_entities.BathroomMotionSensor)
-        );
+        _mockHaContext.EmitMotionDetected(_entities.BathroomMotionSensor);
 
         // Clear calls to focus on final state
 
@@ -427,9 +389,7 @@ public class LightAutomationTests : AutomationTestBase<LightAutomation>
 
         _mockHaContext.SetEntityState(_entities.BathroomMotionSensor.EntityId, "off");
 
-        _mockHaContext.StateChangeSubject.OnNext(
-            StateChangeHelpers.MotionCleared(_entities.BathroomMotionSensor)
-        );
+        _mockHaContext.EmitMotionCleared(_entities.BathroomMotionSensor);
 
         // Assert - Should NOT turn off immediately (30 seconds delay)
 
@@ -497,9 +457,7 @@ public class LightAutomationTests : AutomationTestBase<LightAutomation>
 
         // Trigger a slight state change to activate StateChangesWithCurrent logic
 
-        _mockHaContext.StateChangeSubject.OnNext(
-            StateChangeHelpers.MotionDetected(_entities.MotionSensor)
-        );
+        _mockHaContext.EmitMotionDetected(_entities.MotionSensor);
 
         // Assert - Should turn on bathroom automation due to motion sensor state
 
@@ -513,9 +471,7 @@ public class LightAutomationTests : AutomationTestBase<LightAutomation>
 
         // Act - User enters pantry
 
-        _mockHaContext.StateChangeSubject.OnNext(
-            StateChangeHelpers.MotionDetected(_entities.MotionSensor)
-        );
+        _mockHaContext.EmitMotionDetected(_entities.MotionSensor);
 
         // Verify pantry motion turns on bathroom automation
 
@@ -525,15 +481,11 @@ public class LightAutomationTests : AutomationTestBase<LightAutomation>
 
         // User moves to bathroom (brief overlap period)
 
-        _mockHaContext.StateChangeSubject.OnNext(
-            StateChangeHelpers.MotionDetected(_entities.BathroomMotionSensor)
-        );
+        _mockHaContext.EmitMotionDetected(_entities.BathroomMotionSensor);
 
         // Pantry clears but bathroom still active - automation should stay on
 
-        _mockHaContext.StateChangeSubject.OnNext(
-            StateChangeHelpers.MotionCleared(_entities.MotionSensor)
-        );
+        _mockHaContext.EmitMotionCleared(_entities.MotionSensor);
 
         // Verify automation doesn't turn off yet (bathroom still active)
 
@@ -551,9 +503,7 @@ public class LightAutomationTests : AutomationTestBase<LightAutomation>
 
         _mockHaContext.SetEntityState(_entities.BathroomMotionSensor.EntityId, "off");
 
-        _mockHaContext.StateChangeSubject.OnNext(
-            StateChangeHelpers.MotionCleared(_entities.BathroomMotionSensor)
-        );
+        _mockHaContext.EmitMotionCleared(_entities.BathroomMotionSensor);
 
         // Assert - Should NOT turn off immediately (30 seconds delay)
 
@@ -589,9 +539,7 @@ public class LightAutomationTests : AutomationTestBase<LightAutomation>
 
         // Act - Pantry clears (starts 60s timer)
 
-        _mockHaContext.StateChangeSubject.OnNext(
-            StateChangeHelpers.MotionCleared(_entities.MotionSensor)
-        );
+        _mockHaContext.EmitMotionCleared(_entities.MotionSensor);
 
         // Advance 55 seconds (before timer expires)
 
@@ -599,9 +547,7 @@ public class LightAutomationTests : AutomationTestBase<LightAutomation>
 
         // Pantry motion detected again (should cancel timer)
 
-        _mockHaContext.StateChangeSubject.OnNext(
-            StateChangeHelpers.MotionDetected(_entities.MotionSensor)
-        );
+        _mockHaContext.EmitMotionDetected(_entities.MotionSensor);
 
         // Clear the TurnOn call from motion detection
 
@@ -637,9 +583,7 @@ public class LightAutomationTests : AutomationTestBase<LightAutomation>
 
         // Act - Pantry clears (starts 60s timer)
 
-        _mockHaContext.StateChangeSubject.OnNext(
-            StateChangeHelpers.MotionCleared(_entities.MotionSensor)
-        );
+        _mockHaContext.EmitMotionCleared(_entities.MotionSensor);
 
         // Advance 30 seconds (halfway through timer)
 
@@ -649,9 +593,7 @@ public class LightAutomationTests : AutomationTestBase<LightAutomation>
 
         _mockHaContext.SetEntityState(_entities.BathroomMotionSensor.EntityId, "on");
 
-        _mockHaContext.StateChangeSubject.OnNext(
-            StateChangeHelpers.MotionDetected(_entities.BathroomMotionSensor)
-        );
+        _mockHaContext.EmitMotionDetected(_entities.BathroomMotionSensor);
 
         _mockHaContext.ClearServiceCalls();
 
@@ -684,9 +626,7 @@ public class LightAutomationTests : AutomationTestBase<LightAutomation>
 
         // Act - Pantry clears (starts 60s timer)
 
-        _mockHaContext.StateChangeSubject.OnNext(
-            StateChangeHelpers.MotionCleared(_entities.MotionSensor)
-        );
+        _mockHaContext.EmitMotionCleared(_entities.MotionSensor);
 
         // Advance exactly 59 seconds (one second before timer should fire)
 
@@ -716,25 +656,15 @@ public class LightAutomationTests : AutomationTestBase<LightAutomation>
 
         // Act - Simulate rapid flickering: off -> on -> off -> on -> off -> on (5 occupancy triggers)
 
-        _mockHaContext.StateChangeSubject.OnNext(
-            StateChangeHelpers.MotionDetected(_entities.MotionSensor)
-        );
+        _mockHaContext.EmitMotionDetected(_entities.MotionSensor);
 
-        _mockHaContext.StateChangeSubject.OnNext(
-            StateChangeHelpers.MotionCleared(_entities.MotionSensor)
-        );
+        _mockHaContext.EmitMotionCleared(_entities.MotionSensor);
 
-        _mockHaContext.StateChangeSubject.OnNext(
-            StateChangeHelpers.MotionDetected(_entities.MotionSensor)
-        );
+        _mockHaContext.EmitMotionDetected(_entities.MotionSensor);
 
-        _mockHaContext.StateChangeSubject.OnNext(
-            StateChangeHelpers.MotionCleared(_entities.MotionSensor)
-        );
+        _mockHaContext.EmitMotionCleared(_entities.MotionSensor);
 
-        _mockHaContext.StateChangeSubject.OnNext(
-            StateChangeHelpers.MotionDetected(_entities.MotionSensor)
-        );
+        _mockHaContext.EmitMotionDetected(_entities.MotionSensor);
 
         // Assert - Should have called TurnOn 3 times (redundant but harmless)
 
@@ -746,7 +676,7 @@ public class LightAutomationTests : AutomationTestBase<LightAutomation>
 
         // Verify no exceptions occurred during rapid state changes
 
-        _mockHaContext.ServiceCalls.Should().NotBeEmpty();
+        _mockHaContext.ShouldHaveAnyServiceCalls();
     }
 
     /// <summary>
@@ -766,9 +696,7 @@ public class LightAutomationTests : AutomationTestBase<LightAutomation>
 
         // Act - Pantry clears (starts 60s timer)
 
-        _mockHaContext.StateChangeSubject.OnNext(
-            StateChangeHelpers.MotionCleared(_entities.MotionSensor)
-        );
+        _mockHaContext.EmitMotionCleared(_entities.MotionSensor);
 
         // Advance full 60 seconds (timer fires)
 
@@ -803,9 +731,7 @@ public class LightAutomationTests : AutomationTestBase<LightAutomation>
 
         // Act - Pantry clears (starts 60s timer)
 
-        _mockHaContext.StateChangeSubject.OnNext(
-            StateChangeHelpers.MotionCleared(_entities.MotionSensor)
-        );
+        _mockHaContext.EmitMotionCleared(_entities.MotionSensor);
 
         // Advance 60 seconds (timer fires)
 
@@ -835,9 +761,7 @@ public class LightAutomationTests : AutomationTestBase<LightAutomation>
 
         // Act - Cycle 1: Pantry clears (timer 1 starts)
 
-        _mockHaContext.StateChangeSubject.OnNext(
-            StateChangeHelpers.MotionCleared(_entities.MotionSensor)
-        );
+        _mockHaContext.EmitMotionCleared(_entities.MotionSensor);
 
         // Advance 40 seconds
 
@@ -845,13 +769,9 @@ public class LightAutomationTests : AutomationTestBase<LightAutomation>
 
         // Pantry occupied again, then clears (timer 2 starts, timer 1 cancelled)
 
-        _mockHaContext.StateChangeSubject.OnNext(
-            StateChangeHelpers.MotionDetected(_entities.MotionSensor)
-        );
+        _mockHaContext.EmitMotionDetected(_entities.MotionSensor);
 
-        _mockHaContext.StateChangeSubject.OnNext(
-            StateChangeHelpers.MotionCleared(_entities.MotionSensor)
-        );
+        _mockHaContext.EmitMotionCleared(_entities.MotionSensor);
 
         _mockHaContext.ClearServiceCalls();
 
@@ -894,9 +814,7 @@ public class LightAutomationTests : AutomationTestBase<LightAutomation>
 
         // Act - Trigger occupied state first (this is required for OnCleared to fire later)
 
-        _mockHaContext.StateChangeSubject.OnNext(
-            StateChangeHelpers.MotionDetected(_entities.MotionSensor)
-        );
+        _mockHaContext.EmitMotionDetected(_entities.MotionSensor);
 
         // Verify TurnOn was called
 
@@ -908,9 +826,7 @@ public class LightAutomationTests : AutomationTestBase<LightAutomation>
 
         // Now trigger the clear transition (occupied -> clear)
 
-        _mockHaContext.StateChangeSubject.OnNext(
-            StateChangeHelpers.MotionCleared(_entities.MotionSensor)
-        );
+        _mockHaContext.EmitMotionCleared(_entities.MotionSensor);
 
         // Advance 60 seconds
 

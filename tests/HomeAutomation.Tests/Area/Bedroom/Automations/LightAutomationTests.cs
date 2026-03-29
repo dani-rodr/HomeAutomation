@@ -53,9 +53,7 @@ public class LightAutomationTests : AutomationTestBase<LightAutomation>
     {
         // Act - Simulate motion sensor turning on
 
-        var stateChange = StateChangeHelpers.MotionDetected(_entities.MotionSensor);
-
-        _mockHaContext.StateChangeSubject.OnNext(stateChange);
+        _mockHaContext.EmitMotionDetected(_entities.MotionSensor);
 
         // Assert - Should turn on light directly (no dimming controller in bedroom)
 
@@ -67,9 +65,7 @@ public class LightAutomationTests : AutomationTestBase<LightAutomation>
     {
         // Act - Simulate motion sensor turning off
 
-        var stateChange = StateChangeHelpers.MotionCleared(_entities.MotionSensor);
-
-        _mockHaContext.StateChangeSubject.OnNext(stateChange);
+        _mockHaContext.EmitMotionCleared(_entities.MotionSensor);
 
         // Assert - Should turn off light directly
 
@@ -81,17 +77,11 @@ public class LightAutomationTests : AutomationTestBase<LightAutomation>
     {
         // Act - Motion on, off, on again
 
-        _mockHaContext.StateChangeSubject.OnNext(
-            StateChangeHelpers.MotionDetected(_entities.MotionSensor)
-        );
+        _mockHaContext.EmitMotionDetected(_entities.MotionSensor);
 
-        _mockHaContext.StateChangeSubject.OnNext(
-            StateChangeHelpers.MotionCleared(_entities.MotionSensor)
-        );
+        _mockHaContext.EmitMotionCleared(_entities.MotionSensor);
 
-        _mockHaContext.StateChangeSubject.OnNext(
-            StateChangeHelpers.MotionDetected(_entities.MotionSensor)
-        );
+        _mockHaContext.EmitMotionDetected(_entities.MotionSensor);
 
         // Assert - Verify exact call counts for the sequence
 
@@ -126,7 +116,7 @@ public class LightAutomationTests : AutomationTestBase<LightAutomation>
             userId: null
         );
 
-        _mockHaContext.StateChangeSubject.OnNext(stateChange);
+        _mockHaContext.EmitStateChange(stateChange);
 
         // Assert - Should toggle light and disable master switch
 
@@ -149,7 +139,7 @@ public class LightAutomationTests : AutomationTestBase<LightAutomation>
             userId: "supervisor"
         );
 
-        _mockHaContext.StateChangeSubject.OnNext(stateChange);
+        _mockHaContext.EmitStateChange(stateChange);
 
         // Assert - Should not perform any actions
 
@@ -168,7 +158,7 @@ public class LightAutomationTests : AutomationTestBase<LightAutomation>
             userId: "7512fc7c361e45879df43f9f0f34fc57"
         );
 
-        _mockHaContext.StateChangeSubject.OnNext(stateChange);
+        _mockHaContext.EmitStateChange(stateChange);
 
         // Assert - Should not perform any actions (only physical presses are handled)
 
@@ -193,7 +183,7 @@ public class LightAutomationTests : AutomationTestBase<LightAutomation>
             userId: null
         );
 
-        _mockHaContext.StateChangeSubject.OnNext(stateChange);
+        _mockHaContext.EmitStateChange(stateChange);
 
         // Wait a moment to ensure no double-click is detected\
 
@@ -229,9 +219,9 @@ public class LightAutomationTests : AutomationTestBase<LightAutomation>
             userId: null
         );
 
-        _mockHaContext.StateChangeSubject.OnNext(firstClick);
+        _mockHaContext.EmitStateChange(firstClick);
 
-        _mockHaContext.StateChangeSubject.OnNext(secondClick);
+        _mockHaContext.EmitStateChange(secondClick);
 
         // Assert - Should toggle light and disable master switch
 
@@ -261,9 +251,9 @@ public class LightAutomationTests : AutomationTestBase<LightAutomation>
             userId: "supervisor"
         );
 
-        _mockHaContext.StateChangeSubject.OnNext(firstClick);
+        _mockHaContext.EmitStateChange(firstClick);
 
-        _mockHaContext.StateChangeSubject.OnNext(secondClick);
+        _mockHaContext.EmitStateChange(secondClick);
 
         // Assert - Should not perform any actions (only physical double-clicks are handled)
 
@@ -282,7 +272,7 @@ public class LightAutomationTests : AutomationTestBase<LightAutomation>
             userId: null
         );
 
-        _mockHaContext.StateChangeSubject.OnNext(firstClick);
+        _mockHaContext.EmitStateChange(firstClick);
 
         // Wait longer than the 2-second timeout
 
@@ -295,7 +285,7 @@ public class LightAutomationTests : AutomationTestBase<LightAutomation>
             userId: null
         );
 
-        _mockHaContext.StateChangeSubject.OnNext(secondClick);
+        _mockHaContext.EmitStateChange(secondClick);
 
         // Assert - Should not perform any actions (timeout exceeded)
 
@@ -324,7 +314,7 @@ public class LightAutomationTests : AutomationTestBase<LightAutomation>
             userId: "f389ce79e38841e4bfd26c9685ffa784"
         ); // SUPERVISOR userId
 
-        _mockHaContext.StateChangeSubject.OnNext(lightStateChange);
+        _mockHaContext.EmitStateChange(lightStateChange);
 
         // Assert - Should turn on master switch
 
@@ -357,17 +347,13 @@ public class LightAutomationTests : AutomationTestBase<LightAutomation>
             userId: "7512fc7c361e45879df43f9f0f34fc57"
         );
 
-        _mockHaContext.StateChangeSubject.OnNext(lightStateChange);
+        _mockHaContext.EmitStateChange(lightStateChange);
 
         // Assert - Base class behavior will control master switch based on state comparison
 
         // Since this is complex base class behavior, we'll verify any call was made
 
-        var switchCalls = _mockHaContext.GetServiceCalls("switch").ToList();
-
-        switchCalls
-            .Should()
-            .NotBeEmpty("Manual light changes should trigger master switch control");
+        _mockHaContext.ShouldHaveAnyServiceCallsForDomain("switch");
     }
 
     [Fact]
@@ -382,7 +368,7 @@ public class LightAutomationTests : AutomationTestBase<LightAutomation>
             userId: "supervisor"
         );
 
-        _mockHaContext.StateChangeSubject.OnNext(lightStateChange);
+        _mockHaContext.EmitStateChange(lightStateChange);
 
         // Assert - Should not turn on master switch (only automated "on" events trigger this)
 
@@ -436,9 +422,7 @@ public class LightAutomationTests : AutomationTestBase<LightAutomation>
     {
         // Act - First motion is detected
 
-        var motionStateChange = StateChangeHelpers.MotionDetected(_entities.MotionSensor);
-
-        _mockHaContext.StateChangeSubject.OnNext(motionStateChange);
+        _mockHaContext.EmitMotionDetected(_entities.MotionSensor);
 
         // Then physical switch is pressed (should override and disable master switch)
 
@@ -449,7 +433,7 @@ public class LightAutomationTests : AutomationTestBase<LightAutomation>
             userId: null
         );
 
-        _mockHaContext.StateChangeSubject.OnNext(switchStateChange);
+        _mockHaContext.EmitStateChange(switchStateChange);
 
         // Assert - Verify both actions occurred
 
@@ -489,9 +473,9 @@ public class LightAutomationTests : AutomationTestBase<LightAutomation>
             userId: null
         );
 
-        _mockHaContext.StateChangeSubject.OnNext(firstClick);
+        _mockHaContext.EmitStateChange(firstClick);
 
-        _mockHaContext.StateChangeSubject.OnNext(secondClick);
+        _mockHaContext.EmitStateChange(secondClick);
 
         // Verify double-click worked
 
@@ -505,9 +489,7 @@ public class LightAutomationTests : AutomationTestBase<LightAutomation>
 
         // Then motion is detected (should work because motion automation is always active)
 
-        var motionStateChange = StateChangeHelpers.MotionDetected(_entities.MotionSensor);
-
-        _mockHaContext.StateChangeSubject.OnNext(motionStateChange);
+        _mockHaContext.EmitMotionDetected(_entities.MotionSensor);
 
         // Assert - Motion automation should still work (it's not controlled by master switch for motion events)
 
@@ -530,7 +512,7 @@ public class LightAutomationTests : AutomationTestBase<LightAutomation>
                 userId: null
             );
 
-            _mockHaContext.StateChangeSubject.OnNext(stateChange);
+            _mockHaContext.EmitStateChange(stateChange);
 
             _mockHaContext.AdvanceTimeByMilliseconds(50); // Brief delay between presses
         }
@@ -563,15 +545,11 @@ public class LightAutomationTests : AutomationTestBase<LightAutomation>
 
         var act = () =>
         {
-            _mockHaContext.StateChangeSubject.OnNext(
-                StateChangeHelpers.MotionDetected(_entities.MotionSensor)
-            );
+            _mockHaContext.EmitMotionDetected(_entities.MotionSensor);
 
-            _mockHaContext.StateChangeSubject.OnNext(
-                StateChangeHelpers.MotionCleared(_entities.MotionSensor)
-            );
+            _mockHaContext.EmitMotionCleared(_entities.MotionSensor);
 
-            _mockHaContext.StateChangeSubject.OnNext(
+            _mockHaContext.EmitStateChange(
                 StateChangeHelpers.CreateSwitchStateChange(
                     _entities.RightSideEmptySwitch,
                     "off",
@@ -594,9 +572,9 @@ public class LightAutomationTests : AutomationTestBase<LightAutomation>
                 userId: null
             );
 
-            _mockHaContext.StateChangeSubject.OnNext(firstClick);
+            _mockHaContext.EmitStateChange(firstClick);
 
-            _mockHaContext.StateChangeSubject.OnNext(secondClick);
+            _mockHaContext.EmitStateChange(secondClick);
         };
 
         act.Should().NotThrow();
@@ -657,7 +635,7 @@ public class LightAutomationTests : AutomationTestBase<LightAutomation>
             userId: null
         );
 
-        _mockHaContext.StateChangeSubject.OnNext(stateChange);
+        _mockHaContext.EmitStateChange(stateChange);
 
         // Assert - Should be treated as physical operation
 
@@ -678,7 +656,7 @@ public class LightAutomationTests : AutomationTestBase<LightAutomation>
             userId: ""
         );
 
-        _mockHaContext.StateChangeSubject.OnNext(stateChange);
+        _mockHaContext.EmitStateChange(stateChange);
 
         // Assert - Should be treated as physical operation
 

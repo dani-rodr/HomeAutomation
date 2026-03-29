@@ -14,6 +14,10 @@ public record ServiceCall(string Domain, string Service, ServiceTarget? Target, 
 /// </summary>
 public class MockHaContext : IHaContext
 {
+    private static readonly JsonElement EmptyAttributes = JsonSerializer.SerializeToElement(
+        new Dictionary<string, object?>()
+    );
+
     public MockHaContext()
     {
         SchedulerProvider.Current = _testScheduler;
@@ -68,7 +72,7 @@ public class MockHaContext : IHaContext
     /// <summary>
     /// Dictionary to track entity attributes for testing
     /// </summary>
-    private readonly Dictionary<string, Dictionary<string, object>> _entityAttributes = [];
+    private readonly Dictionary<string, JsonElement> _entityAttributes = [];
 
     /// <summary>
     /// Dictionary to track custom service responses for CallServiceWithResponseAsync
@@ -96,13 +100,11 @@ public class MockHaContext : IHaContext
     public EntityState? GetState(string entityId)
     {
         var state = _entityStates.GetValueOrDefault(entityId, "unknown");
-        var attributes = _entityAttributes.GetValueOrDefault(entityId, []);
+        var attributesJson = _entityAttributes.GetValueOrDefault(entityId, EmptyAttributes);
 
-        // Convert attributes dictionary to JsonElement for proper deserialization
-        var attributesJson = JsonSerializer.SerializeToElement(attributes);
-
-        // Create EntityState with reflection since Attributes property is read-only
         var entityState = new EntityState { State = state };
+
+        // Keep compatibility with model versions where computed Attributes needs explicit set.
         var attributesProperty = typeof(EntityState).GetProperty("Attributes");
         if (attributesProperty?.SetMethod != null)
         {
@@ -121,20 +123,9 @@ public class MockHaContext : IHaContext
         object? data = null
     )
     {
-        // For testing, just record the call and return empty result
         CallService(domain, service, target, data);
 
-        // Check if we have a custom response for this service call
-        var key = $"{domain}.{service}";
-        if (data != null)
-        {
-            // For webostv commands, include the command in the key for specific responses
-            var commandProperty = data.GetType().GetProperty("Command");
-            if (commandProperty != null && commandProperty.GetValue(data) is string command)
-            {
-                key = $"{domain}.{service}.{command}";
-            }
-        }
+        var key = BuildServiceResponseKey(domain, service, data);
 
         if (_serviceResponses.TryGetValue(key, out var response))
         {
@@ -150,10 +141,34 @@ public class MockHaContext : IHaContext
 
     public void SendEvent(string eventType, object? data = null)
     {
-        // For testing, trigger the event through our subject
+        EmitEvent(eventType, data);
+    }
+
+    public void EmitEvent(string eventType, object? data = null)
+    {
         var jsonElement =
             data != null ? JsonSerializer.SerializeToElement(data) : (JsonElement?)null;
-        EventSubject.OnNext(new Event { EventType = eventType, DataElement = jsonElement });
+        EmitEvent(new Event { EventType = eventType, DataElement = jsonElement });
+    }
+
+    public void EmitEvent(Event @event)
+    {
+        EventSubject.OnNext(@event);
+    }
+
+    public void EmitStateChange(StateChange stateChange)
+    {
+        StateChangeSubject.OnNext(stateChange);
+    }
+
+    public void EmitMotionDetected(BinarySensorEntity motionSensor)
+    {
+        EmitStateChange(StateChangeHelpers.MotionDetected(motionSensor));
+    }
+
+    public void EmitMotionCleared(BinarySensorEntity motionSensor)
+    {
+        EmitStateChange(StateChangeHelpers.MotionCleared(motionSensor));
     }
 
     /// <summary>
@@ -179,7 +194,7 @@ public class MockHaContext : IHaContext
                 Context = new Context { UserId = userId },
             }
         );
-        StateChangeSubject.OnNext(stateChange);
+        EmitStateChange(stateChange);
     }
 
     public void SimulateStateChange<TAttributes>(
@@ -214,7 +229,7 @@ public class MockHaContext : IHaContext
             newEntityState
         );
 
-        StateChangeSubject.OnNext(stateChange);
+        EmitStateChange(stateChange);
     }
 
     /// <summary>
@@ -235,12 +250,7 @@ public class MockHaContext : IHaContext
     /// </summary>
     public void SetEntityAttributes(string entityId, object attributes)
     {
-        var attributeDict = new Dictionary<string, object>();
-        foreach (var prop in attributes.GetType().GetProperties())
-        {
-            attributeDict[prop.Name] = prop.GetValue(attributes) ?? new object();
-        }
-        _entityAttributes[entityId] = attributeDict;
+        _entityAttributes[entityId] = JsonSerializer.SerializeToElement(attributes);
     }
 
     /// <summary>
@@ -259,8 +269,35 @@ public class MockHaContext : IHaContext
     /// </summary>
     public void SetServiceResponse(string domain, string service, string? command, object response)
     {
-        var key = command != null ? $"{domain}.{service}.{command}" : $"{domain}.{service}";
+        var key = BuildServiceResponseKey(domain, service, null, command);
         _serviceResponses[key] = JsonSerializer.SerializeToElement(response);
+    }
+
+    private static string BuildServiceResponseKey(
+        string domain,
+        string service,
+        object? data,
+        string? commandOverride = null
+    )
+    {
+        var command = commandOverride ?? TryGetCommand(data);
+        return command is null ? $"{domain}.{service}" : $"{domain}.{service}.{command}";
+    }
+
+    private static string? TryGetCommand(object? data)
+    {
+        if (data is null)
+        {
+            return null;
+        }
+
+        var commandProperty = data.GetType()
+            .GetProperties()
+            .FirstOrDefault(p =>
+                string.Equals(p.Name, "Command", StringComparison.OrdinalIgnoreCase)
+            );
+
+        return commandProperty?.GetValue(data) as string;
     }
 
     /// <summary>

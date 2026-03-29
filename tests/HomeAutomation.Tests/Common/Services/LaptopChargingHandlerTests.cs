@@ -122,7 +122,7 @@ public class LaptopChargingHandlerTests : HaContextTestBase
             "0",
             batteryLevel.ToString()
         );
-        _mockHaContext.StateChangeSubject.OnNext(stateChange);
+        _mockHaContext.EmitStateChange(stateChange);
 
         // Assert
         if (shouldTurnOn)
@@ -146,7 +146,7 @@ public class LaptopChargingHandlerTests : HaContextTestBase
         // Act - Monitor without force charge
         var subscription = _batteryHandler.StartMonitoring();
         var stateChange = StateChangeHelpers.CreateStateChange(_entities.Level, "60", "50");
-        _mockHaContext.StateChangeSubject.OnNext(stateChange);
+        _mockHaContext.EmitStateChange(stateChange);
 
         // Assert - Power should turn off by default
         _mockHaContext.ShouldHaveCalledSwitchTurnOff(_entities.Power.EntityId);
@@ -217,16 +217,7 @@ public class LaptopChargingHandlerTests : HaContextTestBase
 
         // Should have 2 turn_on calls (from HandleLaptopTurnedOff + HandleLaptopTurnedOn), but no turn_off
         _mockHaContext.ShouldHaveCalledSwitchExactly(_entities.Power.EntityId, "turn_on", 2);
-        var switchCalls = _mockHaContext
-            .GetServiceCalls("switch")
-            .Where(c =>
-                c.Target?.EntityIds?.Contains(_entities.Power.EntityId) == true
-                && c.Service == "turn_off"
-            )
-            .ToList();
-        switchCalls
-            .Should()
-            .BeEmpty("Power should not have been turned off due to cancelled timer");
+        _mockHaContext.ShouldHaveCalledSwitchExactly(_entities.Power.EntityId, "turn_off", 0);
     }
 
     [Fact]
@@ -279,7 +270,7 @@ public class LaptopChargingHandlerTests : HaContextTestBase
         // Act - Simulate battery level change to low threshold
         _mockHaContext.SetEntityState(_entities.Level.EntityId, "19");
         var stateChange = StateChangeHelpers.CreateStateChange(_entities.Level, "50", "19");
-        _mockHaContext.StateChangeSubject.OnNext(stateChange);
+        _mockHaContext.EmitStateChange(stateChange);
 
         // Assert - Should trigger power on due to low battery
         _mockHaContext.ShouldHaveCalledSwitchTurnOn(_entities.Power.EntityId);
@@ -296,7 +287,7 @@ public class LaptopChargingHandlerTests : HaContextTestBase
         // Act - Trigger state change
         _mockHaContext.SetEntityState(_entities.Level.EntityId, "42");
         var stateChange = StateChangeHelpers.CreateStateChange(_entities.Level, "30", "42");
-        _mockHaContext.StateChangeSubject.OnNext(stateChange);
+        _mockHaContext.EmitStateChange(stateChange);
 
         // Clear sensor value to test caching
         _mockHaContext.SetEntityState(_entities.Level.EntityId, "");
@@ -350,7 +341,9 @@ public class LaptopChargingHandlerTests : HaContextTestBase
         _mockHaContext.ShouldHaveCalledSwitchTurnOff(_entities.Power.EntityId);
     }
 
-    [Fact(Skip = "Quarantined: performance-sensitive charging behavior | issue HA-TEST-2006 | expires 2026-06-30")]
+    [Fact(
+        Skip = "Quarantined: performance-sensitive charging behavior | issue HA-TEST-2006 | expires 2026-06-30"
+    )]
     public void WeekendCharging_Saturday10AM_Should_StartChargingSession()
     {
         // Arrange - Start monitoring first to set up cron schedules
@@ -375,7 +368,9 @@ public class LaptopChargingHandlerTests : HaContextTestBase
         subscription.Dispose();
     }
 
-    [Fact(Skip = "Quarantined: performance-sensitive charging behavior | issue HA-TEST-2006 | expires 2026-06-30")]
+    [Fact(
+        Skip = "Quarantined: performance-sensitive charging behavior | issue HA-TEST-2006 | expires 2026-06-30"
+    )]
     public void WeekendCharging_Sunday6PM_Should_StartChargingSession()
     {
         // Arrange - Start monitoring first to set up cron schedules
@@ -400,7 +395,9 @@ public class LaptopChargingHandlerTests : HaContextTestBase
         subscription.Dispose();
     }
 
-    [Fact(Skip = "Quarantined: performance-sensitive charging behavior | issue HA-TEST-2006 | expires 2026-06-30")]
+    [Fact(
+        Skip = "Quarantined: performance-sensitive charging behavior | issue HA-TEST-2006 | expires 2026-06-30"
+    )]
     public void WeekendCharging_Monday6AM_Should_StartPreWakeChargingSession()
     {
         // Arrange - Start monitoring first to set up cron schedules
@@ -475,14 +472,7 @@ public class LaptopChargingHandlerTests : HaContextTestBase
         _mockHaContext.AdvanceTimeBy(TimeSpan.FromHours(1));
 
         // Assert – Power should not turn off because timer was disposed
-        var switchCalls = _mockHaContext
-            .GetServiceCalls("switch")
-            .Where(c =>
-                c.Target?.EntityIds?.Contains(_entities.Power.EntityId) == true
-                && c.Service == "turn_off"
-            )
-            .ToList();
-        switchCalls.Should().BeEmpty("Power should not have been turned off due to disposed timer");
+        _mockHaContext.ShouldHaveCalledSwitchExactly(_entities.Power.EntityId, "turn_off", 0);
     }
 
     #endregion
@@ -544,11 +534,7 @@ public class LaptopChargingHandlerTests : HaContextTestBase
         _batteryHandler.HandleLaptopTurnedOn();
 
         // Assert - Should handle multiple calls without issues
-        _mockHaContext
-            .GetServiceCalls("switch")
-            .Count(call => call.Service == "turn_on")
-            .Should()
-            .Be(3, "Each call should trigger power on");
+        _mockHaContext.ShouldHaveCalledSwitchExactly(_entities.Power.EntityId, "turn_on", 3);
     }
 
     #endregion

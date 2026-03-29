@@ -21,10 +21,7 @@ public class FanAutomationTests : AutomationTestBase<FanAutomation>
 
         _entities = new TestEntities(_mockHaContext);
 
-        _automation = new FanAutomation(
-            _entities,
-            Logger.Object
-        );
+        _automation = new FanAutomation(_entities, Logger.Object);
 
         StartAutomation(_automation);
 
@@ -52,9 +49,7 @@ public class FanAutomationTests : AutomationTestBase<FanAutomation>
     {
         // Assert - ShouldActivateFan should start as false (verified through behavior)
 
-        var stateChange = StateChangeHelpers.MotionDetected(_entities.MotionSensor);
-
-        _mockHaContext.StateChangeSubject.OnNext(stateChange);
+        _mockHaContext.EmitMotionDetected(_entities.MotionSensor);
 
         // Need to wait 3 seconds for motion trigger - simulate time-based trigger
 
@@ -76,9 +71,7 @@ public class FanAutomationTests : AutomationTestBase<FanAutomation>
 
         // Act - Simulate motion detection
 
-        var motionDetected = StateChangeHelpers.MotionDetected(_entities.MotionSensor);
-
-        _mockHaContext.StateChangeSubject.OnNext(motionDetected);
+        _mockHaContext.EmitMotionDetected(_entities.MotionSensor);
 
         _mockHaContext.ShouldHaveCalledSwitchExactly(_entities.CeilingFan.EntityId, "turn_on", 0);
 
@@ -100,9 +93,7 @@ public class FanAutomationTests : AutomationTestBase<FanAutomation>
 
         // Act - Simulate motion detection
 
-        var motionDetected = StateChangeHelpers.MotionDetected(_entities.MotionSensor);
-
-        _mockHaContext.StateChangeSubject.OnNext(motionDetected);
+        _mockHaContext.EmitMotionDetected(_entities.MotionSensor);
 
         _mockHaContext.ShouldHaveCalledSwitchExactly(_entities.CeilingFan.EntityId, "turn_on", 0);
 
@@ -199,7 +190,7 @@ public class FanAutomationTests : AutomationTestBase<FanAutomation>
 
         // Assert - Should process automated changes without errors
 
-        var act = () => _mockHaContext.StateChangeSubject.OnNext(automatedStateChange);
+        var act = () => _mockHaContext.EmitStateChange(automatedStateChange);
 
         act.Should().NotThrow();
     }
@@ -215,9 +206,7 @@ public class FanAutomationTests : AutomationTestBase<FanAutomation>
 
         // Act - Try motion detection while automation is disabled
 
-        var motionDetected = StateChangeHelpers.MotionDetected(_entities.MotionSensor);
-
-        _mockHaContext.StateChangeSubject.OnNext(motionDetected);
+        _mockHaContext.EmitMotionDetected(_entities.MotionSensor);
 
         // Assert - No fan operations should occur when master switch is off
 
@@ -237,25 +226,17 @@ public class FanAutomationTests : AutomationTestBase<FanAutomation>
 
         var act = () =>
         {
-            _mockHaContext.StateChangeSubject.OnNext(
-                StateChangeHelpers.MotionDetected(_entities.MotionSensor)
-            );
+            _mockHaContext.EmitMotionDetected(_entities.MotionSensor);
 
-            _mockHaContext.StateChangeSubject.OnNext(
-                StateChangeHelpers.MotionCleared(_entities.MotionSensor)
-            );
+            _mockHaContext.EmitMotionCleared(_entities.MotionSensor);
 
-            _mockHaContext.StateChangeSubject.OnNext(
-                StateChangeHelpers.SwitchTurnedOn(_entities.CeilingFan)
-            );
+            _mockHaContext.EmitStateChange(StateChangeHelpers.SwitchTurnedOn(_entities.CeilingFan));
 
-            _mockHaContext.StateChangeSubject.OnNext(
+            _mockHaContext.EmitStateChange(
                 StateChangeHelpers.SwitchTurnedOff(_entities.CeilingFan)
             );
 
-            _mockHaContext.StateChangeSubject.OnNext(
-                StateChangeHelpers.MotionDetected(_entities.BedroomMotionSensor)
-            );
+            _mockHaContext.EmitMotionDetected(_entities.BedroomMotionSensor);
         };
 
         act.Should().NotThrow();
@@ -282,13 +263,9 @@ public class FanAutomationTests : AutomationTestBase<FanAutomation>
         {
             // Test typical fan automation patterns
 
-            _mockHaContext.StateChangeSubject.OnNext(
-                StateChangeHelpers.MotionDetected(_entities.MotionSensor)
-            );
+            _mockHaContext.EmitMotionDetected(_entities.MotionSensor);
 
-            _mockHaContext.StateChangeSubject.OnNext(
-                StateChangeHelpers.MotionCleared(_entities.MotionSensor)
-            );
+            _mockHaContext.EmitMotionCleared(_entities.MotionSensor);
         };
 
         act.Should().NotThrow();

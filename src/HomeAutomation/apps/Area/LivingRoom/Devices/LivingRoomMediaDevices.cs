@@ -2,7 +2,8 @@ namespace HomeAutomation.apps.Area.LivingRoom.Devices;
 
 public class LivingRoomMediaDevices(HomeAssistantGenerated.Entities entities)
 {
-    public BinarySensorEntity MotionSensor { get; } = entities.BinarySensor.LivingRoomPresenceSensors;
+    public BinarySensorEntity MotionSensor { get; } =
+        entities.BinarySensor.LivingRoomPresenceSensors;
     public ButtonEntity Restart { get; } = entities.Button.SalaMotionSensorRestartEsp32;
     public NumberEntity SensorDelay { get; } = entities.Number.SalaMotionSensorStillTargetDelay;
     public MediaPlayerEntity TclTv { get; } = entities.MediaPlayer.Tcl65c755;

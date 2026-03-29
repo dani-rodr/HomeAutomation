@@ -2,10 +2,8 @@ using HomeAutomation.apps.Area.LivingRoom.Devices;
 
 namespace HomeAutomation.apps.Area.LivingRoom.Automations.Entities;
 
-public class TabletEntities(
-    LivingRoomLightDevices devices,
-    LivingRoomMediaDevices mediaDevices
-) : ITabletEntities
+public class TabletEntities(LivingRoomLightDevices devices, LivingRoomMediaDevices mediaDevices)
+    : ITabletEntities
 {
     public SwitchEntity MasterSwitch => devices.LightAutomation;
     public BinarySensorEntity MotionSensor => mediaDevices.MotionSensor;

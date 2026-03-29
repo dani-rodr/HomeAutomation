@@ -935,13 +935,7 @@ public partial class HelpersTests : HaContextTestBase
         _number.SetNumericValue(testValue);
 
         // Assert
-        _mockHaContext.ShouldHaveCalledService("number", "set_value");
-
-        var serviceCalls = _mockHaContext.GetServiceCalls("number").ToList();
-        var setValueCall = serviceCalls.FirstOrDefault(c => c.Service == "set_value");
-
-        setValueCall.Should().NotBeNull();
-        setValueCall!.Target?.EntityIds.Should().Contain(_number.EntityId);
+        _mockHaContext.ShouldHaveCalledService("number", "set_value", _number.EntityId);
     }
 
     [Theory]

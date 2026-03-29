@@ -59,7 +59,7 @@ public class PersonControllerTests : HaContextTestBase
     {
         _mockHaContext.SetEntityState(_entities.Person.EntityId, "home");
 
-        _mockHaContext.StateChangeSubject.OnNext(
+        _mockHaContext.EmitStateChange(
             StateChangeHelpers.CreateButtonPress(_entities.ToggleLocation)
         );
         _mockHaContext.ShouldHaveCalledService("device_tracker", "see");
@@ -71,7 +71,7 @@ public class PersonControllerTests : HaContextTestBase
     {
         _mockHaContext.SetEntityState(_entities.Person.EntityId, "not_home");
 
-        _mockHaContext.StateChangeSubject.OnNext(
+        _mockHaContext.EmitStateChange(
             StateChangeHelpers.CreateButtonPress(_entities.ToggleLocation)
         );
         _mockHaContext.ShouldHaveCalledService("device_tracker", "see");
@@ -88,7 +88,7 @@ public class PersonControllerTests : HaContextTestBase
 
         // Act - Home trigger activates
         var stateChange = StateChangeHelpers.CreateStateChange(_entities.HomeTrigger1, "off", "on");
-        _mockHaContext.StateChangeSubject.OnNext(stateChange);
+        _mockHaContext.EmitStateChange(stateChange);
 
         // Assert - Should emit the trigger's entity ID
         Assert.Single(_arrivedHomeEvents);
@@ -103,7 +103,7 @@ public class PersonControllerTests : HaContextTestBase
 
         // Act - Home trigger activates
         var stateChange = StateChangeHelpers.CreateStateChange(_entities.HomeTrigger1, "off", "on");
-        _mockHaContext.StateChangeSubject.OnNext(stateChange);
+        _mockHaContext.EmitStateChange(stateChange);
 
         // Assert - Should not emit anything
         Assert.Empty(_arrivedHomeEvents);
@@ -126,8 +126,8 @@ public class PersonControllerTests : HaContextTestBase
             "off",
             "on"
         );
-        _mockHaContext.StateChangeSubject.OnNext(trigger1Change);
-        _mockHaContext.StateChangeSubject.OnNext(trigger2Change);
+        _mockHaContext.EmitStateChange(trigger1Change);
+        _mockHaContext.EmitStateChange(trigger2Change);
 
         // Assert - Should emit both trigger entity IDs
         Assert.Equal(2, _arrivedHomeEvents.Count);
@@ -143,7 +143,7 @@ public class PersonControllerTests : HaContextTestBase
 
         // Act - Home trigger turns off (not on)
         var stateChange = StateChangeHelpers.CreateStateChange(_entities.HomeTrigger1, "on", "off");
-        _mockHaContext.StateChangeSubject.OnNext(stateChange);
+        _mockHaContext.EmitStateChange(stateChange);
 
         // Assert - Should not emit (only responds to "on" state)
         Assert.Empty(_arrivedHomeEvents);
@@ -157,7 +157,7 @@ public class PersonControllerTests : HaContextTestBase
 
         // Act - Away trigger turns off
         var stateChange = StateChangeHelpers.CreateStateChange(_entities.AwayTrigger1, "on", "off");
-        _mockHaContext.StateChangeSubject.OnNext(stateChange);
+        _mockHaContext.EmitStateChange(stateChange);
 
         // Advance time by exactly 60 seconds
         _mockHaContext.AdvanceTimeBySeconds(60);
@@ -175,7 +175,7 @@ public class PersonControllerTests : HaContextTestBase
 
         // Act - Away trigger turns off
         var stateChange = StateChangeHelpers.CreateStateChange(_entities.AwayTrigger1, "on", "off");
-        _mockHaContext.StateChangeSubject.OnNext(stateChange);
+        _mockHaContext.EmitStateChange(stateChange);
 
         // Advance time by 60 seconds
         _mockHaContext.AdvanceTimeBySeconds(60);
@@ -192,7 +192,7 @@ public class PersonControllerTests : HaContextTestBase
 
         // Act - Away trigger turns off
         var stateChange = StateChangeHelpers.CreateStateChange(_entities.AwayTrigger1, "on", "off");
-        _mockHaContext.StateChangeSubject.OnNext(stateChange);
+        _mockHaContext.EmitStateChange(stateChange);
 
         // Advance time by only 59 seconds (before delay)
         _mockHaContext.AdvanceTimeBySeconds(59);
@@ -219,8 +219,8 @@ public class PersonControllerTests : HaContextTestBase
             "off"
         );
 
-        _mockHaContext.StateChangeSubject.OnNext(trigger1Change);
-        _mockHaContext.StateChangeSubject.OnNext(trigger2Change);
+        _mockHaContext.EmitStateChange(trigger1Change);
+        _mockHaContext.EmitStateChange(trigger2Change);
 
         // Advance time by 60 seconds from the second trigger
         _mockHaContext.AdvanceTimeBySeconds(60);
@@ -250,7 +250,7 @@ public class PersonControllerTests : HaContextTestBase
             "on",
             "off"
         );
-        _mockHaContext.StateChangeSubject.OnNext(trigger1Change);
+        _mockHaContext.EmitStateChange(trigger1Change);
 
         // Advance time by 60 seconds for first trigger
         _mockHaContext.AdvanceTimeBySeconds(60);
@@ -265,7 +265,7 @@ public class PersonControllerTests : HaContextTestBase
             "on",
             "off"
         );
-        _mockHaContext.StateChangeSubject.OnNext(trigger2Change);
+        _mockHaContext.EmitStateChange(trigger2Change);
 
         // Advance time by 60 seconds for second trigger
         _mockHaContext.AdvanceTimeBySeconds(60);
@@ -284,7 +284,7 @@ public class PersonControllerTests : HaContextTestBase
 
         // Act - Away trigger turns on (not off)
         var stateChange = StateChangeHelpers.CreateStateChange(_entities.AwayTrigger1, "off", "on");
-        _mockHaContext.StateChangeSubject.OnNext(stateChange);
+        _mockHaContext.EmitStateChange(stateChange);
 
         // Advance time by 60 seconds
         _mockHaContext.AdvanceTimeBySeconds(60);
@@ -302,7 +302,7 @@ public class PersonControllerTests : HaContextTestBase
             "off",
             "on"
         );
-        _mockHaContext.StateChangeSubject.OnNext(stateChange);
+        _mockHaContext.EmitStateChange(stateChange);
 
         // Assert - Should emit immediately (no delay)
         Assert.Single(_directUnlockEvents);
@@ -323,8 +323,8 @@ public class PersonControllerTests : HaContextTestBase
             "off",
             "on"
         );
-        _mockHaContext.StateChangeSubject.OnNext(trigger1Change);
-        _mockHaContext.StateChangeSubject.OnNext(trigger2Change);
+        _mockHaContext.EmitStateChange(trigger1Change);
+        _mockHaContext.EmitStateChange(trigger2Change);
 
         // Assert - Should emit both trigger entity IDs
         Assert.Equal(2, _directUnlockEvents.Count);
@@ -341,7 +341,7 @@ public class PersonControllerTests : HaContextTestBase
             "on",
             "off"
         );
-        _mockHaContext.StateChangeSubject.OnNext(stateChange);
+        _mockHaContext.EmitStateChange(stateChange);
 
         // Assert - Should not emit (only responds to "on" state)
         Assert.Empty(_directUnlockEvents);
@@ -379,7 +379,7 @@ public class PersonControllerTests : HaContextTestBase
 
         // Act - Press toggle button
         var buttonPress = StateChangeHelpers.CreateButtonPress(_entities.ToggleLocation);
-        _mockHaContext.StateChangeSubject.OnNext(buttonPress);
+        _mockHaContext.EmitStateChange(buttonPress);
 
         // Assert - Should emit person entity ID via subject and call SetAway
         Assert.Single(_leftHomeEvents);
@@ -396,7 +396,7 @@ public class PersonControllerTests : HaContextTestBase
 
         // Act - Press toggle button
         var buttonPress = StateChangeHelpers.CreateButtonPress(_entities.ToggleLocation);
-        _mockHaContext.StateChangeSubject.OnNext(buttonPress);
+        _mockHaContext.EmitStateChange(buttonPress);
 
         // Assert - Should emit person entity ID via subject and call SetHome
         Assert.Single(_arrivedHomeEvents);
@@ -417,10 +417,10 @@ public class PersonControllerTests : HaContextTestBase
             "off",
             "on"
         );
-        _mockHaContext.StateChangeSubject.OnNext(sensorTrigger);
+        _mockHaContext.EmitStateChange(sensorTrigger);
 
         var buttonPress = StateChangeHelpers.CreateButtonPress(_entities.ToggleLocation);
-        _mockHaContext.StateChangeSubject.OnNext(buttonPress);
+        _mockHaContext.EmitStateChange(buttonPress);
 
         // Assert - Should have both events: sensor entity ID and person entity ID
         Assert.Equal(2, _arrivedHomeEvents.Count);
@@ -440,7 +440,7 @@ public class PersonControllerTests : HaContextTestBase
             "on",
             "off"
         );
-        _mockHaContext.StateChangeSubject.OnNext(sensorTrigger);
+        _mockHaContext.EmitStateChange(sensorTrigger);
 
         // Advance time by 60 seconds for sensor delay
         _mockHaContext.AdvanceTimeBySeconds(60);
@@ -451,7 +451,7 @@ public class PersonControllerTests : HaContextTestBase
 
         // Then trigger toggle button (should emit immediately via subject)
         var buttonPress = StateChangeHelpers.CreateButtonPress(_entities.ToggleLocation);
-        _mockHaContext.StateChangeSubject.OnNext(buttonPress);
+        _mockHaContext.EmitStateChange(buttonPress);
 
         // Assert - Should have both events: sensor entity ID and person entity ID
         Assert.Equal(2, _leftHomeEvents.Count);
@@ -467,17 +467,17 @@ public class PersonControllerTests : HaContextTestBase
 
         // Act - Toggle multiple times (away -> home -> away -> home)
         var buttonPress1 = StateChangeHelpers.CreateButtonPress(_entities.ToggleLocation);
-        _mockHaContext.StateChangeSubject.OnNext(buttonPress1); // Should go home
+        _mockHaContext.EmitStateChange(buttonPress1); // Should go home
 
         _mockHaContext.SetEntityState(_entities.Person.EntityId, "home"); // Update state after SetHome
 
         var buttonPress2 = StateChangeHelpers.CreateButtonPress(_entities.ToggleLocation);
-        _mockHaContext.StateChangeSubject.OnNext(buttonPress2); // Should go away
+        _mockHaContext.EmitStateChange(buttonPress2); // Should go away
 
         _mockHaContext.SetEntityState(_entities.Person.EntityId, "not_home"); // Update state after SetAway
 
         var buttonPress3 = StateChangeHelpers.CreateButtonPress(_entities.ToggleLocation);
-        _mockHaContext.StateChangeSubject.OnNext(buttonPress3); // Should go home again
+        _mockHaContext.EmitStateChange(buttonPress3); // Should go home again
 
         // Assert - Should have alternating events
         Assert.Equal(2, _arrivedHomeEvents.Count); // Two arrivals (button 1 and 3)
@@ -498,7 +498,7 @@ public class PersonControllerTests : HaContextTestBase
             "off",
             "on"
         );
-        _mockHaContext.StateChangeSubject.OnNext(homeSensorTrigger);
+        _mockHaContext.EmitStateChange(homeSensorTrigger);
 
         Assert.Single(_arrivedHomeEvents);
         Assert.Equal(_entities.HomeTrigger1.EntityId, _arrivedHomeEvents[0]);
@@ -512,7 +512,7 @@ public class PersonControllerTests : HaContextTestBase
             "on",
             "off"
         );
-        _mockHaContext.StateChangeSubject.OnNext(awaySensorTrigger);
+        _mockHaContext.EmitStateChange(awaySensorTrigger);
         _mockHaContext.AdvanceTimeBySeconds(60);
 
         Assert.Single(_leftHomeEvents);
@@ -520,7 +520,7 @@ public class PersonControllerTests : HaContextTestBase
 
         // Act & Assert - Toggle emits person entity ID
         var buttonPress = StateChangeHelpers.CreateButtonPress(_entities.ToggleLocation);
-        _mockHaContext.StateChangeSubject.OnNext(buttonPress);
+        _mockHaContext.EmitStateChange(buttonPress);
 
         Assert.Equal(2, _leftHomeEvents.Count);
         Assert.Equal(_entities.Person.EntityId, _leftHomeEvents[1]); // Second event should be person ID
@@ -541,7 +541,7 @@ public class PersonControllerTests : HaContextTestBase
 
         // Try to trigger toggle button after disposal
         var buttonPress = StateChangeHelpers.CreateButtonPress(_entities.ToggleLocation);
-        _mockHaContext.StateChangeSubject.OnNext(buttonPress);
+        _mockHaContext.EmitStateChange(buttonPress);
 
         // Assert - Should not emit any events after disposal
         Assert.Empty(_arrivedHomeEvents);

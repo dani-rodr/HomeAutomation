@@ -1,7 +1,7 @@
+using System.Reactive.Disposables;
 using HomeAutomation.apps.Area.Desk.Devices;
 using HomeAutomation.apps.Area.Desk.Devices.Entities;
 using HomeAutomation.apps.Common.Interface;
-using System.Reactive.Disposables;
 
 namespace HomeAutomation.Tests.Area.Desk.Devices;
 
@@ -195,7 +195,7 @@ public class LaptopTests : HaContextTestBase
 
         // Assert
         _mockHaContext.ShouldHaveCalledSwitchTurnOff(_entities.VirtualSwitch.EntityId);
-        _mockHaContext.ShouldHaveCalledService("button", "press", _entities.Lock.EntityId);
+        _mockHaContext.ShouldHaveCalledButtonPress(_entities.Lock.EntityId);
         _mockHaContext.ShouldHaveServiceCallCount(2);
     }
 
@@ -268,7 +268,7 @@ public class LaptopTests : HaContextTestBase
             "off",
             "on"
         );
-        _mockHaContext.StateChangeSubject.OnNext(stateChange);
+        _mockHaContext.EmitStateChange(stateChange);
 
         // Assert - Should call battery handler turned on
         _mockBatteryHandler.Verify(
@@ -287,7 +287,7 @@ public class LaptopTests : HaContextTestBase
             "on",
             "off"
         );
-        _mockHaContext.StateChangeSubject.OnNext(stateChange);
+        _mockHaContext.EmitStateChange(stateChange);
 
         // Assert - Should call battery handler turned off async
         _mockBatteryHandler.Verify(
@@ -310,7 +310,7 @@ public class LaptopTests : HaContextTestBase
             "off",
             "on"
         );
-        _mockHaContext.StateChangeSubject.OnNext(stateChange);
+        _mockHaContext.EmitStateChange(stateChange);
 
         // Assert - Should trigger full turn on sequence
         _mockHaContext.ShouldHaveCalledSwitchTurnOn(_entities.VirtualSwitch.EntityId);
@@ -335,24 +335,24 @@ public class LaptopTests : HaContextTestBase
             "on",
             "off"
         );
-        _mockHaContext.StateChangeSubject.OnNext(stateChange);
+        _mockHaContext.EmitStateChange(stateChange);
 
         // Assert - Should trigger turn off sequence including lock button
         _mockHaContext.ShouldHaveCalledSwitchTurnOff(_entities.VirtualSwitch.EntityId);
-        _mockHaContext.ShouldHaveCalledService("button", "press", _entities.Lock.EntityId);
+        _mockHaContext.ShouldHaveCalledButtonPress(_entities.Lock.EntityId);
     }
 
     [Fact]
     public void VirtualSwitchRepeatedChanges_Should_HandleCorrectly()
     {
         // Act - Multiple rapid switch changes
-        _mockHaContext.StateChangeSubject.OnNext(
+        _mockHaContext.EmitStateChange(
             StateChangeHelpers.CreateStateChange(_entities.VirtualSwitch, "off", "on")
         );
-        _mockHaContext.StateChangeSubject.OnNext(
+        _mockHaContext.EmitStateChange(
             StateChangeHelpers.CreateStateChange(_entities.VirtualSwitch, "on", "off")
         );
-        _mockHaContext.StateChangeSubject.OnNext(
+        _mockHaContext.EmitStateChange(
             StateChangeHelpers.CreateStateChange(_entities.VirtualSwitch, "off", "on")
         );
 
@@ -393,7 +393,7 @@ public class LaptopTests : HaContextTestBase
         _laptop.StateChanges().Subscribe(results.Add);
 
         // Act
-        _mockHaContext.StateChangeSubject.OnNext(
+        _mockHaContext.EmitStateChange(
             StateChangeHelpers.CreateStateChange(_entities.Session, "unavailable", "locked")
         );
 
@@ -409,7 +409,7 @@ public class LaptopTests : HaContextTestBase
         _laptop.StateChanges().Subscribe(results.Add);
 
         // Act
-        _mockHaContext.StateChangeSubject.OnNext(
+        _mockHaContext.EmitStateChange(
             StateChangeHelpers.CreateStateChange(_entities.Session, "unlocked", "locked")
         );
 
@@ -430,7 +430,7 @@ public class LaptopTests : HaContextTestBase
         results.Clear(); // Clear initial state
 
         // Act - Change switch state
-        _mockHaContext.StateChangeSubject.OnNext(
+        _mockHaContext.EmitStateChange(
             StateChangeHelpers.CreateStateChange(_entities.VirtualSwitch, "off", "on")
         );
 
@@ -456,7 +456,7 @@ public class LaptopTests : HaContextTestBase
 
         // Act - Change session state (both emit state change and update entity state)
         _mockHaContext.SetEntityState(_entities.Session.EntityId, "unlocked");
-        _mockHaContext.StateChangeSubject.OnNext(
+        _mockHaContext.EmitStateChange(
             StateChangeHelpers.CreateStateChange(_entities.Session, "locked", "unlocked")
         );
 
@@ -485,10 +485,10 @@ public class LaptopTests : HaContextTestBase
         results.Clear(); // Clear initial state
 
         // Act - Both change to on/unlocked
-        _mockHaContext.StateChangeSubject.OnNext(
+        _mockHaContext.EmitStateChange(
             StateChangeHelpers.CreateStateChange(_entities.VirtualSwitch, "off", "on")
         );
-        _mockHaContext.StateChangeSubject.OnNext(
+        _mockHaContext.EmitStateChange(
             StateChangeHelpers.CreateStateChange(_entities.Session, "locked", "unlocked")
         );
 
@@ -517,13 +517,13 @@ public class LaptopTests : HaContextTestBase
         _laptop.StateChanges().Subscribe(results.Add);
 
         // Act - Rapid session state changes (simulating flapping)
-        _mockHaContext.StateChangeSubject.OnNext(
+        _mockHaContext.EmitStateChange(
             StateChangeHelpers.CreateStateChange(_entities.Session, "locked", "unlocked")
         );
-        _mockHaContext.StateChangeSubject.OnNext(
+        _mockHaContext.EmitStateChange(
             StateChangeHelpers.CreateStateChange(_entities.Session, "unlocked", "locked")
         );
-        _mockHaContext.StateChangeSubject.OnNext(
+        _mockHaContext.EmitStateChange(
             StateChangeHelpers.CreateStateChange(_entities.Session, "locked", "unlocked")
         );
 
@@ -613,7 +613,7 @@ public class LaptopTests : HaContextTestBase
         {
             var newState = i % 2 == 0 ? "on" : "off";
             var oldState = i % 2 == 0 ? "off" : "on";
-            _mockHaContext.StateChangeSubject.OnNext(
+            _mockHaContext.EmitStateChange(
                 StateChangeHelpers.CreateStateChange(_entities.VirtualSwitch, oldState, newState)
             );
         }
@@ -706,7 +706,7 @@ public class LaptopTests : HaContextTestBase
         scheduledActions[0]();
 
         // Assert: No TurnOff-related service call
-        _mockHaContext.ServiceCalls.Should().BeEmpty("Laptop is off; logoff should do nothing");
+        _mockHaContext.ShouldHaveNoServiceCalls();
     }
 
     [Fact]
@@ -739,15 +739,13 @@ public class LaptopTests : HaContextTestBase
 
         // Assert: TurnOff should run immediately
         _mockBatteryHandler.Verify(x => x.HandleLaptopTurnedOff(), Times.Once);
-        _mockHaContext
-            .ServiceCalls.Should()
-            .ContainSingle(c =>
-                c.Domain == "button"
-                && c.Service == "press"
-                && c.Target != null
-                && c.Target.EntityIds != null
-                && c.Target.EntityIds.Contains(_entities.Lock.EntityId)
-            );
+        _mockHaContext.ShouldHaveCalledButtonPress(_entities.Lock.EntityId);
+        _mockHaContext.ShouldHaveCalledDomainServiceExactly(
+            "button",
+            "press",
+            1,
+            _entities.Lock.EntityId
+        );
     }
 
     [Fact]
@@ -779,9 +777,7 @@ public class LaptopTests : HaContextTestBase
         scheduledActions[0]();
 
         // Assert: no service calls yet because motion is still on
-        _mockHaContext
-            .ServiceCalls.Should()
-            .BeEmpty("TurnOff should wait for motion sensor to be off");
+        _mockHaContext.ShouldHaveNoServiceCalls();
 
         // Simulate motion sensor turning off
         _mockHaContext.SimulateStateChange(
@@ -791,15 +787,13 @@ public class LaptopTests : HaContextTestBase
         );
 
         // Assert: after motion turns off, TurnOff should be called (e.g. lock pressed)
-        _mockHaContext
-            .ServiceCalls.Should()
-            .ContainSingle(c =>
-                c.Domain == "button"
-                && c.Service == "press"
-                && c.Target != null
-                && c.Target.EntityIds != null
-                && c.Target.EntityIds.Contains(_entities.Lock.EntityId)
-            );
+        _mockHaContext.ShouldHaveCalledButtonPress(_entities.Lock.EntityId);
+        _mockHaContext.ShouldHaveCalledDomainServiceExactly(
+            "button",
+            "press",
+            1,
+            _entities.Lock.EntityId
+        );
     }
 
     [Fact]
@@ -832,9 +826,7 @@ public class LaptopTests : HaContextTestBase
 
         // Assert: no immediate service call
         _mockBatteryHandler.Verify(x => x.HandleLaptopTurnedOff(), Times.Never);
-        _mockHaContext
-            .ServiceCalls.Should()
-            .BeEmpty("Motion is still on, so TurnOff should not have been called");
+        _mockHaContext.ShouldHaveNoServiceCalls();
 
         // Simulate motion sensor turning off
         _mockHaContext.SimulateStateChange(
@@ -844,15 +836,13 @@ public class LaptopTests : HaContextTestBase
         );
 
         // Assert: after motion turns off, TurnOff should be called (e.g. lock pressed)
-        _mockHaContext
-            .ServiceCalls.Should()
-            .ContainSingle(c =>
-                c.Domain == "button"
-                && c.Service == "press"
-                && c.Target != null
-                && c.Target.EntityIds != null
-                && c.Target.EntityIds.Contains(_entities.Lock.EntityId)
-            );
+        _mockHaContext.ShouldHaveCalledButtonPress(_entities.Lock.EntityId);
+        _mockHaContext.ShouldHaveCalledDomainServiceExactly(
+            "button",
+            "press",
+            1,
+            _entities.Lock.EntityId
+        );
     }
 
     [Fact]
@@ -882,13 +872,13 @@ public class LaptopTests : HaContextTestBase
         scheduledActions[0]();
 
         // Assert: TurnOff should be called right away
-        _mockHaContext
-            .ServiceCalls.Should()
-            .ContainSingle(c =>
-                c.Domain == "button"
-                && c.Service == "press"
-                && c.Target!.EntityIds!.Contains(_entities.Lock.EntityId)
-            );
+        _mockHaContext.ShouldHaveCalledButtonPress(_entities.Lock.EntityId);
+        _mockHaContext.ShouldHaveCalledDomainServiceExactly(
+            "button",
+            "press",
+            1,
+            _entities.Lock.EntityId
+        );
     }
 
     [Fact]
@@ -916,7 +906,7 @@ public class LaptopTests : HaContextTestBase
 
         scheduledActions[0]();
 
-        _mockHaContext.ServiceCalls.Should().BeEmpty();
+        _mockHaContext.ShouldHaveNoServiceCalls();
     }
 
     [Fact]
@@ -943,7 +933,7 @@ public class LaptopTests : HaContextTestBase
 
         scheduledActions[0]();
 
-        _mockHaContext.ServiceCalls.Should().BeEmpty();
+        _mockHaContext.ShouldHaveNoServiceCalls();
     }
 
     [Fact]
@@ -973,7 +963,7 @@ public class LaptopTests : HaContextTestBase
         _mockHaContext.SimulateStateChange(_entities.MotionSensor.EntityId, "on", "off");
 
         // Clear service calls
-        _mockHaContext.ServiceCalls.Clear();
+        _mockHaContext.ClearServiceCalls();
 
         // Reset motion and fire schedule again
         _mockHaContext.SetEntityState(_entities.MotionSensor.EntityId, "on");
@@ -981,24 +971,17 @@ public class LaptopTests : HaContextTestBase
         _mockHaContext.SimulateStateChange(_entities.MotionSensor.EntityId, "on", "off");
 
         // Assert: TurnOff called again (once for each schedule)
-        var shutdownCalls = _mockHaContext
-            .ServiceCalls.Where(c =>
-                (
-                    c.Domain == "switch"
-                    && c.Service == "turn_off"
-                    && c.Target!.EntityIds!.Contains(_entities.VirtualSwitch.EntityId)
-                )
-                || (
-                    c.Domain == "button"
-                    && c.Service == "press"
-                    && c.Target!.EntityIds!.Contains(_entities.Lock.EntityId)
-                )
-            )
-            .ToList();
-
-        shutdownCalls
-            .Should()
-            .HaveCount(2, "shutdown should trigger switch off and lock press once");
+        _mockHaContext.ShouldHaveCalledSwitchExactly(
+            _entities.VirtualSwitch.EntityId,
+            "turn_off",
+            1
+        );
+        _mockHaContext.ShouldHaveCalledDomainServiceExactly(
+            "button",
+            "press",
+            1,
+            _entities.Lock.EntityId
+        );
     }
 
     #endregion

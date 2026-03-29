@@ -176,9 +176,7 @@ public partial class ClimateAutomationTests : AutomationTestBase<ClimateAutomati
 
         _mockHaContext.SetEntityState(_entities.Door.EntityId, "off");
 
-        var motionEvent = StateChangeHelpers.MotionDetected(_entities.MotionSensor);
-
-        _mockHaContext.StateChangeSubject.OnNext(motionEvent);
+        _mockHaContext.EmitMotionDetected(_entities.MotionSensor);
 
         _mockHaContext.ShouldHaveCalledClimateSetTemperature(
             _entities.AirConditioner.EntityId,
@@ -194,9 +192,7 @@ public partial class ClimateAutomationTests : AutomationTestBase<ClimateAutomati
 
         _mockHaContext.SetEntityState(_entities.Door.EntityId, "on");
 
-        var motionEvent = StateChangeHelpers.MotionDetected(_entities.MotionSensor);
-
-        _mockHaContext.StateChangeSubject.OnNext(motionEvent);
+        _mockHaContext.EmitMotionDetected(_entities.MotionSensor);
 
         _mockHaContext.ShouldHaveCalledClimateSetTemperature(
             _entities.AirConditioner.EntityId,
@@ -261,9 +257,7 @@ public partial class ClimateAutomationTests : AutomationTestBase<ClimateAutomati
 
         // Act - Trigger motion state change
 
-        var stateChange = StateChangeHelpers.MotionCleared(_entities.MotionSensor);
-
-        _mockHaContext.StateChangeSubject.OnNext(stateChange);
+        _mockHaContext.EmitMotionCleared(_entities.MotionSensor);
 
         // Assert - Should not turn on fan switch
 
@@ -292,7 +286,9 @@ public partial class ClimateAutomationTests : AutomationTestBase<ClimateAutomati
         _mockHaContext.ShouldHaveCalledClimateSetTemperature(_entities.AirConditioner.EntityId);
     }
 
-    [Fact(Skip = "Quarantined: bedroom automation logic under review | issue HA-TEST-2002 | expires 2026-06-30")]
+    [Fact(
+        Skip = "Quarantined: bedroom automation logic under review | issue HA-TEST-2002 | expires 2026-06-30"
+    )]
     public void DoorOpenFor5Minutes_Should_TriggerAcSettingApplication()
     {
         // Note: This test simulates the time-based filter behavior
@@ -303,7 +299,7 @@ public partial class ClimateAutomationTests : AutomationTestBase<ClimateAutomati
 
         var stateChange = StateChangeHelpers.DoorOpened(_entities.Door);
 
-        _mockHaContext.StateChangeSubject.OnNext(stateChange);
+        _mockHaContext.EmitStateChange(stateChange);
 
         // Assert - Should apply time-based AC settings
 
@@ -315,25 +311,23 @@ public partial class ClimateAutomationTests : AutomationTestBase<ClimateAutomati
     {
         // Act - Simulate motion detected
 
-        var stateChange = StateChangeHelpers.MotionDetected(_entities.MotionSensor);
-
-        _mockHaContext.StateChangeSubject.OnNext(stateChange);
+        _mockHaContext.EmitMotionDetected(_entities.MotionSensor);
 
         // Assert - Should apply time-based AC settings
 
         _mockHaContext.ShouldHaveCalledClimateSetTemperature(_entities.AirConditioner.EntityId);
     }
 
-    [Fact(Skip = "Quarantined: bedroom automation logic under review | issue HA-TEST-2002 | expires 2026-06-30")]
+    [Fact(
+        Skip = "Quarantined: bedroom automation logic under review | issue HA-TEST-2002 | expires 2026-06-30"
+    )]
     public void MotionClearedFor10Minutes_Should_TriggerAcSettingApplication()
     {
         // Note: This test simulates the time-based filter behavior
 
         // Act - Simulate motion cleared for extended period
 
-        var stateChange = StateChangeHelpers.MotionCleared(_entities.MotionSensor);
-
-        _mockHaContext.StateChangeSubject.OnNext(stateChange);
+        _mockHaContext.EmitMotionCleared(_entities.MotionSensor);
 
         // Assert - Should apply time-based AC settings
 
@@ -346,7 +340,9 @@ public partial class ClimateAutomationTests : AutomationTestBase<ClimateAutomati
     #region House Presence Automation Tests
 
 
-    [Fact(Skip = "Quarantined: bedroom automation logic under review | issue HA-TEST-2002 | expires 2026-06-30")]
+    [Fact(
+        Skip = "Quarantined: bedroom automation logic under review | issue HA-TEST-2002 | expires 2026-06-30"
+    )]
     public void HouseEmpty1Hour_Should_TurnOffAc()
     {
         // Note: This simulates the time-based behavior
@@ -359,14 +355,16 @@ public partial class ClimateAutomationTests : AutomationTestBase<ClimateAutomati
             "off"
         );
 
-        _mockHaContext.StateChangeSubject.OnNext(stateChange);
+        _mockHaContext.EmitStateChange(stateChange);
 
         // Assert - Should turn off AC
 
         _mockHaContext.ShouldHaveCalledClimateTurnOff(_entities.AirConditioner.EntityId);
     }
 
-    [Fact(Skip = "Quarantined: bedroom automation logic under review | issue HA-TEST-2002 | expires 2026-06-30")]
+    [Fact(
+        Skip = "Quarantined: bedroom automation logic under review | issue HA-TEST-2002 | expires 2026-06-30"
+    )]
     public void HouseOccupiedAfterLongAbsence_Should_TurnOnAcAndApplySettings()
     {
         // Arrange - Setup house as previously empty
@@ -385,7 +383,7 @@ public partial class ClimateAutomationTests : AutomationTestBase<ClimateAutomati
             "on"
         );
 
-        _mockHaContext.StateChangeSubject.OnNext(stateChange);
+        _mockHaContext.EmitStateChange(stateChange);
 
         // Assert - Should turn on AC and apply settings
 
@@ -419,15 +417,13 @@ public partial class ClimateAutomationTests : AutomationTestBase<ClimateAutomati
 
         _mockHaContext.ClearServiceCalls();
 
-        _mockHaContext.StateChangeSubject.OnNext(stateChange);
+        _mockHaContext.EmitStateChange(stateChange);
 
         // Assert - Should not make AC changes (threshold is 20 minutes)
 
         // Note: This test would need time mocking for full accuracy
 
-        var climateCalls = _mockHaContext.GetServiceCalls("climate").ToList();
-
-        climateCalls.Should().BeEmpty("Short absence should not trigger AC changes");
+        _mockHaContext.ShouldHaveNoServiceCallsForDomain("climate");
     }
 
     #endregion
@@ -463,7 +459,7 @@ public partial class ClimateAutomationTests : AutomationTestBase<ClimateAutomati
 
         // Keep same temperature (no temperature attribute change)
 
-        _mockHaContext.StateChangeSubject.OnNext(stateChange);
+        _mockHaContext.EmitStateChange(stateChange);
 
         // Assert - Should not turn off master switch (no temperature change detected)
 
@@ -482,7 +478,7 @@ public partial class ClimateAutomationTests : AutomationTestBase<ClimateAutomati
             HaIdentity.DANIEL_RODRIGUEZ
         );
 
-        _mockHaContext.StateChangeSubject.OnNext(stateChange);
+        _mockHaContext.EmitStateChange(stateChange);
 
         _mockHaContext.ShouldNeverHaveCalledSwitch(_entities.MasterSwitch.EntityId);
     }
@@ -501,7 +497,7 @@ public partial class ClimateAutomationTests : AutomationTestBase<ClimateAutomati
             HaIdentity.DANIEL_RODRIGUEZ
         );
 
-        _mockHaContext.StateChangeSubject.OnNext(stateChange);
+        _mockHaContext.EmitStateChange(stateChange);
 
         // Assert - Should turn off master switch
 
@@ -525,7 +521,7 @@ public partial class ClimateAutomationTests : AutomationTestBase<ClimateAutomati
             HaIdentity.DANIEL_RODRIGUEZ
         );
 
-        _mockHaContext.StateChangeSubject.OnNext(stateChange);
+        _mockHaContext.EmitStateChange(stateChange);
 
         // Act - Simulate AC state change (off to cool) without temperature change
 
@@ -534,7 +530,7 @@ public partial class ClimateAutomationTests : AutomationTestBase<ClimateAutomati
             new { temperature = 22.0 }
         );
 
-        _mockHaContext.StateChangeSubject.OnNext(stateChange);
+        _mockHaContext.EmitStateChange(stateChange);
 
         _mockHaContext.ShouldNeverHaveCalledSwitch(_entities.MasterSwitch.EntityId);
     }
@@ -565,7 +561,9 @@ public partial class ClimateAutomationTests : AutomationTestBase<ClimateAutomati
     #region Fan Mode Toggle Tests
 
 
-    [Fact(Skip = "Quarantined: bedroom automation logic under review | issue HA-TEST-2002 | expires 2026-06-30")]
+    [Fact(
+        Skip = "Quarantined: bedroom automation logic under review | issue HA-TEST-2002 | expires 2026-06-30"
+    )]
     public void AcFanModeToggle_ValidButtonPress_Should_CycleFanModes()
     {
         // Arrange - Set current fan mode to AUTO
@@ -583,14 +581,16 @@ public partial class ClimateAutomationTests : AutomationTestBase<ClimateAutomati
             "on"
         );
 
-        _mockHaContext.StateChangeSubject.OnNext(stateChange);
+        _mockHaContext.EmitStateChange(stateChange);
 
         // Assert - Should call set fan mode service (cycles auto -> low -> medium -> high -> auto)
 
         _mockHaContext.ShouldHaveCalledClimateSetFanMode(_entities.AirConditioner.EntityId);
     }
 
-    [Fact(Skip = "Quarantined: bedroom automation logic under review | issue HA-TEST-2002 | expires 2026-06-30")]
+    [Fact(
+        Skip = "Quarantined: bedroom automation logic under review | issue HA-TEST-2002 | expires 2026-06-30"
+    )]
     public void AcFanModeToggle_FromHigh_Should_CycleBackToAuto()
     {
         // Arrange - Set current fan mode to HIGH (last in cycle)
@@ -608,7 +608,7 @@ public partial class ClimateAutomationTests : AutomationTestBase<ClimateAutomati
             "on"
         );
 
-        _mockHaContext.StateChangeSubject.OnNext(stateChange);
+        _mockHaContext.EmitStateChange(stateChange);
 
         // Assert - Should cycle back to AUTO
 
@@ -630,9 +630,7 @@ public partial class ClimateAutomationTests : AutomationTestBase<ClimateAutomati
 
         // Act - Trigger AC setting application
 
-        var stateChange = StateChangeHelpers.MotionDetected(_entities.MotionSensor);
-
-        _mockHaContext.StateChangeSubject.OnNext(stateChange);
+        _mockHaContext.EmitMotionDetected(_entities.MotionSensor);
 
         // Assert - Should not apply settings when AC is off
 
@@ -666,9 +664,7 @@ public partial class ClimateAutomationTests : AutomationTestBase<ClimateAutomati
 
         // Act - Trigger motion detected
 
-        var stateChange = StateChangeHelpers.MotionDetected(_entities.MotionSensor);
-
-        _mockHaContext.StateChangeSubject.OnNext(stateChange);
+        _mockHaContext.EmitMotionDetected(_entities.MotionSensor);
 
         // Assert - Should apply new settings
 
@@ -775,9 +771,7 @@ public partial class ClimateAutomationTests : AutomationTestBase<ClimateAutomati
 
         // Act - Trigger AC setting application
 
-        var stateChange = StateChangeHelpers.MotionDetected(_entities.MotionSensor);
-
-        _mockHaContext.StateChangeSubject.OnNext(stateChange);
+        _mockHaContext.EmitMotionDetected(_entities.MotionSensor);
 
         // Assert - Should not throw and should attempt to apply settings
 
@@ -795,7 +789,7 @@ public partial class ClimateAutomationTests : AutomationTestBase<ClimateAutomati
             new EntityState { State = "on" }
         );
 
-        var act = () => _mockHaContext.StateChangeSubject.OnNext(stateChange);
+        var act = () => _mockHaContext.EmitStateChange(stateChange);
 
         // Assert - Should not throw exceptions
 
@@ -813,9 +807,7 @@ public partial class ClimateAutomationTests : AutomationTestBase<ClimateAutomati
 
         // Act - Try to trigger switchable automations
 
-        var stateChange = StateChangeHelpers.MotionDetected(_entities.MotionSensor);
-
-        _mockHaContext.StateChangeSubject.OnNext(stateChange);
+        _mockHaContext.EmitMotionDetected(_entities.MotionSensor);
 
         // Assert - Some automations may still work (motion detection) but temperature management should be limited
 
@@ -840,9 +832,7 @@ public partial class ClimateAutomationTests : AutomationTestBase<ClimateAutomati
             tasks.Add(
                 Task.Run(() =>
                 {
-                    var stateChange = StateChangeHelpers.MotionDetected(_entities.MotionSensor);
-
-                    _mockHaContext.StateChangeSubject.OnNext(stateChange);
+                    _mockHaContext.EmitMotionDetected(_entities.MotionSensor);
                 })
             );
 
@@ -851,7 +841,7 @@ public partial class ClimateAutomationTests : AutomationTestBase<ClimateAutomati
                 {
                     var stateChange = StateChangeHelpers.DoorOpened(_entities.Door);
 
-                    _mockHaContext.StateChangeSubject.OnNext(stateChange);
+                    _mockHaContext.EmitStateChange(stateChange);
                 })
             );
         }

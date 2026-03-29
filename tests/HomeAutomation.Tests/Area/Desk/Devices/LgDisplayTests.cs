@@ -1,6 +1,5 @@
 using HomeAutomation.apps.Area.Desk.Devices;
 using HomeAutomation.apps.Area.Desk.Devices.Entities;
-using System.Text.Json;
 
 namespace HomeAutomation.Tests.Area.Desk.Devices;
 
@@ -55,19 +54,10 @@ public class LgDisplayTests : HaContextTestBase
         _lgDisplay.ShowPC();
 
         // Assert - Verify the source was mapped correctly
-        _mockHaContext.ShouldHaveCalledService(
-            "media_player",
-            "select_source",
-            _entities.MediaPlayer.EntityId
+        _mockHaContext.ShouldHaveCalledMediaPlayerSelectSource(
+            _entities.MediaPlayer.EntityId,
+            "HDMI 1"
         );
-        var serviceCall = _mockHaContext.ServiceCalls.Last();
-        serviceCall
-            .Data?.GetType()
-            .GetProperty("Source")
-            ?.GetValue(serviceCall.Data)
-            ?.ToString()
-            .Should()
-            .Be("HDMI 1", "PC source should map to HDMI 1");
     }
 
     [Theory]
@@ -97,19 +87,10 @@ public class LgDisplayTests : HaContextTestBase
         }
 
         // Assert
-        _mockHaContext.ShouldHaveCalledService(
-            "media_player",
-            "select_source",
-            _entities.MediaPlayer.EntityId
+        _mockHaContext.ShouldHaveCalledMediaPlayerSelectSource(
+            _entities.MediaPlayer.EntityId,
+            expectedHdmiSource
         );
-        var serviceCall = _mockHaContext.ServiceCalls.Last();
-        serviceCall
-            .Data?.GetType()
-            .GetProperty("Source")
-            ?.GetValue(serviceCall.Data)
-            ?.ToString()
-            .Should()
-            .Be(expectedHdmiSource, $"{sourceKey} should map to {expectedHdmiSource}");
     }
 
     [Fact]
@@ -122,7 +103,7 @@ public class LgDisplayTests : HaContextTestBase
         _lgDisplay.ShowPC();
 
         // Assert
-        _mockHaContext.ShouldHaveCalledService("wake_on_lan", "send_magic_packet");
+        _mockHaContext.ShouldHaveCalledWakeOnLan("D4:8D:26:B8:C4:AA");
     }
 
     [Fact]
@@ -132,14 +113,10 @@ public class LgDisplayTests : HaContextTestBase
         _lgDisplay.ShowLaptop();
 
         // Assert
-        var serviceCall = _mockHaContext.ServiceCalls.Last();
-        serviceCall
-            .Data?.GetType()
-            .GetProperty("Source")
-            ?.GetValue(serviceCall.Data)
-            ?.ToString()
-            .Should()
-            .Be("HDMI 3", "Laptop should use HDMI 3 port");
+        _mockHaContext.ShouldHaveCalledMediaPlayerSelectSource(
+            _entities.MediaPlayer.EntityId,
+            "HDMI 3"
+        );
     }
 
     [Fact]
@@ -149,21 +126,19 @@ public class LgDisplayTests : HaContextTestBase
         _lgDisplay.ShowScreenSaver();
 
         // Assert
-        var serviceCall = _mockHaContext.ServiceCalls.Last();
-        serviceCall
-            .Data?.GetType()
-            .GetProperty("Source")
-            ?.GetValue(serviceCall.Data)
-            ?.ToString()
-            .Should()
-            .Be("Always Ready", "ScreenSaver should use Always Ready source");
+        _mockHaContext.ShouldHaveCalledMediaPlayerSelectSource(
+            _entities.MediaPlayer.EntityId,
+            "Always Ready"
+        );
     }
 
     #endregion
 
     #region Source State Properties Tests
 
-    [Fact(Skip = "Quarantined: display logic under review | issue HA-TEST-2005 | expires 2026-06-30")]
+    [Fact(
+        Skip = "Quarantined: display logic under review | issue HA-TEST-2005 | expires 2026-06-30"
+    )]
     public void IsShowingPc_WhenCurrentSourceIsHdmi1_Should_ReturnTrue()
     {
         // Arrange
@@ -197,7 +172,9 @@ public class LgDisplayTests : HaContextTestBase
             .BeFalse("IsShowingPc should return false when current source is not HDMI 1");
     }
 
-    [Fact(Skip = "Quarantined: display logic under review | issue HA-TEST-2005 | expires 2026-06-30")]
+    [Fact(
+        Skip = "Quarantined: display logic under review | issue HA-TEST-2005 | expires 2026-06-30"
+    )]
     public void IsShowingLaptop_WhenCurrentSourceIsHdmi3_Should_ReturnTrue()
     {
         // Arrange
@@ -241,28 +218,20 @@ public class LgDisplayTests : HaContextTestBase
         _lgDisplay.ShowPC();
 
         // Assert: No media_player.select_source should be called yet
-        _mockHaContext
-            .ServiceCalls.Where(call => call.Service == "select_source")
-            .Should()
-            .BeEmpty("source should be queued, not applied while display is off");
+        _mockHaContext.ShouldNotHaveCalledService(
+            "media_player",
+            "select_source",
+            _entities.MediaPlayer.EntityId
+        );
 
         // Act: Turn the display on (this should trigger queued source selection)
         _mockHaContext.SimulateStateChange(_entities.MediaPlayer.EntityId, "off", "on");
 
         // Assert: Now the queued source should be selected
-        var selectSourceCall = _mockHaContext.ServiceCalls.FirstOrDefault(call =>
-            call.Service == "select_source"
+        _mockHaContext.ShouldHaveCalledMediaPlayerSelectSource(
+            _entities.MediaPlayer.EntityId,
+            "HDMI 1"
         );
-
-        selectSourceCall.Should().NotBeNull("queued source should be selected on power-on");
-
-        var selectedSource = selectSourceCall!
-            .Data?.GetType()
-            .GetProperty("Source")
-            ?.GetValue(selectSourceCall.Data)
-            ?.ToString();
-
-        selectedSource.Should().Be("HDMI 1", "PC should map to HDMI 1");
     }
 
     [Fact]
@@ -275,15 +244,14 @@ public class LgDisplayTests : HaContextTestBase
         _lgDisplay.ShowLaptop();
 
         // Assert: WOL magic packet should be sent to wake the display
-        _mockHaContext.ShouldHaveCalledService("wake_on_lan", "send_magic_packet");
+        _mockHaContext.ShouldHaveCalledWakeOnLan("D4:8D:26:B8:C4:AA");
 
         // Assert: No media_player.select_source should be called yet
-        _mockHaContext
-            .ServiceCalls.Where(call => call.Service == "select_source")
-            .Should()
-            .BeEmpty(
-                "source should be queued, not applied while display is unavailable to avoid 'did not match any entities' error"
-            );
+        _mockHaContext.ShouldNotHaveCalledService(
+            "media_player",
+            "select_source",
+            _entities.MediaPlayer.EntityId
+        );
 
         // Act: Simulate display becoming available (unavailable -> on transition)
         _mockHaContext.SimulateStateChange(
@@ -293,19 +261,10 @@ public class LgDisplayTests : HaContextTestBase
         );
 
         // Assert: Now the queued source should be selected
-        var selectSourceCall = _mockHaContext.ServiceCalls.FirstOrDefault(call =>
-            call.Service == "select_source"
+        _mockHaContext.ShouldHaveCalledMediaPlayerSelectSource(
+            _entities.MediaPlayer.EntityId,
+            "HDMI 3"
         );
-
-        selectSourceCall.Should().NotBeNull("queued source should be selected once available");
-
-        var selectedSource = selectSourceCall!
-            .Data?.GetType()
-            .GetProperty("Source")
-            ?.GetValue(selectSourceCall.Data)
-            ?.ToString();
-
-        selectedSource.Should().Be("HDMI 3", "Laptop should map to HDMI 3");
     }
 
     #endregion
@@ -319,18 +278,10 @@ public class LgDisplayTests : HaContextTestBase
         _lgDisplay.ShowToast("Test Message");
 
         // Assert
-        _mockHaContext.ShouldHaveCalledWebostvService("command", _entities.MediaPlayer.EntityId);
-
-        var commandCall = _mockHaContext
-            .ServiceCalls.Where(c => c.Service == "command" && c.Domain == "webostv")
-            .FirstOrDefault();
-
-        var commandProperty = commandCall!.Data?.GetType().GetProperty("command");
-        commandProperty
-            ?.GetValue(commandCall.Data)
-            ?.ToString()
-            .Should()
-            .Be("system.notifications/createToast", "Should call createToast command");
+        _mockHaContext.ShouldHaveCalledWebostvCommand(
+            _entities.MediaPlayer.EntityId,
+            "system.notifications/createToast"
+        );
     }
 
     [Fact]
@@ -340,18 +291,10 @@ public class LgDisplayTests : HaContextTestBase
         _lgDisplay.ShowToast("Hello World");
 
         // Assert
-        var commandCall = _mockHaContext.ServiceCalls.FirstOrDefault(c =>
-            c.Service == "command" && c.Domain == "webostv"
+        _mockHaContext.ShouldHaveCalledWebostvCommandContaining(
+            _entities.MediaPlayer.EntityId,
+            "payload"
         );
-
-        commandCall.Should().NotBeNull("Should have called webostv command");
-
-        // Verify payload exists (exact structure testing would require reflection)
-        var payloadProperty = commandCall!.Data?.GetType().GetProperty("payload");
-        payloadProperty
-            ?.GetValue(commandCall.Data)
-            .Should()
-            .NotBeNull("Command should include message payload");
     }
 
     [Theory]
@@ -379,21 +322,7 @@ public class LgDisplayTests : HaContextTestBase
         _lgDisplay.TurnOn();
 
         // Assert
-        _mockHaContext.ShouldHaveCalledService("wake_on_lan", "send_magic_packet");
-
-        var wolCall = _mockHaContext.ServiceCalls.FirstOrDefault(c =>
-            c.Service == "send_magic_packet" && c.Domain == "wake_on_lan"
-        );
-
-        wolCall.Should().NotBeNull("Should call Wake on LAN service");
-
-        // Verify MAC address is included
-        var macProperty = wolCall!.Data?.GetType().GetProperty("mac");
-        macProperty
-            ?.GetValue(wolCall.Data)
-            ?.ToString()
-            .Should()
-            .Be("D4:8D:26:B8:C4:AA", "Should use correct MAC address");
+        _mockHaContext.ShouldHaveCalledWakeOnLan("D4:8D:26:B8:C4:AA");
     }
 
     [Fact]
@@ -403,13 +332,10 @@ public class LgDisplayTests : HaContextTestBase
         _lgDisplay.TurnOn();
 
         // Assert
-        _mockHaContext.ShouldHaveCalledService("wake_on_lan", "send_magic_packet");
+        _mockHaContext.ShouldHaveCalledWakeOnLan();
 
         // Ensure no WebOS command was sent directly by TurnOn()
-        _mockHaContext
-            .ServiceCalls.Any(c => c.Domain == "webostv" && c.Service == "command")
-            .Should()
-            .BeFalse("TurnOn should not send webostv command directly");
+        _mockHaContext.ShouldNotHaveCalledService("webostv", "command");
     }
 
     #endregion
@@ -523,10 +449,12 @@ public class LgDisplayTests : HaContextTestBase
         _lgDisplay.ShowPC();
 
         // Assert - Should call WOL, screen power on, and source selection
-        _mockHaContext.ShouldHaveCalledService("wake_on_lan", "send_magic_packet");
+        _mockHaContext.ShouldHaveCalledWakeOnLan();
     }
 
-    [Fact(Skip = "Quarantined: display logic under review | issue HA-TEST-2005 | expires 2026-06-30")]
+    [Fact(
+        Skip = "Quarantined: display logic under review | issue HA-TEST-2005 | expires 2026-06-30"
+    )]
     public void MultipleOperations_Should_HandleSequentially()
     {
         // Act - Perform multiple operations in sequence
@@ -535,14 +463,11 @@ public class LgDisplayTests : HaContextTestBase
         _lgDisplay.ShowToast("Done");
 
         // Assert - Should handle all operations
-        var toastCalls = _mockHaContext.ServiceCalls.Count(c =>
-            c.Service == "command"
-            && c.Domain == "webostv"
-            && c.Data?.GetType().GetProperty("command")?.GetValue(c.Data)?.ToString()
-                == "system.notifications/createToast"
+        _mockHaContext.ShouldHaveCalledWebostvCommandExactly(
+            _entities.MediaPlayer.EntityId,
+            "system.notifications/createToast",
+            2
         );
-
-        toastCalls.Should().Be(2, "Should have called toast notification twice");
 
         _mockHaContext.ShouldHaveCalledService(
             "media_player",
@@ -604,39 +529,22 @@ public class LgDisplayTests : HaContextTestBase
         );
 
         // Assert - Should invoke SetBrightnessAsync with correct value
-        var calls = _mockHaContext.ServiceCalls;
+        _mockHaContext.ShouldHaveServiceCallSequence(
+            ("webostv", "command"),
+            ("webostv", "command"),
+            ("webostv", "button"),
+            ("light", "turn_on")
+        );
 
-        calls.Count.Should().Be(4);
-
-        // First call should be power state check
-        var powerStateCall = calls[0];
-        powerStateCall.Should().NotBeNull();
-        powerStateCall!.Domain.Should().Be("webostv");
-        powerStateCall.Service.Should().Be("command");
-
-        // Second call should be brightness command
-        var brightnessCall = calls[1];
-        brightnessCall.Should().NotBeNull();
-        brightnessCall!.Domain.Should().Be("webostv");
-        brightnessCall.Service.Should().Be("command");
-
-        // Third call should be button press
-        var buttonCall = calls[2];
-        buttonCall.Should().NotBeNull();
-        buttonCall!.Domain.Should().Be("webostv");
-        buttonCall.Service.Should().Be("button");
-
-        // Fourth call should be light update
-        var lightCall = calls[3];
-        lightCall.Should().NotBeNull();
-        lightCall!.Domain.Should().Be("light");
-        lightCall.Service.Should().Be("turn_on");
-
-        var brightnessDataJson = JsonSerializer.Serialize(brightnessCall.Data);
-        brightnessDataJson.Should().Contain($"{newBrightnessPct}");
-
-        var buttonDataJson = JsonSerializer.Serialize(buttonCall.Data);
-        buttonDataJson.Should().Contain(buttonEnterPressed);
+        _mockHaContext.ShouldHaveCalledWebostvCommandContaining(
+            _entities.MediaPlayer.EntityId,
+            $"{newBrightnessPct}"
+        );
+        _mockHaContext.ShouldHaveCalledWebostvService("button", _entities.MediaPlayer.EntityId);
+        _mockHaContext.ShouldHaveCalledWebostvButtonContaining(
+            _entities.MediaPlayer.EntityId,
+            buttonEnterPressed
+        );
     }
 
     [Fact]
@@ -671,7 +579,7 @@ public class LgDisplayTests : HaContextTestBase
         _lgDisplay.TurnOn();
 
         // Assert
-        _mockHaContext.ShouldHaveCalledService("wake_on_lan", "send_magic_packet");
+        _mockHaContext.ShouldHaveCalledWakeOnLan();
     }
 
     #endregion

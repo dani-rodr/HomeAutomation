@@ -1,8 +1,8 @@
+using System.Reactive.Disposables;
 using HomeAutomation.apps.Area.Desk.Automations;
 using HomeAutomation.apps.Area.Desk.Devices;
 using HomeAutomation.apps.Area.Desk.Devices.Entities;
 using HomeAutomation.apps.Common.Interface;
-using System.Reactive.Disposables;
 
 namespace HomeAutomation.Tests.Area.Desk.Automations;
 
@@ -423,7 +423,7 @@ public class DisplayAutomationTests : AutomationTestBase<DisplayAutomation>
             _desktopEntities.RemotePcButton,
             HaIdentity.DANIEL_RODRIGUEZ
         );
-        _mockHaContext.StateChangeSubject.OnNext(stateChange);
+        _mockHaContext.EmitStateChange(stateChange);
 
         // Assert - Should launch Moonlight app on Poco F4
         _mockNotificationServices.Verify(
@@ -441,7 +441,7 @@ public class DisplayAutomationTests : AutomationTestBase<DisplayAutomation>
             _desktopEntities.RemotePcButton,
             HaIdentity.MIPAD5
         );
-        _mockHaContext.StateChangeSubject.OnNext(stateChange);
+        _mockHaContext.EmitStateChange(stateChange);
 
         // Assert - Should launch Moonlight app on MiPad
         _mockNotificationServices.Verify(

@@ -203,11 +203,11 @@ public class CookingAutomationTests : AutomationTestBase<CookingAutomation>
             new EntityState { State = boilingPower.ToString() } // To boiling power
         );
 
-        _mockHaContext.StateChangeSubject.OnNext(stateChange);
+        _mockHaContext.EmitStateChange(stateChange);
 
         // Assert - State change should be processed without errors
 
-        var act = () => _mockHaContext.StateChangeSubject.OnNext(stateChange);
+        var act = () => _mockHaContext.EmitStateChange(stateChange);
 
         act.Should().NotThrow("Should handle induction cooker power state changes without errors");
     }
@@ -233,7 +233,7 @@ public class CookingAutomationTests : AutomationTestBase<CookingAutomation>
 
         // Act & Assert - Should process state changes for values above threshold
 
-        var act = () => _mockHaContext.StateChangeSubject.OnNext(stateChange);
+        var act = () => _mockHaContext.EmitStateChange(stateChange);
 
         act.Should().NotThrow("Should handle power values above threshold");
 
@@ -243,7 +243,7 @@ public class CookingAutomationTests : AutomationTestBase<CookingAutomation>
 
         stateChange = CreatePowerStateChange(_entities.InductionPower, atThreshold);
 
-        act = () => _mockHaContext.StateChangeSubject.OnNext(stateChange);
+        act = () => _mockHaContext.EmitStateChange(stateChange);
 
         act.Should().NotThrow("Should handle power values at threshold");
 
@@ -253,7 +253,7 @@ public class CookingAutomationTests : AutomationTestBase<CookingAutomation>
 
         stateChange = CreatePowerStateChange(_entities.InductionPower, belowThreshold);
 
-        act = () => _mockHaContext.StateChangeSubject.OnNext(stateChange);
+        act = () => _mockHaContext.EmitStateChange(stateChange);
 
         act.Should().NotThrow("Should handle power values below threshold");
     }
@@ -273,7 +273,7 @@ public class CookingAutomationTests : AutomationTestBase<CookingAutomation>
 
         _mockHaContext.SetEntityState(_entities.AirFryerStatus.EntityId, "unavailable");
 
-        var act = () => _mockHaContext.StateChangeSubject.OnNext(stateChange);
+        var act = () => _mockHaContext.EmitStateChange(stateChange);
 
         act.Should().NotThrow("Should handle power state when air fryer is unavailable");
 
@@ -285,7 +285,7 @@ public class CookingAutomationTests : AutomationTestBase<CookingAutomation>
         {
             _mockHaContext.SetEntityState(_entities.AirFryerStatus.EntityId, state);
 
-            act = () => _mockHaContext.StateChangeSubject.OnNext(stateChange);
+            act = () => _mockHaContext.EmitStateChange(stateChange);
 
             act.Should().NotThrow($"Should handle power state when air fryer is '{state}'");
         }
@@ -315,9 +315,9 @@ public class CookingAutomationTests : AutomationTestBase<CookingAutomation>
 
         var act = () =>
         {
-            _mockHaContext.StateChangeSubject.OnNext(riceCookerStateChange);
+            _mockHaContext.EmitStateChange(riceCookerStateChange);
 
-            _mockHaContext.StateChangeSubject.OnNext(inductionStateChange);
+            _mockHaContext.EmitStateChange(inductionStateChange);
         };
 
         act.Should().NotThrow("Both persistent automations should be active immediately");
@@ -338,9 +338,9 @@ public class CookingAutomationTests : AutomationTestBase<CookingAutomation>
 
                 var inductionChange = CreatePowerStateChange(_entities.InductionPower, 1600 + i);
 
-                _mockHaContext.StateChangeSubject.OnNext(riceCookerChange);
+                _mockHaContext.EmitStateChange(riceCookerChange);
 
-                _mockHaContext.StateChangeSubject.OnNext(inductionChange);
+                _mockHaContext.EmitStateChange(inductionChange);
             }
         };
 
@@ -405,11 +405,11 @@ public class CookingAutomationTests : AutomationTestBase<CookingAutomation>
 
             // Trigger all changes simultaneously
 
-            _mockHaContext.StateChangeSubject.OnNext(riceCookerChange);
+            _mockHaContext.EmitStateChange(riceCookerChange);
 
-            _mockHaContext.StateChangeSubject.OnNext(inductionChange);
+            _mockHaContext.EmitStateChange(inductionChange);
 
-            _mockHaContext.StateChangeSubject.OnNext(airFryerChange);
+            _mockHaContext.EmitStateChange(airFryerChange);
         };
 
         // Assert - Should handle concurrent triggers without issues
@@ -481,7 +481,7 @@ public class CookingAutomationTests : AutomationTestBase<CookingAutomation>
         {
             for (int i = 0; i < 5; i++)
             {
-                _mockHaContext.StateChangeSubject.OnNext(riceCookerChange);
+                _mockHaContext.EmitStateChange(riceCookerChange);
             }
         };
 
@@ -499,13 +499,9 @@ public class CookingAutomationTests : AutomationTestBase<CookingAutomation>
         {
             // Valid state changes
 
-            _mockHaContext.StateChangeSubject.OnNext(
-                CreatePowerStateChange(_entities.RiceCookerPower, 50)
-            );
+            _mockHaContext.EmitStateChange(CreatePowerStateChange(_entities.RiceCookerPower, 50));
 
-            _mockHaContext.StateChangeSubject.OnNext(
-                CreatePowerStateChange(_entities.InductionPower, 1600)
-            );
+            _mockHaContext.EmitStateChange(CreatePowerStateChange(_entities.InductionPower, 1600));
 
             // Invalid state changes
 
@@ -515,13 +511,9 @@ public class CookingAutomationTests : AutomationTestBase<CookingAutomation>
 
             // More valid state changes
 
-            _mockHaContext.StateChangeSubject.OnNext(
-                CreatePowerStateChange(_entities.RiceCookerPower, 80)
-            );
+            _mockHaContext.EmitStateChange(CreatePowerStateChange(_entities.RiceCookerPower, 80));
 
-            _mockHaContext.StateChangeSubject.OnNext(
-                CreatePowerStateChange(_entities.InductionPower, 1700)
-            );
+            _mockHaContext.EmitStateChange(CreatePowerStateChange(_entities.InductionPower, 1700));
         };
 
         // Assert - Should handle mix of valid and invalid states

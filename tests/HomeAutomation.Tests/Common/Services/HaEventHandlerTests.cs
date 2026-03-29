@@ -413,7 +413,7 @@ public class HaEventHandlerTests : HaContextTestBase
 
         // Manually create event with null DataElement
         var eventWithNullData = new Event { EventType = "tag_scanned", DataElement = null };
-        _mockHaContext.EventSubject.OnNext(eventWithNullData);
+        _mockHaContext.EmitEvent(eventWithNullData);
 
         // Assert
         receivedUserIds.Should().BeEmpty("Should not match events with null DataElement");
@@ -570,7 +570,9 @@ public class HaEventHandlerTests : HaContextTestBase
 
     #region Integration Tests
 
-    [Fact(Skip = "Quarantined: event handling edge case needs investigation | issue HA-TEST-2007 | expires 2026-06-30")]
+    [Fact(
+        Skip = "Quarantined: event handling edge case needs investigation | issue HA-TEST-2007 | expires 2026-06-30"
+    )]
     public void CompleteWorkflow_NfcScanToUserIdExtraction_Should_WorkEndToEnd()
     {
         // Arrange

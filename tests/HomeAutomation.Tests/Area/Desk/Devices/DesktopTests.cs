@@ -1,7 +1,7 @@
+using System.Reflection;
 using HomeAutomation.apps.Area.Desk.Devices;
 using HomeAutomation.apps.Area.Desk.Devices.Entities;
 using HomeAutomation.apps.Common.Interface;
-using System.Reflection;
 
 namespace HomeAutomation.Tests.Area.Desk.Devices;
 
@@ -188,7 +188,7 @@ public class DesktopTests : HaContextTestBase
             DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"),
             HaIdentity.DANIEL_RODRIGUEZ
         );
-        _mockHaContext.StateChangeSubject.OnNext(buttonPress);
+        _mockHaContext.EmitStateChange(buttonPress);
 
         // Assert
         _mockNotificationServices.Verify(
@@ -213,7 +213,7 @@ public class DesktopTests : HaContextTestBase
             DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"),
             HaIdentity.MIPAD5
         );
-        _mockHaContext.StateChangeSubject.OnNext(buttonPress);
+        _mockHaContext.EmitStateChange(buttonPress);
 
         // Assert
         _mockNotificationServices.Verify(
@@ -238,7 +238,7 @@ public class DesktopTests : HaContextTestBase
             DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"),
             "unknown-user-id"
         );
-        _mockHaContext.StateChangeSubject.OnNext(buttonPress);
+        _mockHaContext.EmitStateChange(buttonPress);
 
         // Assert
         _mockNotificationServices.Verify(
@@ -263,7 +263,7 @@ public class DesktopTests : HaContextTestBase
             "invalid-timestamp",
             HaIdentity.DANIEL_RODRIGUEZ
         );
-        _mockHaContext.StateChangeSubject.OnNext(invalidButtonPress);
+        _mockHaContext.EmitStateChange(invalidButtonPress);
 
         // Assert
         _mockNotificationServices.Verify(
@@ -290,8 +290,8 @@ public class DesktopTests : HaContextTestBase
             HaIdentity.MIPAD5
         );
 
-        _mockHaContext.StateChangeSubject.OnNext(danielPress);
-        _mockHaContext.StateChangeSubject.OnNext(mipadPress);
+        _mockHaContext.EmitStateChange(danielPress);
+        _mockHaContext.EmitStateChange(mipadPress);
 
         // Assert
         _mockNotificationServices.Verify(

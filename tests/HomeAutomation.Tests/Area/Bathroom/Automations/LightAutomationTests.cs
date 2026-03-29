@@ -44,9 +44,7 @@ public class LightAutomationTests : AutomationTestBase<LightAutomation>
     {
         // Act - Simulate motion sensor turning on
 
-        var stateChange = StateChangeHelpers.MotionDetected(_entities.MotionSensor);
-
-        _mockHaContext.StateChangeSubject.OnNext(stateChange);
+        _mockHaContext.EmitMotionDetected(_entities.MotionSensor);
 
         // Assert - Should call dimming controller with light entity
 
@@ -62,9 +60,7 @@ public class LightAutomationTests : AutomationTestBase<LightAutomation>
     {
         // Act - Simulate motion sensor turning off
 
-        var stateChange = StateChangeHelpers.MotionCleared(_entities.MotionSensor);
-
-        _mockHaContext.StateChangeSubject.OnNext(stateChange);
+        _mockHaContext.EmitMotionCleared(_entities.MotionSensor);
 
         // Assert - Should call dimming controller async method
 
@@ -116,17 +112,11 @@ public class LightAutomationTests : AutomationTestBase<LightAutomation>
     {
         // Act - Motion on, off, on again
 
-        _mockHaContext.StateChangeSubject.OnNext(
-            StateChangeHelpers.MotionDetected(_entities.MotionSensor)
-        );
+        _mockHaContext.EmitMotionDetected(_entities.MotionSensor);
 
-        _mockHaContext.StateChangeSubject.OnNext(
-            StateChangeHelpers.MotionCleared(_entities.MotionSensor)
-        );
+        _mockHaContext.EmitMotionCleared(_entities.MotionSensor);
 
-        _mockHaContext.StateChangeSubject.OnNext(
-            StateChangeHelpers.MotionDetected(_entities.MotionSensor)
-        );
+        _mockHaContext.EmitMotionDetected(_entities.MotionSensor);
 
         // Assert - Verify dimming controller calls in sequence
 
@@ -205,9 +195,7 @@ public class LightAutomationTests : AutomationTestBase<LightAutomation>
 
         // Act - Simulate motion cleared (sensor delay behavior is handled by dimming controller)
 
-        var stateChange = StateChangeHelpers.MotionCleared(_entities.MotionSensor);
-
-        _mockHaContext.StateChangeSubject.OnNext(stateChange);
+        _mockHaContext.EmitMotionCleared(_entities.MotionSensor);
 
         // Assert - Should delegate to dimming controller
 
@@ -223,9 +211,7 @@ public class LightAutomationTests : AutomationTestBase<LightAutomation>
     {
         // Arrange - simulate motion sensor going on
 
-        var stateChange = StateChangeHelpers.MotionDetected(_entities.MotionSensor);
-
-        _mockHaContext.StateChangeSubject.OnNext(stateChange);
+        _mockHaContext.EmitMotionDetected(_entities.MotionSensor);
 
         // Act - simulate motion sensor going on -> unavailable -> off
 
@@ -251,13 +237,9 @@ public class LightAutomationTests : AutomationTestBase<LightAutomation>
 
         var act = () =>
         {
-            _mockHaContext.StateChangeSubject.OnNext(
-                StateChangeHelpers.MotionDetected(_entities.MotionSensor)
-            );
+            _mockHaContext.EmitMotionDetected(_entities.MotionSensor);
 
-            _mockHaContext.StateChangeSubject.OnNext(
-                StateChangeHelpers.MotionCleared(_entities.MotionSensor)
-            );
+            _mockHaContext.EmitMotionCleared(_entities.MotionSensor);
         };
 
         act.Should().NotThrow();
@@ -274,9 +256,7 @@ public class LightAutomationTests : AutomationTestBase<LightAutomation>
 
         // Act - Simulate motion sensor turning on for 2 seconds
 
-        var stateChange = StateChangeHelpers.MotionDetected(_entities.MotionSensor);
-
-        _mockHaContext.StateChangeSubject.OnNext(stateChange);
+        _mockHaContext.EmitMotionDetected(_entities.MotionSensor);
 
         _mockHaContext.AdvanceTimeBySeconds(2);
 
@@ -304,9 +284,7 @@ public class LightAutomationTests : AutomationTestBase<LightAutomation>
 
         // Act - Simulate motion sensor turning on for 2 seconds
 
-        var stateChange = StateChangeHelpers.MotionDetected(_entities.MotionSensor);
-
-        _mockHaContext.StateChangeSubject.OnNext(stateChange);
+        _mockHaContext.EmitMotionDetected(_entities.MotionSensor);
 
         _mockHaContext.AdvanceTimeBySeconds(2);
 

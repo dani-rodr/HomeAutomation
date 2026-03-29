@@ -54,7 +54,7 @@ public class LockAutomationTests : AutomationTestBase<LockAutomation>
             HaEntityStates.UNLOCKED,
             HaEntityStates.LOCKED
         );
-        _mockHaContext.StateChangeSubject.OnNext(stateChange);
+        _mockHaContext.EmitStateChange(stateChange);
 
         // Assert - Should turn off flytrap and clear notification
         _mockHaContext.ShouldHaveCalledSwitchTurnOff(_entities.Flytrap.EntityId);
@@ -74,7 +74,7 @@ public class LockAutomationTests : AutomationTestBase<LockAutomation>
             HaEntityStates.LOCKED,
             HaEntityStates.UNLOCKED
         );
-        _mockHaContext.StateChangeSubject.OnNext(stateChange);
+        _mockHaContext.EmitStateChange(stateChange);
 
         // Assert - Should turn on flytrap and send unlock notification
         _mockHaContext.ShouldHaveCalledSwitchTurnOn(_entities.Flytrap.EntityId);
@@ -103,23 +103,17 @@ public class LockAutomationTests : AutomationTestBase<LockAutomation>
             HaEntityStates.UNLOCKED,
             null
         );
-        _mockHaContext.StateChangeSubject.OnNext(stateChange);
+        _mockHaContext.EmitStateChange(stateChange);
 
         // Clear previous service calls
         _mockHaContext.ClearServiceCalls();
 
         // Act - Now simulate door closing (should not trigger immediate relock)
         var doorClosedChange = StateChangeHelpers.DoorClosed(_entities.Door);
-        _mockHaContext.StateChangeSubject.OnNext(doorClosedChange);
+        _mockHaContext.EmitStateChange(doorClosedChange);
 
         // Assert - Should NOT call lock service (no immediate relock)
-        var lockCalls = _mockHaContext
-            .GetServiceCalls("lock")
-            .Where(c => c.Service == "lock")
-            .ToList();
-        lockCalls
-            .Should()
-            .BeEmpty("Should not immediately relock when unlocked by physical operation");
+        _mockHaContext.ShouldNeverHaveCalledLock(_entities.Lock.EntityId);
     }
 
     [Fact]
@@ -136,14 +130,14 @@ public class LockAutomationTests : AutomationTestBase<LockAutomation>
             HaEntityStates.UNLOCKED,
             HaIdentity.SUPERVISOR
         );
-        _mockHaContext.StateChangeSubject.OnNext(stateChange);
+        _mockHaContext.EmitStateChange(stateChange);
 
         // Clear previous service calls
         _mockHaContext.ClearServiceCalls();
 
         // Act - Now simulate door closing (should trigger immediate relock)
         var doorClosedChange = StateChangeHelpers.DoorClosed(_entities.Door);
-        _mockHaContext.StateChangeSubject.OnNext(doorClosedChange);
+        _mockHaContext.EmitStateChange(doorClosedChange);
 
         // Assert - Should call lock service (immediate relock)
         _mockHaContext.ShouldHaveCalledLockLock(_entities.Lock.EntityId);
@@ -158,7 +152,7 @@ public class LockAutomationTests : AutomationTestBase<LockAutomation>
     {
         // Act - Simulate door opening
         var stateChange = StateChangeHelpers.DoorOpened(_entities.Door);
-        _mockHaContext.StateChangeSubject.OnNext(stateChange);
+        _mockHaContext.EmitStateChange(stateChange);
 
         // Assert - Should send door opened notification
         _mockNotificationServices.Verify(
@@ -179,14 +173,14 @@ public class LockAutomationTests : AutomationTestBase<LockAutomation>
             HaEntityStates.UNLOCKED,
             HaIdentity.SUPERVISOR
         );
-        _mockHaContext.StateChangeSubject.OnNext(unlockChange);
+        _mockHaContext.EmitStateChange(unlockChange);
 
         // Clear previous service calls
         _mockHaContext.ClearServiceCalls();
 
         // Act - Simulate door closing
         var stateChange = StateChangeHelpers.DoorClosed(_entities.Door);
-        _mockHaContext.StateChangeSubject.OnNext(stateChange);
+        _mockHaContext.EmitStateChange(stateChange);
 
         // Assert - Should lock the door immediately
         _mockHaContext.ShouldHaveCalledLockLock(_entities.Lock.EntityId);
@@ -202,7 +196,7 @@ public class LockAutomationTests : AutomationTestBase<LockAutomation>
             HaEntityStates.UNLOCKED,
             null
         );
-        _mockHaContext.StateChangeSubject.OnNext(unlockChange);
+        _mockHaContext.EmitStateChange(unlockChange);
 
         // Clear previous service calls and notifications
         _mockHaContext.ClearServiceCalls();
@@ -210,14 +204,10 @@ public class LockAutomationTests : AutomationTestBase<LockAutomation>
 
         // Act - Simulate door closing
         var stateChange = StateChangeHelpers.DoorClosed(_entities.Door);
-        _mockHaContext.StateChangeSubject.OnNext(stateChange);
+        _mockHaContext.EmitStateChange(stateChange);
 
         // Assert - Should send unlocked notification instead of locking
-        var lockCalls = _mockHaContext
-            .GetServiceCalls("lock")
-            .Where(c => c.Service == "lock")
-            .ToList();
-        lockCalls.Should().BeEmpty("Should not lock door when immediate relock is not set");
+        _mockHaContext.ShouldNeverHaveCalledLock(_entities.Lock.EntityId);
 
         _mockNotificationServices.Verify(
             x =>
@@ -235,7 +225,9 @@ public class LockAutomationTests : AutomationTestBase<LockAutomation>
 
     #region Auto-Lock After Time Tests
 
-    [Fact(Skip = "Quarantined: lock automation edge case needs investigation | issue HA-TEST-2008 | expires 2026-06-30")]
+    [Fact(
+        Skip = "Quarantined: lock automation edge case needs investigation | issue HA-TEST-2008 | expires 2026-06-30"
+    )]
     public void AutoLock_UnlockedFor5Minutes_WithDoorClosedAndMotionOn_Should_LockDoor()
     {
         // Arrange - Set conditions for auto-lock: door closed, motion on, house status off, lock unlocked
@@ -253,13 +245,13 @@ public class LockAutomationTests : AutomationTestBase<LockAutomation>
 
         // Simulate the time-based condition by directly calling the subscription
         // This simulates the IsUnlockedForMinutes(5) condition being met
-        _mockHaContext.StateChangeSubject.OnNext(stateChange);
+        _mockHaContext.EmitStateChange(stateChange);
 
         // Clear initial calls and simulate the auto-lock condition
         _mockHaContext.ClearServiceCalls();
 
         // Trigger the auto-lock condition - simulate the reactive stream for unlocked for 5 minutes
-        _mockHaContext.StateChangeSubject.OnNext(stateChange);
+        _mockHaContext.EmitStateChange(stateChange);
 
         // Assert - Should lock the door due to auto-lock conditions being met
         _mockHaContext.ShouldHaveCalledLockLock(_entities.Lock.EntityId);
@@ -280,14 +272,10 @@ public class LockAutomationTests : AutomationTestBase<LockAutomation>
             HaEntityStates.LOCKED,
             HaEntityStates.UNLOCKED
         );
-        _mockHaContext.StateChangeSubject.OnNext(stateChange);
+        _mockHaContext.EmitStateChange(stateChange);
 
         // Assert - Should NOT lock the door when door is open
-        var lockCalls = _mockHaContext
-            .GetServiceCalls("lock")
-            .Where(c => c.Service == "lock")
-            .ToList();
-        lockCalls.Should().BeEmpty("Should not auto-lock when door is open");
+        _mockHaContext.ShouldNeverHaveCalledLock(_entities.Lock.EntityId);
     }
 
     [Fact]
@@ -305,14 +293,10 @@ public class LockAutomationTests : AutomationTestBase<LockAutomation>
             HaEntityStates.LOCKED,
             HaEntityStates.UNLOCKED
         );
-        _mockHaContext.StateChangeSubject.OnNext(stateChange);
+        _mockHaContext.EmitStateChange(stateChange);
 
         // Assert - Should NOT lock the door when conditions are not met
-        var lockCalls = _mockHaContext
-            .GetServiceCalls("lock")
-            .Where(c => c.Service == "lock")
-            .ToList();
-        lockCalls.Should().BeEmpty("Should not auto-lock when motion is off and house is occupied");
+        _mockHaContext.ShouldNeverHaveCalledLock(_entities.Lock.EntityId);
     }
 
     #endregion
@@ -406,8 +390,7 @@ public class LockAutomationTests : AutomationTestBase<LockAutomation>
         nfcSubject.OnNext(null!);
 
         // Assert - Should NOT trigger any lock actions
-        var lockCalls = _mockHaContext.GetServiceCalls("lock").ToList();
-        lockCalls.Should().BeEmpty("Should ignore NFC scans that are physically operated");
+        _mockHaContext.ShouldNeverHaveCalledLock(_entities.Lock.EntityId);
     }
 
     #endregion
@@ -461,7 +444,7 @@ public class LockAutomationTests : AutomationTestBase<LockAutomation>
             HaEntityStates.UNLOCKED,
             HaEntityStates.LOCKED
         );
-        _mockHaContext.StateChangeSubject.OnNext(stateChange);
+        _mockHaContext.EmitStateChange(stateChange);
 
         // Assert - Should not call any services when master switch is off
         _mockHaContext.ShouldHaveNoServiceCalls();
@@ -483,7 +466,7 @@ public class LockAutomationTests : AutomationTestBase<LockAutomation>
             HaEntityStates.UNLOCKED,
             HaEntityStates.LOCKED
         );
-        _mockHaContext.StateChangeSubject.OnNext(stateChange);
+        _mockHaContext.EmitStateChange(stateChange);
 
         // Assert - Should process automation when master switch is on
         _mockHaContext.ShouldHaveCalledSwitchTurnOff(_entities.Flytrap.EntityId);
@@ -505,22 +488,16 @@ public class LockAutomationTests : AutomationTestBase<LockAutomation>
             HaEntityStates.LOCKED,
             HaEntityStates.UNLOCKED
         );
-        _mockHaContext.StateChangeSubject.OnNext(stateChange);
+        _mockHaContext.EmitStateChange(stateChange);
 
         // Clear calls from state change handling
         _mockHaContext.ClearServiceCalls();
 
         // Simulate auto-lock condition
-        _mockHaContext.StateChangeSubject.OnNext(stateChange);
+        _mockHaContext.EmitStateChange(stateChange);
 
         // Assert - Should not call lock service when already locked
-        var lockServiceCalls = _mockHaContext
-            .GetServiceCalls("lock")
-            .Where(c => c.Service == "lock")
-            .ToList();
-        lockServiceCalls
-            .Should()
-            .BeEmpty("Should not call lock service when door is already locked");
+        _mockHaContext.ShouldNeverHaveCalledLock(_entities.Lock.EntityId);
     }
 
     [Fact]
@@ -562,13 +539,13 @@ public class LockAutomationTests : AutomationTestBase<LockAutomation>
 
         // Act - Simulate door being open for 5 minutes (reactive stream condition)
         var stateChange = StateChangeHelpers.DoorOpened(_entities.Door);
-        _mockHaContext.StateChangeSubject.OnNext(stateChange);
+        _mockHaContext.EmitStateChange(stateChange);
 
         // Clear first notification
         _mockNotificationServices.Reset();
 
         // Simulate the "open for 5 minutes" condition
-        _mockHaContext.StateChangeSubject.OnNext(stateChange);
+        _mockHaContext.EmitStateChange(stateChange);
 
         // Assert - Should send door opened notification again
         _mockNotificationServices.Verify(

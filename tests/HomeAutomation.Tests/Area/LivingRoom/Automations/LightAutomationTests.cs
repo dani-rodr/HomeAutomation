@@ -46,9 +46,7 @@ public class LightAutomationTests : AutomationTestBase<LightAutomation>
     {
         // Act - Simulate motion sensor turning on
 
-        var stateChange = StateChangeHelpers.MotionDetected(_entities.MotionSensor);
-
-        _mockHaContext.StateChangeSubject.OnNext(stateChange);
+        _mockHaContext.EmitMotionDetected(_entities.MotionSensor);
 
         // Assert - Should call dimming controller with light entity
 
@@ -80,9 +78,7 @@ public class LightAutomationTests : AutomationTestBase<LightAutomation>
     {
         // Act - Simulate motion sensor turning off
 
-        var stateChange = StateChangeHelpers.MotionCleared(_entities.MotionSensor);
-
-        _mockHaContext.StateChangeSubject.OnNext(stateChange);
+        _mockHaContext.EmitMotionCleared(_entities.MotionSensor);
 
         // Assert - Should call dimming controller async method
 
@@ -132,9 +128,7 @@ public class LightAutomationTests : AutomationTestBase<LightAutomation>
 
         // Since we can't actually wait 30 minutes, we simulate the condition
 
-        var stateChange = StateChangeHelpers.MotionCleared(_entities.MotionSensor);
-
-        _mockHaContext.StateChangeSubject.OnNext(stateChange);
+        _mockHaContext.EmitMotionCleared(_entities.MotionSensor);
 
         // Simulate the 30-minute timeout condition by manually triggering the logic
 
@@ -161,9 +155,7 @@ public class LightAutomationTests : AutomationTestBase<LightAutomation>
 
         // Act - Simulate motion sensor being off for 30 minutes with TV on
 
-        var stateChange = StateChangeHelpers.MotionCleared(_entities.MotionSensor);
-
-        _mockHaContext.StateChangeSubject.OnNext(stateChange);
+        _mockHaContext.EmitMotionCleared(_entities.MotionSensor);
 
         // Simulate the 30-minute timeout condition - should not trigger when TV is on
 
@@ -196,9 +188,7 @@ public class LightAutomationTests : AutomationTestBase<LightAutomation>
 
         // Act - Simulate motion sensor being off for 2 minutes
 
-        var stateChange = StateChangeHelpers.MotionCleared(_entities.MotionSensor);
-
-        _mockHaContext.StateChangeSubject.OnNext(stateChange);
+        _mockHaContext.EmitMotionCleared(_entities.MotionSensor);
 
         // Simulate the 2-minute timeout condition
 
@@ -225,9 +215,7 @@ public class LightAutomationTests : AutomationTestBase<LightAutomation>
 
         // Act - Simulate motion sensor being off for 2 minutes with door open
 
-        var stateChange = StateChangeHelpers.MotionCleared(_entities.MotionSensor);
-
-        _mockHaContext.StateChangeSubject.OnNext(stateChange);
+        _mockHaContext.EmitMotionCleared(_entities.MotionSensor);
 
         // Simulate the condition check - should fail because door is open
 
@@ -254,9 +242,7 @@ public class LightAutomationTests : AutomationTestBase<LightAutomation>
 
         // Act - Simulate motion sensor being off for 2 minutes with bedroom unoccupied
 
-        var stateChange = StateChangeHelpers.MotionCleared(_entities.MotionSensor);
-
-        _mockHaContext.StateChangeSubject.OnNext(stateChange);
+        _mockHaContext.EmitMotionCleared(_entities.MotionSensor);
 
         // Simulate the condition check - should fail because bedroom is not occupied
 
@@ -281,9 +267,7 @@ public class LightAutomationTests : AutomationTestBase<LightAutomation>
     {
         // Act - Simulate kitchen motion sensors being on for 10 seconds
 
-        var stateChange = StateChangeHelpers.MotionDetected(_entities.KitchenMotionSensor);
-
-        _mockHaContext.StateChangeSubject.OnNext(stateChange);
+        _mockHaContext.EmitMotionDetected(_entities.KitchenMotionSensor);
 
         // Simulate the 10-second timeout condition
 
@@ -309,9 +293,7 @@ public class LightAutomationTests : AutomationTestBase<LightAutomation>
 
         // Act - Simulate kitchen motion sensors turning off (should not trigger delay change)
 
-        var stateChange = StateChangeHelpers.MotionCleared(_entities.KitchenMotionSensor);
-
-        _mockHaContext.StateChangeSubject.OnNext(stateChange);
+        _mockHaContext.EmitMotionCleared(_entities.KitchenMotionSensor);
 
         // Assert - Should not call SetNumericValue when kitchen motion is cleared
 
@@ -341,7 +323,7 @@ public class LightAutomationTests : AutomationTestBase<LightAutomation>
 
         var stateChange = StateChangeHelpers.CreateStateChange(_entities.Light, "on", "off");
 
-        _mockHaContext.StateChangeSubject.OnNext(stateChange);
+        _mockHaContext.EmitStateChange(stateChange);
 
         // Simulate the pantry unoccupied check and action
 
@@ -370,7 +352,7 @@ public class LightAutomationTests : AutomationTestBase<LightAutomation>
 
         var stateChange = StateChangeHelpers.CreateStateChange(_entities.Light, "on", "off");
 
-        _mockHaContext.StateChangeSubject.OnNext(stateChange);
+        _mockHaContext.EmitStateChange(stateChange);
 
         // Simulate the pantry unoccupied check - should fail because pantry is occupied
 
@@ -399,7 +381,7 @@ public class LightAutomationTests : AutomationTestBase<LightAutomation>
 
         var stateChange = StateChangeHelpers.CreateStateChange(_entities.Light, "on", "off");
 
-        _mockHaContext.StateChangeSubject.OnNext(stateChange);
+        _mockHaContext.EmitStateChange(stateChange);
 
         // Simulate the pantry unoccupied check - should fail because motion sensor is disabled
 
@@ -470,9 +452,7 @@ public class LightAutomationTests : AutomationTestBase<LightAutomation>
 
         // Act - Simulate motion sensor being on for the wait time (base class handles this)
 
-        var stateChange = StateChangeHelpers.MotionDetected(_entities.MotionSensor);
-
-        _mockHaContext.StateChangeSubject.OnNext(stateChange);
+        _mockHaContext.EmitMotionDetected(_entities.MotionSensor);
 
         // Simulate the sensor delay automation from base class
 
@@ -508,15 +488,11 @@ public class LightAutomationTests : AutomationTestBase<LightAutomation>
 
         // Act 1 - Motion detected in living room
 
-        var motionStateChange = StateChangeHelpers.MotionDetected(_entities.MotionSensor);
-
-        _mockHaContext.StateChangeSubject.OnNext(motionStateChange);
+        _mockHaContext.EmitMotionDetected(_entities.MotionSensor);
 
         // Act 2 - Kitchen motion detected (should trigger sensor delay change)
 
-        var kitchenStateChange = StateChangeHelpers.MotionDetected(_entities.KitchenMotionSensor);
-
-        _mockHaContext.StateChangeSubject.OnNext(kitchenStateChange);
+        _mockHaContext.EmitMotionDetected(_entities.KitchenMotionSensor);
 
         _entities.SensorDelay.SetNumericValue(45); // Simulate the delay change
 
@@ -600,7 +576,7 @@ public class LightAutomationTests : AutomationTestBase<LightAutomation>
 
             var stateChange = StateChangeHelpers.CreateStateChange(_entities.Light, "on", "off");
 
-            _mockHaContext.StateChangeSubject.OnNext(stateChange);
+            _mockHaContext.EmitStateChange(stateChange);
 
             // Simulate the pantry logic
 
@@ -679,31 +655,21 @@ public class LightAutomationTests : AutomationTestBase<LightAutomation>
 
         var act = () =>
         {
-            _mockHaContext.StateChangeSubject.OnNext(
-                StateChangeHelpers.MotionDetected(_entities.MotionSensor)
-            );
+            _mockHaContext.EmitMotionDetected(_entities.MotionSensor);
 
-            _mockHaContext.StateChangeSubject.OnNext(
-                StateChangeHelpers.MotionCleared(_entities.MotionSensor)
-            );
+            _mockHaContext.EmitMotionCleared(_entities.MotionSensor);
 
-            _mockHaContext.StateChangeSubject.OnNext(
-                StateChangeHelpers.MotionDetected(_entities.KitchenMotionSensor)
-            );
+            _mockHaContext.EmitMotionDetected(_entities.KitchenMotionSensor);
 
-            _mockHaContext.StateChangeSubject.OnNext(
+            _mockHaContext.EmitStateChange(
                 StateChangeHelpers.CreateStateChange(_entities.TclTv, "on", "off")
             );
 
-            _mockHaContext.StateChangeSubject.OnNext(
-                StateChangeHelpers.DoorClosed(_entities.BedroomDoor)
-            );
+            _mockHaContext.EmitStateChange(StateChangeHelpers.DoorClosed(_entities.BedroomDoor));
 
-            _mockHaContext.StateChangeSubject.OnNext(
-                StateChangeHelpers.MotionDetected(_entities.BedroomMotionSensor)
-            );
+            _mockHaContext.EmitMotionDetected(_entities.BedroomMotionSensor);
 
-            _mockHaContext.StateChangeSubject.OnNext(
+            _mockHaContext.EmitStateChange(
                 StateChangeHelpers.CreateStateChange(_entities.Light, "on", "off")
             );
         };

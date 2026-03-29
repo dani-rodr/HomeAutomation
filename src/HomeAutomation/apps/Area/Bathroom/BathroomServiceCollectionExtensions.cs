@@ -1,7 +1,6 @@
 using HomeAutomation.apps.Area.Bathroom.Automations.Entities;
 using HomeAutomation.apps.Area.Bathroom.Devices;
 using Microsoft.Extensions.DependencyInjection;
-
 using BathroomLightEntityAdapter = HomeAutomation.apps.Area.Bathroom.Automations.Entities.LightEntities;
 
 namespace HomeAutomation.apps.Area.Bathroom;

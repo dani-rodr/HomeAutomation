@@ -1,5 +1,5 @@
-using NetDaemon.Extensions.Scheduler;
 using System.Diagnostics.CodeAnalysis;
+using NetDaemon.Extensions.Scheduler;
 
 namespace HomeAutomation.apps.Common.Services.Schedulers;
 

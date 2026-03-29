@@ -46,8 +46,7 @@ public partial class ClimateAutomationTests
         _mockHaContext.SetEntityState(_entities.AirConditioner.EntityId, "cool");
         _mockHaContext.ClearServiceCalls();
 
-        var stateChange = StateChangeHelpers.MotionDetected(_entities.MotionSensor);
-        _mockHaContext.StateChangeSubject.OnNext(stateChange);
+        _mockHaContext.EmitMotionDetected(_entities.MotionSensor);
 
         _mockHaContext.ShouldHaveCalledClimateSetTemperature(
             _entities.AirConditioner.EntityId,
@@ -115,8 +114,7 @@ public partial class ClimateAutomationTests
         _mockHaContext.SetEntityState(_entities.AirConditioner.EntityId, mode);
         _mockHaContext.ClearServiceCalls();
 
-        var stateChange = StateChangeHelpers.MotionDetected(_entities.MotionSensor);
-        _mockHaContext.StateChangeSubject.OnNext(stateChange);
+        _mockHaContext.EmitMotionDetected(_entities.MotionSensor);
 
         _mockHaContext.ShouldHaveCalledClimateSetTemperature(
             _entities.AirConditioner.EntityId,
@@ -127,7 +125,9 @@ public partial class ClimateAutomationTests
         scenario.Should().NotBeEmpty("Test scenario should be documented");
     }
 
-    [Theory(Skip = "Quarantined: fan activation feature removed | issue HA-TEST-2003 | expires 2026-06-30")]
+    [Theory(
+        Skip = "Quarantined: fan activation feature removed | issue HA-TEST-2003 | expires 2026-06-30"
+    )]
     [InlineData(true, "Fan should be activated when setting.ActivateFan is true")]
     [InlineData(false, "Fan should not be activated when setting.ActivateFan is false")]
     public void ClimateAutomation_FanActivation_Should_Follow_Setting(
@@ -163,8 +163,7 @@ public partial class ClimateAutomationTests
 
         _mockHaContext.ClearServiceCalls();
 
-        var stateChange = StateChangeHelpers.MotionDetected(_entities.MotionSensor);
-        _mockHaContext.StateChangeSubject.OnNext(stateChange);
+        _mockHaContext.EmitMotionDetected(_entities.MotionSensor);
 
         if (activateFan)
         {

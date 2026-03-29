@@ -1,5 +1,4 @@
 using HomeAutomation.apps.Common.Services;
-using System.Text.Json;
 
 namespace HomeAutomation.Tests.Common.Services;
 
@@ -30,18 +29,7 @@ public class DimmingLightControllerTests : HaContextTestBase
         _controller.OnMotionDetected(_light);
 
         // Assert - Should turn on light at 100% brightness
-        _mockHaContext.ShouldHaveCalledLightTurnOn(_light.EntityId);
-
-        // Verify it was called with full brightness data
-        var turnOnCall = _mockHaContext
-            .GetServiceCalls("light")
-            .FirstOrDefault(call =>
-                call.Service == "turn_on"
-                && call.Target?.EntityIds?.Contains(_light.EntityId) == true
-            );
-
-        turnOnCall.Should().NotBeNull();
-        GetBrightnessFromServiceCall(turnOnCall!).Should().Be(100);
+        _mockHaContext.ShouldHaveCalledLightTurnOn(_light.EntityId, 100);
     }
 
     [Fact]
@@ -81,9 +69,7 @@ public class DimmingLightControllerTests : HaContextTestBase
         _mockHaContext.ShouldHaveCalledLightTurnOff(_light.EntityId);
 
         // Should not have any turn_on calls (no dimming)
-        var lightCalls = _mockHaContext.GetServiceCalls("light").ToList();
-        var turnOnCalls = lightCalls.Where(call => call.Service == "turn_on").ToList();
-        turnOnCalls.Should().BeEmpty("Should not dim when dimming is disabled");
+        _mockHaContext.ShouldHaveCalledLightExactly(_light.EntityId, "turn_on", 0);
     }
 
     [Fact]
@@ -100,18 +86,8 @@ public class DimmingLightControllerTests : HaContextTestBase
 
         await task;
 
-        _mockHaContext.ShouldHaveCalledLightTurnOn(_light.EntityId);
+        _mockHaContext.ShouldHaveCalledLightTurnOn(_light.EntityId, 60);
         _mockHaContext.ShouldHaveCalledLightTurnOff(_light.EntityId);
-
-        var dimCall = _mockHaContext
-            .GetServiceCalls("light")
-            .FirstOrDefault(c =>
-                c.Service == "turn_on" && c.Target?.EntityIds?.Contains(_light.EntityId) == true
-            );
-
-        dimCall.Should().NotBeNull();
-        // Verify dimming brightness
-        GetBrightnessFromServiceCall(dimCall!).Should().Be(60);
     }
 
     [Fact]
@@ -129,16 +105,7 @@ public class DimmingLightControllerTests : HaContextTestBase
 
         await task;
 
-        _mockHaContext.ShouldHaveCalledLightTurnOn(_light.EntityId);
-
-        var turnOnCall = _mockHaContext
-            .GetServiceCalls("light")
-            .FirstOrDefault(c =>
-                c.Service == "turn_on" && c.Target?.EntityIds?.Contains(_light.EntityId) == true
-            );
-
-        turnOnCall.Should().NotBeNull();
-        GetBrightnessFromServiceCall(turnOnCall!).Should().Be(75);
+        _mockHaContext.ShouldHaveCalledLightTurnOn(_light.EntityId, 75);
     }
 
     [Fact]
@@ -155,7 +122,7 @@ public class DimmingLightControllerTests : HaContextTestBase
 
         await task;
 
-        _mockHaContext.ShouldHaveCalledLightTurnOn(_light.EntityId);
+        _mockHaContext.ShouldHaveCalledLightTurnOn(_light.EntityId, 80);
     }
 
     [Fact]
@@ -209,15 +176,10 @@ public class DimmingLightControllerTests : HaContextTestBase
 
         // Assert - Should turn off (redundant but harmless), but NO dimming
         _mockHaContext.ShouldHaveCalledLightTurnOff(_light.EntityId);
-        _mockHaContext.ClearServiceCalls();
-
-        // Verify NO turn_on calls were made (no dimming sequence)
-        var lightCalls = _mockHaContext.GetServiceCalls("light").ToList();
-        var turnOnCalls = lightCalls.Where(call => call.Service == "turn_on").ToList();
-        turnOnCalls.Should().BeEmpty("Should skip dimming when light is already off");
+        _mockHaContext.ShouldHaveCalledLightExactly(_light.EntityId, "turn_on", 0);
 
         _mockHaContext.AdvanceTimeBy(TimeSpan.FromSeconds(6));
-        _mockHaContext.ShouldHaveCalledLightExactly(_light.EntityId, "turn_off", 0);
+        _mockHaContext.ShouldHaveCalledLightExactly(_light.EntityId, "turn_off", 1);
     }
 
     [Fact]
@@ -233,45 +195,7 @@ public class DimmingLightControllerTests : HaContextTestBase
 
         await task;
 
-        _mockHaContext.ShouldHaveCalledLightTurnOn(_light.EntityId);
-
-        var turnOnCall = _mockHaContext
-            .GetServiceCalls("light")
-            .FirstOrDefault(c =>
-                c.Service == "turn_on" && c.Target?.EntityIds?.Contains(_light.EntityId) == true
-            );
-
-        turnOnCall.Should().NotBeNull();
-        GetBrightnessFromServiceCall(turnOnCall!).Should().Be(80);
-    }
-
-    /// <summary>
-    /// Helper method to extract brightness percentage from service call data
-    /// </summary>
-    private static int GetBrightnessFromServiceCall(ServiceCall serviceCall)
-    {
-        // Handle LightTurnOnParameters object
-        if (
-            serviceCall.Data is LightTurnOnParameters lightParams
-            && lightParams.BrightnessPct.HasValue
-        )
-        {
-            return (int)lightParams.BrightnessPct.Value;
-        }
-
-        // Handle JSON data (fallback)
-        if (
-            serviceCall.Data is JsonElement dataElement
-            && dataElement.ValueKind == JsonValueKind.Object
-            && dataElement.TryGetProperty("brightness_pct", out var brightnessProperty)
-        )
-        {
-            return brightnessProperty.GetInt32();
-        }
-
-        throw new InvalidOperationException(
-            $"Service call data does not contain brightness_pct: {serviceCall.Data}"
-        );
+        _mockHaContext.ShouldHaveCalledLightTurnOn(_light.EntityId, 80);
     }
 
     protected override void Dispose(bool disposing)
