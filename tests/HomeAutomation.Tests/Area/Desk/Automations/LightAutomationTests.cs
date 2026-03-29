@@ -9,11 +9,11 @@ namespace HomeAutomation.Tests.Area.Desk.Automations;
 /// Tests desk-specific motion automation with presence detection and light/display control
 /// Tests only automation behavior with mocked dimming controller for proper separation of concerns
 /// </summary>
-public class LightAutomationTests : IDisposable
+public class LightAutomationTests : AutomationTestBase<LightAutomation>
 {
-    private readonly MockHaContext _mockHaContext;
+    private MockHaContext _mockHaContext => HaContext;
 
-    private readonly Mock<ILogger<LightAutomation>> _mockLogger;
+    private Mock<ILogger<LightAutomation>> _mockLogger => Logger;
 
     private readonly Mock<ILgDisplay> _mockLgDisplay;
 
@@ -25,10 +25,6 @@ public class LightAutomationTests : IDisposable
 
     public LightAutomationTests()
     {
-        _mockHaContext = new MockHaContext();
-
-        _mockLogger = new Mock<ILogger<LightAutomation>>();
-
         _mockLgDisplay = new Mock<ILgDisplay>();
 
         _mockLgDisplay.Setup(m => m.IsShowingPc).Returns(true);
@@ -43,17 +39,7 @@ public class LightAutomationTests : IDisposable
 
         _automation = new LightAutomation(_entities, _mockLgDisplay.Object, _mockLogger.Object);
 
-        // Start the automation to set up subscriptions
-
-        _automation.StartAutomation();
-
-        // Simulate master switch being ON to enable automation logic
-
-        _mockHaContext.SimulateStateChange(_entities.MasterSwitch.EntityId, "off", "on");
-
-        // Clear any initialization service calls
-
-        _mockHaContext.ClearServiceCalls();
+        StartAutomation(_automation, _entities.MasterSwitch.EntityId);
     }
 
     [Fact]
@@ -146,11 +132,14 @@ public class LightAutomationTests : IDisposable
         _mockHaContext.ShouldHaveNoServiceCalls();
     }
 
-    public void Dispose()
+    protected override void Dispose(bool disposing)
     {
-        _automation?.Dispose();
+        if (disposing)
+        {
+            _automation.Dispose();
+        }
 
-        _mockHaContext?.Dispose();
+        base.Dispose(disposing);
     }
 
     /// <summary>

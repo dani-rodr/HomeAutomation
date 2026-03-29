@@ -7,9 +7,9 @@ namespace HomeAutomation.Tests.Area.LivingRoom.Automations;
 /// Comprehensive behavioral tests for LivingRoom FanAutomation using clean assertion syntax
 /// Tests complex fan coordination logic with multiple fans and cross-area dependencies
 /// </summary>
-public class FanAutomationTests : IDisposable
+public class FanAutomationTests : AutomationTestBase<FanAutomation>
 {
-    private readonly MockHaContext _mockHaContext;
+    private MockHaContext _mockHaContext => HaContext;
 
     private readonly TestEntities _entities;
 
@@ -17,20 +17,16 @@ public class FanAutomationTests : IDisposable
 
     public FanAutomationTests()
     {
-        _mockHaContext = new MockHaContext();
-
         // Create test entities wrapper
 
         _entities = new TestEntities(_mockHaContext);
 
         _automation = new FanAutomation(
             _entities,
-            MockHaContext.CreateLogger<FanAutomation>(LogLevel.Debug)
+            Logger.Object
         );
 
-        // Start the automation to set up subscriptions
-
-        _automation.StartAutomation();
+        StartAutomation(_automation);
 
         // Set initial states
 
@@ -298,11 +294,14 @@ public class FanAutomationTests : IDisposable
         act.Should().NotThrow();
     }
 
-    public void Dispose()
+    protected override void Dispose(bool disposing)
     {
-        _automation?.Dispose();
+        if (disposing)
+        {
+            _automation.Dispose();
+        }
 
-        _mockHaContext?.Dispose();
+        base.Dispose(disposing);
     }
 
     /// <summary>

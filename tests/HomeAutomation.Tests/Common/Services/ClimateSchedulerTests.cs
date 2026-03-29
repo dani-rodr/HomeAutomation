@@ -7,9 +7,9 @@ namespace HomeAutomation.Tests.Common.Services;
 /// Unit tests for ClimateScheduler focusing on time-based logic, temperature selection, and scheduling behavior
 /// Tests the core scheduling functionality without complex automation integration
 /// </summary>
-public class ClimateSchedulerTests : IDisposable
+public class ClimateSchedulerTests : HaContextTestBase
 {
-    private readonly MockHaContext _mockHaContext;
+    private MockHaContext _mockHaContext => HaContext;
     private readonly Mock<ILogger<ClimateScheduler>> _mockLogger;
     private readonly Mock<IAcTemperatureCalculator> _mockCalculator;
     private readonly TestWeatherEntities _weatherEntities;
@@ -17,7 +17,6 @@ public class ClimateSchedulerTests : IDisposable
 
     public ClimateSchedulerTests()
     {
-        _mockHaContext = new MockHaContext();
         _mockLogger = new Mock<ILogger<ClimateScheduler>>();
         _mockCalculator = new Mock<IAcTemperatureCalculator>();
         _weatherEntities = new TestWeatherEntities(_mockHaContext);
@@ -41,6 +40,14 @@ public class ClimateSchedulerTests : IDisposable
         _mockHaContext.SetEntityState(_weatherEntities.SunSetting.EntityId, "2024-01-01T18:00:00");
         _mockHaContext.SetEntityState(_weatherEntities.SunMidnight.EntityId, "2024-01-01T00:00:00");
         _mockHaContext.SetEntityState(_weatherEntities.Weather.EntityId, "sunny");
+    }
+
+    private void SetSchedulerToLocalTime(int hour, int minute = 0)
+    {
+        var localTime = new DateTime(2024, 1, 1, hour, minute, 0, DateTimeKind.Unspecified);
+        var offset = TimeZoneInfo.Local.GetUtcOffset(localTime);
+        var schedulerTime = new DateTimeOffset(localTime, offset).ToUniversalTime();
+        _mockHaContext.AdvanceTimeTo(schedulerTime);
     }
 
     #region TimeBlock Configuration Tests
@@ -188,13 +195,8 @@ public class ClimateSchedulerTests : IDisposable
     [Fact]
     public void FindCurrentTimeBlock_BoundaryHours_Should_Handle_Correctly()
     {
-        if (Environment.GetEnvironmentVariable("GITHUB_ACTIONS") == "true")
-        {
-            // Skip this test in GitHub Actions due to timezone issues
-            return;
-        }
         // Test boundary conditions
-        _mockHaContext.AdvanceTimeTo(new DateTime(2024, 1, 1, 6, 0, 0).AddHours(-8)); // Account for local hours
+        SetSchedulerToLocalTime(6);
 
         // 6 AM - start of Sunrise
         var scheduler6 = new ClimateScheduler(
@@ -237,13 +239,9 @@ public class ClimateSchedulerTests : IDisposable
     [Fact]
     public void FindCurrentTimeBlock_At5AM_Should_ReturnSunriseNotMidnight()
     {
-        if (Environment.GetEnvironmentVariable("GITHUB_ACTIONS") == "true")
-        {
-            // Skip this test in GitHub Actions due to timezone issues
-            return;
-        }
         // Arrange - Create scheduler with mocked time at exactly 5:00 AM
         // This test is designed to catch the bug where 5:00 AM incorrectly returns Midnight instead of Sunrise
+        SetSchedulerToLocalTime(5);
         var scheduler5AM = new ClimateScheduler(
             _weatherEntities,
             _mockCalculator.Object,
@@ -280,14 +278,9 @@ public class ClimateSchedulerTests : IDisposable
         string reason
     )
     {
-        if (Environment.GetEnvironmentVariable("GITHUB_ACTIONS") == "true")
-        {
-            // Skip this test in GitHub Actions due to timezone issues
-            return;
-        }
         // Arrange
 
-        _mockHaContext.AdvanceTimeTo(new DateTime(2024, 1, 1, hour, minute, 0).AddHours(-8)); // Account for local hours
+        SetSchedulerToLocalTime(hour, minute);
 
         var scheduler = new ClimateScheduler(
             _weatherEntities,
@@ -383,11 +376,6 @@ public class ClimateSchedulerTests : IDisposable
     }
 
     #endregion
-
-    public void Dispose()
-    {
-        _mockHaContext?.Dispose();
-    }
 
     private class TestWeatherEntities(IHaContext haContext) : IClimateSchedulerEntities
     {

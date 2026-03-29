@@ -9,9 +9,9 @@ namespace HomeAutomation.Tests.Area.Desk.Devices;
 /// Comprehensive tests for Desktop device class focusing on power state logic and reactive behavior
 /// Tests complex power state calculation combining network and power sensor states
 /// </summary>
-public class DesktopTests : IDisposable
+public class DesktopTests : HaContextTestBase
 {
-    private readonly MockHaContext _mockHaContext;
+    private MockHaContext _mockHaContext => HaContext;
     private readonly Mock<ILogger<Desktop>> _mockLogger;
     private readonly Mock<IEventHandler> _mockEventHandler;
     private readonly Mock<INotificationServices> _mockNotificationServices;
@@ -21,7 +21,6 @@ public class DesktopTests : IDisposable
 
     public DesktopTests()
     {
-        _mockHaContext = new MockHaContext();
         _mockLogger = new Mock<ILogger<Desktop>>();
         _mockEventHandler = new Mock<IEventHandler>();
         _mockNotificationServices = new Mock<INotificationServices>();
@@ -418,10 +417,14 @@ public class DesktopTests : IDisposable
 
     #endregion
 
-    public void Dispose()
+    protected override void Dispose(bool disposing)
     {
-        _desktop?.Dispose();
-        _mockHaContext?.Dispose();
+        if (disposing)
+        {
+            _desktop?.Dispose();
+        }
+
+        base.Dispose(disposing);
     }
 
     /// <summary>

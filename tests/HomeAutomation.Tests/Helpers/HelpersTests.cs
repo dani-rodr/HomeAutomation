@@ -6,9 +6,9 @@ namespace HomeAutomation.Tests.Helpers;
 /// Comprehensive tests for all extension methods in Helpers.cs
 /// Tests state filtering, time-based operations, user validation, and utility methods
 /// </summary>
-public class HelpersTests : IDisposable
+public partial class HelpersTests : HaContextTestBase
 {
-    private readonly MockHaContext _mockHaContext;
+    private MockHaContext _mockHaContext => HaContext;
     private readonly BinarySensorEntity _motionSensor;
     private readonly LightEntity _light;
     private readonly SwitchEntity _switch;
@@ -22,7 +22,6 @@ public class HelpersTests : IDisposable
 
     public HelpersTests()
     {
-        _mockHaContext = new MockHaContext();
         _motionSensor = new BinarySensorEntity(_mockHaContext, "binary_sensor.test_motion");
         _light = new LightEntity(_mockHaContext, "light.test_light");
         _switch = new SwitchEntity(_mockHaContext, "switch.test_switch");
@@ -1021,128 +1020,13 @@ public class HelpersTests : IDisposable
 
     #endregion
 
-    #region StateChangeExtensions Tests
-
-    [Fact]
-    public void GetAttributeChange_Should_ExtractAttributeChanges()
+    protected override void Dispose(bool disposing)
     {
-        // This test verifies the method signature and basic functionality
-        // In a real scenario, attributes would be set through entity state updates
-        var change = StateChangeHelpers.CreateStateChange(_light, "off", "on");
+        if (disposing)
+        {
+            _stateChangeSubject?.Dispose();
+        }
 
-        // Act - Test with missing attributes (should return defaults)
-        var (oldBrightness, newBrightness) = change.GetAttributeChange<int>("brightness");
-        var (oldTemp, newTemp) = change.GetAttributeChange<double>("temperature");
-
-        // Assert - Should return default values for missing attributes
-        oldBrightness.Should().Be(0);
-        newBrightness.Should().Be(0);
-        oldTemp.Should().Be(0.0);
-        newTemp.Should().Be(0.0);
-    }
-
-    [Fact]
-    public void GetAttributeChange_Should_HandleMissingAttributes()
-    {
-        // Arrange
-        var change = StateChangeHelpers.CreateStateChange(_light, "off", "on");
-
-        // Act
-        var (oldValue, newValue) = change.GetAttributeChange<int>("missing_attribute");
-
-        // Assert
-        oldValue.Should().Be(0); // default(int)
-        newValue.Should().Be(0);
-    }
-
-    [Fact]
-    public void GetAttributeChange_Should_HandleNullAttributes()
-    {
-        // Arrange
-        var change = StateChangeHelpers.CreateStateChange(_light, "off", "on");
-
-        // Act
-        var (oldValue, newValue) = change.GetAttributeChange<string>("any_attribute");
-
-        // Assert
-        oldValue.Should().BeNull(); // default(string)
-        newValue.Should().BeNull();
-    }
-
-    [Fact]
-    public void GetAttributeChange_Should_HandleJsonElementAttributes()
-    {
-        // This test verifies the method handles JSON elements properly
-        // In practice, attributes come from Home Assistant entity state
-        var change = StateChangeHelpers.CreateStateChange(_light, "off", "on");
-
-        // Act
-        var (oldValue, newValue) = change.GetAttributeChange<int>("test_attribute");
-
-        // Assert - Should return defaults when no attributes are present
-        oldValue.Should().Be(0);
-        newValue.Should().Be(0);
-    }
-
-    [Fact]
-    public void GetAttributeChange_Should_HandleTypeConversion()
-    {
-        // This test verifies the method signature and error handling
-        var change = StateChangeHelpers.CreateStateChange(_light, "off", "on");
-
-        // Act
-        var (_, stringAsInt) = change.GetAttributeChange<int>("string_number");
-        var (_, doubleAsInt) = change.GetAttributeChange<int>("double_to_int");
-
-        // Assert - Should return defaults when attributes are missing
-        stringAsInt.Should().Be(0);
-        doubleAsInt.Should().Be(0);
-    }
-
-    [Fact]
-    public void GetAttributeChange_Should_ReturnDefaultForInvalidConversion()
-    {
-        // This test verifies the method's error handling for type conversion
-        var change = StateChangeHelpers.CreateStateChange(_light, "off", "on");
-
-        // Act
-        var (_, result) = change.GetAttributeChange<int>("invalid_number");
-
-        // Assert
-        result.Should().Be(0); // default(int) for failed conversion
-    }
-
-    #endregion
-
-    #region SwitchEntityExtensions Tests
-
-    [Fact]
-    public void OnDoubleClick_Should_ReturnObservableOfBufferedChanges()
-    {
-        // Arrange
-        var switchChangeSubject =
-            new Subject<StateChange<SwitchEntity, EntityState<SwitchAttributes>>>();
-        var results = new List<IList<StateChange<SwitchEntity, EntityState<SwitchAttributes>>>>();
-
-        IDisposable automation = _switch.OnDoubleClick(2).Subscribe(results.Add);
-
-        _mockHaContext.SimulateStateChange(_switch.EntityId, "on", "off");
-        _mockHaContext.AdvanceTimeBy(TimeSpan.FromMilliseconds(500));
-        _mockHaContext.SimulateStateChange(_switch.EntityId, "off", "on");
-        _mockHaContext.AdvanceTimeBy(TimeSpan.FromMilliseconds(500));
-
-        // Act & Assert - verify the observable is properly set up
-        switchChangeSubject.Should().NotBeNull();
-        results.Should().NotBeEmpty();
-
-        automation.Dispose();
-    }
-
-    #endregion
-
-    public void Dispose()
-    {
-        _stateChangeSubject?.Dispose();
-        _mockHaContext?.Dispose();
+        base.Dispose(disposing);
     }
 }

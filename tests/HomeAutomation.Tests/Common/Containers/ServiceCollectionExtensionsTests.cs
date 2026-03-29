@@ -19,7 +19,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace HomeAutomation.Tests.Common.Containers;
 
-public class ServiceCollectionExtensionsTests
+public class ServiceCollectionExtensionsTests : HaContextTestBase
 {
     [Fact]
     public void AddHomeEntitiesAndServices_ShouldResolveBathroomLightEntities()
@@ -262,14 +262,13 @@ public class ServiceCollectionExtensionsTests
         app.Should().NotBeNull();
     }
 
-    private static ServiceProvider CreateServiceProvider()
+    private ServiceProvider CreateServiceProvider()
     {
         var services = new ServiceCollection();
-        var haContext = new MockHaContext();
 
         services.AddLogging();
-        services.AddSingleton<IHaContext>(haContext);
-        services.AddSingleton<IScheduler>(haContext.Scheduler);
+        services.AddSingleton<IHaContext>(HaContext);
+        services.AddSingleton<IScheduler>(HaContext.Scheduler);
         services.AddHomeAssistantGenerated();
         services.AddHomeEntitiesAndServices();
         services.AddTransient<BathroomApp>();

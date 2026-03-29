@@ -7,11 +7,11 @@ namespace HomeAutomation.Tests.Area.LivingRoom.Automations;
 /// Comprehensive behavioral tests for LivingRoom AirQualityAutomation using clean assertion syntax
 /// Tests air quality monitoring, fan control based on PM2.5 levels, and environmental automation
 /// </summary>
-public class AirQualityAutomationTests : IDisposable
+public class AirQualityAutomationTests : AutomationTestBase<AirQualityAutomation>
 {
-    private readonly MockHaContext _mockHaContext;
+    private MockHaContext _mockHaContext => HaContext;
 
-    private readonly Mock<ILogger<AirQualityAutomation>> _mockLogger;
+    private Mock<ILogger<AirQualityAutomation>> _mockLogger => Logger;
 
     private readonly TestEntities _entities;
 
@@ -19,19 +19,13 @@ public class AirQualityAutomationTests : IDisposable
 
     public AirQualityAutomationTests()
     {
-        _mockHaContext = new MockHaContext();
-
-        _mockLogger = new Mock<ILogger<AirQualityAutomation>>();
-
         // Create test entities wrapper
 
         _entities = new TestEntities(_mockHaContext);
 
         _automation = new AirQualityAutomation(_entities, _mockLogger.Object);
 
-        // Start the automation to set up subscriptions
-
-        _automation.StartAutomation();
+        StartAutomation(_automation);
 
         _mockHaContext.SetEntityState(_entities.Fans.First().EntityId, "off");
 
@@ -92,7 +86,7 @@ public class AirQualityAutomationTests : IDisposable
         _mockHaContext.ShouldHaveCalledSwitchTurnOn(_entities.SupportingFan.EntityId);
     }
 
-    [Fact(Skip = "Temporarily disabled - air quality automation logic under review")]
+    [Fact(Skip = "Quarantined: air quality automation logic under review | issue HA-TEST-2001 | expires 2026-06-30")]
     public void ExcellentAirQuality_Should_TurnOffMainFan()
     {
         // Arrange - Set air quality to excellent (below clean threshold)
@@ -114,7 +108,7 @@ public class AirQualityAutomationTests : IDisposable
         _mockHaContext.ShouldHaveCalledSwitchTurnOff(_entities.Fans.First().EntityId);
     }
 
-    [Fact(Skip = "Temporarily disabled - air quality automation logic under review")]
+    [Fact(Skip = "Quarantined: air quality automation logic under review | issue HA-TEST-2001 | expires 2026-06-30")]
     public void ModerateAirQuality_Should_TurnOnMainFan_When_IsCleaningAir()
     {
         // Arrange - First simulate poor air quality to set IsCleaningAir to true
@@ -148,7 +142,7 @@ public class AirQualityAutomationTests : IDisposable
         _mockHaContext.ShouldHaveCalledSwitchTurnOff(_entities.Fans.Last().EntityId);
     }
 
-    [Fact(Skip = "Temporarily disabled - air quality automation logic under review")]
+    [Fact(Skip = "Quarantined: air quality automation logic under review | issue HA-TEST-2001 | expires 2026-06-30")]
     public void PoorAirQuality_Should_ActivateSupportingFan()
     {
         // Arrange - Poor air quality (above dirty threshold)
@@ -209,7 +203,7 @@ public class AirQualityAutomationTests : IDisposable
     #region Fan Control and State Management Tests
 
 
-    [Fact(Skip = "Temporarily disabled - air quality automation logic under review")]
+    [Fact(Skip = "Quarantined: air quality automation logic under review | issue HA-TEST-2001 | expires 2026-06-30")]
     public void MainFan_StateChange_Should_SyncLedStatus()
     {
         // Act - Simulate main fan turning on
@@ -268,7 +262,7 @@ public class AirQualityAutomationTests : IDisposable
         _mockHaContext.ShouldHaveCalledSwitchExactly(_entities.Fans.Last().EntityId, "turn_on", 0);
     }
 
-    [Theory(Skip = "Temporarily disabled - air quality automation logic under review")]
+    [Theory(Skip = "Quarantined: air quality automation logic under review | issue HA-TEST-2001 | expires 2026-06-30")]
     [InlineData(5.0, "excellent")]
     [InlineData(25.0, "moderate")]
     [InlineData(100.0, "poor")]
@@ -317,7 +311,7 @@ public class AirQualityAutomationTests : IDisposable
     #region Persistent Automation Tests
 
 
-    [Fact(Skip = "Temporarily disabled - air quality automation logic under review")]
+    [Fact(Skip = "Quarantined: air quality automation logic under review | issue HA-TEST-2001 | expires 2026-06-30")]
     public void MotionSensor_OffFor15Minutes_With_MasterSwitchOff_Should_TurnOnMasterSwitch()
     {
         // Arrange - Set master switch to off
@@ -454,7 +448,7 @@ public class AirQualityAutomationTests : IDisposable
     #region State Coordination Tests
 
 
-    [Fact(Skip = "Temporarily disabled - air quality automation logic under review")]
+    [Fact(Skip = "Quarantined: air quality automation logic under review | issue HA-TEST-2001 | expires 2026-06-30")]
     public void ComplexAirQualitySequence_Should_HandleStateTransitions()
     {
         // Test a complete sequence: excellent -> poor -> moderate -> excellent
@@ -516,7 +510,7 @@ public class AirQualityAutomationTests : IDisposable
         _mockHaContext.ShouldHaveCalledSwitchTurnOff(_entities.Fans.First().EntityId);
     }
 
-    [Fact(Skip = "Temporarily disabled - air quality automation logic under review")]
+    [Fact(Skip = "Quarantined: air quality automation logic under review | issue HA-TEST-2001 | expires 2026-06-30")]
     public void SupportingFan_OffFor10Minutes_Should_ResetShouldActivateFan()
     {
         // Arrange - First manually operate supporting fan to set ShouldActivateFan to true
@@ -559,7 +553,7 @@ public class AirQualityAutomationTests : IDisposable
     #region Logging and Error Handling Tests
 
 
-    [Fact(Skip = "Temporarily disabled - air quality automation logic under review")]
+    [Fact(Skip = "Quarantined: air quality automation logic under review | issue HA-TEST-2001 | expires 2026-06-30")]
     public void ExcellentAirQuality_Should_LogAppropriateMessage()
     {
         // Arrange
@@ -591,7 +585,7 @@ public class AirQualityAutomationTests : IDisposable
         );
     }
 
-    [Fact(Skip = "Temporarily disabled - air quality automation logic under review")]
+    [Fact(Skip = "Quarantined: air quality automation logic under review | issue HA-TEST-2001 | expires 2026-06-30")]
     public void ModerateAirQuality_Should_LogAppropriateMessage()
     {
         // Arrange - First set poor air quality to get into cleaning state
@@ -631,7 +625,7 @@ public class AirQualityAutomationTests : IDisposable
         );
     }
 
-    [Fact(Skip = "Temporarily disabled - air quality automation logic under review")]
+    [Fact(Skip = "Quarantined: air quality automation logic under review | issue HA-TEST-2001 | expires 2026-06-30")]
     public void PoorAirQuality_Should_LogAppropriateMessage()
     {
         // Arrange
@@ -702,7 +696,7 @@ public class AirQualityAutomationTests : IDisposable
     #region Edge Cases and Boundary Tests
 
 
-    [Theory(Skip = "Temporarily disabled - air quality automation logic under review")]
+    [Theory(Skip = "Quarantined: air quality automation logic under review | issue HA-TEST-2001 | expires 2026-06-30")]
     [InlineData(7.0, "boundary_clean")] // Exactly at clean threshold
     [InlineData(7.1, "just_above_clean")] // Just above clean threshold
     [InlineData(75.0, "boundary_dirty")] // Exactly at dirty threshold
@@ -791,11 +785,14 @@ public class AirQualityAutomationTests : IDisposable
     #endregion
 
 
-    public void Dispose()
+    protected override void Dispose(bool disposing)
     {
-        _automation?.Dispose();
+        if (disposing)
+        {
+            _automation.Dispose();
+        }
 
-        _mockHaContext?.Dispose();
+        base.Dispose(disposing);
     }
 
     /// <summary>

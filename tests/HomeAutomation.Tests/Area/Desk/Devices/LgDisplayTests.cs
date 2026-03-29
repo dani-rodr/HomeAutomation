@@ -9,9 +9,9 @@ namespace HomeAutomation.Tests.Area.Desk.Devices;
 /// dynamic brightness control with delay mechanisms, source switching logic, screen power management,
 /// toast notification functionality, and service call verification for webostv commands
 /// </summary>
-public class LgDisplayTests : IDisposable
+public class LgDisplayTests : HaContextTestBase
 {
-    private readonly MockHaContext _mockHaContext;
+    private MockHaContext _mockHaContext => HaContext;
     private readonly Mock<ILogger<LgDisplay>> _mockLogger;
     private readonly TestLgDisplayEntities _entities;
     private readonly LgDisplay _lgDisplay;
@@ -19,7 +19,6 @@ public class LgDisplayTests : IDisposable
 
     public LgDisplayTests()
     {
-        _mockHaContext = new MockHaContext();
         _mockLogger = new Mock<ILogger<LgDisplay>>();
         _entities = new TestLgDisplayEntities(_mockHaContext);
 
@@ -164,7 +163,7 @@ public class LgDisplayTests : IDisposable
 
     #region Source State Properties Tests
 
-    [Fact(Skip = "Temporarily disabled - display logic under review")]
+    [Fact(Skip = "Quarantined: display logic under review | issue HA-TEST-2005 | expires 2026-06-30")]
     public void IsShowingPc_WhenCurrentSourceIsHdmi1_Should_ReturnTrue()
     {
         // Arrange
@@ -198,7 +197,7 @@ public class LgDisplayTests : IDisposable
             .BeFalse("IsShowingPc should return false when current source is not HDMI 1");
     }
 
-    [Fact(Skip = "Temporarily disabled - display logic under review")]
+    [Fact(Skip = "Quarantined: display logic under review | issue HA-TEST-2005 | expires 2026-06-30")]
     public void IsShowingLaptop_WhenCurrentSourceIsHdmi3_Should_ReturnTrue()
     {
         // Arrange
@@ -527,7 +526,7 @@ public class LgDisplayTests : IDisposable
         _mockHaContext.ShouldHaveCalledService("wake_on_lan", "send_magic_packet");
     }
 
-    [Fact(Skip = "Temporarily disabled - display logic under review")]
+    [Fact(Skip = "Quarantined: display logic under review | issue HA-TEST-2005 | expires 2026-06-30")]
     public void MultipleOperations_Should_HandleSequentially()
     {
         // Act - Perform multiple operations in sequence
@@ -677,10 +676,9 @@ public class LgDisplayTests : IDisposable
 
     #endregion
 
-    public void Dispose()
+    protected override void Dispose(bool disposing)
     {
-        // LgDisplay doesn't implement IDisposable
-        _mockHaContext?.Dispose();
+        base.Dispose(disposing);
     }
 
     /// <summary>

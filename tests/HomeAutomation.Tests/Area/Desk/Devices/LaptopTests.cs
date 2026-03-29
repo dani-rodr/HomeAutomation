@@ -10,9 +10,9 @@ namespace HomeAutomation.Tests.Area.Desk.Devices;
 /// multi-device coordination, session state throttling, and power-on sequences.
 /// Tests the coordination between virtual switch, session state, power plug, WOL buttons, and lock button.
 /// </summary>
-public class LaptopTests : IDisposable
+public class LaptopTests : HaContextTestBase
 {
-    private readonly MockHaContext _mockHaContext;
+    private MockHaContext _mockHaContext => HaContext;
     private readonly Mock<IEventHandler> _mockEventHandler;
     private readonly Mock<ILogger<Laptop>> _mockLogger;
     private readonly Mock<ILaptopShutdownScheduler> _mockScheduler;
@@ -22,7 +22,6 @@ public class LaptopTests : IDisposable
 
     public LaptopTests()
     {
-        _mockHaContext = new MockHaContext();
         _mockEventHandler = new Mock<IEventHandler>();
         _mockLogger = new Mock<ILogger<Laptop>>();
         _mockScheduler = new Mock<ILaptopShutdownScheduler>();
@@ -1021,10 +1020,14 @@ public class LaptopTests : IDisposable
 
     #endregion
 
-    public void Dispose()
+    protected override void Dispose(bool disposing)
     {
-        _laptop?.Dispose();
-        _mockHaContext?.Dispose();
+        if (disposing)
+        {
+            _laptop?.Dispose();
+        }
+
+        base.Dispose(disposing);
     }
 
     /// <summary>

@@ -7,11 +7,11 @@ namespace HomeAutomation.Tests.Area.Bedroom.Automations;
 /// Comprehensive behavioral tests for Bedroom FanAutomation using clean assertion syntax
 /// Tests fan control logic extending FanAutomationBase with motion-based activation patterns
 /// </summary>
-public class FanAutomationTests : IDisposable
+public class FanAutomationTests : AutomationTestBase<FanAutomation>
 {
-    private readonly MockHaContext _mockHaContext;
+    private MockHaContext _mockHaContext => HaContext;
 
-    private readonly Mock<ILogger<FanAutomation>> _mockLogger;
+    private Mock<ILogger<FanAutomation>> _mockLogger => Logger;
 
     private readonly TestEntities _entities;
 
@@ -19,19 +19,13 @@ public class FanAutomationTests : IDisposable
 
     public FanAutomationTests()
     {
-        _mockHaContext = new MockHaContext();
-
-        _mockLogger = new Mock<ILogger<FanAutomation>>();
-
         // Create test entities wrapper
 
         _entities = new TestEntities(_mockHaContext);
 
         _automation = new FanAutomation(_entities, _mockLogger.Object);
 
-        // Start the automation to set up subscriptions
-
-        _automation.StartAutomation();
+        StartAutomation(_automation, _entities.MasterSwitch.EntityId);
 
         // Set initial states
 
@@ -39,13 +33,6 @@ public class FanAutomationTests : IDisposable
 
         _mockHaContext.SetEntityState(_entities.Fan.EntityId, "off");
 
-        // Simulate master switch being ON to enable automation logic
-
-        _mockHaContext.SimulateStateChange(_entities.MasterSwitch.EntityId, "off", "on");
-
-        // Clear any initialization service calls
-
-        _mockHaContext.ClearServiceCalls();
     }
 
     [Fact]
@@ -60,7 +47,7 @@ public class FanAutomationTests : IDisposable
         _mockHaContext.ShouldHaveCalledSwitchTurnOn(_entities.Fan.EntityId);
     }
 
-    [Fact(Skip = "Temporarily disabled - fan automation logic under review")]
+    [Fact(Skip = "Quarantined: fan automation logic under review | issue HA-TEST-2004 | expires 2026-06-30")]
     public void FanManuallyTurnedOn_Should_SetShouldActivateFanTrue()
     {
         // Arrange - Simulate fan being manually turned on (this should set ShouldActivateFan = true)
@@ -93,7 +80,7 @@ public class FanAutomationTests : IDisposable
         _mockHaContext.ShouldHaveCalledSwitchTurnOn(_entities.Fan.EntityId);
     }
 
-    [Fact(Skip = "Temporarily disabled - bedroom automation logic under review")]
+    [Fact(Skip = "Quarantined: bedroom automation logic under review | issue HA-TEST-2002 | expires 2026-06-30")]
     public void FanManuallyTurnedOff_Should_SetShouldActivateFanFalse()
     {
         // Arrange - First set ShouldActivateFan to true
@@ -137,7 +124,7 @@ public class FanAutomationTests : IDisposable
         _mockHaContext.ShouldNeverHaveCalledSwitch(_entities.Fan.EntityId);
     }
 
-    [Fact(Skip = "Temporarily disabled - fan automation logic under review")]
+    [Fact(Skip = "Quarantined: fan automation logic under review | issue HA-TEST-2004 | expires 2026-06-30")]
     public void MotionDetected_WithShouldActivateFanTrue_Should_TurnOnFan()
     {
         // Arrange - Set ShouldActivateFan to true by manual operation
@@ -196,7 +183,7 @@ public class FanAutomationTests : IDisposable
         _mockHaContext.ShouldHaveCalledSwitchTurnOff(_entities.Fan.EntityId);
     }
 
-    [Fact(Skip = "Temporarily disabled - bedroom automation logic under review")]
+    [Fact(Skip = "Quarantined: bedroom automation logic under review | issue HA-TEST-2002 | expires 2026-06-30")]
     public void CompleteMotionCycle_WithManualActivation_Should_FollowExpectedPattern()
     {
         // Arrange - Set ShouldActivateFan to true
@@ -231,7 +218,7 @@ public class FanAutomationTests : IDisposable
         _mockHaContext.ShouldHaveCalledSwitchTurnOff(_entities.Fan.EntityId);
     }
 
-    [Fact(Skip = "Temporarily disabled - fan automation logic under review")]
+    [Fact(Skip = "Quarantined: fan automation logic under review | issue HA-TEST-2004 | expires 2026-06-30")]
     public void AutomatedFanOperation_Should_NotChangeShouldActivateFan()
     {
         // Arrange - Set ShouldActivateFan to true initially
@@ -302,7 +289,7 @@ public class FanAutomationTests : IDisposable
         _mockHaContext.ShouldNeverHaveCalledSwitch(_entities.Fan.EntityId);
     }
 
-    [Fact(Skip = "Temporarily disabled - fan automation logic under review")]
+    [Fact(Skip = "Quarantined: fan automation logic under review | issue HA-TEST-2004 | expires 2026-06-30")]
     public void MultipleMotionEvents_Should_HandleCorrectly()
     {
         // Arrange - Set ShouldActivateFan to true
@@ -372,11 +359,14 @@ public class FanAutomationTests : IDisposable
         act.Should().NotThrow();
     }
 
-    public void Dispose()
+    protected override void Dispose(bool disposing)
     {
-        _automation?.Dispose();
+        if (disposing)
+        {
+            _automation?.Dispose();
+        }
 
-        _mockHaContext?.Dispose();
+        base.Dispose(disposing);
     }
 
     /// <summary>

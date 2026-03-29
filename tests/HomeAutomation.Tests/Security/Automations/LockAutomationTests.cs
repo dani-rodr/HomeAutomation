@@ -8,10 +8,10 @@ namespace HomeAutomation.Tests.Security.Automations;
 /// Comprehensive behavioral tests for Security LockAutomation covering critical security functionality
 /// Tests lock/unlock behavior, NFC integration, auto-lock logic, door state coordination, and notifications
 /// </summary>
-public class LockAutomationTests : IDisposable
+public class LockAutomationTests : AutomationTestBase<LockAutomation>
 {
-    private readonly MockHaContext _mockHaContext;
-    private readonly Mock<ILogger<LockAutomation>> _mockLogger;
+    private MockHaContext _mockHaContext => HaContext;
+    private Mock<ILogger<LockAutomation>> _mockLogger => Logger;
     private readonly Mock<INotificationServices> _mockNotificationServices;
     private readonly Mock<IEventHandler> _mockEventHandler;
     private readonly TestEntities _entities;
@@ -19,8 +19,6 @@ public class LockAutomationTests : IDisposable
 
     public LockAutomationTests()
     {
-        _mockHaContext = new MockHaContext();
-        _mockLogger = new Mock<ILogger<LockAutomation>>();
         _mockNotificationServices = new Mock<INotificationServices>();
         _mockEventHandler = new Mock<IEventHandler>();
 
@@ -42,14 +40,7 @@ public class LockAutomationTests : IDisposable
             _mockLogger.Object
         );
 
-        // Start the automation to set up subscriptions
-        _automation.StartAutomation();
-
-        // Simulate master switch being ON to enable automation logic
-        _mockHaContext.SimulateStateChange(_entities.MasterSwitch.EntityId, "off", "on");
-
-        // Clear any initialization service calls
-        _mockHaContext.ClearServiceCalls();
+        StartAutomation(_automation, _entities.MasterSwitch.EntityId);
     }
 
     #region Lock State Changes Tests
@@ -244,7 +235,7 @@ public class LockAutomationTests : IDisposable
 
     #region Auto-Lock After Time Tests
 
-    [Fact(Skip = "Temporarily disabled - needs investigation")]
+    [Fact(Skip = "Quarantined: lock automation edge case needs investigation | issue HA-TEST-2008 | expires 2026-06-30")]
     public void AutoLock_UnlockedFor5Minutes_WithDoorClosedAndMotionOn_Should_LockDoor()
     {
         // Arrange - Set conditions for auto-lock: door closed, motion on, house status off, lock unlocked
@@ -603,9 +594,13 @@ public class LockAutomationTests : IDisposable
 
     #endregion
 
-    public void Dispose()
+    protected override void Dispose(bool disposing)
     {
-        _automation?.Dispose();
-        _mockHaContext?.Dispose();
+        if (disposing)
+        {
+            _automation.Dispose();
+        }
+
+        base.Dispose(disposing);
     }
 }

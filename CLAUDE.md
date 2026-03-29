@@ -17,10 +17,10 @@ dotnet csharpier format .           # Format (CSharpier)
 dotnet csharpier check .            # Check formatting
 dotnet format <project> --verify-no-changes   # Verify analyzer / editorconfig issues
 .\publish.ps1                       # Deploy to Home Assistant add-on
-.\test-coverage.ps1                 # Interactive test + coverage workflow
+dotnet test --settings ./build/coverlet.runsettings --collect:"XPlat Code Coverage"   # Coverage workflow
 ```
 
-> Coverage scope: only `src/apps/**` (automation logic). 80 % threshold.
+> Coverage scope: only `src/apps/**` (automation logic). 40 % staged baseline threshold.
 
 ---
 

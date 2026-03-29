@@ -8,11 +8,11 @@ namespace HomeAutomation.Tests.Area.Bathroom.Automations;
 /// Comprehensive behavioral tests for Bathroom MotionAutomation using clean assertion syntax
 /// Tests only automation behavior with mocked dimming controller for proper separation of concerns
 /// </summary>
-public class LightAutomationTests : IDisposable
+public class LightAutomationTests : AutomationTestBase<LightAutomation>
 {
-    private readonly MockHaContext _mockHaContext;
+    private MockHaContext _mockHaContext => HaContext;
 
-    private readonly Mock<ILogger<LightAutomation>> _mockLogger;
+    private Mock<ILogger<LightAutomation>> _mockLogger => Logger;
 
     private readonly Mock<IDimmingLightController> _mockDimmingController;
 
@@ -22,10 +22,6 @@ public class LightAutomationTests : IDisposable
 
     public LightAutomationTests()
     {
-        _mockHaContext = new MockHaContext();
-
-        _mockLogger = new Mock<ILogger<LightAutomation>>();
-
         _mockDimmingController = new Mock<IDimmingLightController>();
 
         // Create test entities wrapper - much simpler!
@@ -40,15 +36,7 @@ public class LightAutomationTests : IDisposable
 
         // Start the automation to set up subscriptions
 
-        _automation.StartAutomation();
-
-        // Simulate master switch being ON to enable automation logic
-
-        _mockHaContext.SimulateStateChange(_entities.MasterSwitch.EntityId, "off", "on");
-
-        // Clear any initialization service calls
-
-        _mockHaContext.ClearServiceCalls();
+        StartAutomation(_automation, _entities.MasterSwitch.EntityId);
     }
 
     [Fact]
@@ -325,13 +313,15 @@ public class LightAutomationTests : IDisposable
         _mockHaContext.ShouldHaveCalledSwitchTurnOn(_entities.MasterSwitch.EntityId);
     }
 
-    public void Dispose()
+    protected override void Dispose(bool disposing)
     {
-        _automation?.Dispose();
+        if (disposing)
+        {
+            _automation.Dispose();
+            _mockDimmingController.Object.Dispose();
+        }
 
-        _mockHaContext?.Dispose();
-
-        _mockDimmingController?.Object.Dispose();
+        base.Dispose(disposing);
     }
 
     /// <summary>

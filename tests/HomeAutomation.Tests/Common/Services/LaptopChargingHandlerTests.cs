@@ -8,16 +8,15 @@ namespace HomeAutomation.Tests.Common.Services;
 /// charging logic, async operations, cancellation scenarios, and resource disposal.
 /// Tests battery level thresholds, force charging, and laptop power state coordination.
 /// </summary>
-public class LaptopChargingHandlerTests : IDisposable
+public class LaptopChargingHandlerTests : HaContextTestBase
 {
-    private readonly MockHaContext _mockHaContext;
+    private MockHaContext _mockHaContext => HaContext;
     private readonly Mock<ILogger<LaptopChargingHandler>> _mockLogger;
     private readonly TestBatteryHandlerEntities _entities;
     private readonly LaptopChargingHandler _batteryHandler;
 
     public LaptopChargingHandlerTests()
     {
-        _mockHaContext = new MockHaContext();
         _mockLogger = new Mock<ILogger<LaptopChargingHandler>>();
         _entities = new TestBatteryHandlerEntities(_mockHaContext);
         _batteryHandler = new LaptopChargingHandler(_entities, _mockLogger.Object);
@@ -351,7 +350,7 @@ public class LaptopChargingHandlerTests : IDisposable
         _mockHaContext.ShouldHaveCalledSwitchTurnOff(_entities.Power.EntityId);
     }
 
-    [Fact(Skip = "Temporarily disabled, test is passing although performance is not ideal")]
+    [Fact(Skip = "Quarantined: performance-sensitive charging behavior | issue HA-TEST-2006 | expires 2026-06-30")]
     public void WeekendCharging_Saturday10AM_Should_StartChargingSession()
     {
         // Arrange - Start monitoring first to set up cron schedules
@@ -376,7 +375,7 @@ public class LaptopChargingHandlerTests : IDisposable
         subscription.Dispose();
     }
 
-    [Fact(Skip = "Temporarily disabled, test is passing although performance is not ideal")]
+    [Fact(Skip = "Quarantined: performance-sensitive charging behavior | issue HA-TEST-2006 | expires 2026-06-30")]
     public void WeekendCharging_Sunday6PM_Should_StartChargingSession()
     {
         // Arrange - Start monitoring first to set up cron schedules
@@ -401,7 +400,7 @@ public class LaptopChargingHandlerTests : IDisposable
         subscription.Dispose();
     }
 
-    [Fact(Skip = "Temporarily disabled, test is passing although performance is not ideal")]
+    [Fact(Skip = "Quarantined: performance-sensitive charging behavior | issue HA-TEST-2006 | expires 2026-06-30")]
     public void WeekendCharging_Monday6AM_Should_StartPreWakeChargingSession()
     {
         // Arrange - Start monitoring first to set up cron schedules
@@ -554,10 +553,14 @@ public class LaptopChargingHandlerTests : IDisposable
 
     #endregion
 
-    public void Dispose()
+    protected override void Dispose(bool disposing)
     {
-        _batteryHandler?.Dispose();
-        _mockHaContext?.Dispose();
+        if (disposing)
+        {
+            _batteryHandler?.Dispose();
+        }
+
+        base.Dispose(disposing);
     }
 
     /// <summary>

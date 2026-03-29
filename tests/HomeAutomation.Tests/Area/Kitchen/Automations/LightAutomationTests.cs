@@ -11,11 +11,11 @@ namespace HomeAutomation.Tests.Area.Kitchen.Automations;
 /// NOTE: Kitchen automation uses IsOn().ForSeconds(5) which creates a 5-second delay before turning on light.
 /// This is different from other automations that turn on lights immediately.
 /// </summary>
-public class LightAutomationTests : IDisposable
+public class LightAutomationTests : AutomationTestBase<LightAutomation>
 {
-    private readonly MockHaContext _mockHaContext;
+    private MockHaContext _mockHaContext => HaContext;
 
-    private readonly Mock<ILogger<LightAutomation>> _mockLogger;
+    private Mock<ILogger<LightAutomation>> _mockLogger => Logger;
 
     private readonly TestEntities _entities;
 
@@ -23,10 +23,6 @@ public class LightAutomationTests : IDisposable
 
     public LightAutomationTests()
     {
-        _mockHaContext = new MockHaContext();
-
-        _mockLogger = new Mock<ILogger<LightAutomation>>();
-
         // Create test entities wrapper with Kitchen-specific entities
 
         _entities = new TestEntities(_mockHaContext);
@@ -35,15 +31,7 @@ public class LightAutomationTests : IDisposable
 
         // Start the automation to set up subscriptions
 
-        _automation.StartAutomation();
-
-        // Simulate master switch being ON to enable automation logic
-
-        _mockHaContext.SimulateStateChange(_entities.MasterSwitch.EntityId, "off", "on");
-
-        // Clear any initialization service calls
-
-        _mockHaContext.ClearServiceCalls();
+        StartAutomation(_automation, _entities.MasterSwitch.EntityId);
     }
 
     #region Custom Timing Tests (Kitchen-Specific)
@@ -586,11 +574,14 @@ public class LightAutomationTests : IDisposable
         _mockHaContext.ShouldHaveNoServiceCalls();
     }
 
-    public void Dispose()
+    protected override void Dispose(bool disposing)
     {
-        _automation?.Dispose();
+        if (disposing)
+        {
+            _automation.Dispose();
+        }
 
-        _mockHaContext?.Dispose();
+        base.Dispose(disposing);
     }
 
     #endregion

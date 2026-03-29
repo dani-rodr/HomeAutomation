@@ -7,6 +7,23 @@ namespace HomeAutomation.Tests.Infrastructure;
 /// </summary>
 public static class StateChangeHelpers
 {
+    private static readonly DateTimeOffset ButtonPressBaseline = new(
+        2024,
+        1,
+        1,
+        0,
+        0,
+        0,
+        TimeSpan.Zero
+    );
+
+    private static long _buttonPressSequence;
+
+    private static string NextButtonPressState() =>
+        ButtonPressBaseline
+            .AddMilliseconds(Interlocked.Increment(ref _buttonPressSequence))
+            .ToString("yyyy-MM-ddTHH:mm:ss.fffZ");
+
     /// <summary>
     /// Creates a StateChange for an entity transitioning from one state to another
     /// </summary>
@@ -192,25 +209,25 @@ public static class StateChangeHelpers
     /// Creates a StateChange for a button press
     /// </summary>
     public static StateChange CreateButtonPress(ButtonEntity button) =>
-        CreateStateChange(button, "", DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"));
+        CreateStateChange(button, "", NextButtonPressState());
 
     /// <summary>
     /// Creates a StateChange for a button press with user context
     /// </summary>
     public static StateChange CreateButtonPress(ButtonEntity button, string? userId) =>
-        CreateStateChange(button, "", DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"), userId);
+        CreateStateChange(button, "", NextButtonPressState(), userId);
 
     /// <summary>
     /// Creates a StateChange for an input button press
     /// </summary>
     public static StateChange CreateButtonPress(InputButtonEntity button) =>
-        CreateStateChange(button, "", DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"));
+        CreateStateChange(button, "", NextButtonPressState());
 
     /// <summary>
     /// Creates a StateChange for an input button press with user context
     /// </summary>
     public static StateChange CreateButtonPress(InputButtonEntity button, string? userId) =>
-        CreateStateChange(button, "", DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"), userId);
+        CreateStateChange(button, "", NextButtonPressState(), userId);
 
     /// <summary>
     /// Creates a StateChange for a lock being locked

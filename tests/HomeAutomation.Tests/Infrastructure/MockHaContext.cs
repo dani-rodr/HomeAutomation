@@ -1,5 +1,5 @@
-using Microsoft.Reactive.Testing;
 using System.Text.Json;
+using Microsoft.Reactive.Testing;
 
 namespace HomeAutomation.Tests.Infrastructure;
 

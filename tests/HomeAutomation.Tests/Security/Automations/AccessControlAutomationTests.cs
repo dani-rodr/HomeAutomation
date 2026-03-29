@@ -8,10 +8,10 @@ namespace HomeAutomation.Tests.Security.Automations;
 /// Comprehensive behavioral tests for AccessControlAutomation covering critical access control functionality
 /// Tests home/away triggers, lock automation, door state coordination, and suppression logic
 /// </summary>
-public class AccessControlAutomationTests : IDisposable
+public class AccessControlAutomationTests : AutomationTestBase<AccessControlAutomation>
 {
-    private readonly MockHaContext _mockHaContext;
-    private readonly Mock<ILogger<AccessControlAutomation>> _mockLogger;
+    private MockHaContext _mockHaContext => HaContext;
+    private Mock<ILogger<AccessControlAutomation>> _mockLogger => Logger;
     private readonly TestEntities _entities;
     private readonly Mock<IPersonController> _mockPerson1Controller;
     private readonly Mock<IPersonController> _mockPerson2Controller;
@@ -26,9 +26,6 @@ public class AccessControlAutomationTests : IDisposable
 
     public AccessControlAutomationTests()
     {
-        _mockHaContext = new MockHaContext();
-        _mockLogger = new Mock<ILogger<AccessControlAutomation>>();
-
         // Create test entities wrapper
         _entities = new TestEntities(_mockHaContext);
 
@@ -44,11 +41,7 @@ public class AccessControlAutomationTests : IDisposable
 
         _automation = new AccessControlAutomation(personControllers, _entities, _mockLogger.Object);
 
-        // Start the automation to set up subscriptions
-        _automation.StartAutomation();
-
-        // Clear any initialization service calls
-        _mockHaContext.ClearServiceCalls();
+        StartAutomation(_automation);
     }
 
     #region Home Trigger Tests
@@ -784,19 +777,23 @@ public class AccessControlAutomationTests : IDisposable
 
     #endregion
 
-    public void Dispose()
+    protected override void Dispose(bool disposing)
     {
-        _automation?.Dispose();
-        _mockHaContext?.Dispose();
+        if (disposing)
+        {
+            _automation.Dispose();
 
-        // Dispose observable subjects
-        _person1ArrivedHome?.Dispose();
-        _person1LeftHome?.Dispose();
-        _person1DirectUnlock?.Dispose();
-        _person2ArrivedHome?.Dispose();
-        _person2LeftHome?.Dispose();
+            // Dispose observable subjects
+            _person1ArrivedHome.Dispose();
+            _person1LeftHome.Dispose();
+            _person1DirectUnlock.Dispose();
+            _person2ArrivedHome.Dispose();
+            _person2LeftHome.Dispose();
 
-        // Reset scheduler to default
-        SchedulerProvider.Reset();
+            // Reset scheduler to default
+            SchedulerProvider.Reset();
+        }
+
+        base.Dispose(disposing);
     }
 }

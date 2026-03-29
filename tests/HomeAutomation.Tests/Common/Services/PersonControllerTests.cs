@@ -3,9 +3,9 @@ using HomeAutomation.apps.Common.Services;
 
 namespace HomeAutomation.Tests.Common.Services;
 
-public class PersonControllerTests : IDisposable
+public class PersonControllerTests : HaContextTestBase
 {
-    private readonly MockHaContext _mockHaContext;
+    private MockHaContext _mockHaContext => HaContext;
     private readonly TestEntities _entities;
     private readonly Mock<ILogger<PersonController>> _mockLogger;
     private readonly PersonController _controller;
@@ -15,7 +15,6 @@ public class PersonControllerTests : IDisposable
 
     public PersonControllerTests()
     {
-        _mockHaContext = new MockHaContext();
         _mockLogger = new Mock<ILogger<PersonController>>();
 
         _entities = new TestEntities(_mockHaContext);
@@ -551,10 +550,14 @@ public class PersonControllerTests : IDisposable
 
     #endregion
 
-    public void Dispose()
+    protected override void Dispose(bool disposing)
     {
-        _controller.Dispose();
-        _mockHaContext.Dispose();
+        if (disposing)
+        {
+            _controller.Dispose();
+        }
+
+        base.Dispose(disposing);
     }
 
     private class TestEntities(IHaContext context) : IPersonEntities

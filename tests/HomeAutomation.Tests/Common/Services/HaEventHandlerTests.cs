@@ -6,9 +6,9 @@ namespace HomeAutomation.Tests.Common.Services;
 /// Comprehensive tests for HaEventHandler service
 /// Tests event subscription, filtering, NFC/mobile event handling, JSON parsing, and resource management
 /// </summary>
-public class HaEventHandlerTests : IDisposable
+public class HaEventHandlerTests : HaContextTestBase
 {
-    private readonly MockHaContext _mockHaContext;
+    private MockHaContext _mockHaContext => HaContext;
     private readonly Mock<ILogger<HaEventHandler>> _mockLogger;
     private readonly HaEventHandler _eventHandler;
 
@@ -18,7 +18,6 @@ public class HaEventHandlerTests : IDisposable
 
     public HaEventHandlerTests()
     {
-        _mockHaContext = new MockHaContext();
         _mockLogger = new Mock<ILogger<HaEventHandler>>();
         _eventHandler = new HaEventHandler(_mockHaContext, _mockLogger.Object);
     }
@@ -571,7 +570,7 @@ public class HaEventHandlerTests : IDisposable
 
     #region Integration Tests
 
-    [Fact(Skip = "Temporarily disabled - needs investigation")]
+    [Fact(Skip = "Quarantined: event handling edge case needs investigation | issue HA-TEST-2007 | expires 2026-06-30")]
     public void CompleteWorkflow_NfcScanToUserIdExtraction_Should_WorkEndToEnd()
     {
         // Arrange
@@ -685,9 +684,13 @@ public class HaEventHandlerTests : IDisposable
 
     #endregion
 
-    public void Dispose()
+    protected override void Dispose(bool disposing)
     {
-        _eventHandler?.Dispose();
-        _mockHaContext?.Dispose();
+        if (disposing)
+        {
+            _eventHandler?.Dispose();
+        }
+
+        base.Dispose(disposing);
     }
 }

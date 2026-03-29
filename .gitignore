@@ -83,3 +83,6 @@ TestResults/
 coverage*.json
 coverage*.xml
 coverage*.info
+
+# Local git worktrees
+.worktrees/

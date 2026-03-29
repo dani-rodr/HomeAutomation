@@ -10,7 +10,7 @@
   <!-- Code Coverage Configuration -->
   <PropertyGroup>
     <!-- Coverage thresholds -->
-    <Threshold>0</Threshold>
+    <Threshold>40</Threshold>
     <ThresholdType>line,branch,method</ThresholdType>
     <ThresholdStat>minimum</ThresholdStat>
     <!-- Coverage output settings -->

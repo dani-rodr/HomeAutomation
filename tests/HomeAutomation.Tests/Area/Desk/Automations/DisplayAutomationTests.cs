@@ -15,10 +15,10 @@ namespace HomeAutomation.Tests.Area.Desk.Automations;
 /// - Complex state decision logic and fallback behavior
 /// - Master switch automation lifecycle management
 /// </summary>
-public class DisplayAutomationTests : IDisposable
+public class DisplayAutomationTests : AutomationTestBase<DisplayAutomation>
 {
-    private readonly MockHaContext _mockHaContext;
-    private readonly Mock<ILogger<DisplayAutomation>> _mockLogger;
+    private MockHaContext _mockHaContext => HaContext;
+    private Mock<ILogger<DisplayAutomation>> _mockLogger => Logger;
     private readonly Mock<IEventHandler> _mockEventHandler;
     private readonly Mock<ILogger<LgDisplay>> _mockMonitorLogger;
     private readonly Mock<ILogger<Desktop>> _mockDesktopLogger;
@@ -44,8 +44,6 @@ public class DisplayAutomationTests : IDisposable
 
     public DisplayAutomationTests()
     {
-        _mockHaContext = new MockHaContext();
-        _mockLogger = new Mock<ILogger<DisplayAutomation>>();
         _mockEventHandler = new Mock<IEventHandler>();
         _mockMonitorLogger = new Mock<ILogger<LgDisplay>>();
         _mockDesktopLogger = new Mock<ILogger<Desktop>>();
@@ -692,16 +690,20 @@ public class DisplayAutomationTests : IDisposable
 
     #endregion
 
-    public void Dispose()
+    protected override void Dispose(bool disposing)
     {
-        _automation?.Dispose();
-        _desktop?.Dispose();
-        _laptop?.Dispose();
-        _nfcScanSubject?.Dispose();
-        _showPcSubject?.Dispose();
-        _hidePcSubject?.Dispose();
-        _showLaptopSubject?.Dispose();
-        _hideLaptopSubject?.Dispose();
-        _mockHaContext?.Dispose();
+        if (disposing)
+        {
+            _automation.Dispose();
+            _desktop.Dispose();
+            _laptop.Dispose();
+            _nfcScanSubject.Dispose();
+            _showPcSubject.Dispose();
+            _hidePcSubject.Dispose();
+            _showLaptopSubject.Dispose();
+            _hideLaptopSubject.Dispose();
+        }
+
+        base.Dispose(disposing);
     }
 }

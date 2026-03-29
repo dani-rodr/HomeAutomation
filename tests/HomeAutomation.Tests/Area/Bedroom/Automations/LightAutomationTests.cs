@@ -8,11 +8,11 @@ namespace HomeAutomation.Tests.Area.Bedroom.Automations;
 /// Tests complex functionality including double-click detection, physical switch operations,
 /// and master switch disabling behavior with enhanced readability
 /// </summary>
-public class LightAutomationTests : IDisposable
+public class LightAutomationTests : AutomationTestBase<LightAutomation>
 {
-    private readonly MockHaContext _mockHaContext;
+    private MockHaContext _mockHaContext => HaContext;
 
-    private readonly Mock<ILogger<LightAutomation>> _mockLogger;
+    private Mock<ILogger<LightAutomation>> _mockLogger => Logger;
 
     private readonly TestEntities _entities;
 
@@ -20,29 +20,15 @@ public class LightAutomationTests : IDisposable
 
     public LightAutomationTests()
     {
-        _mockHaContext = new MockHaContext();
-
-        _mockLogger = new Mock<ILogger<LightAutomation>>();
-
         // Create test entities wrapper
 
         _entities = new TestEntities(_mockHaContext);
 
         _automation = new LightAutomation(_entities, _mockLogger.Object);
 
-        // Start the automation to set up subscriptions
-
-        _automation.StartAutomation();
-
         _mockHaContext.ShouldHaveCalledLightExactly(_entities.Light.EntityId, "toggle", 0);
 
-        // Simulate master switch being ON to enable automation logic
-
-        _mockHaContext.SimulateStateChange(_entities.MasterSwitch.EntityId, "off", "on");
-
-        // Clear any initialization service calls
-
-        _mockHaContext.ClearServiceCalls();
+        StartAutomation(_automation, _entities.MasterSwitch.EntityId);
     }
 
     [Fact]
@@ -704,11 +690,14 @@ public class LightAutomationTests : IDisposable
     #endregion
 
 
-    public void Dispose()
+    protected override void Dispose(bool disposing)
     {
-        _automation?.Dispose();
+        if (disposing)
+        {
+            _automation?.Dispose();
+        }
 
-        _mockHaContext?.Dispose();
+        base.Dispose(disposing);
     }
 
     /// <summary>

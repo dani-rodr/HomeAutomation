@@ -7,9 +7,9 @@ namespace HomeAutomation.Tests.Common.Services;
 /// Comprehensive tests for DimmingLightController service
 /// Tests dimming logic, async behavior, configuration, and cancellation scenarios
 /// </summary>
-public class DimmingLightControllerTests : IDisposable
+public class DimmingLightControllerTests : HaContextTestBase
 {
-    private readonly MockHaContext _mockHaContext;
+    private MockHaContext _mockHaContext => HaContext;
     private readonly NumberEntity _sensorDelay;
     private readonly Mock<ILogger<DimmingLightController>> _mockLogger;
     private readonly LightEntity _light;
@@ -17,7 +17,6 @@ public class DimmingLightControllerTests : IDisposable
 
     public DimmingLightControllerTests()
     {
-        _mockHaContext = new MockHaContext();
         _sensorDelay = new NumberEntity(_mockHaContext, "number.test_sensor_delay");
         _light = new LightEntity(_mockHaContext, "light.test_light");
         _mockLogger = new Mock<ILogger<DimmingLightController>>();
@@ -275,9 +274,13 @@ public class DimmingLightControllerTests : IDisposable
         );
     }
 
-    public void Dispose()
+    protected override void Dispose(bool disposing)
     {
-        _controller?.Dispose();
-        _mockHaContext?.Dispose();
+        if (disposing)
+        {
+            _controller?.Dispose();
+        }
+
+        base.Dispose(disposing);
     }
 }

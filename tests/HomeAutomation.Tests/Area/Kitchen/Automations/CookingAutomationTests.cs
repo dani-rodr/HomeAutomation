@@ -9,11 +9,11 @@ namespace HomeAutomation.Tests.Area.Kitchen.Automations;
 /// Note: Time-based filtering (WhenStateIsForMinutes) is a framework feature tested separately
 /// These tests focus on the business logic that executes after the time thresholds are met
 /// </summary>
-public class CookingAutomationTests : IDisposable
+public class CookingAutomationTests : AutomationTestBase<CookingAutomation>
 {
-    private readonly MockHaContext _mockHaContext;
+    private MockHaContext _mockHaContext => HaContext;
 
-    private readonly Mock<ILogger<CookingAutomation>> _mockLogger;
+    private Mock<ILogger<CookingAutomation>> _mockLogger => Logger;
 
     private readonly TestCookingEntities _entities;
 
@@ -21,10 +21,6 @@ public class CookingAutomationTests : IDisposable
 
     public CookingAutomationTests()
     {
-        _mockHaContext = new MockHaContext();
-
-        _mockLogger = new Mock<ILogger<CookingAutomation>>();
-
         // Create test entities wrapper
 
         _entities = new TestCookingEntities(_mockHaContext);
@@ -33,11 +29,7 @@ public class CookingAutomationTests : IDisposable
 
         // Start the automation to set up subscriptions
 
-        _automation.StartAutomation();
-
-        // Clear any initialization service calls
-
-        _mockHaContext.ClearServiceCalls();
+        StartAutomation(_automation);
     }
 
     #region Timing Tests
@@ -540,11 +532,14 @@ public class CookingAutomationTests : IDisposable
     #endregion
 
 
-    public void Dispose()
+    protected override void Dispose(bool disposing)
     {
-        _automation?.Dispose();
+        if (disposing)
+        {
+            _automation.Dispose();
+        }
 
-        _mockHaContext?.Dispose();
+        base.Dispose(disposing);
     }
 
     /// <summary>

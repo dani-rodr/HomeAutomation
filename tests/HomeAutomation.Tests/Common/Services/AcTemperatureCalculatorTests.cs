@@ -4,9 +4,9 @@ using HomeAutomation.apps.Common.Services.Schedulers;
 
 namespace HomeAutomation.Tests.Common.Services;
 
-public class AcTemperatureCalculatorTests
+public class AcTemperatureCalculatorTests : HaContextTestBase
 {
-    private readonly MockHaContext _mockHaContext;
+    private MockHaContext _mockHaContext => HaContext;
     private readonly WeatherEntity _weather;
     private readonly InputBooleanEntity _powerSaving;
     private readonly Mock<ILogger<AcTemperatureCalculator>> _mockLogger;
@@ -15,7 +15,6 @@ public class AcTemperatureCalculatorTests
 
     public AcTemperatureCalculatorTests()
     {
-        _mockHaContext = new MockHaContext();
         _weather = new WeatherEntity(_mockHaContext, "weather.home");
         _powerSaving = new InputBooleanEntity(_mockHaContext, "input_boolean.power_saving_mode");
         _mockLogger = new Mock<ILogger<AcTemperatureCalculator>>();

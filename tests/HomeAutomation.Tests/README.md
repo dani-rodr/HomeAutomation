@@ -27,7 +27,7 @@ dotnet.exe test --collect:"XPlat Code Coverage"
 
 ## Code Coverage
 
-This project includes comprehensive code coverage analysis with 80% minimum threshold.
+This project includes code coverage analysis with a staged minimum threshold.
 
 ### Basic Coverage Commands
 
@@ -36,10 +36,10 @@ This project includes comprehensive code coverage analysis with 80% minimum thre
 dotnet.exe test --collect:"XPlat Code Coverage"
 
 # Run tests with custom coverage settings
-dotnet.exe test --settings coverlet.runsettings
+dotnet.exe test --settings ./build/coverlet.runsettings
 
-# Run with coverage threshold enforcement (fails if below 80%)
-dotnet.exe test /p:CollectCoverage=true /p:Threshold=80
+# Run with coverage threshold enforcement (fails if below project threshold)
+dotnet.exe test /p:CollectCoverage=true
 ```
 
 ### HTML Coverage Reports
@@ -68,7 +68,7 @@ The project is configured to generate multiple coverage formats:
 
 Coverage settings are configured in:
 - `HomeAutomation.Tests.csproj` - MSBuild properties for thresholds and exclusions
-- `coverlet.runsettings` - Detailed collector settings for advanced scenarios
+- `build/coverlet.runsettings` - Detailed collector settings for advanced scenarios
 
 **Exclusions:**
 - Generated code (`HomeAssistantGenerated.cs`)
@@ -77,8 +77,24 @@ Coverage settings are configured in:
 - Obsolete/deprecated code
 
 **Thresholds:**
-- Minimum 80% coverage for lines, branches, and methods
+- Minimum 40% coverage for lines, branches, and methods (staged baseline)
 - Configurable per coverage type in project file
+
+## Skip Policy
+
+Skipped tests are allowed only when all three items exist:
+
+1. A concrete reason in the `[Fact]` or `[Theory]` `Skip` message.
+2. A linked tracking issue identifier in the skip message (for example `HA-123`).
+3. An expiry date in `YYYY-MM-DD` format in the skip message.
+
+Preferred format:
+
+```csharp
+[Fact(Skip = "HA-123 flaky under scheduler migration; expires 2026-06-30")]
+```
+
+Avoid long-term commented-out test classes. Re-enable, rewrite, or delete with rationale.
 
 ## Test Frameworks
 

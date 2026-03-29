@@ -5,11 +5,11 @@ using HomeAutomation.apps.Common.Services.Schedulers;
 
 namespace HomeAutomation.Tests.Area.Bedroom.Automations;
 
-public class ClimateAutomationTests : IDisposable
+public partial class ClimateAutomationTests : AutomationTestBase<ClimateAutomation>
 {
-    private readonly MockHaContext _mockHaContext;
+    private MockHaContext _mockHaContext => HaContext;
 
-    private readonly Mock<ILogger<ClimateAutomation>> _mockLogger;
+    private Mock<ILogger<ClimateAutomation>> _mockLogger => Logger;
 
     private readonly Mock<IClimateScheduler> _mockScheduler;
 
@@ -19,10 +19,6 @@ public class ClimateAutomationTests : IDisposable
 
     public ClimateAutomationTests()
     {
-        _mockHaContext = new MockHaContext();
-
-        _mockLogger = new Mock<ILogger<ClimateAutomation>>();
-
         _mockScheduler = new Mock<IClimateScheduler>();
 
         _entities = new TestEntities(_mockHaContext);
@@ -33,11 +29,7 @@ public class ClimateAutomationTests : IDisposable
 
         _automation = new ClimateAutomation(_entities, _mockScheduler.Object, _mockLogger.Object);
 
-        _automation.StartAutomation();
-
-        _mockHaContext.SimulateStateChange(_entities.MasterSwitch.EntityId, "off", "on");
-
-        _mockHaContext.ClearServiceCalls();
+        StartAutomation(_automation, _entities.MasterSwitch.EntityId);
     }
 
     private void SetupDefaultEntityStates()
@@ -300,7 +292,7 @@ public class ClimateAutomationTests : IDisposable
         _mockHaContext.ShouldHaveCalledClimateSetTemperature(_entities.AirConditioner.EntityId);
     }
 
-    [Fact(Skip = "Temporarily disabled - bedroom automation logic under review")]
+    [Fact(Skip = "Quarantined: bedroom automation logic under review | issue HA-TEST-2002 | expires 2026-06-30")]
     public void DoorOpenFor5Minutes_Should_TriggerAcSettingApplication()
     {
         // Note: This test simulates the time-based filter behavior
@@ -332,7 +324,7 @@ public class ClimateAutomationTests : IDisposable
         _mockHaContext.ShouldHaveCalledClimateSetTemperature(_entities.AirConditioner.EntityId);
     }
 
-    [Fact(Skip = "Temporarily disabled - bedroom automation logic under review")]
+    [Fact(Skip = "Quarantined: bedroom automation logic under review | issue HA-TEST-2002 | expires 2026-06-30")]
     public void MotionClearedFor10Minutes_Should_TriggerAcSettingApplication()
     {
         // Note: This test simulates the time-based filter behavior
@@ -354,7 +346,7 @@ public class ClimateAutomationTests : IDisposable
     #region House Presence Automation Tests
 
 
-    [Fact(Skip = "Temporarily disabled - bedroom automation logic under review")]
+    [Fact(Skip = "Quarantined: bedroom automation logic under review | issue HA-TEST-2002 | expires 2026-06-30")]
     public void HouseEmpty1Hour_Should_TurnOffAc()
     {
         // Note: This simulates the time-based behavior
@@ -374,7 +366,7 @@ public class ClimateAutomationTests : IDisposable
         _mockHaContext.ShouldHaveCalledClimateTurnOff(_entities.AirConditioner.EntityId);
     }
 
-    [Fact(Skip = "Temporarily disabled - bedroom automation logic under review")]
+    [Fact(Skip = "Quarantined: bedroom automation logic under review | issue HA-TEST-2002 | expires 2026-06-30")]
     public void HouseOccupiedAfterLongAbsence_Should_TurnOnAcAndApplySettings()
     {
         // Arrange - Setup house as previously empty
@@ -573,7 +565,7 @@ public class ClimateAutomationTests : IDisposable
     #region Fan Mode Toggle Tests
 
 
-    [Fact(Skip = "Temporarily disabled - bedroom automation logic under review")]
+    [Fact(Skip = "Quarantined: bedroom automation logic under review | issue HA-TEST-2002 | expires 2026-06-30")]
     public void AcFanModeToggle_ValidButtonPress_Should_CycleFanModes()
     {
         // Arrange - Set current fan mode to AUTO
@@ -598,7 +590,7 @@ public class ClimateAutomationTests : IDisposable
         _mockHaContext.ShouldHaveCalledClimateSetFanMode(_entities.AirConditioner.EntityId);
     }
 
-    [Fact(Skip = "Temporarily disabled - bedroom automation logic under review")]
+    [Fact(Skip = "Quarantined: bedroom automation logic under review | issue HA-TEST-2002 | expires 2026-06-30")]
     public void AcFanModeToggle_FromHigh_Should_CycleBackToAuto()
     {
         // Arrange - Set current fan mode to HIGH (last in cycle)
@@ -874,241 +866,14 @@ public class ClimateAutomationTests : IDisposable
     #endregion
 
 
-    #region Comprehensive Theory Tests for Temperature Selection
-
-
-    [Theory]
-    [InlineData(true, false, TimeBlock.Sunset, 23, "cool", "Occupied + closed door = CoolTemp")]
-    [InlineData(false, true, TimeBlock.Sunset, 27, "cool", "Unoccupied + open door = PassiveTemp")]
-    [InlineData(true, true, TimeBlock.Sunset, 25, "cool", "Occupied + open door = NormalTemp")]
-    [InlineData(
-        false,
-        false,
-        TimeBlock.Sunset,
-        27,
-        "cool",
-        "Unoccupied + closed door = PassiveTemp"
-    )]
-    public void ClimateAutomation_TemperatureSelection_Should_Follow_Logic(
-        bool occupied,
-        bool doorOpen,
-        TimeBlock timeBlock,
-        int expectedTemp,
-        string expectedMode,
-        string scenario
-    )
+    protected override void Dispose(bool disposing)
     {
-        // Arrange - Setup custom scheduler mock for this test
-
-        var testSetting = new AcSettings(
-            NormalTemp: 25,
-            PowerSavingTemp: 27,
-            CoolTemp: 23,
-            PassiveTemp: 27,
-            Mode: expectedMode,
-            ActivateFan: false,
-            HourStart: 18,
-            HourEnd: 0
-        );
-
-        SetupSchedulerMock(timeBlock, testSetting);
-
-        _mockHaContext.ClearServiceCalls(); // clear before state change
-
-        // Setup entity states based on test parameters
-
-        _mockHaContext.SetEntityState(_entities.MotionSensor.EntityId, occupied ? "on" : "off");
-
-        _mockHaContext.SetEntityState(_entities.Door.EntityId, doorOpen ? "on" : "off");
-
-        _mockHaContext.SetEntityState(_entities.AirConditioner.EntityId, "cool");
-
-        // Clear any previous service calls
-
-        _mockHaContext.ClearServiceCalls();
-
-        // Act - Trigger automation through motion state change
-
-        var stateChange = StateChangeHelpers.MotionDetected(_entities.MotionSensor);
-
-        _mockHaContext.StateChangeSubject.OnNext(stateChange);
-
-        // Assert - Verify correct temperature and mode were set
-
-        _mockHaContext.ShouldHaveCalledClimateSetTemperature(
-            _entities.AirConditioner.EntityId,
-            expectedMode,
-            expectedTemp
-        );
-
-        // Verify test scenario documentation
-
-        scenario.Should().NotBeEmpty("Test scenario should be documented");
-    }
-
-    [Theory]
-    [InlineData(
-        TimeBlock.Sunrise,
-        24,
-        27,
-        27,
-        "dry",
-        true,
-        "Sunrise: CoolTemp=24, PowerSaving=27, Mode=dry, Fan=true"
-    )]
-    [InlineData(
-        TimeBlock.Sunset,
-        23,
-        27,
-        27,
-        "cool",
-        false,
-        "Sunset: CoolTemp=23, PowerSaving=27, Mode=cool, Fan=false"
-    )]
-    [InlineData(
-        TimeBlock.Midnight,
-        22,
-        25,
-        25,
-        "cool",
-        false,
-        "Midnight: CoolTemp=22, PowerSaving=25, Mode=cool, Fan=false"
-    )]
-    public void ClimateAutomation_TimeBlockVariations_Should_Use_Correct_Settings(
-        TimeBlock timeBlock,
-        int coolTemp,
-        int powerSavingTemp,
-        int passiveTemp,
-        string mode,
-        bool activateFan,
-        string scenario
-    )
-    {
-        // Arrange - Setup scheduler mock with specific time block settings
-
-        var testSetting = new AcSettings(
-            NormalTemp: 25, // Fixed for test simplicity
-            PowerSavingTemp: powerSavingTemp,
-            CoolTemp: coolTemp,
-            PassiveTemp: passiveTemp,
-            Mode: mode,
-            ActivateFan: activateFan,
-            HourStart: 18,
-            HourEnd: 0
-        );
-
-        SetupSchedulerMock(timeBlock, testSetting);
-
-        _mockHaContext.ClearServiceCalls(); // clear before state change
-
-        // Setup for occupied + closed door scenario (should use CoolTemp)
-
-        _mockHaContext.SetEntityState(_entities.MotionSensor.EntityId, "on");
-
-        _mockHaContext.SetEntityState(_entities.Door.EntityId, "off");
-
-        _mockHaContext.SetEntityState(_entities.AirConditioner.EntityId, mode);
-
-        // Clear any previous service calls
-
-        _mockHaContext.ClearServiceCalls();
-
-        // Act - Trigger automation
-
-        var stateChange = StateChangeHelpers.MotionDetected(_entities.MotionSensor);
-
-        _mockHaContext.StateChangeSubject.OnNext(stateChange);
-
-        // Assert - Verify correct settings for the time block
-
-        _mockHaContext.ShouldHaveCalledClimateSetTemperature(
-            _entities.AirConditioner.EntityId,
-            mode,
-            coolTemp
-        );
-
-        // Verify test scenario documentation
-
-        scenario.Should().NotBeEmpty("Test scenario should be documented");
-    }
-
-    [Theory(Skip = "Fan activation feature removed")]
-    [InlineData(true, "Fan should be activated when setting.ActivateFan is true")]
-    [InlineData(false, "Fan should not be activated when setting.ActivateFan is false")]
-    public void ClimateAutomation_FanActivation_Should_Follow_Setting(
-        bool activateFan,
-        string scenario
-    )
-    {
-        // Arrange - Setup scheduler mock with specific fan activation setting
-
-        var testSetting = new AcSettings(
-            NormalTemp: 25,
-            PowerSavingTemp: 27,
-            CoolTemp: 23,
-            PassiveTemp: 27,
-            Mode: "cool",
-            ActivateFan: activateFan,
-            HourStart: 18,
-            HourEnd: 0
-        );
-
-        SetupSchedulerMock(TimeBlock.Sunset, testSetting);
-
-        // Setup for a scenario that would normally activate fan (hot room)
-
-        _mockHaContext.SetEntityState(_entities.MotionSensor.EntityId, "off");
-
-        _mockHaContext.SetEntityState(_entities.Door.EntityId, "off");
-
-        _mockHaContext.SetEntityState(_entities.AirConditioner.EntityId, "cool");
-
-        _mockHaContext.SetEntityAttributes(
-            _entities.AirConditioner.EntityId,
-            new
-            {
-                temperature = 23.0,
-
-                current_temperature = 28.0, // Hot room - would normally trigger fan
-
-                fan_mode = "auto",
-            }
-        );
-
-        // Clear any previous service calls
-
-        _mockHaContext.ClearServiceCalls();
-
-        // Act - Trigger automation
-
-        var stateChange = StateChangeHelpers.MotionDetected(_entities.MotionSensor);
-
-        _mockHaContext.StateChangeSubject.OnNext(stateChange);
-
-        // Assert - Verify fan activation based on setting
-
-        if (activateFan)
+        if (disposing)
         {
-            _mockHaContext.ShouldHaveCalledSwitchTurnOn(_entities.FanAutomation.EntityId);
-        }
-        else
-        {
-            _mockHaContext.ShouldHaveCalledSwitchTurnOff(_entities.FanAutomation.EntityId);
+            _automation?.Dispose();
         }
 
-        // Verify test scenario documentation
-
-        scenario.Should().NotBeEmpty("Test scenario should be documented");
-    }
-
-    #endregion
-
-
-    public void Dispose()
-    {
-        _automation?.Dispose();
-
-        _mockHaContext?.Dispose();
+        base.Dispose(disposing);
     }
 
     /// <summary>
