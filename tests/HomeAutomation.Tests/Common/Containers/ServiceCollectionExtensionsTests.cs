@@ -12,6 +12,7 @@ using HomeAutomation.apps.Area.LivingRoom.Automations.Entities;
 using HomeAutomation.apps.Area.LivingRoom.Devices.Entities;
 using HomeAutomation.apps.Area.Pantry;
 using HomeAutomation.apps.Area.Pantry.Automations.Entities;
+using HomeAutomation.apps.Common.Services.Logging;
 using HomeAutomation.apps.Security;
 using HomeAutomation.apps.Security.Automations.Entities;
 using HomeAutomation.apps.Security.People;
@@ -260,6 +261,28 @@ public class ServiceCollectionExtensionsTests : HaContextTestBase
         var app = provider.GetRequiredService<SecurityApp>();
 
         app.Should().NotBeNull();
+    }
+
+    [Fact]
+    public void AddHomeEntitiesAndServices_ShouldResolveAutomationLogger()
+    {
+        using var provider = CreateServiceProvider();
+
+        var logger = provider.GetRequiredService<ILogger<BathroomApp>>();
+
+        logger.Should().BeOfType<AutomationLogger<BathroomApp>>();
+    }
+
+    [Fact]
+    public void AddHomeEntitiesAndServices_ShouldResolveLoggingPolicyServices()
+    {
+        using var provider = CreateServiceProvider();
+
+        var policy = provider.GetRequiredService<IAutomationLogPolicy>();
+        var sink = provider.GetRequiredService<ILogbookSink>();
+
+        policy.Should().BeOfType<AutomationLogPolicy>();
+        sink.Should().BeOfType<LogbookSink>();
     }
 
     private ServiceProvider CreateServiceProvider()

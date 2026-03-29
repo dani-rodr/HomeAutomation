@@ -387,7 +387,7 @@
         },
         {
           "id": "media_player.xiaomi_tv_box_11",
-          "friendlyName": "Xiaomi TV Box",
+          "friendlyName": null,
           "cSharpName": "XiaomiTvBox11"
         }
       ],
@@ -2333,14 +2333,14 @@
           "cSharpName": "NetdaemonHomeAutomationAppsAreaPantryPantryApp"
         },
         {
-          "id": "input_boolean.netdaemon_home_automation_apps_common_security_security_app",
-          "friendlyName": "netdaemon_home_automation_apps_common_security_security_app",
-          "cSharpName": "NetdaemonHomeAutomationAppsCommonSecuritySecurityApp"
-        },
-        {
           "id": "input_boolean.netdaemon_home_automation_apps_common_startup_app",
           "friendlyName": "netdaemon_home_automation_apps_common_startup_app",
           "cSharpName": "NetdaemonHomeAutomationAppsCommonStartupApp"
+        },
+        {
+          "id": "input_boolean.netdaemon_home_automation_apps_security_security_app",
+          "friendlyName": "netdaemon_home_automation_apps_security_security_app",
+          "cSharpName": "NetdaemonHomeAutomationAppsSecuritySecurityApp"
         },
         {
           "id": "input_boolean.project_nation_week",
@@ -3488,7 +3488,7 @@
         },
         {
           "id": "remote.xiaomi_tv_box_11",
-          "friendlyName": "Xiaomi TV Box",
+          "friendlyName": null,
           "cSharpName": "XiaomiTvBox11"
         }
       ],
@@ -4131,7 +4131,7 @@
         },
         {
           "id": "sensor.daniel_pc_hass_agent_incognito",
-          "friendlyName": "DANIEL-PC_hass-agent DANIEL-PC_hass-agent_incognito",
+          "friendlyName": "DANIEL-PC_hass-agent Incognito",
           "cSharpName": "DanielPcHassAgentIncognito"
         },
         {
@@ -6288,6 +6288,11 @@
           "cSharpName": "ContactSensorBattery"
         },
         {
+          "id": "sensor.currency_exchange_aud_to_php",
+          "friendlyName": "Currency Exchange AUD to PHP",
+          "cSharpName": "CurrencyExchangeAudToPhp"
+        },
+        {
           "id": "sensor.daniel_pc_free_disk_space_c",
           "friendlyName": "DANIEL-PC Free disk space C:",
           "cSharpName": "DanielPcFreeDiskSpaceC"
@@ -6316,6 +6321,11 @@
           "id": "sensor.daniel_pc_hass_agent_cpuload",
           "friendlyName": "DANIEL-PC_hass-agent DANIEL-PC_hass-agent_cpuload",
           "cSharpName": "DanielPcHassAgentCpuload"
+        },
+        {
+          "id": "sensor.daniel_pc_hass_agent_cpuload_2",
+          "friendlyName": "DANIEL-PC_hass-agent Cpuload",
+          "cSharpName": "DanielPcHassAgentCpuload2"
         },
         {
           "id": "sensor.daniel_pc_temperature",
@@ -9744,6 +9754,38 @@
         }
       ],
       "attributes": [
+        {
+          "jsonName": "friendly_name",
+          "cSharpName": "FriendlyName",
+          "clrType": "System.String"
+        }
+      ]
+    },
+    {
+      "domain": "input_select",
+      "entities": [
+        {
+          "id": "input_select.automation_log_level",
+          "friendlyName": "Automation Log Level",
+          "cSharpName": "AutomationLogLevel"
+        }
+      ],
+      "attributes": [
+        {
+          "jsonName": "options",
+          "cSharpName": "Options",
+          "clrType": "System.Collections.Generic.IReadOnlyList\u00601[System.String]"
+        },
+        {
+          "jsonName": "editable",
+          "cSharpName": "Editable",
+          "clrType": "System.Boolean"
+        },
+        {
+          "jsonName": "icon",
+          "cSharpName": "Icon",
+          "clrType": "System.String"
+        },
         {
           "jsonName": "friendly_name",
           "cSharpName": "FriendlyName",

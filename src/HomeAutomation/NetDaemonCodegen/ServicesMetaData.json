@@ -1,55 +1,4 @@
 {
-  "persistent_notification": {
-    "create": {
-      "fields": {
-        "message": {
-          "required": true,
-          "example": "Please check your configuration.yaml.",
-          "selector": {
-            "text": {
-              "multiple": false,
-              "multiline": false
-            }
-          }
-        },
-        "title": {
-          "example": "Test notification",
-          "selector": {
-            "text": {
-              "multiple": false,
-              "multiline": false
-            }
-          }
-        },
-        "notification_id": {
-          "example": 1234,
-          "selector": {
-            "text": {
-              "multiple": false,
-              "multiline": false
-            }
-          }
-        }
-      }
-    },
-    "dismiss": {
-      "fields": {
-        "notification_id": {
-          "required": true,
-          "example": 1234,
-          "selector": {
-            "text": {
-              "multiple": false,
-              "multiline": false
-            }
-          }
-        }
-      }
-    },
-    "dismiss_all": {
-      "fields": {}
-    }
-  },
   "homeassistant": {
     "save_persistent_states": {
       "fields": {}
@@ -182,8 +131,8 @@
           "required": true,
           "selector": {
             "area": {
-              "multiple": false,
-              "reorder": false
+              "reorder": false,
+              "multiple": false
             }
           }
         },
@@ -209,8 +158,8 @@
           "required": true,
           "selector": {
             "area": {
-              "multiple": false,
-              "reorder": false
+              "reorder": false,
+              "multiple": false
             }
           }
         },
@@ -236,8 +185,8 @@
           "required": true,
           "selector": {
             "area": {
-              "multiple": false,
-              "reorder": false
+              "reorder": false,
+              "multiple": false
             }
           }
         },
@@ -289,8 +238,8 @@
           "required": true,
           "selector": {
             "area": {
-              "multiple": false,
-              "reorder": false
+              "reorder": false,
+              "multiple": false
             }
           }
         },
@@ -317,8 +266,8 @@
           "required": false,
           "selector": {
             "text": {
-              "multiple": false,
-              "multiline": false
+              "multiline": false,
+              "multiple": false
             }
           }
         }
@@ -334,8 +283,8 @@
           "required": true,
           "selector": {
             "area": {
-              "multiple": false,
-              "reorder": false
+              "reorder": false,
+              "multiple": false
             }
           }
         },
@@ -395,8 +344,8 @@
           "required": true,
           "selector": {
             "text": {
-              "multiple": false,
-              "multiline": false
+              "multiline": false,
+              "multiple": false
             }
           }
         },
@@ -544,8 +493,8 @@
           "required": true,
           "selector": {
             "text": {
-              "multiple": false,
-              "multiline": false
+              "multiline": false,
+              "multiple": false
             }
           }
         },
@@ -591,8 +540,8 @@
           "required": true,
           "selector": {
             "entity": {
-              "multiple": false,
-              "reorder": false
+              "reorder": false,
+              "multiple": false
             }
           }
         },
@@ -602,8 +551,8 @@
           "required": true,
           "selector": {
             "text": {
-              "multiple": false,
-              "multiline": false
+              "multiline": false,
+              "multiple": false
             }
           }
         }
@@ -654,8 +603,8 @@
           "required": true,
           "selector": {
             "text": {
-              "multiple": false,
-              "multiline": false
+              "multiline": false,
+              "multiple": false
             }
           }
         },
@@ -665,8 +614,8 @@
           "required": true,
           "selector": {
             "text": {
-              "multiple": false,
-              "multiline": false
+              "multiline": false,
+              "multiple": false
             }
           }
         },
@@ -779,9 +728,9 @@
                   "value": "white"
                 }
               ],
+              "custom_value": false,
               "sort": false,
-              "multiple": false,
-              "custom_value": false
+              "multiple": false
             }
           }
         }
@@ -866,8 +815,8 @@
           "required": true,
           "selector": {
             "area": {
-              "multiple": false,
-              "reorder": false
+              "reorder": false,
+              "multiple": false
             }
           }
         }
@@ -964,8 +913,8 @@
           "required": true,
           "selector": {
             "text": {
-              "multiple": false,
-              "multiline": false
+              "multiline": false,
+              "multiple": false
             }
           }
         }
@@ -1136,6 +1085,57 @@
       }
     }
   },
+  "persistent_notification": {
+    "create": {
+      "fields": {
+        "message": {
+          "required": true,
+          "example": "Please check your configuration.yaml.",
+          "selector": {
+            "text": {
+              "multiline": false,
+              "multiple": false
+            }
+          }
+        },
+        "title": {
+          "example": "Test notification",
+          "selector": {
+            "text": {
+              "multiline": false,
+              "multiple": false
+            }
+          }
+        },
+        "notification_id": {
+          "example": 1234,
+          "selector": {
+            "text": {
+              "multiline": false,
+              "multiple": false
+            }
+          }
+        }
+      }
+    },
+    "dismiss": {
+      "fields": {
+        "notification_id": {
+          "required": true,
+          "example": 1234,
+          "selector": {
+            "text": {
+              "multiline": false,
+              "multiple": false
+            }
+          }
+        }
+      }
+    },
+    "dismiss_all": {
+      "fields": {}
+    }
+  },
   "system_log": {
     "clear": {
       "fields": {}
@@ -1147,8 +1147,8 @@
           "example": "Something went wrong",
           "selector": {
             "text": {
-              "multiple": false,
-              "multiline": false
+              "multiline": false,
+              "multiple": false
             }
           }
         },
@@ -1164,9 +1164,9 @@
                 "critical"
               ],
               "translation_key": "level",
+              "custom_value": false,
               "sort": false,
-              "multiple": false,
-              "custom_value": false
+              "multiple": false
             }
           }
         },
@@ -1174,8 +1174,8 @@
           "example": "mycomponent.myplatform",
           "selector": {
             "text": {
-              "multiple": false,
-              "multiline": false
+              "multiline": false,
+              "multiple": false
             }
           }
         }
@@ -1197,9 +1197,9 @@
                 "critical"
               ],
               "translation_key": "level",
+              "custom_value": false,
               "sort": false,
-              "multiple": false,
-              "custom_value": false
+              "multiple": false
             }
           }
         }
@@ -1354,9 +1354,9 @@
                 "month",
                 "year"
               ],
+              "custom_value": false,
               "sort": false,
-              "multiple": false,
-              "custom_value": false
+              "multiple": false
             }
           }
         },
@@ -1378,8 +1378,8 @@
                 "sum"
               ],
               "multiple": true,
-              "sort": false,
-              "custom_value": false
+              "custom_value": false,
+              "sort": false
             }
           }
         },
@@ -1410,8 +1410,8 @@
           "required": true,
           "selector": {
             "entity": {
-              "multiple": false,
-              "reorder": false
+              "reorder": false,
+              "multiple": false
             }
           }
         },
@@ -1421,8 +1421,8 @@
           "required": false,
           "selector": {
             "text": {
-              "multiple": false,
-              "multiline": false
+              "multiline": false,
+              "multiple": false
             }
           }
         },
@@ -1432,8 +1432,8 @@
           "required": true,
           "selector": {
             "text": {
-              "multiple": false,
-              "multiline": false
+              "multiline": false,
+              "multiple": false
             }
           }
         },
@@ -1443,8 +1443,8 @@
           "required": false,
           "selector": {
             "text": {
-              "multiple": false,
-              "multiline": false
+              "multiline": false,
+              "multiple": false
             }
           }
         },
@@ -1586,8 +1586,8 @@
           "example": "Backup 1",
           "selector": {
             "text": {
-              "multiple": false,
-              "multiline": false
+              "multiline": false,
+              "multiple": false
             }
           }
         },
@@ -1595,8 +1595,8 @@
           "example": "password",
           "selector": {
             "text": {
-              "multiple": false,
-              "multiline": false
+              "multiline": false,
+              "multiple": false
             }
           }
         },
@@ -1672,8 +1672,8 @@
           "example": "Partial backup 1",
           "selector": {
             "text": {
-              "multiple": false,
-              "multiline": false
+              "multiline": false,
+              "multiple": false
             }
           }
         },
@@ -1681,8 +1681,8 @@
           "example": "password",
           "selector": {
             "text": {
-              "multiple": false,
-              "multiline": false
+              "multiline": false,
+              "multiple": false
             }
           }
         },
@@ -1706,8 +1706,8 @@
           "required": true,
           "selector": {
             "text": {
-              "multiple": false,
-              "multiline": false
+              "multiline": false,
+              "multiple": false
             }
           }
         },
@@ -1715,8 +1715,8 @@
           "example": "password",
           "selector": {
             "text": {
-              "multiple": false,
-              "multiline": false
+              "multiline": false,
+              "multiple": false
             }
           }
         }
@@ -1728,8 +1728,8 @@
           "required": true,
           "selector": {
             "text": {
-              "multiple": false,
-              "multiline": false
+              "multiline": false,
+              "multiple": false
             }
           }
         },
@@ -1777,8 +1777,8 @@
           "example": "password",
           "selector": {
             "text": {
-              "multiple": false,
-              "multiline": false
+              "multiline": false,
+              "multiple": false
             }
           }
         }
@@ -1793,8 +1793,8 @@
           "example": "1.0.0",
           "selector": {
             "text": {
-              "multiple": false,
-              "multiline": false
+              "multiline": false,
+              "multiple": false
             }
           }
         },
@@ -2145,8 +2145,8 @@
           "example": "video1",
           "selector": {
             "text": {
-              "multiple": false,
-              "multiline": false
+              "multiline": false,
+              "multiple": false
             }
           }
         }
@@ -2170,8 +2170,8 @@
           "example": "Music",
           "selector": {
             "text": {
-              "multiple": false,
-              "multiline": false
+              "multiline": false,
+              "multiple": false
             }
           }
         }
@@ -2216,9 +2216,9 @@
                 "replace"
               ],
               "translation_key": "enqueue",
+              "custom_value": false,
               "sort": false,
-              "multiple": false,
-              "custom_value": false
+              "multiple": false
             }
           }
         },
@@ -2255,8 +2255,8 @@
           "example": "music",
           "selector": {
             "text": {
-              "multiple": false,
-              "multiline": false
+              "multiline": false,
+              "multiple": false
             }
           }
         },
@@ -2265,8 +2265,8 @@
           "example": "A:ALBUMARTIST/Beatles",
           "selector": {
             "text": {
-              "multiple": false,
-              "multiline": false
+              "multiline": false,
+              "multiple": false
             }
           }
         }
@@ -2294,8 +2294,8 @@
           "example": "Beatles",
           "selector": {
             "text": {
-              "multiple": false,
-              "multiline": false
+              "multiline": false,
+              "multiple": false
             }
           }
         },
@@ -2304,8 +2304,8 @@
           "example": "music",
           "selector": {
             "text": {
-              "multiple": false,
-              "multiline": false
+              "multiline": false,
+              "multiple": false
             }
           }
         },
@@ -2314,8 +2314,8 @@
           "example": "A:ALBUMARTIST/Beatles",
           "selector": {
             "text": {
-              "multiple": false,
-              "multiline": false
+              "multiline": false,
+              "multiple": false
             }
           }
         },
@@ -2398,9 +2398,9 @@
                 "one"
               ],
               "translation_key": "repeat",
+              "custom_value": false,
               "sort": false,
-              "multiple": false,
-              "custom_value": false
+              "multiple": false
             }
           }
         }
@@ -2475,8 +2475,8 @@
           "example": "/tmp/snapshot_{{ entity_id.name }}.jpg",
           "selector": {
             "text": {
-              "multiple": false,
-              "multiline": false
+              "multiline": false,
+              "multiple": false
             }
           }
         }
@@ -2500,8 +2500,8 @@
               "domain": [
                 "media_player"
               ],
-              "multiple": false,
-              "reorder": false
+              "reorder": false,
+              "multiple": false
             }
           }
         },
@@ -2512,9 +2512,9 @@
               "options": [
                 "hls"
               ],
+              "custom_value": false,
               "sort": false,
-              "multiple": false,
-              "custom_value": false
+              "multiple": false
             }
           }
         }
@@ -2536,8 +2536,8 @@
           "example": "/tmp/snapshot_{{ entity_id.name }}.mp4",
           "selector": {
             "text": {
-              "multiple": false,
-              "multiline": false
+              "multiline": false,
+              "multiple": false
             }
           }
         },
@@ -2587,8 +2587,8 @@
               "domain": [
                 "binary_sensor"
               ],
-              "multiple": false,
-              "reorder": false
+              "reorder": false,
+              "multiple": false
             }
           }
         }
@@ -2603,8 +2603,8 @@
               "domain": [
                 "binary_sensor"
               ],
-              "multiple": false,
-              "reorder": false
+              "reorder": false,
+              "multiple": false
             }
           }
         }
@@ -2619,9 +2619,71 @@
               "domain": [
                 "binary_sensor"
               ],
-              "multiple": false,
-              "reorder": false
+              "reorder": false,
+              "multiple": false
             }
+          }
+        }
+      }
+    }
+  },
+  "conversation": {
+    "process": {
+      "fields": {
+        "text": {
+          "example": "Turn all lights on",
+          "required": true,
+          "selector": {
+            "text": {
+              "multiline": false,
+              "multiple": false
+            }
+          }
+        },
+        "language": {
+          "example": "NL",
+          "selector": {
+            "text": {
+              "multiline": false,
+              "multiple": false
+            }
+          }
+        },
+        "agent_id": {
+          "example": "homeassistant",
+          "selector": {
+            "conversation_agent": {}
+          }
+        },
+        "conversation_id": {
+          "example": "my_conversation_1",
+          "selector": {
+            "text": {
+              "multiline": false,
+              "multiple": false
+            }
+          }
+        }
+      },
+      "response": {
+        "optional": true
+      }
+    },
+    "reload": {
+      "fields": {
+        "language": {
+          "example": "NL",
+          "selector": {
+            "text": {
+              "multiline": false,
+              "multiple": false
+            }
+          }
+        },
+        "agent_id": {
+          "example": "homeassistant",
+          "selector": {
+            "conversation_agent": {}
           }
         }
       }
@@ -2665,68 +2727,6 @@
       }
     }
   },
-  "conversation": {
-    "process": {
-      "fields": {
-        "text": {
-          "example": "Turn all lights on",
-          "required": true,
-          "selector": {
-            "text": {
-              "multiple": false,
-              "multiline": false
-            }
-          }
-        },
-        "language": {
-          "example": "NL",
-          "selector": {
-            "text": {
-              "multiple": false,
-              "multiline": false
-            }
-          }
-        },
-        "agent_id": {
-          "example": "homeassistant",
-          "selector": {
-            "conversation_agent": {}
-          }
-        },
-        "conversation_id": {
-          "example": "my_conversation_1",
-          "selector": {
-            "text": {
-              "multiple": false,
-              "multiline": false
-            }
-          }
-        }
-      },
-      "response": {
-        "optional": true
-      }
-    },
-    "reload": {
-      "fields": {
-        "language": {
-          "example": "NL",
-          "selector": {
-            "text": {
-              "multiple": false,
-              "multiline": false
-            }
-          }
-        },
-        "agent_id": {
-          "example": "homeassistant",
-          "selector": {
-            "conversation_agent": {}
-          }
-        }
-      }
-    }
-  },
   "wake_on_lan": {
     "send_magic_packet": {
       "fields": {
@@ -2735,8 +2735,8 @@
           "example": "aa:bb:cc:dd:ee:ff",
           "selector": {
             "text": {
-              "multiple": false,
-              "multiline": false
+              "multiline": false,
+              "multiple": false
             }
           }
         },
@@ -2744,8 +2744,8 @@
           "example": "192.168.255.255",
           "selector": {
             "text": {
-              "multiple": false,
-              "multiline": false
+              "multiline": false,
+              "multiple": false
             }
           }
         },
@@ -2792,8 +2792,8 @@
               "domain": [
                 "media_player"
               ],
-              "multiple": false,
-              "reorder": false
+              "reorder": false,
+              "multiple": false
             }
           }
         },
@@ -2802,8 +2802,8 @@
           "required": true,
           "selector": {
             "text": {
-              "multiple": false,
-              "multiline": false
+              "multiline": false,
+              "multiple": false
             }
           }
         },
@@ -2817,8 +2817,8 @@
           "example": "ru",
           "selector": {
             "text": {
-              "multiple": false,
-              "multiline": false
+              "multiline": false,
+              "multiple": false
             }
           }
         },
@@ -2894,8 +2894,8 @@
           "required": true,
           "selector": {
             "text": {
-              "multiple": false,
-              "multiline": false
+              "multiline": false,
+              "multiple": false
             }
           }
         },
@@ -2903,8 +2903,8 @@
           "example": "rtsp://rtsp:12345678@192.168.1.123:554/av_stream/ch0",
           "selector": {
             "text": {
-              "multiple": false,
-              "multiline": false
+              "multiline": false,
+              "multiple": false
             }
           }
         },
@@ -2915,8 +2915,8 @@
               "domain": [
                 "camera"
               ],
-              "multiple": false,
-              "reorder": false
+              "reorder": false,
+              "multiple": false
             }
           }
         },
@@ -2957,8 +2957,8 @@
               "domain": [
                 "media_player"
               ],
-              "multiple": false,
-              "reorder": false
+              "reorder": false,
+              "multiple": false
             }
           }
         },
@@ -2966,8 +2966,8 @@
           "example": "rtsp://rtsp:12345678@192.168.1.123:554/av_stream/ch0",
           "selector": {
             "text": {
-              "multiple": false,
-              "multiline": false
+              "multiline": false,
+              "multiple": false
             }
           }
         },
@@ -2978,8 +2978,8 @@
               "domain": [
                 "camera"
               ],
-              "multiple": false,
-              "reorder": false
+              "reorder": false,
+              "multiple": false
             }
           }
         },
@@ -2999,8 +2999,8 @@
           "example": "http://192.168.1.123:8123",
           "selector": {
             "text": {
-              "multiple": false,
-              "multiline": false
+              "multiline": false,
+              "multiple": false
             }
           }
         }
@@ -3133,8 +3133,8 @@
           "example": "away",
           "selector": {
             "text": {
-              "multiple": false,
-              "multiline": false
+              "multiline": false,
+              "multiple": false
             }
           }
         }
@@ -3214,9 +3214,9 @@
                 "heat"
               ],
               "translation_key": "hvac_mode",
+              "custom_value": false,
               "sort": false,
-              "multiple": false,
-              "custom_value": false
+              "multiple": false
             }
           }
         }
@@ -3270,8 +3270,8 @@
           "example": "low",
           "selector": {
             "text": {
-              "multiple": false,
-              "multiline": false
+              "multiline": false,
+              "multiple": false
             }
           }
         }
@@ -3296,8 +3296,8 @@
           "example": "on",
           "selector": {
             "text": {
-              "multiple": false,
-              "multiline": false
+              "multiline": false,
+              "multiple": false
             }
           }
         }
@@ -3322,8 +3322,8 @@
           "example": "on",
           "selector": {
             "text": {
-              "multiple": false,
-              "multiline": false
+              "multiline": false,
+              "multiple": false
             }
           }
         }
@@ -3548,8 +3548,8 @@
           },
           "selector": {
             "text": {
-              "multiple": false,
-              "multiline": false
+              "multiline": false,
+              "multiple": false
             }
           }
         }
@@ -3685,9 +3685,9 @@
                 "reverse"
               ],
               "translation_key": "direction",
+              "custom_value": false,
               "sort": false,
-              "multiple": false,
-              "custom_value": false
+              "multiple": false
             }
           }
         }
@@ -3740,8 +3740,8 @@
           "example": "auto",
           "selector": {
             "text": {
-              "multiple": false,
-              "multiline": false
+              "multiline": false,
+              "multiple": false
             }
           }
         }
@@ -3873,8 +3873,8 @@
           },
           "selector": {
             "text": {
-              "multiple": false,
-              "multiline": false
+              "multiline": false,
+              "multiple": false
             }
           }
         },
@@ -4084,9 +4084,9 @@
                     "yellow",
                     "yellowgreen"
                   ],
+                  "custom_value": false,
                   "sort": false,
-                  "multiple": false,
-                  "custom_value": false
+                  "multiple": false
                 }
               }
             },
@@ -4193,8 +4193,8 @@
               "example": "relax",
               "selector": {
                 "text": {
-                  "multiple": false,
-                  "multiline": false
+                  "multiline": false,
+                  "multiple": false
                 }
               }
             },
@@ -4211,9 +4211,9 @@
                     "long",
                     "short"
                   ],
+                  "custom_value": false,
                   "sort": false,
-                  "multiple": false,
-                  "custom_value": false
+                  "multiple": false
                 }
               }
             }
@@ -4264,9 +4264,9 @@
                     "long",
                     "short"
                   ],
+                  "custom_value": false,
                   "sort": false,
-                  "multiple": false,
-                  "custom_value": false
+                  "multiple": false
                 }
               }
             }
@@ -4371,8 +4371,8 @@
           },
           "selector": {
             "text": {
-              "multiple": false,
-              "multiline": false
+              "multiline": false,
+              "multiple": false
             }
           }
         },
@@ -4582,9 +4582,9 @@
                     "yellow",
                     "yellowgreen"
                   ],
+                  "custom_value": false,
                   "sort": false,
-                  "multiple": false,
-                  "custom_value": false
+                  "multiple": false
                 }
               }
             },
@@ -4668,8 +4668,8 @@
               "example": "relax",
               "selector": {
                 "text": {
-                  "multiple": false,
-                  "multiline": false
+                  "multiline": false,
+                  "multiple": false
                 }
               }
             },
@@ -4686,9 +4686,9 @@
                     "long",
                     "short"
                   ],
+                  "custom_value": false,
                   "sort": false,
-                  "multiple": false,
-                  "custom_value": false
+                  "multiple": false
                 }
               }
             }
@@ -4713,8 +4713,8 @@
           "example": 1234,
           "selector": {
             "text": {
-              "multiple": false,
-              "multiline": false
+              "multiline": false,
+              "multiple": false
             }
           }
         }
@@ -4735,8 +4735,8 @@
           "example": 1234,
           "selector": {
             "text": {
-              "multiple": false,
-              "multiline": false
+              "multiline": false,
+              "multiple": false
             }
           }
         }
@@ -4757,8 +4757,8 @@
           "example": 1234,
           "selector": {
             "text": {
-              "multiple": false,
-              "multiline": false
+              "multiline": false,
+              "multiple": false
             }
           }
         }
@@ -4785,8 +4785,8 @@
           "required": true,
           "selector": {
             "text": {
-              "multiple": false,
-              "multiline": false
+              "multiline": false,
+              "multiple": false
             }
           }
         }
@@ -5117,8 +5117,8 @@
           "example": "low",
           "selector": {
             "text": {
-              "multiple": false,
-              "multiline": false
+              "multiline": false,
+              "multiple": false
             }
           }
         }
@@ -5140,8 +5140,8 @@
           "example": "set_dnd_timer",
           "selector": {
             "text": {
-              "multiple": false,
-              "multiline": false
+              "multiline": false,
+              "multiple": false
             }
           }
         },
@@ -5317,8 +5317,8 @@
           "example": "eco",
           "selector": {
             "text": {
-              "multiple": false,
-              "multiline": false
+              "multiline": false,
+              "multiple": false
             }
           }
         }
@@ -5340,8 +5340,8 @@
           "example": "eco",
           "selector": {
             "text": {
-              "multiple": false,
-              "multiline": false
+              "multiline": false,
+              "multiple": false
             }
           }
         }
@@ -5363,8 +5363,8 @@
         "agent_user_id": {
           "selector": {
             "text": {
-              "multiple": false,
-              "multiline": false
+              "multiline": false,
+              "multiple": false
             }
           }
         }
@@ -5414,8 +5414,8 @@
           "example": "all_lights",
           "selector": {
             "text": {
-              "multiple": false,
-              "multiline": false
+              "multiline": false,
+              "multiple": false
             }
           }
         },
@@ -5477,6 +5477,85 @@
       }
     }
   },
+  "group": {
+    "reload": {
+      "fields": {}
+    },
+    "set": {
+      "fields": {
+        "object_id": {
+          "required": true,
+          "example": "test_group",
+          "selector": {
+            "text": {
+              "multiline": false,
+              "multiple": false
+            }
+          }
+        },
+        "name": {
+          "example": "My test group",
+          "selector": {
+            "text": {
+              "multiline": false,
+              "multiple": false
+            }
+          }
+        },
+        "icon": {
+          "example": "mdi:camera",
+          "selector": {
+            "icon": {}
+          }
+        },
+        "entities": {
+          "example": "domain.entity_id1, domain.entity_id2",
+          "selector": {
+            "entity": {
+              "multiple": true,
+              "reorder": false
+            }
+          }
+        },
+        "add_entities": {
+          "example": "domain.entity_id1, domain.entity_id2",
+          "selector": {
+            "entity": {
+              "multiple": true,
+              "reorder": false
+            }
+          }
+        },
+        "remove_entities": {
+          "example": "domain.entity_id1, domain.entity_id2",
+          "selector": {
+            "entity": {
+              "multiple": true,
+              "reorder": false
+            }
+          }
+        },
+        "all": {
+          "selector": {
+            "boolean": {}
+          }
+        }
+      }
+    },
+    "remove": {
+      "fields": {
+        "object_id": {
+          "required": true,
+          "example": "test_group",
+          "selector": {
+            "object": {
+              "multiple": false
+            }
+          }
+        }
+      }
+    }
+  },
   "logbook": {
     "log": {
       "fields": {
@@ -5485,8 +5564,8 @@
           "example": "Kitchen",
           "selector": {
             "text": {
-              "multiple": false,
-              "multiline": false
+              "multiline": false,
+              "multiple": false
             }
           }
         },
@@ -5495,16 +5574,16 @@
           "example": "is being used",
           "selector": {
             "text": {
-              "multiple": false,
-              "multiline": false
+              "multiline": false,
+              "multiple": false
             }
           }
         },
         "entity_id": {
           "selector": {
             "entity": {
-              "multiple": false,
-              "reorder": false
+              "reorder": false,
+              "multiple": false
             }
           }
         },
@@ -5512,8 +5591,8 @@
           "example": "light",
           "selector": {
             "text": {
-              "multiple": false,
-              "multiline": false
+              "multiline": false,
+              "multiple": false
             }
           }
         }
@@ -5601,85 +5680,6 @@
       }
     }
   },
-  "group": {
-    "reload": {
-      "fields": {}
-    },
-    "set": {
-      "fields": {
-        "object_id": {
-          "required": true,
-          "example": "test_group",
-          "selector": {
-            "text": {
-              "multiple": false,
-              "multiline": false
-            }
-          }
-        },
-        "name": {
-          "example": "My test group",
-          "selector": {
-            "text": {
-              "multiple": false,
-              "multiline": false
-            }
-          }
-        },
-        "icon": {
-          "example": "mdi:camera",
-          "selector": {
-            "icon": {}
-          }
-        },
-        "entities": {
-          "example": "domain.entity_id1, domain.entity_id2",
-          "selector": {
-            "entity": {
-              "multiple": true,
-              "reorder": false
-            }
-          }
-        },
-        "add_entities": {
-          "example": "domain.entity_id1, domain.entity_id2",
-          "selector": {
-            "entity": {
-              "multiple": true,
-              "reorder": false
-            }
-          }
-        },
-        "remove_entities": {
-          "example": "domain.entity_id1, domain.entity_id2",
-          "selector": {
-            "entity": {
-              "multiple": true,
-              "reorder": false
-            }
-          }
-        },
-        "all": {
-          "selector": {
-            "boolean": {}
-          }
-        }
-      }
-    },
-    "remove": {
-      "fields": {
-        "object_id": {
-          "required": true,
-          "example": "test_group",
-          "selector": {
-            "object": {
-              "multiple": false
-            }
-          }
-        }
-      }
-    }
-  },
   "zone": {
     "reload": {
       "fields": {}
@@ -5725,8 +5725,8 @@
                   ]
                 }
               ],
-              "multiple": false,
-              "reorder": false
+              "reorder": false,
+              "multiple": false
             }
           }
         },
@@ -5736,8 +5736,8 @@
           "required": false,
           "selector": {
             "text": {
-              "multiple": false,
-              "multiline": false
+              "multiline": false,
+              "multiple": false
             }
           }
         },
@@ -5806,8 +5806,8 @@
           "required": true,
           "selector": {
             "text": {
-              "multiple": false,
-              "multiline": false
+              "multiline": false,
+              "multiple": false
             }
           }
         },
@@ -5864,64 +5864,6 @@
             }
           }
         }
-      }
-    }
-  },
-  "input_boolean": {
-    "reload": {
-      "fields": {}
-    },
-    "turn_on": {
-      "fields": {},
-      "target": {
-        "entity": [
-          {
-            "domain": [
-              "input_boolean"
-            ]
-          }
-        ]
-      }
-    },
-    "turn_off": {
-      "fields": {},
-      "target": {
-        "entity": [
-          {
-            "domain": [
-              "input_boolean"
-            ]
-          }
-        ]
-      }
-    },
-    "toggle": {
-      "fields": {},
-      "target": {
-        "entity": [
-          {
-            "domain": [
-              "input_boolean"
-            ]
-          }
-        ]
-      }
-    }
-  },
-  "input_button": {
-    "reload": {
-      "fields": {}
-    },
-    "press": {
-      "fields": {},
-      "target": {
-        "entity": [
-          {
-            "domain": [
-              "input_button"
-            ]
-          }
-        ]
       }
     }
   },
@@ -6034,6 +5976,64 @@
       }
     }
   },
+  "input_boolean": {
+    "reload": {
+      "fields": {}
+    },
+    "turn_on": {
+      "fields": {},
+      "target": {
+        "entity": [
+          {
+            "domain": [
+              "input_boolean"
+            ]
+          }
+        ]
+      }
+    },
+    "turn_off": {
+      "fields": {},
+      "target": {
+        "entity": [
+          {
+            "domain": [
+              "input_boolean"
+            ]
+          }
+        ]
+      }
+    },
+    "toggle": {
+      "fields": {},
+      "target": {
+        "entity": [
+          {
+            "domain": [
+              "input_boolean"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "input_button": {
+    "reload": {
+      "fields": {}
+    },
+    "press": {
+      "fields": {},
+      "target": {
+        "entity": [
+          {
+            "domain": [
+              "input_button"
+            ]
+          }
+        ]
+      }
+    }
+  },
   "timer": {
     "reload": {
       "fields": {}
@@ -6130,8 +6130,8 @@
           "example": "00:01:00, 60",
           "selector": {
             "text": {
-              "multiple": false,
-              "multiline": false
+              "multiline": false,
+              "multiple": false
             }
           }
         }
@@ -6337,8 +6337,8 @@
                   ]
                 }
               ],
-              "multiple": false,
-              "reorder": false
+              "reorder": false,
+              "multiple": false
             }
           }
         },
@@ -6379,8 +6379,8 @@
                   ]
                 }
               ],
-              "multiple": false,
-              "reorder": false
+              "reorder": false,
+              "multiple": false
             }
           }
         },
@@ -6412,8 +6412,8 @@
           "example": "FF:FF:FF:FF:FF:FF",
           "selector": {
             "text": {
-              "multiple": false,
-              "multiline": false
+              "multiline": false,
+              "multiple": false
             }
           }
         },
@@ -6421,8 +6421,8 @@
           "example": "phonedave",
           "selector": {
             "text": {
-              "multiple": false,
-              "multiline": false
+              "multiline": false,
+              "multiple": false
             }
           }
         },
@@ -6430,8 +6430,8 @@
           "example": "Dave",
           "selector": {
             "text": {
-              "multiple": false,
-              "multiline": false
+              "multiline": false,
+              "multiple": false
             }
           }
         },
@@ -6439,8 +6439,8 @@
           "example": "home",
           "selector": {
             "text": {
-              "multiple": false,
-              "multiline": false
+              "multiline": false,
+              "multiple": false
             }
           }
         },
@@ -6476,6 +6476,26 @@
       }
     }
   },
+  "schedule": {
+    "reload": {
+      "fields": {}
+    },
+    "get_schedule": {
+      "fields": {},
+      "target": {
+        "entity": [
+          {
+            "domain": [
+              "schedule"
+            ]
+          }
+        ]
+      },
+      "response": {
+        "optional": false
+      }
+    }
+  },
   "mqtt": {
     "publish": {
       "fields": {
@@ -6484,8 +6504,8 @@
           "example": "/homeassistant/hello",
           "selector": {
             "text": {
-              "multiple": false,
-              "multiline": false
+              "multiline": false,
+              "multiple": false
             }
           }
         },
@@ -6512,9 +6532,9 @@
                 "1",
                 "2"
               ],
+              "custom_value": false,
               "sort": false,
-              "multiple": false,
-              "custom_value": false
+              "multiple": false
             }
           }
         },
@@ -6532,8 +6552,8 @@
           "example": "OpenZWave/#",
           "selector": {
             "text": {
-              "multiple": false,
-              "multiline": false
+              "multiline": false,
+              "multiple": false
             }
           }
         },
@@ -6555,24 +6575,492 @@
       "fields": {}
     }
   },
-  "schedule": {
-    "reload": {
-      "fields": {}
+  "google_generative_ai_conversation": {
+    "generate_content": {
+      "fields": {
+        "prompt": {
+          "required": true,
+          "selector": {
+            "text": {
+              "multiline": true,
+              "multiple": false
+            }
+          }
+        },
+        "filenames": {
+          "required": false,
+          "selector": {
+            "text": {
+              "multiple": true,
+              "multiline": false
+            }
+          }
+        }
+      },
+      "description_placeholders": {
+        "example_image_path": "/config/www/image.jpg"
+      },
+      "response": {
+        "optional": false
+      }
+    }
+  },
+  "automation": {
+    "trigger": {
+      "fields": {
+        "skip_condition": {
+          "default": true,
+          "selector": {
+            "boolean": {}
+          }
+        }
+      },
+      "target": {
+        "entity": [
+          {
+            "domain": [
+              "automation"
+            ]
+          }
+        ]
+      }
     },
-    "get_schedule": {
+    "toggle": {
       "fields": {},
       "target": {
         "entity": [
           {
             "domain": [
-              "schedule"
+              "automation"
             ]
           }
         ]
+      }
+    },
+    "turn_on": {
+      "fields": {},
+      "target": {
+        "entity": [
+          {
+            "domain": [
+              "automation"
+            ]
+          }
+        ]
+      }
+    },
+    "turn_off": {
+      "fields": {
+        "stop_actions": {
+          "default": true,
+          "selector": {
+            "boolean": {}
+          }
+        }
+      },
+      "target": {
+        "entity": [
+          {
+            "domain": [
+              "automation"
+            ]
+          }
+        ]
+      }
+    },
+    "reload": {
+      "fields": {}
+    }
+  },
+  "adguard": {
+    "add_url": {
+      "fields": {
+        "name": {
+          "required": true,
+          "example": "Example",
+          "selector": {
+            "text": {
+              "multiline": false,
+              "multiple": false
+            }
+          }
+        },
+        "url": {
+          "required": true,
+          "example": "https://www.example.com/filter/1.txt",
+          "selector": {
+            "text": {
+              "multiline": false,
+              "multiple": false
+            }
+          }
+        }
+      }
+    },
+    "remove_url": {
+      "fields": {
+        "url": {
+          "required": true,
+          "example": "https://www.example.com/filter/1.txt",
+          "selector": {
+            "text": {
+              "multiline": false,
+              "multiple": false
+            }
+          }
+        }
+      }
+    },
+    "enable_url": {
+      "fields": {
+        "url": {
+          "required": true,
+          "example": "https://www.example.com/filter/1.txt",
+          "selector": {
+            "text": {
+              "multiline": false,
+              "multiple": false
+            }
+          }
+        }
+      }
+    },
+    "disable_url": {
+      "fields": {
+        "url": {
+          "required": true,
+          "example": "https://www.example.com/filter/1.txt",
+          "selector": {
+            "text": {
+              "multiline": false,
+              "multiple": false
+            }
+          }
+        }
+      }
+    },
+    "refresh": {
+      "fields": {
+        "force": {
+          "default": false,
+          "selector": {
+            "boolean": {}
+          }
+        }
+      }
+    }
+  },
+  "counter": {
+    "increment": {
+      "fields": {},
+      "target": {
+        "entity": [
+          {
+            "domain": [
+              "counter"
+            ]
+          }
+        ]
+      }
+    },
+    "decrement": {
+      "fields": {},
+      "target": {
+        "entity": [
+          {
+            "domain": [
+              "counter"
+            ]
+          }
+        ]
+      }
+    },
+    "reset": {
+      "fields": {},
+      "target": {
+        "entity": [
+          {
+            "domain": [
+              "counter"
+            ]
+          }
+        ]
+      }
+    },
+    "set_value": {
+      "fields": {
+        "value": {
+          "required": true,
+          "selector": {
+            "number": {
+              "min": 0.0,
+              "max": 9.223372036854776e+18,
+              "mode": "box",
+              "step": 1.0
+            }
+          }
+        }
+      },
+      "target": {
+        "entity": [
+          {
+            "domain": [
+              "counter"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "androidtv": {
+    "adb_command": {
+      "fields": {
+        "command": {
+          "required": true,
+          "example": "HOME",
+          "selector": {
+            "text": {
+              "multiline": false,
+              "multiple": false
+            }
+          }
+        }
+      },
+      "target": {
+        "entity": [
+          {
+            "integration": "androidtv",
+            "domain": [
+              "media_player"
+            ]
+          }
+        ]
+      }
+    },
+    "learn_sendevent": {
+      "fields": {},
+      "target": {
+        "entity": [
+          {
+            "integration": "androidtv",
+            "domain": [
+              "media_player"
+            ]
+          }
+        ]
+      }
+    },
+    "download": {
+      "fields": {
+        "device_path": {
+          "required": true,
+          "example": "/storage/emulated/0/Download/example.txt",
+          "selector": {
+            "text": {
+              "multiline": false,
+              "multiple": false
+            }
+          }
+        },
+        "local_path": {
+          "required": true,
+          "example": "/config/www/example.txt",
+          "selector": {
+            "text": {
+              "multiline": false,
+              "multiple": false
+            }
+          }
+        }
+      },
+      "target": {
+        "entity": [
+          {
+            "integration": "androidtv",
+            "domain": [
+              "media_player"
+            ]
+          }
+        ]
+      }
+    },
+    "upload": {
+      "fields": {
+        "device_path": {
+          "required": true,
+          "example": "/storage/emulated/0/Download/example.txt",
+          "selector": {
+            "text": {
+              "multiline": false,
+              "multiple": false
+            }
+          }
+        },
+        "local_path": {
+          "required": true,
+          "example": "/config/www/example.txt",
+          "selector": {
+            "text": {
+              "multiline": false,
+              "multiple": false
+            }
+          }
+        }
+      },
+      "target": {
+        "entity": [
+          {
+            "integration": "androidtv",
+            "domain": [
+              "media_player"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "webostv": {
+    "button": {
+      "fields": {
+        "entity_id": {
+          "required": true,
+          "selector": {
+            "entity": {
+              "integration": "webostv",
+              "domain": [
+                "media_player"
+              ],
+              "reorder": false,
+              "multiple": false
+            }
+          }
+        },
+        "button": {
+          "required": true,
+          "example": "LEFT",
+          "selector": {
+            "text": {
+              "multiline": false,
+              "multiple": false
+            }
+          }
+        }
+      }
+    },
+    "command": {
+      "fields": {
+        "entity_id": {
+          "required": true,
+          "selector": {
+            "entity": {
+              "integration": "webostv",
+              "domain": [
+                "media_player"
+              ],
+              "reorder": false,
+              "multiple": false
+            }
+          }
+        },
+        "command": {
+          "required": true,
+          "example": "system.launcher/open",
+          "selector": {
+            "text": {
+              "multiline": false,
+              "multiple": false
+            }
+          }
+        },
+        "payload": {
+          "example": "target: https://www.google.com",
+          "advanced": true,
+          "selector": {
+            "object": {
+              "multiple": false
+            }
+          }
+        }
       },
       "response": {
-        "optional": false
+        "optional": true
       }
+    },
+    "select_sound_output": {
+      "fields": {
+        "entity_id": {
+          "required": true,
+          "selector": {
+            "entity": {
+              "integration": "webostv",
+              "domain": [
+                "media_player"
+              ],
+              "reorder": false,
+              "multiple": false
+            }
+          }
+        },
+        "sound_output": {
+          "required": true,
+          "example": "external_speaker",
+          "selector": {
+            "text": {
+              "multiline": false,
+              "multiple": false
+            }
+          }
+        }
+      },
+      "response": {
+        "optional": true
+      }
+    }
+  },
+  "input_text": {
+    "reload": {
+      "fields": {}
+    },
+    "set_value": {
+      "fields": {
+        "value": {
+          "required": true,
+          "example": "This is an example text",
+          "selector": {
+            "text": {
+              "multiline": false,
+              "multiple": false
+            }
+          }
+        }
+      },
+      "target": {
+        "entity": [
+          {
+            "domain": [
+              "input_text"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "sonoff": {
+    "send_command": {
+      "fields": {
+        "device": {
+          "name": "Device",
+          "description": "Device ID to send command to.",
+          "example": "1000123456"
+        },
+        "cmd": {
+          "name": "Command",
+          "description": "A single command to send.",
+          "example": "switch"
+        }
+      },
+      "description": "Sends a command to a device.",
+      "name": "Send Command"
     }
   },
   "browser_mod": {
@@ -6707,8 +7195,8 @@
           "description": "ID of the popup-card to use as a template for the popup",
           "selector": {
             "text": {
-              "multiple": false,
-              "multiline": false
+              "multiline": false,
+              "multiple": false
             }
           }
         },
@@ -6717,8 +7205,8 @@
           "description": "Popup title",
           "selector": {
             "text": {
-              "multiple": false,
-              "multiline": false
+              "multiline": false,
+              "multiple": false
             }
           }
         },
@@ -6853,8 +7341,8 @@
           "description": "Text of the right button",
           "selector": {
             "text": {
-              "multiple": false,
-              "multiline": false
+              "multiline": false,
+              "multiple": false
             }
           }
         },
@@ -6871,9 +7359,9 @@
                 "warning",
                 "success"
               ],
+              "custom_value": false,
               "sort": false,
-              "multiple": false,
-              "custom_value": false
+              "multiple": false
             }
           }
         },
@@ -6889,9 +7377,9 @@
                 "outlined",
                 "plain"
               ],
+              "custom_value": false,
               "sort": false,
-              "multiple": false,
-              "custom_value": false
+              "multiple": false
             }
           }
         },
@@ -6909,8 +7397,8 @@
           "description": "Text of the left button",
           "selector": {
             "text": {
-              "multiple": false,
-              "multiline": false
+              "multiline": false,
+              "multiple": false
             }
           }
         },
@@ -6927,9 +7415,9 @@
                 "warning",
                 "success"
               ],
+              "custom_value": false,
               "sort": false,
-              "multiple": false,
-              "custom_value": false
+              "multiple": false
             }
           }
         },
@@ -6945,9 +7433,9 @@
                 "outlined",
                 "plain"
               ],
+              "custom_value": false,
               "sort": false,
-              "multiple": false,
-              "custom_value": false
+              "multiple": false
             }
           }
         },
@@ -7016,8 +7504,8 @@
           "description": "Tag for managing multiple popups",
           "selector": {
             "text": {
-              "multiple": false,
-              "multiline": false
+              "multiline": false,
+              "multiple": false
             }
           }
         }
@@ -7063,8 +7551,8 @@
           "description": "",
           "selector": {
             "text": {
-              "multiple": false,
-              "multiline": false
+              "multiline": false,
+              "multiple": false
             }
           }
         },
@@ -7080,9 +7568,9 @@
                 "settings",
                 "related"
               ],
+              "custom_value": false,
               "sort": false,
-              "multiple": false,
-              "custom_value": false
+              "multiple": false
             }
           }
         },
@@ -7160,8 +7648,8 @@
           "description": "Tag for popup to close when using multiple popups",
           "selector": {
             "text": {
-              "multiple": false,
-              "multiline": false
+              "multiline": false,
+              "multiple": false
             }
           }
         }
@@ -7215,8 +7703,8 @@
           "description": "Tag for popup to set style for when using multiple popups",
           "selector": {
             "text": {
-              "multiple": false,
-              "multiline": false
+              "multiline": false,
+              "multiple": false
             }
           }
         },
@@ -7248,9 +7736,9 @@
                 "forward",
                 "back"
               ],
+              "custom_value": false,
               "sort": false,
-              "multiple": false,
-              "custom_value": false
+              "multiple": false
             }
           }
         }
@@ -7297,8 +7785,8 @@
           "required": true,
           "selector": {
             "text": {
-              "multiple": false,
-              "multiline": false
+              "multiline": false,
+              "multiple": false
             }
           }
         },
@@ -7317,8 +7805,8 @@
           "description": "Text of optional action button",
           "selector": {
             "text": {
-              "multiple": false,
-              "multiline": false
+              "multiline": false,
+              "multiple": false
             }
           }
         },
@@ -7373,8 +7861,8 @@
           "description": "Target path",
           "selector": {
             "text": {
-              "multiple": false,
-              "multiline": false
+              "multiline": false,
+              "multiple": false
             }
           }
         }
@@ -7440,8 +7928,8 @@
           "description": "New Browser ID for the browser",
           "selector": {
             "text": {
-              "multiple": false,
-              "multiline": false
+              "multiline": false,
+              "multiple": false
             }
           }
         },
@@ -7502,8 +7990,8 @@
           "description": "Name of theme or \u0027auto\u0027",
           "selector": {
             "text": {
-              "multiple": false,
-              "multiline": false
+              "multiline": false,
+              "multiple": false
             }
           }
         },
@@ -7517,9 +8005,9 @@
                 "light",
                 "dark"
               ],
+              "custom_value": false,
               "sort": false,
-              "multiple": false,
-              "custom_value": false
+              "multiple": false
             }
           }
         },
@@ -7579,8 +8067,8 @@
           "description": "Text to print",
           "selector": {
             "text": {
-              "multiple": false,
-              "multiline": false
+              "multiline": false,
+              "multiple": false
             }
           }
         }
@@ -7694,8 +8182,8 @@
           "example": "\u00222019-04-20\u0022",
           "selector": {
             "text": {
-              "multiple": false,
-              "multiline": false
+              "multiline": false,
+              "multiple": false
             }
           }
         },
@@ -7709,8 +8197,8 @@
           "example": "\u00222019-04-20 05:04:20\u0022",
           "selector": {
             "text": {
-              "multiple": false,
-              "multiline": false
+              "multiline": false,
+              "multiple": false
             }
           }
         },
@@ -7730,167 +8218,6 @@
           {
             "domain": [
               "input_datetime"
-            ]
-          }
-        ]
-      }
-    }
-  },
-  "file": {
-    "read_file": {
-      "fields": {
-        "file_name": {
-          "example": "www/my_file.json",
-          "selector": {
-            "text": {
-              "multiple": false,
-              "multiline": false
-            }
-          }
-        },
-        "file_encoding": {
-          "example": "JSON",
-          "selector": {
-            "select": {
-              "options": [
-                "JSON",
-                "YAML"
-              ],
-              "sort": false,
-              "multiple": false,
-              "custom_value": false
-            }
-          }
-        }
-      },
-      "response": {
-        "optional": false
-      }
-    }
-  },
-  "automation": {
-    "trigger": {
-      "fields": {
-        "skip_condition": {
-          "default": true,
-          "selector": {
-            "boolean": {}
-          }
-        }
-      },
-      "target": {
-        "entity": [
-          {
-            "domain": [
-              "automation"
-            ]
-          }
-        ]
-      }
-    },
-    "toggle": {
-      "fields": {},
-      "target": {
-        "entity": [
-          {
-            "domain": [
-              "automation"
-            ]
-          }
-        ]
-      }
-    },
-    "turn_on": {
-      "fields": {},
-      "target": {
-        "entity": [
-          {
-            "domain": [
-              "automation"
-            ]
-          }
-        ]
-      }
-    },
-    "turn_off": {
-      "fields": {
-        "stop_actions": {
-          "default": true,
-          "selector": {
-            "boolean": {}
-          }
-        }
-      },
-      "target": {
-        "entity": [
-          {
-            "domain": [
-              "automation"
-            ]
-          }
-        ]
-      }
-    },
-    "reload": {
-      "fields": {}
-    }
-  },
-  "counter": {
-    "increment": {
-      "fields": {},
-      "target": {
-        "entity": [
-          {
-            "domain": [
-              "counter"
-            ]
-          }
-        ]
-      }
-    },
-    "decrement": {
-      "fields": {},
-      "target": {
-        "entity": [
-          {
-            "domain": [
-              "counter"
-            ]
-          }
-        ]
-      }
-    },
-    "reset": {
-      "fields": {},
-      "target": {
-        "entity": [
-          {
-            "domain": [
-              "counter"
-            ]
-          }
-        ]
-      }
-    },
-    "set_value": {
-      "fields": {
-        "value": {
-          "required": true,
-          "selector": {
-            "number": {
-              "min": 0.0,
-              "max": 9.223372036854776e+18,
-              "mode": "box",
-              "step": 1.0
-            }
-          }
-        }
-      },
-      "target": {
-        "entity": [
-          {
-            "domain": [
-              "counter"
             ]
           }
         ]
@@ -7918,8 +8245,8 @@
           "required": true,
           "selector": {
             "text": {
-              "multiple": false,
-              "multiline": false
+              "multiline": false,
+              "multiple": false
             }
           }
         }
@@ -7936,270 +8263,9 @@
       }
     }
   },
-  "adguard": {
-    "add_url": {
-      "fields": {
-        "name": {
-          "required": true,
-          "example": "Example",
-          "selector": {
-            "text": {
-              "multiple": false,
-              "multiline": false
-            }
-          }
-        },
-        "url": {
-          "required": true,
-          "example": "https://www.example.com/filter/1.txt",
-          "selector": {
-            "text": {
-              "multiple": false,
-              "multiline": false
-            }
-          }
-        }
-      }
-    },
-    "remove_url": {
-      "fields": {
-        "url": {
-          "required": true,
-          "example": "https://www.example.com/filter/1.txt",
-          "selector": {
-            "text": {
-              "multiple": false,
-              "multiline": false
-            }
-          }
-        }
-      }
-    },
-    "enable_url": {
-      "fields": {
-        "url": {
-          "required": true,
-          "example": "https://www.example.com/filter/1.txt",
-          "selector": {
-            "text": {
-              "multiple": false,
-              "multiline": false
-            }
-          }
-        }
-      }
-    },
-    "disable_url": {
-      "fields": {
-        "url": {
-          "required": true,
-          "example": "https://www.example.com/filter/1.txt",
-          "selector": {
-            "text": {
-              "multiple": false,
-              "multiline": false
-            }
-          }
-        }
-      }
-    },
-    "refresh": {
-      "fields": {
-        "force": {
-          "default": false,
-          "selector": {
-            "boolean": {}
-          }
-        }
-      }
-    }
-  },
-  "input_text": {
-    "reload": {
-      "fields": {}
-    },
-    "set_value": {
-      "fields": {
-        "value": {
-          "required": true,
-          "example": "This is an example text",
-          "selector": {
-            "text": {
-              "multiple": false,
-              "multiline": false
-            }
-          }
-        }
-      },
-      "target": {
-        "entity": [
-          {
-            "domain": [
-              "input_text"
-            ]
-          }
-        ]
-      }
-    }
-  },
-  "google_generative_ai_conversation": {
-    "generate_content": {
-      "fields": {
-        "prompt": {
-          "required": true,
-          "selector": {
-            "text": {
-              "multiline": true,
-              "multiple": false
-            }
-          }
-        },
-        "filenames": {
-          "required": false,
-          "selector": {
-            "text": {
-              "multiple": true,
-              "multiline": false
-            }
-          }
-        }
-      },
-      "description_placeholders": {
-        "example_image_path": "/config/www/image.jpg"
-      },
-      "response": {
-        "optional": false
-      }
-    }
-  },
   "template": {
     "reload": {
       "fields": {}
-    }
-  },
-  "sonoff": {
-    "send_command": {
-      "fields": {
-        "device": {
-          "name": "Device",
-          "description": "Device ID to send command to.",
-          "example": "1000123456"
-        },
-        "cmd": {
-          "name": "Command",
-          "description": "A single command to send.",
-          "example": "switch"
-        }
-      },
-      "description": "Sends a command to a device.",
-      "name": "Send Command"
-    }
-  },
-  "androidtv": {
-    "adb_command": {
-      "fields": {
-        "command": {
-          "required": true,
-          "example": "HOME",
-          "selector": {
-            "text": {
-              "multiple": false,
-              "multiline": false
-            }
-          }
-        }
-      },
-      "target": {
-        "entity": [
-          {
-            "integration": "androidtv",
-            "domain": [
-              "media_player"
-            ]
-          }
-        ]
-      }
-    },
-    "learn_sendevent": {
-      "fields": {},
-      "target": {
-        "entity": [
-          {
-            "integration": "androidtv",
-            "domain": [
-              "media_player"
-            ]
-          }
-        ]
-      }
-    },
-    "download": {
-      "fields": {
-        "device_path": {
-          "required": true,
-          "example": "/storage/emulated/0/Download/example.txt",
-          "selector": {
-            "text": {
-              "multiple": false,
-              "multiline": false
-            }
-          }
-        },
-        "local_path": {
-          "required": true,
-          "example": "/config/www/example.txt",
-          "selector": {
-            "text": {
-              "multiple": false,
-              "multiline": false
-            }
-          }
-        }
-      },
-      "target": {
-        "entity": [
-          {
-            "integration": "androidtv",
-            "domain": [
-              "media_player"
-            ]
-          }
-        ]
-      }
-    },
-    "upload": {
-      "fields": {
-        "device_path": {
-          "required": true,
-          "example": "/storage/emulated/0/Download/example.txt",
-          "selector": {
-            "text": {
-              "multiple": false,
-              "multiline": false
-            }
-          }
-        },
-        "local_path": {
-          "required": true,
-          "example": "/config/www/example.txt",
-          "selector": {
-            "text": {
-              "multiple": false,
-              "multiline": false
-            }
-          }
-        }
-      },
-      "target": {
-        "entity": [
-          {
-            "integration": "androidtv",
-            "domain": [
-              "media_player"
-            ]
-          }
-        ]
-      }
     }
   },
   "alarm_control_panel": {
@@ -8209,8 +8275,8 @@
           "example": "1234",
           "selector": {
             "text": {
-              "multiple": false,
-              "multiline": false
+              "multiline": false,
+              "multiple": false
             }
           }
         }
@@ -8231,8 +8297,8 @@
           "example": "1234",
           "selector": {
             "text": {
-              "multiple": false,
-              "multiline": false
+              "multiline": false,
+              "multiple": false
             }
           }
         }
@@ -8256,8 +8322,8 @@
           "example": "1234",
           "selector": {
             "text": {
-              "multiple": false,
-              "multiline": false
+              "multiline": false,
+              "multiple": false
             }
           }
         }
@@ -8281,8 +8347,8 @@
           "example": "1234",
           "selector": {
             "text": {
-              "multiple": false,
-              "multiline": false
+              "multiline": false,
+              "multiple": false
             }
           }
         }
@@ -8306,8 +8372,8 @@
           "example": "1234",
           "selector": {
             "text": {
-              "multiple": false,
-              "multiline": false
+              "multiline": false,
+              "multiple": false
             }
           }
         }
@@ -8331,8 +8397,8 @@
           "example": "1234",
           "selector": {
             "text": {
-              "multiple": false,
-              "multiline": false
+              "multiline": false,
+              "multiple": false
             }
           }
         }
@@ -8356,8 +8422,8 @@
           "example": "1234",
           "selector": {
             "text": {
-              "multiple": false,
-              "multiline": false
+              "multiline": false,
+              "multiple": false
             }
           }
         }
@@ -8400,8 +8466,8 @@
           },
           "selector": {
             "text": {
-              "multiple": false,
-              "multiline": false
+              "multiline": false,
+              "multiple": false
             }
           }
         }
@@ -8434,8 +8500,8 @@
           "example": "32756745",
           "selector": {
             "text": {
-              "multiple": false,
-              "multiline": false
+              "multiline": false,
+              "multiple": false
             }
           }
         },
@@ -8500,8 +8566,8 @@
           "example": "television",
           "selector": {
             "text": {
-              "multiple": false,
-              "multiline": false
+              "multiline": false,
+              "multiple": false
             }
           }
         },
@@ -8521,9 +8587,9 @@
                 "ir",
                 "rf"
               ],
+              "custom_value": false,
               "sort": false,
-              "multiple": false,
-              "custom_value": false
+              "multiple": false
             }
           }
         },
@@ -8560,8 +8626,8 @@
           "example": "television",
           "selector": {
             "text": {
-              "multiple": false,
-              "multiline": false
+              "multiline": false,
+              "multiple": false
             }
           }
         },
@@ -8586,104 +8652,6 @@
       }
     }
   },
-  "webostv": {
-    "button": {
-      "fields": {
-        "entity_id": {
-          "required": true,
-          "selector": {
-            "entity": {
-              "integration": "webostv",
-              "domain": [
-                "media_player"
-              ],
-              "multiple": false,
-              "reorder": false
-            }
-          }
-        },
-        "button": {
-          "required": true,
-          "example": "LEFT",
-          "selector": {
-            "text": {
-              "multiple": false,
-              "multiline": false
-            }
-          }
-        }
-      }
-    },
-    "command": {
-      "fields": {
-        "entity_id": {
-          "required": true,
-          "selector": {
-            "entity": {
-              "integration": "webostv",
-              "domain": [
-                "media_player"
-              ],
-              "multiple": false,
-              "reorder": false
-            }
-          }
-        },
-        "command": {
-          "required": true,
-          "example": "system.launcher/open",
-          "selector": {
-            "text": {
-              "multiple": false,
-              "multiline": false
-            }
-          }
-        },
-        "payload": {
-          "example": "target: https://www.google.com",
-          "advanced": true,
-          "selector": {
-            "object": {
-              "multiple": false
-            }
-          }
-        }
-      },
-      "response": {
-        "optional": true
-      }
-    },
-    "select_sound_output": {
-      "fields": {
-        "entity_id": {
-          "required": true,
-          "selector": {
-            "entity": {
-              "integration": "webostv",
-              "domain": [
-                "media_player"
-              ],
-              "multiple": false,
-              "reorder": false
-            }
-          }
-        },
-        "sound_output": {
-          "required": true,
-          "example": "external_speaker",
-          "selector": {
-            "text": {
-              "multiple": false,
-              "multiline": false
-            }
-          }
-        }
-      },
-      "response": {
-        "optional": true
-      }
-    }
-  },
   "cast": {
     "show_lovelace_view": {
       "fields": {
@@ -8695,8 +8663,8 @@
               "domain": [
                 "media_player"
               ],
-              "multiple": false,
-              "reorder": false
+              "reorder": false,
+              "multiple": false
             }
           }
         },
@@ -8704,8 +8672,8 @@
           "example": "lovelace-cast",
           "selector": {
             "text": {
-              "multiple": false,
-              "multiline": false
+              "multiline": false,
+              "multiple": false
             }
           }
         },
@@ -8714,11 +8682,43 @@
           "example": "downstairs",
           "selector": {
             "text": {
-              "multiple": false,
-              "multiline": false
+              "multiline": false,
+              "multiple": false
             }
           }
         }
+      }
+    }
+  },
+  "file": {
+    "read_file": {
+      "fields": {
+        "file_name": {
+          "example": "www/my_file.json",
+          "selector": {
+            "text": {
+              "multiline": false,
+              "multiple": false
+            }
+          }
+        },
+        "file_encoding": {
+          "example": "JSON",
+          "selector": {
+            "select": {
+              "options": [
+                "JSON",
+                "YAML"
+              ],
+              "custom_value": false,
+              "sort": false,
+              "multiple": false
+            }
+          }
+        }
+      },
+      "response": {
+        "optional": false
       }
     }
   },
@@ -8729,8 +8729,8 @@
           "required": true,
           "selector": {
             "text": {
-              "multiple": false,
-              "multiline": false
+              "multiline": false,
+              "multiple": false
             }
           }
         },
@@ -8738,8 +8738,8 @@
           "required": false,
           "selector": {
             "text": {
-              "multiple": false,
-              "multiline": false
+              "multiline": false,
+              "multiple": false
             }
           },
           "filter": {
@@ -8766,8 +8766,8 @@
           "example": "The garage door has been open for 10 minutes.",
           "selector": {
             "text": {
-              "multiple": false,
-              "multiline": false
+              "multiline": false,
+              "multiple": false
             }
           }
         },
@@ -8775,8 +8775,8 @@
           "example": "Your Garage Door Friend",
           "selector": {
             "text": {
-              "multiple": false,
-              "multiline": false
+              "multiline": false,
+              "multiple": false
             }
           }
         },
@@ -9070,194 +9070,6 @@
       }
     }
   },
-  "flux_led": {
-    "set_custom_effect": {
-      "fields": {
-        "colors": {
-          "example": "- [255,0,0]\n- [0,255,0]\n- [0,0,255]\n",
-          "required": true,
-          "selector": {
-            "object": {
-              "multiple": false
-            }
-          }
-        },
-        "speed_pct": {
-          "example": 80,
-          "default": 50,
-          "required": false,
-          "selector": {
-            "number": {
-              "min": 1.0,
-              "step": 1.0,
-              "max": 100.0,
-              "unit_of_measurement": "%",
-              "mode": "slider"
-            }
-          }
-        },
-        "transition": {
-          "example": "jump",
-          "default": "gradual",
-          "required": false,
-          "selector": {
-            "select": {
-              "options": [
-                "gradual",
-                "jump",
-                "strobe"
-              ],
-              "sort": false,
-              "multiple": false,
-              "custom_value": false
-            }
-          }
-        }
-      },
-      "target": {
-        "entity": [
-          {
-            "integration": "flux_led",
-            "domain": [
-              "light"
-            ]
-          }
-        ]
-      }
-    },
-    "set_zones": {
-      "fields": {
-        "colors": {
-          "example": "- [255,0,0]\n- [0,255,0]\n- [0,0,255]\n- [255,255,255]\n",
-          "required": true,
-          "selector": {
-            "object": {
-              "multiple": false
-            }
-          }
-        },
-        "speed_pct": {
-          "example": 80,
-          "default": 50,
-          "required": false,
-          "selector": {
-            "number": {
-              "min": 1.0,
-              "step": 1.0,
-              "max": 100.0,
-              "unit_of_measurement": "%",
-              "mode": "slider"
-            }
-          }
-        },
-        "effect": {
-          "example": "running_water",
-          "default": "static",
-          "required": false,
-          "selector": {
-            "select": {
-              "options": [
-                "static",
-                "running_water",
-                "strobe",
-                "jump",
-                "breathing"
-              ],
-              "sort": false,
-              "multiple": false,
-              "custom_value": false
-            }
-          }
-        }
-      },
-      "target": {
-        "entity": [
-          {
-            "integration": "flux_led",
-            "domain": [
-              "light"
-            ]
-          }
-        ]
-      }
-    },
-    "set_music_mode": {
-      "fields": {
-        "sensitivity": {
-          "example": 80,
-          "default": 100,
-          "required": false,
-          "selector": {
-            "number": {
-              "min": 1.0,
-              "step": 1.0,
-              "max": 100.0,
-              "unit_of_measurement": "%",
-              "mode": "slider"
-            }
-          }
-        },
-        "brightness": {
-          "example": 80,
-          "default": 100,
-          "required": false,
-          "selector": {
-            "number": {
-              "min": 1.0,
-              "step": 1.0,
-              "max": 100.0,
-              "unit_of_measurement": "%",
-              "mode": "slider"
-            }
-          }
-        },
-        "light_screen": {
-          "default": false,
-          "required": false,
-          "selector": {
-            "boolean": {}
-          }
-        },
-        "effect": {
-          "example": 1,
-          "default": 1,
-          "required": false,
-          "selector": {
-            "number": {
-              "min": 0.0,
-              "step": 1.0,
-              "max": 16.0,
-              "mode": "slider"
-            }
-          }
-        },
-        "foreground_color": {
-          "example": "[255, 100, 100]",
-          "required": false,
-          "selector": {
-            "color_rgb": {}
-          }
-        },
-        "background_color": {
-          "example": "[255, 100, 100]",
-          "required": false,
-          "selector": {
-            "color_rgb": {}
-          }
-        }
-      },
-      "target": {
-        "entity": [
-          {
-            "integration": "flux_led",
-            "domain": [
-              "light"
-            ]
-          }
-        ]
-      }
-    }
-  },
   "ai_task": {
     "generate_data": {
       "fields": {
@@ -9266,8 +9078,8 @@
           "required": true,
           "selector": {
             "text": {
-              "multiple": false,
-              "multiline": false
+              "multiline": false,
+              "multiple": false
             }
           }
         },
@@ -9295,8 +9107,8 @@
                   ]
                 }
               ],
-              "multiple": false,
-              "reorder": false
+              "reorder": false,
+              "multiple": false
             }
           }
         },
@@ -9332,8 +9144,8 @@
           "required": true,
           "selector": {
             "text": {
-              "multiple": false,
-              "multiline": false
+              "multiline": false,
+              "multiple": false
             }
           }
         },
@@ -9361,8 +9173,8 @@
                   ]
                 }
               ],
-              "multiple": false,
-              "reorder": false
+              "reorder": false,
+              "multiple": false
             }
           }
         },
@@ -9377,6 +9189,147 @@
             }
           }
         }
+      },
+      "response": {
+        "optional": false
+      }
+    }
+  },
+  "text": {
+    "set_value": {
+      "fields": {
+        "value": {
+          "required": true,
+          "example": "Hello world!",
+          "selector": {
+            "text": {
+              "multiline": false,
+              "multiple": false
+            }
+          }
+        }
+      },
+      "target": {
+        "entity": [
+          {
+            "domain": [
+              "text"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "watchman": {
+    "report": {
+      "fields": {
+        "parse_config": {
+          "example": true,
+          "default": false,
+          "required": false,
+          "selector": {
+            "boolean": {}
+          }
+        },
+        "advanced_options": {
+          "collapsed": true,
+          "fields": {
+            "action": {
+              "example": "persistent_notification.create",
+              "required": false,
+              "advanced": true,
+              "selector": {
+                "text": {
+                  "multiline": false,
+                  "multiple": false
+                }
+              }
+            },
+            "data": {
+              "example": "title: Watchman Report",
+              "required": false,
+              "advanced": true
+            },
+            "chunk_size": {
+              "example": 3500,
+              "required": false,
+              "advanced": true,
+              "selector": {
+                "number": {
+                  "min": 0.0,
+                  "max": 100000.0,
+                  "mode": "box",
+                  "step": 1.0
+                }
+              }
+            },
+            "create_file": {
+              "example": true,
+              "default": true,
+              "required": false,
+              "selector": {
+                "boolean": {}
+              }
+            }
+          }
+        }
+      },
+      "description": "Run watchman report",
+      "name": "Report",
+      "response": {
+        "optional": true
+      }
+    },
+    "set_ignored_labels": {
+      "fields": {
+        "labels": {
+          "name": "Labels",
+          "description": "List of labels to ignore.",
+          "required": true,
+          "selector": {
+            "label": {
+              "multiple": true
+            }
+          }
+        }
+      },
+      "description": "Overwrite the list of labels to ignore.",
+      "name": "Set ignored labels"
+    }
+  },
+  "weather": {
+    "get_forecasts": {
+      "fields": {
+        "type": {
+          "required": true,
+          "selector": {
+            "select": {
+              "options": [
+                "daily",
+                "hourly",
+                "twice_daily"
+              ],
+              "translation_key": "forecast_type",
+              "custom_value": false,
+              "sort": false,
+              "multiple": false
+            }
+          }
+        }
+      },
+      "target": {
+        "entity": [
+          {
+            "domain": [
+              "weather"
+            ],
+            "supported_features": [
+              1,
+              2,
+              4
+            ]
+          }
+        ]
       },
       "response": {
         "optional": false
@@ -9427,8 +9380,8 @@
           "example": "away",
           "selector": {
             "text": {
-              "multiple": false,
-              "multiline": false
+              "multiline": false,
+              "multiple": false
             }
           }
         }
@@ -9472,70 +9425,6 @@
       }
     }
   },
-  "text": {
-    "set_value": {
-      "fields": {
-        "value": {
-          "required": true,
-          "example": "Hello world!",
-          "selector": {
-            "text": {
-              "multiple": false,
-              "multiline": false
-            }
-          }
-        }
-      },
-      "target": {
-        "entity": [
-          {
-            "domain": [
-              "text"
-            ]
-          }
-        ]
-      }
-    }
-  },
-  "weather": {
-    "get_forecasts": {
-      "fields": {
-        "type": {
-          "required": true,
-          "selector": {
-            "select": {
-              "options": [
-                "daily",
-                "hourly",
-                "twice_daily"
-              ],
-              "translation_key": "forecast_type",
-              "sort": false,
-              "multiple": false,
-              "custom_value": false
-            }
-          }
-        }
-      },
-      "target": {
-        "entity": [
-          {
-            "domain": [
-              "weather"
-            ],
-            "supported_features": [
-              1,
-              2,
-              4
-            ]
-          }
-        ]
-      },
-      "response": {
-        "optional": false
-      }
-    }
-  },
   "siren": {
     "turn_on": {
       "fields": {
@@ -9549,8 +9438,8 @@
           "required": false,
           "selector": {
             "text": {
-              "multiple": false,
-              "multiline": false
+              "multiline": false,
+              "multiple": false
             }
           }
         },
@@ -9581,8 +9470,8 @@
           "required": false,
           "selector": {
             "text": {
-              "multiple": false,
-              "multiline": false
+              "multiline": false,
+              "multiple": false
             }
           }
         }
@@ -9898,81 +9787,192 @@
       }
     }
   },
-  "watchman": {
-    "report": {
+  "flux_led": {
+    "set_custom_effect": {
       "fields": {
-        "parse_config": {
-          "example": true,
+        "colors": {
+          "example": "- [255,0,0]\n- [0,255,0]\n- [0,0,255]\n",
+          "required": true,
+          "selector": {
+            "object": {
+              "multiple": false
+            }
+          }
+        },
+        "speed_pct": {
+          "example": 80,
+          "default": 50,
+          "required": false,
+          "selector": {
+            "number": {
+              "min": 1.0,
+              "step": 1.0,
+              "max": 100.0,
+              "unit_of_measurement": "%",
+              "mode": "slider"
+            }
+          }
+        },
+        "transition": {
+          "example": "jump",
+          "default": "gradual",
+          "required": false,
+          "selector": {
+            "select": {
+              "options": [
+                "gradual",
+                "jump",
+                "strobe"
+              ],
+              "custom_value": false,
+              "sort": false,
+              "multiple": false
+            }
+          }
+        }
+      },
+      "target": {
+        "entity": [
+          {
+            "integration": "flux_led",
+            "domain": [
+              "light"
+            ]
+          }
+        ]
+      }
+    },
+    "set_zones": {
+      "fields": {
+        "colors": {
+          "example": "- [255,0,0]\n- [0,255,0]\n- [0,0,255]\n- [255,255,255]\n",
+          "required": true,
+          "selector": {
+            "object": {
+              "multiple": false
+            }
+          }
+        },
+        "speed_pct": {
+          "example": 80,
+          "default": 50,
+          "required": false,
+          "selector": {
+            "number": {
+              "min": 1.0,
+              "step": 1.0,
+              "max": 100.0,
+              "unit_of_measurement": "%",
+              "mode": "slider"
+            }
+          }
+        },
+        "effect": {
+          "example": "running_water",
+          "default": "static",
+          "required": false,
+          "selector": {
+            "select": {
+              "options": [
+                "static",
+                "running_water",
+                "strobe",
+                "jump",
+                "breathing"
+              ],
+              "custom_value": false,
+              "sort": false,
+              "multiple": false
+            }
+          }
+        }
+      },
+      "target": {
+        "entity": [
+          {
+            "integration": "flux_led",
+            "domain": [
+              "light"
+            ]
+          }
+        ]
+      }
+    },
+    "set_music_mode": {
+      "fields": {
+        "sensitivity": {
+          "example": 80,
+          "default": 100,
+          "required": false,
+          "selector": {
+            "number": {
+              "min": 1.0,
+              "step": 1.0,
+              "max": 100.0,
+              "unit_of_measurement": "%",
+              "mode": "slider"
+            }
+          }
+        },
+        "brightness": {
+          "example": 80,
+          "default": 100,
+          "required": false,
+          "selector": {
+            "number": {
+              "min": 1.0,
+              "step": 1.0,
+              "max": 100.0,
+              "unit_of_measurement": "%",
+              "mode": "slider"
+            }
+          }
+        },
+        "light_screen": {
           "default": false,
           "required": false,
           "selector": {
             "boolean": {}
           }
         },
-        "advanced_options": {
-          "collapsed": true,
-          "fields": {
-            "action": {
-              "example": "persistent_notification.create",
-              "required": false,
-              "advanced": true,
-              "selector": {
-                "text": {
-                  "multiple": false,
-                  "multiline": false
-                }
-              }
-            },
-            "data": {
-              "example": "title: Watchman Report",
-              "required": false,
-              "advanced": true
-            },
-            "chunk_size": {
-              "example": 3500,
-              "required": false,
-              "advanced": true,
-              "selector": {
-                "number": {
-                  "min": 0.0,
-                  "max": 100000.0,
-                  "mode": "box",
-                  "step": 1.0
-                }
-              }
-            },
-            "create_file": {
-              "example": true,
-              "default": true,
-              "required": false,
-              "selector": {
-                "boolean": {}
-              }
-            }
-          }
-        }
-      },
-      "description": "Run watchman report",
-      "name": "Report",
-      "response": {
-        "optional": true
-      }
-    },
-    "set_ignored_labels": {
-      "fields": {
-        "labels": {
-          "name": "Labels",
-          "description": "List of labels to ignore.",
-          "required": true,
+        "effect": {
+          "example": 1,
+          "default": 1,
+          "required": false,
           "selector": {
-            "label": {
-              "multiple": true
+            "number": {
+              "min": 0.0,
+              "step": 1.0,
+              "max": 16.0,
+              "mode": "slider"
             }
+          }
+        },
+        "foreground_color": {
+          "example": "[255, 100, 100]",
+          "required": false,
+          "selector": {
+            "color_rgb": {}
+          }
+        },
+        "background_color": {
+          "example": "[255, 100, 100]",
+          "required": false,
+          "selector": {
+            "color_rgb": {}
           }
         }
       },
-      "description": "Overwrite the list of labels to ignore.",
-      "name": "Set ignored labels"
+      "target": {
+        "entity": [
+          {
+            "integration": "flux_led",
+            "domain": [
+              "light"
+            ]
+          }
+        ]
+      }
     }
   },
   "repairs": {
@@ -9991,8 +9991,8 @@
           "required": true,
           "selector": {
             "text": {
-              "multiple": false,
-              "multiline": false
+              "multiline": false,
+              "multiple": false
             }
           }
         }
@@ -10008,8 +10008,8 @@
           "required": true,
           "selector": {
             "text": {
-              "multiple": false,
-              "multiline": false
+              "multiline": false,
+              "multiple": false
             }
           }
         },
@@ -10030,8 +10030,8 @@
           "required": false,
           "selector": {
             "text": {
-              "multiple": false,
-              "multiline": false
+              "multiline": false,
+              "multiple": false
             }
           }
         },
@@ -10041,8 +10041,8 @@
           "required": false,
           "selector": {
             "text": {
-              "multiple": false,
-              "multiline": false
+              "multiline": false,
+              "multiple": false
             }
           }
         },
@@ -10066,9 +10066,9 @@
                   "value": "critical"
                 }
               ],
+              "custom_value": false,
               "sort": false,
-              "multiple": false,
-              "custom_value": false
+              "multiple": false
             }
           }
         },
@@ -10099,8 +10099,8 @@
           "required": true,
           "selector": {
             "text": {
-              "multiple": false,
-              "multiline": false
+              "multiline": false,
+              "multiple": false
             }
           }
         }
@@ -10127,8 +10127,8 @@
           "example": "1,2",
           "selector": {
             "text": {
-              "multiple": false,
-              "multiline": false
+              "multiline": false,
+              "multiple": false
             }
           }
         },
@@ -10208,8 +10208,8 @@
           "required": true,
           "selector": {
             "text": {
-              "multiple": false,
-              "multiline": false
+              "multiline": false,
+              "multiple": false
             }
           }
         },
@@ -10262,8 +10262,8 @@
           "required": true,
           "selector": {
             "text": {
-              "multiple": false,
-              "multiline": false
+              "multiline": false,
+              "multiple": false
             }
           }
         },
@@ -10429,8 +10429,8 @@
           "name": "Name",
           "selector": {
             "text": {
-              "multiple": false,
-              "multiline": false
+              "multiline": false,
+              "multiple": false
             }
           }
         }
@@ -10457,8 +10457,8 @@
           "name": "Name",
           "selector": {
             "text": {
-              "multiple": false,
-              "multiline": false
+              "multiline": false,
+              "multiple": false
             }
           }
         }
