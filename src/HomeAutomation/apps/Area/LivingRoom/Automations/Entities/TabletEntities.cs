@@ -2,7 +2,7 @@ using HomeAutomation.apps.Area.LivingRoom.Devices;
 
 namespace HomeAutomation.apps.Area.LivingRoom.Automations.Entities;
 
-public class LivingRoomTabletEntities(
+public class TabletEntities(
     LivingRoomLightDevices devices,
     LivingRoomMediaDevices mediaDevices
 ) : ITabletEntities

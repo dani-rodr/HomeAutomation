@@ -1,4 +1,5 @@
 using HomeAutomation.apps.Area.LivingRoom.Automations;
+using HomeAutomation.apps.Area.LivingRoom.Automations.Entities;
 using HomeAutomation.apps.Area.LivingRoom.Devices;
 
 namespace HomeAutomation.apps.Area.LivingRoom;
@@ -16,15 +17,22 @@ public class LivingRoomApp(
     protected override IEnumerable<IAutomation> CreateAutomations()
     {
         yield return tclDisplay;
+
         yield return new FanAutomation(fanEntities, loggerFactory.CreateLogger<FanAutomation>());
+
         yield return new AirQualityAutomation(
             airQualityEntities,
             loggerFactory.CreateLogger<AirQualityAutomation>()
         );
+
         // yield return new TabletAutomation(
+
         //     tabletEntities,
+
         //     loggerFactory.CreateLogger<TabletAutomation>()
+
         // );
+
         yield return motionSensor;
 
         yield return new LightAutomation(

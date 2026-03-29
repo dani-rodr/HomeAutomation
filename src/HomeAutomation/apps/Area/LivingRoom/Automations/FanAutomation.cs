@@ -1,4 +1,5 @@
 using System.Reactive.Disposables;
+using HomeAutomation.apps.Area.LivingRoom.Automations.Entities;
 
 namespace HomeAutomation.apps.Area.LivingRoom.Automations;
 
@@ -27,6 +28,7 @@ public class FanAutomation(ILivingRoomFanEntities entities, ILogger<FanAutomatio
                 entities.BedroomMotionSensor.EntityId,
                 ExhaustFan.EntityId
             );
+
             ExhaustFan.TurnOn();
         }
     }
@@ -34,6 +36,7 @@ public class FanAutomation(ILivingRoomFanEntities entities, ILogger<FanAutomatio
     private IEnumerable<IDisposable> GetSalaFanAutomations()
     {
         yield return MotionSensor.OnOccupied(new(Seconds: 3)).Subscribe(TurnOnFans);
+
         yield return MotionSensor.OnCleared(new(Minutes: 1)).Subscribe(TurnOffFans);
     }
 

@@ -1,4 +1,4 @@
-namespace HomeAutomation.apps.Area.Desk.Automations;
+namespace HomeAutomation.apps.Area.Desk.Automations.Entities;
 
 public interface IDeskLightEntities : ILightAutomationEntities
 {

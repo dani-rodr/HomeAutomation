@@ -1,3 +1,4 @@
+using HomeAutomation.apps.Area.Kitchen.Automations.Entities;
 
 namespace HomeAutomation.apps.Area.Kitchen.Automations;
 
@@ -7,7 +8,9 @@ public class LightAutomation(IKitchenLightEntities entities, ILogger<LightAutoma
     private readonly BinarySensorEntity _powerPlug = entities.PowerPlug;
 
     protected override int SensorWaitTime => 20;
+
     protected override int SensorActiveDelayValue => 20;
+
     protected override int SensorInactiveDelayValue => 3;
 
     protected override IEnumerable<IDisposable> GetLightAutomations() =>

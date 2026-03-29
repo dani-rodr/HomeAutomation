@@ -1,4 +1,5 @@
 using System.Linq;
+using HomeAutomation.apps.Area.Bedroom.Automations.Entities;
 
 namespace HomeAutomation.apps.Area.Bedroom.Automations;
 
@@ -6,6 +7,7 @@ public class LightAutomation(IBedroomLightEntities entities, ILogger<LightAutoma
     : LightAutomationBase(entities, logger)
 {
     private readonly SwitchEntity _rightSideEmptySwitch = entities.RightSideEmptySwitch;
+
     private readonly SwitchEntity _leftSideFanSwitch = entities.LeftSideFanSwitch;
     protected override int SensorActiveDelayValue => 45;
 
@@ -26,9 +28,11 @@ public class LightAutomation(IBedroomLightEntities entities, ILogger<LightAutoma
             {
                 ToggleLightsViaSwitch(e.First());
             });
+
         yield return _rightSideEmptySwitch
             .OnChanges(new(StartImmediately: false))
             .Subscribe(ToggleLightsViaSwitch);
+
         yield return Light
             .OnTurnedOn(new(StartImmediately: false))
             .IsSystemOperated()
@@ -41,7 +45,9 @@ public class LightAutomation(IBedroomLightEntities entities, ILogger<LightAutoma
         {
             return;
         }
+
         Light.Toggle();
+
         MasterSwitch.TurnOff();
     }
 }

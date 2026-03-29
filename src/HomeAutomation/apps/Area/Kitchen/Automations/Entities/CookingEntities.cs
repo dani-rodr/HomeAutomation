@@ -1,8 +1,8 @@
 using HomeAutomation.apps.Area.Kitchen.Devices;
 
-namespace HomeAutomation.apps.Area.Kitchen.Automations;
+namespace HomeAutomation.apps.Area.Kitchen.Automations.Entities;
 
-public class KitchenCookingEntities(KitchenDevices devices) : ICookingEntities
+public class CookingEntities(KitchenDevices devices) : ICookingEntities
 {
     public SwitchEntity MasterSwitch => devices.CookingAutomation;
     public NumericSensorEntity RiceCookerPower => devices.RiceCookerPower;

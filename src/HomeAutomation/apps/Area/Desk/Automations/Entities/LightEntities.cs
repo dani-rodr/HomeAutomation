@@ -1,8 +1,8 @@
 using HomeAutomation.apps.Area.Desk.Devices;
 
-namespace HomeAutomation.apps.Area.Desk.Automations;
+namespace HomeAutomation.apps.Area.Desk.Automations.Entities;
 
-public class DeskLightEntities(DeskDevices devices) : IDeskLightEntities
+public class LightEntities(DeskDevices devices) : IDeskLightEntities
 {
     public SwitchEntity MasterSwitch => devices.LightAutomation;
     public BinarySensorEntity MotionSensor => devices.MotionSensor;

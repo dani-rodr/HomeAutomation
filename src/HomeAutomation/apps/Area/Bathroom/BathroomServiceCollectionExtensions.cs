@@ -1,6 +1,8 @@
-using HomeAutomation.apps.Area.Bathroom.Automations;
+using HomeAutomation.apps.Area.Bathroom.Automations.Entities;
 using HomeAutomation.apps.Area.Bathroom.Devices;
 using Microsoft.Extensions.DependencyInjection;
+
+using BathroomLightEntityAdapter = HomeAutomation.apps.Area.Bathroom.Automations.Entities.LightEntities;
 
 namespace HomeAutomation.apps.Area.Bathroom;
 
@@ -10,6 +12,6 @@ public static class BathroomServiceCollectionExtensions
     {
         return services
             .AddTransient<BathroomDevices>()
-            .AddTransient<IBathroomLightEntities, BathroomLightEntities>();
+            .AddTransient<IBathroomLightEntities, BathroomLightEntityAdapter>();
     }
 }

@@ -1,3 +1,4 @@
+using HomeAutomation.apps.Area.LivingRoom.Automations.Entities;
 
 namespace HomeAutomation.apps.Area.LivingRoom.Automations;
 
@@ -8,7 +9,9 @@ public class LightAutomation(
 ) : LightAutomationBase(entities, logger)
 {
     protected override int SensorWaitTime => 30;
+
     protected override int SensorActiveDelayValue => 45;
+
     protected override int SensorInactiveDelayValue => 1;
 
     public override void StartAutomation()
@@ -16,14 +19,18 @@ public class LightAutomation(
         base.StartAutomation();
 
         dimmingController.SetSensorActiveDelayValue(SensorActiveDelayValue);
+
         dimmingController.SetDimParameters(brightnessPct: 80, delaySeconds: 15);
     }
 
     protected override IEnumerable<IDisposable> GetLightAutomations()
     {
         yield return entities.LivingRoomDoor.OnOpened().Subscribe(TurnOnLights);
+
         yield return Light.OnTurnedOn().Subscribe(_ => entities.KitchenMotionAutomation.TurnOn());
+
         yield return MotionSensor.OnOccupied().Subscribe(TurnOnLights);
+
         yield return MotionSensor
             .OnCleared()
             .Subscribe(async _ => await dimmingController.OnMotionStoppedAsync(Light));
@@ -37,6 +44,7 @@ public class LightAutomation(
     protected override IEnumerable<IDisposable> GetAdditionalSwitchableAutomations()
     {
         yield return TurnOffPantryLights();
+
         yield return SetSensorDelayOnKitchenOccupancy();
     }
 
@@ -71,7 +79,9 @@ public class LightAutomation(
     public override void Dispose()
     {
         dimmingController?.Dispose();
+
         base.Dispose();
+
         GC.SuppressFinalize(this);
     }
 }

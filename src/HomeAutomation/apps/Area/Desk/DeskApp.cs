@@ -1,4 +1,5 @@
 using HomeAutomation.apps.Area.Desk.Automations;
+using HomeAutomation.apps.Area.Desk.Automations.Entities;
 using HomeAutomation.apps.Area.Desk.Devices;
 
 namespace HomeAutomation.apps.Area.Desk;
@@ -16,8 +17,11 @@ public class DeskApp(
     protected override IEnumerable<IAutomation> CreateAutomations()
     {
         yield return desktop;
+
         yield return laptop;
+
         yield return lgDisplay;
+
         yield return motionSensor;
 
         yield return new LightAutomation(
@@ -25,6 +29,7 @@ public class DeskApp(
             lgDisplay,
             loggerFactory.CreateLogger<LightAutomation>()
         );
+
         yield return new DisplayAutomation(
             lgDisplay,
             desktop,

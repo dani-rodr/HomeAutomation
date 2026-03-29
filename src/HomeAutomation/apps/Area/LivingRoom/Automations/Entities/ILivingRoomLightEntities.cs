@@ -1,4 +1,4 @@
-namespace HomeAutomation.apps.Area.LivingRoom.Automations;
+namespace HomeAutomation.apps.Area.LivingRoom.Automations.Entities;
 
 public interface ILivingRoomLightEntities : ILightAutomationEntities
 {

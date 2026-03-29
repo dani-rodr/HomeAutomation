@@ -1,4 +1,5 @@
 using HomeAutomation.apps.Area.Bedroom.Automations;
+using HomeAutomation.apps.Area.Bedroom.Automations.Entities;
 using HomeAutomation.apps.Area.Bedroom.Devices;
 
 namespace HomeAutomation.apps.Area.Bedroom;
@@ -15,11 +16,14 @@ public class BedroomApp(
     protected override IEnumerable<IAutomation> CreateAutomations()
     {
         yield return motionSensor;
+
         yield return new LightAutomation(
             motionEntities,
             loggerFactory.CreateLogger<LightAutomation>()
         );
+
         yield return new FanAutomation(fanEntities, loggerFactory.CreateLogger<FanAutomation>());
+
         yield return new ClimateAutomation(
             climateEntities,
             climateScheduler,

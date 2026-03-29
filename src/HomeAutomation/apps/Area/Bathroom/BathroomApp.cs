@@ -1,4 +1,5 @@
 using HomeAutomation.apps.Area.Bathroom.Automations;
+using HomeAutomation.apps.Area.Bathroom.Automations.Entities;
 using HomeAutomation.apps.Area.Bathroom.Devices;
 
 namespace HomeAutomation.apps.Area.Bathroom;

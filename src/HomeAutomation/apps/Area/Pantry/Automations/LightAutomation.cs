@@ -1,4 +1,5 @@
 using System.Linq;
+using HomeAutomation.apps.Area.Pantry.Automations.Entities;
 
 namespace HomeAutomation.apps.Area.Pantry.Automations;
 
@@ -6,6 +7,7 @@ public class LightAutomation(IPantryLightEntities entities, ILogger<LightAutomat
     : LightAutomationBase(entities, logger)
 {
     protected override int SensorWaitTime => 5;
+
     protected override int SensorActiveDelayValue => 5;
 
     protected override IEnumerable<IDisposable> GetAdditionalPersistentAutomations() =>
@@ -47,8 +49,10 @@ public class LightAutomation(IPantryLightEntities entities, ILogger<LightAutomat
                     "Pantry motion detected - activating bathroom automation {EntityId}",
                     entities.BathroomMotionAutomation.EntityId
                 );
+
                 entities.BathroomMotionAutomation.TurnOn();
             });
+
         yield return DeactivateWhenBothSensorsClear(MotionSensor, entities.BathroomMotionSensor);
 
         yield return DeactivateWhenBothSensorsClear(entities.BathroomMotionSensor, MotionSensor);
@@ -71,6 +75,7 @@ public class LightAutomation(IPantryLightEntities entities, ILogger<LightAutomat
                     otherSensor.EntityId,
                     entities.BathroomMotionAutomation.EntityId
                 );
+
                 entities.BathroomMotionAutomation.TurnOff();
             });
 }

@@ -1,6 +1,9 @@
-using HomeAutomation.apps.Area.Kitchen.Automations;
+using HomeAutomation.apps.Area.Kitchen.Automations.Entities;
 using HomeAutomation.apps.Area.Kitchen.Devices;
 using Microsoft.Extensions.DependencyInjection;
+
+using KitchenCookingEntityAdapter = HomeAutomation.apps.Area.Kitchen.Automations.Entities.CookingEntities;
+using KitchenLightEntityAdapter = HomeAutomation.apps.Area.Kitchen.Automations.Entities.LightEntities;
 
 namespace HomeAutomation.apps.Area.Kitchen;
 
@@ -10,7 +13,7 @@ public static class KitchenServiceCollectionExtensions
     {
         return services
             .AddTransient<KitchenDevices>()
-            .AddTransient<IKitchenLightEntities, KitchenLightEntities>()
-            .AddTransient<ICookingEntities, KitchenCookingEntities>();
+            .AddTransient<IKitchenLightEntities, KitchenLightEntityAdapter>()
+            .AddTransient<ICookingEntities, KitchenCookingEntityAdapter>();
     }
 }

@@ -1,9 +1,9 @@
 using HomeAutomation.apps.Area.Bedroom.Devices;
 using HomeAutomation.apps.Common.Devices;
 
-namespace HomeAutomation.apps.Area.Bedroom.Automations;
+namespace HomeAutomation.apps.Area.Bedroom.Automations.Entities;
 
-public class BedroomClimateEntities(BedroomDevices devices, GlobalDevices globalDevices)
+public class ClimateEntities(BedroomDevices devices, GlobalDevices globalDevices)
     : IClimateEntities
 {
     public SwitchEntity MasterSwitch => devices.ClimateAutomation;

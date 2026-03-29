@@ -1,4 +1,4 @@
-namespace HomeAutomation.apps.Area.Pantry.Automations;
+namespace HomeAutomation.apps.Area.Pantry.Automations.Entities;
 
 public interface IPantryLightEntities : ILightAutomationEntities
 {

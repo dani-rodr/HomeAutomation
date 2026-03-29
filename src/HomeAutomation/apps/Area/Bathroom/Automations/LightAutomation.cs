@@ -1,3 +1,5 @@
+using HomeAutomation.apps.Area.Bathroom.Automations.Entities;
+
 namespace HomeAutomation.apps.Area.Bathroom.Automations;
 
 public class LightAutomation(
@@ -32,6 +34,7 @@ public class LightAutomation(
         yield return MotionSensor
             .OnOccupied()
             .Subscribe(e => dimmingController.OnMotionDetected(Light));
+
         yield return MotionSensor
             .OnCleared()
             .Subscribe(async _ => await dimmingController.OnMotionStoppedAsync(Light));
@@ -40,7 +43,9 @@ public class LightAutomation(
     public override void Dispose()
     {
         dimmingController?.Dispose();
+
         base.Dispose();
+
         GC.SuppressFinalize(this);
     }
 }

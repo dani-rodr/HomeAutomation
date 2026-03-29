@@ -1,4 +1,5 @@
 using System.Reactive.Disposables;
+using HomeAutomation.apps.Area.Bedroom.Automations.Entities;
 
 namespace HomeAutomation.apps.Area.Bedroom.Automations;
 
@@ -17,8 +18,10 @@ public class FanAutomation(IBedroomFanEntities entities, ILogger<FanAutomation> 
                 if (MainFan.IsOn() && MotionSensor.IsOn())
                 {
                     MasterSwitch.TurnOn();
+
                     return;
                 }
+
                 MasterSwitch.TurnOff();
             });
     }

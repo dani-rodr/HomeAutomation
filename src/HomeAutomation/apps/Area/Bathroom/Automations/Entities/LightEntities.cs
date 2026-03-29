@@ -1,8 +1,8 @@
 using HomeAutomation.apps.Area.Bathroom.Devices;
 
-namespace HomeAutomation.apps.Area.Bathroom.Automations;
+namespace HomeAutomation.apps.Area.Bathroom.Automations.Entities;
 
-public class BathroomLightEntities(BathroomDevices devices) : IBathroomLightEntities
+public class LightEntities(BathroomDevices devices) : IBathroomLightEntities
 {
     public SwitchEntity MasterSwitch => devices.LightAutomation;
     public BinarySensorEntity MotionSensor => devices.MotionSensor;

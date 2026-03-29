@@ -1,4 +1,5 @@
 using System.Reactive.Disposables;
+using HomeAutomation.apps.Area.LivingRoom.Automations.Entities;
 
 namespace HomeAutomation.apps.Area.LivingRoom.Automations;
 
@@ -8,19 +9,29 @@ public class AirQualityAutomation(
 ) : FanAutomationBase(entities, logger)
 {
     private readonly NumericSensorEntity _airQuality = entities.Pm25Sensor;
+
     private readonly SwitchEntity _ledStatus = entities.LedStatus;
+
     private readonly SwitchEntity _supportingFan = entities.SupportingFan;
+
     private bool _activateSupportingFan = false;
+
     private bool _isCleaningAir = false;
+
     private bool _wasSalaFanAutomationTurnedOff = false;
+
     private const int CLEAN_AIR_THRESHOLD = 7;
+
     private const int DIRTY_AIR_THRESHOLD = 75;
 
     protected override IEnumerable<IDisposable> GetToggleableAutomations()
     {
         yield return SubscribeToFanStateChanges();
+
         yield return SubscribeToAirQuality();
+
         yield return SubscribeToManualFanOperation();
+
         yield return SubscribeToSupportingFanIdle();
     }
 
@@ -29,6 +40,7 @@ public class AirQualityAutomation(
     protected override void RunInitialActions()
     {
         Logger.LogDebug("Running initial air quality check");
+
         HandleAirQuality(_airQuality.State ?? 0);
     }
 
@@ -37,12 +49,14 @@ public class AirQualityAutomation(
         if (airQuality > DIRTY_AIR_THRESHOLD)
         {
             HandlePoorAirQuality();
+
             return;
         }
 
         if (airQuality > CLEAN_AIR_THRESHOLD)
         {
             HandleModerateAirQuality();
+
             return;
         }
 
@@ -55,7 +69,9 @@ public class AirQualityAutomation(
             .Subscribe(e =>
             {
                 var value = _airQuality.State ?? 0;
+
                 Logger.LogDebug("Air quality state changed → {ParsedValue}", value);
+
                 HandleAirQuality(value);
             });
 
@@ -68,12 +84,17 @@ public class AirQualityAutomation(
             Logger.LogInformation(
                 "Exiting cleaning mode - turning off supporting fan and re-enabling living room switch"
             );
+
             _supportingFan.TurnOff();
+
             _isCleaningAir = false;
+
             _activateSupportingFan = false;
+
             if (_wasSalaFanAutomationTurnedOff)
             {
                 entities.LivingRoomFanAutomation.TurnOn();
+
                 _wasSalaFanAutomationTurnedOff = false;
             }
         }
@@ -84,18 +105,24 @@ public class AirQualityAutomation(
         if (_activateSupportingFan)
         {
             Logger.LogDebug("Supporting fan manually activated - skipping automatic override");
+
             return;
         }
 
         Logger.LogInformation(
             "Entering cleaning mode - turning on supporting fan and disabling living room switch"
         );
+
         _supportingFan.TurnOn();
+
         _isCleaningAir = true;
+
         _activateSupportingFan = false;
+
         if (entities.LivingRoomFanAutomation.IsOn())
         {
             _wasSalaFanAutomationTurnedOff = true;
+
             entities.LivingRoomFanAutomation.TurnOff();
         }
     }
@@ -107,6 +134,7 @@ public class AirQualityAutomation(
             .Subscribe(e =>
             {
                 _activateSupportingFan = true;
+
                 Logger.LogInformation("Manual fan operation detected - override flag enabled");
             });
 
@@ -116,6 +144,7 @@ public class AirQualityAutomation(
             .Subscribe(_ =>
             {
                 _activateSupportingFan = false;
+
                 Logger.LogInformation("Supporting fan idle for 10 minutes - override flag cleared");
             });
 
@@ -127,11 +156,13 @@ public class AirQualityAutomation(
                 if (MainFan.IsOn())
                 {
                     _ledStatus.TurnOn();
+
                     Logger.LogDebug("Main fan turned ON - LED status ON");
                 }
                 else
                 {
                     _ledStatus.TurnOff();
+
                     Logger.LogDebug("Main fan turned OFF - LED status OFF");
                 }
             });

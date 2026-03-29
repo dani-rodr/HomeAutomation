@@ -1,8 +1,8 @@
 using HomeAutomation.apps.Area.Bedroom.Devices;
 
-namespace HomeAutomation.apps.Area.Bedroom.Automations;
+namespace HomeAutomation.apps.Area.Bedroom.Automations.Entities;
 
-public class BedroomLightEntities(BedroomDevices devices) : IBedroomLightEntities
+public class LightEntities(BedroomDevices devices) : IBedroomLightEntities
 {
     public SwitchEntity MasterSwitch => devices.LightAutomation;
     public BinarySensorEntity MotionSensor => devices.MotionSensor;

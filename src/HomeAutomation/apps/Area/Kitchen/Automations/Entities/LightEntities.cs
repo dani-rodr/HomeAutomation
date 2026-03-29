@@ -1,8 +1,8 @@
 using HomeAutomation.apps.Area.Kitchen.Devices;
 
-namespace HomeAutomation.apps.Area.Kitchen.Automations;
+namespace HomeAutomation.apps.Area.Kitchen.Automations.Entities;
 
-public class KitchenLightEntities(KitchenDevices devices) : IKitchenLightEntities
+public class LightEntities(KitchenDevices devices) : IKitchenLightEntities
 {
     public SwitchEntity MasterSwitch => devices.LightAutomation;
     public BinarySensorEntity MotionSensor => devices.MotionSensor;

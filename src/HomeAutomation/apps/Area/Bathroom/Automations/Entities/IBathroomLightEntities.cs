@@ -1,3 +1,3 @@
-namespace HomeAutomation.apps.Area.Bathroom.Automations;
+namespace HomeAutomation.apps.Area.Bathroom.Automations.Entities;
 
 public interface IBathroomLightEntities : ILightAutomationEntities;

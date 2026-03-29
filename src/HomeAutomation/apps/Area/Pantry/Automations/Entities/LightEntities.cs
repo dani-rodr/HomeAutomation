@@ -1,8 +1,8 @@
 using HomeAutomation.apps.Area.Pantry.Devices;
 
-namespace HomeAutomation.apps.Area.Pantry.Automations;
+namespace HomeAutomation.apps.Area.Pantry.Automations.Entities;
 
-public class PantryLightEntities(PantryDevices devices) : IPantryLightEntities
+public class LightEntities(PantryDevices devices) : IPantryLightEntities
 {
     public SwitchEntity MasterSwitch => devices.LightAutomation;
     public BinarySensorEntity MotionSensor => devices.MotionSensor;
