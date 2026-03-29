@@ -5,7 +5,9 @@ using HomeAutomation.apps.Area.Bedroom.Devices;
 namespace HomeAutomation.apps.Area.Bedroom;
 
 public class BedroomApp(
-    ILoggerFactory loggerFactory,
+    ILogger<LightAutomation> lightAutomationLogger,
+    ILogger<FanAutomation> fanAutomationLogger,
+    ILogger<ClimateAutomation> climateAutomationLogger,
     IBedroomLightEntities motionEntities,
     IBedroomFanEntities fanEntities,
     IClimateEntities climateEntities,
@@ -17,17 +19,14 @@ public class BedroomApp(
     {
         yield return motionSensor;
 
-        yield return new LightAutomation(
-            motionEntities,
-            loggerFactory.CreateLogger<LightAutomation>()
-        );
+        yield return new LightAutomation(motionEntities, lightAutomationLogger);
 
-        yield return new FanAutomation(fanEntities, loggerFactory.CreateLogger<FanAutomation>());
+        yield return new FanAutomation(fanEntities, fanAutomationLogger);
 
         yield return new ClimateAutomation(
             climateEntities,
             climateScheduler,
-            loggerFactory.CreateLogger<ClimateAutomation>()
+            climateAutomationLogger
         );
     }
 }

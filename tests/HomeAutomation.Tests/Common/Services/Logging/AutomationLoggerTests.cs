@@ -98,6 +98,9 @@ public sealed class AutomationLoggerTests
     public void Log_Should_NotForward_WhenLevelDisabled()
     {
         _policy.Setup(x => x.IsEnabled(LogLevel.Information)).Returns(false);
+        _policy
+            .Setup(x => x.ShouldWriteToLogbook(It.IsAny<string>(), It.IsAny<LogLevel>()))
+            .Returns(false);
         var logger = CreateLogger<SampleAutomation>();
 
         logger.Log(LogLevel.Information, default, "state", null, static (_, _) => "ignored");
@@ -112,6 +115,47 @@ public sealed class AutomationLoggerTests
                     It.IsAny<Func<It.IsAnyType, Exception?, string>>()
                 ),
             Times.Never
+        );
+    }
+
+    [Fact]
+    public void Log_Should_WriteToLogbook_WhenLevelDisabledButEntryIsImportant()
+    {
+        _policy.Setup(x => x.IsEnabled(LogLevel.Information)).Returns(false);
+        _policy
+            .Setup(x => x.ShouldWriteToLogbook(typeof(SampleAutomation).FullName!, LogLevel.Information))
+            .Returns(true);
+        var logger = CreateLogger<SampleAutomation>();
+
+        logger.Log(
+            LogLevel.Information,
+            default,
+            "state",
+            null,
+            static (_, _) => "important info"
+        );
+
+        _innerLogger.Verify(
+            x =>
+                x.Log(
+                    It.IsAny<LogLevel>(),
+                    It.IsAny<EventId>(),
+                    It.IsAny<It.IsAnyType>(),
+                    It.IsAny<Exception>(),
+                    It.IsAny<Func<It.IsAnyType, Exception?, string>>()
+                ),
+            Times.Never
+        );
+
+        _logbookSink.Verify(
+            x =>
+                x.TryWrite(
+                    typeof(SampleAutomation).FullName!,
+                    LogLevel.Information,
+                    "important info",
+                    null
+                ),
+            Times.Once
         );
     }
 

@@ -24,7 +24,7 @@ public class LaptopChargingHandler(
         var inactiveSchedules = Power
             .OnTurnedOff(new(Hours: 12))
             .Subscribe(_ => StartScheduledCharge(hours: 1));
-        logger.LogInformation("Setting up weekend and Monday morning charging schedules.");
+        logger.LogDebug("Setting up weekend and Monday morning charging schedules.");
         var weekendChargingSchedules = new CompositeDisposable(
             _scheduler.ScheduleCron("0 22 * * 5", () => StartScheduledCharge(1)), // Fri 22:00
             _scheduler.ScheduleCron("0 8 * * 6", () => StartScheduledCharge(1)), // Sat 08:00
@@ -40,11 +40,11 @@ public class LaptopChargingHandler(
 
     public void HandleLaptopTurnedOn()
     {
-        logger.LogInformation("Laptop turned on. Cancelling any pending power-off timer.");
+        logger.LogDebug("Laptop turned on. Cancelling any pending power-off timer.");
         _powerOffTimer?.Dispose();
         _powerOffTimer = null;
 
-        logger.LogInformation("Applying charging logic with forceCharge = true.");
+        logger.LogDebug("Applying charging logic with forceCharge = true.");
         ApplyChargingLogic(forceCharge: true);
     }
 
@@ -66,13 +66,13 @@ public class LaptopChargingHandler(
         );
         Power.TurnOn();
 
-        logger.LogInformation("Scheduling power off after 1 hour.");
+        logger.LogDebug("Scheduling power off after 1 hour.");
         _powerOffTimer?.Dispose();
         _powerOffTimer = Observable
             .Timer(TimeSpan.FromHours(1), _scheduler)
             .Subscribe(_ =>
             {
-                logger.LogInformation("1-hour timer expired. Turning power off.");
+                logger.LogDebug("1-hour timer expired. Turning power off.");
                 Power.TurnOff();
             });
     }
@@ -86,7 +86,7 @@ public class LaptopChargingHandler(
             TimeSpan.FromHours(hours),
             () =>
             {
-                logger.LogInformation(
+                logger.LogDebug(
                     "Scheduled charge ended after {Hours} hour(s). Turning power off.",
                     hours
                 );
@@ -97,7 +97,7 @@ public class LaptopChargingHandler(
 
     public void Dispose()
     {
-        logger.LogInformation("Disposing laptop charging handler and any active timers.");
+        logger.LogDebug("Disposing laptop charging handler and any active timers.");
         _powerOffTimer?.Dispose();
         _powerOffTimer = null;
         GC.SuppressFinalize(this);

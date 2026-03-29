@@ -5,12 +5,9 @@ public interface IDimmingLightControllerFactory
     public IDimmingLightController Create(NumberEntity sensorDelay);
 }
 
-public class DimmingLightControllerFactory(ILoggerFactory loggerFactory)
+public class DimmingLightControllerFactory(ILogger<DimmingLightController> logger)
     : IDimmingLightControllerFactory
 {
     public IDimmingLightController Create(NumberEntity sensorDelay) =>
-        new DimmingLightController(
-            sensorDelay,
-            loggerFactory.CreateLogger<DimmingLightController>()
-        );
+        new DimmingLightController(sensorDelay, logger);
 }

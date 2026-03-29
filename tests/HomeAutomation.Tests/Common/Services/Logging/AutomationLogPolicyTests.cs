@@ -1,24 +1,32 @@
 using HomeAutomation.apps.Common.Services.Logging;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace HomeAutomation.Tests.Common.Services.Logging;
 
 public sealed class AutomationLogPolicyTests : HaContextTestBase
 {
+    private readonly ServiceProvider _serviceProvider;
     private readonly AutomationLogPolicy _policy;
     private readonly string _logLevelEntityId;
 
     public AutomationLogPolicyTests()
     {
+        var services = new ServiceCollection();
+        services.AddSingleton<IHaContext>(HaContext);
+        services.AddHomeAssistantGenerated();
+        _serviceProvider = services.BuildServiceProvider();
+
         var inputSelectEntities = new InputSelectEntities(HaContext);
-        _policy = new AutomationLogPolicy(inputSelectEntities);
+        var scopeFactory = _serviceProvider.GetRequiredService<IServiceScopeFactory>();
+        _policy = new AutomationLogPolicy(scopeFactory);
         _logLevelEntityId = inputSelectEntities.AutomationLogLevel.EntityId;
     }
 
     [Fact]
-    public void IsEnabled_Should_DefaultToInformation_WhenSelectorStateMissing()
+    public void IsEnabled_Should_DefaultToDebug_WhenSelectorStateMissing()
     {
-        _policy.IsEnabled(LogLevel.Debug).Should().BeFalse();
-        _policy.IsEnabled(LogLevel.Information).Should().BeTrue();
+        _policy.IsEnabled(LogLevel.Trace).Should().BeFalse();
+        _policy.IsEnabled(LogLevel.Debug).Should().BeTrue();
     }
 
     [Fact]
@@ -39,10 +47,10 @@ public sealed class AutomationLogPolicyTests : HaContextTestBase
     }
 
     [Fact]
-    public void ShouldWriteToLogbook_Should_WriteInformationForAutomationCategories()
+    public void ShouldWriteToLogbook_Should_WriteInformationForCuratedCategories()
     {
         var shouldWrite = _policy.ShouldWriteToLogbook(
-            "HomeAutomation.apps.Area.Bathroom.Automations.LightAutomation",
+            "HomeAutomation.apps.Security.Automations.AccessControlAutomation",
             LogLevel.Information
         );
 
@@ -50,10 +58,10 @@ public sealed class AutomationLogPolicyTests : HaContextTestBase
     }
 
     [Fact]
-    public void ShouldWriteToLogbook_Should_NotWriteInformationForNonAutomationCategories()
+    public void ShouldWriteToLogbook_Should_NotWriteInformationForNonCuratedCategories()
     {
         var shouldWrite = _policy.ShouldWriteToLogbook(
-            "HomeAutomation.apps.Common.Services.PersonController",
+            "HomeAutomation.apps.Area.Bathroom.Automations.LightAutomation",
             LogLevel.Information
         );
 

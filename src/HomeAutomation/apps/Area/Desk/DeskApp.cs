@@ -11,7 +11,8 @@ public class DeskApp(
     IDesktop desktop,
     ILaptop laptop,
     MotionSensor motionSensor,
-    ILoggerFactory loggerFactory
+    ILogger<LightAutomation> lightAutomationLogger,
+    ILogger<DisplayAutomation> displayAutomationLogger
 ) : AppBase<DeskApp>()
 {
     protected override IEnumerable<IAutomation> CreateAutomations()
@@ -24,11 +25,7 @@ public class DeskApp(
 
         yield return motionSensor;
 
-        yield return new LightAutomation(
-            deskMotionEntities,
-            lgDisplay,
-            loggerFactory.CreateLogger<LightAutomation>()
-        );
+        yield return new LightAutomation(deskMotionEntities, lgDisplay, lightAutomationLogger);
 
         yield return new DisplayAutomation(
             lgDisplay,
@@ -36,7 +33,7 @@ public class DeskApp(
             laptop,
             eventHandler,
             deskMotionEntities.MasterSwitch,
-            loggerFactory.CreateLogger<DisplayAutomation>()
+            displayAutomationLogger
         );
     }
 }

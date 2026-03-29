@@ -36,7 +36,7 @@ public class AccessControlAutomation(
 
     private IEnumerable<IDisposable> GetPersonAccessAutomations()
     {
-        Logger.LogInformation("AccessControlAutomation initialized with person controllers");
+        Logger.LogDebug("AccessControlAutomation initialized with person controllers");
 
         foreach (var person in _personControllers)
         {
@@ -65,7 +65,7 @@ public class AccessControlAutomation(
                 .OnClosed()
                 .Subscribe(_ =>
                 {
-                    Logger.LogInformation("Door closed. Marking door as recently closed.");
+                    Logger.LogDebug("Door closed. Marking door as recently closed.");
                     _doorRecentlyClosed = true;
                     if (_autoLockOnDoorClose)
                     {
@@ -77,7 +77,7 @@ public class AccessControlAutomation(
                 .OnClosed(new(Minutes: DOOR_CLOSE_WINDOW_DELAY))
                 .Subscribe(_ =>
                 {
-                    Logger.LogInformation(
+                    Logger.LogDebug(
                         "Door has been closed for {Delay} minutes. Clearing 'recently closed' flag.",
                         DOOR_CLOSE_WINDOW_DELAY
                     );
@@ -101,9 +101,7 @@ public class AccessControlAutomation(
                 .House.OnOccupied(new(Minutes: UNLOCK_SUPPRESION_DELAY))
                 .Subscribe(_ =>
                 {
-                    Logger.LogInformation(
-                        "Unlock suppression window expired. Re-enabling unlocks."
-                    );
+                    Logger.LogDebug("Unlock suppression window expired. Re-enabling unlocks.");
                     _suppressUnlocks = false;
                 }),
         ];
@@ -117,7 +115,7 @@ public class AccessControlAutomation(
         );
 
         person.SetHome();
-        Logger.LogInformation("{PersonName} is now home", person.Name);
+        Logger.LogDebug("{PersonName} is now home", person.Name);
 
         if (_wasHouseEmpty)
         {

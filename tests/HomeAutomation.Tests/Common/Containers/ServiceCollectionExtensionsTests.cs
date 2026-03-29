@@ -302,6 +302,8 @@ public class ServiceCollectionExtensionsTests : HaContextTestBase
         services.AddTransient<PantryApp>();
         services.AddTransient<SecurityApp>();
 
-        return services.BuildServiceProvider();
+        return services.BuildServiceProvider(
+            new ServiceProviderOptions { ValidateOnBuild = true, ValidateScopes = true }
+        );
     }
 }

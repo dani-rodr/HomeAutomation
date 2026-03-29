@@ -25,16 +25,25 @@ public sealed class AutomationLogger<T>(
         Func<TState, Exception?, string> formatter
     )
     {
-        if (!IsEnabled(logLevel))
+        var shouldWriteToLogbook = policy.ShouldWriteToLogbook(_categoryName, logLevel);
+        var isEnabled = IsEnabled(logLevel);
+
+        if (!isEnabled && !shouldWriteToLogbook)
         {
             return;
         }
 
-        _innerLogger.Log(logLevel, eventId, state, exception, formatter);
+        string? formattedMessage = null;
 
-        if (policy.ShouldWriteToLogbook(_categoryName, logLevel))
+        if (isEnabled)
         {
-            logbookSink.TryWrite(_categoryName, logLevel, formatter(state, exception), exception);
+            _innerLogger.Log(logLevel, eventId, state, exception, formatter);
+        }
+
+        if (shouldWriteToLogbook)
+        {
+            formattedMessage ??= formatter(state, exception);
+            logbookSink.TryWrite(_categoryName, logLevel, formattedMessage, exception);
         }
     }
 }

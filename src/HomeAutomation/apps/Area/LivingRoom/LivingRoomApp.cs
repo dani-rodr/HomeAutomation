@@ -11,34 +11,27 @@ public class LivingRoomApp(
     ITclDisplay tclDisplay,
     IDimmingLightControllerFactory dimmingLightControllerFactory,
     MotionSensor motionSensor,
-    ILoggerFactory loggerFactory
+    ILogger<FanAutomation> fanAutomationLogger,
+    ILogger<AirQualityAutomation> airQualityAutomationLogger,
+    ILogger<LightAutomation> lightAutomationLogger
 ) : AppBase<LivingRoomApp>()
 {
     protected override IEnumerable<IAutomation> CreateAutomations()
     {
         yield return tclDisplay;
 
-        yield return new FanAutomation(fanEntities, loggerFactory.CreateLogger<FanAutomation>());
+        yield return new FanAutomation(fanEntities, fanAutomationLogger);
 
-        yield return new AirQualityAutomation(
-            airQualityEntities,
-            loggerFactory.CreateLogger<AirQualityAutomation>()
-        );
+        yield return new AirQualityAutomation(airQualityEntities, airQualityAutomationLogger);
 
-        // yield return new TabletAutomation(
-
-        //     tabletEntities,
-
-        //     loggerFactory.CreateLogger<TabletAutomation>()
-
-        // );
+        // yield return new TabletAutomation(tabletEntities, tabletAutomationLogger);
 
         yield return motionSensor;
 
         yield return new LightAutomation(
             motionEntities,
             dimmingLightControllerFactory.Create(motionEntities.SensorDelay),
-            loggerFactory.CreateLogger<LightAutomation>()
+            lightAutomationLogger
         );
     }
 }
