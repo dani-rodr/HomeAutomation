@@ -5,11 +5,9 @@ using HomeAutomation.apps.Area.Desk.Devices;
 namespace HomeAutomation.apps.Area.Desk;
 
 public class DeskApp(
-    IEventHandler eventHandler,
     IDeskLightEntities deskMotionEntities,
     ILgDisplay lgDisplay,
     IDesktop desktop,
-    ILaptop laptop,
     MotionSensor motionSensor,
     ILogger<LightAutomation> lightAutomationLogger,
     ILogger<DisplayAutomation> displayAutomationLogger
@@ -18,8 +16,6 @@ public class DeskApp(
     protected override IEnumerable<IAutomation> CreateAutomations()
     {
         yield return desktop;
-
-        yield return laptop;
 
         yield return lgDisplay;
 
@@ -30,8 +26,6 @@ public class DeskApp(
         yield return new DisplayAutomation(
             lgDisplay,
             desktop,
-            laptop,
-            eventHandler,
             deskMotionEntities.MasterSwitch,
             displayAutomationLogger
         );
