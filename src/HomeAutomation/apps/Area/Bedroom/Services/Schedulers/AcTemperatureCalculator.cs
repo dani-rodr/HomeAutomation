@@ -1,3 +1,5 @@
+using HomeAutomation.apps.Area.Bedroom.Config;
+
 namespace HomeAutomation.apps.Area.Bedroom.Services.Schedulers;
 
 /// <summary>
@@ -9,7 +11,7 @@ public class AcTemperatureCalculator(ILogger<AcTemperatureCalculator> logger)
     private readonly ILogger<AcTemperatureCalculator> _logger = logger;
 
     public int CalculateTemperature(
-        AcSettings settings,
+        ClimateSetting settings,
         bool isOccupied,
         bool isDoorOpen,
         bool powerSaving

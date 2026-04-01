@@ -1,23 +1,24 @@
-using System.Diagnostics.CodeAnalysis;
+using HomeAutomation.apps.Area.Bedroom.Config;
 using NetDaemon.Extensions.Scheduler;
 
 namespace HomeAutomation.apps.Area.Bedroom.Services.Schedulers;
 
-public class ClimateScheduler : IClimateScheduler
+public class ClimateSettingsResolver : IClimateSettingsResolver
 {
-    private readonly Entities.IClimateSchedulerEntities _entities;
+    private readonly IClimateSettingsProvider _climateSettingsProvider;
     private readonly InputBooleanEntity _powerSavingMode;
     private readonly IScheduler _scheduler;
     private readonly IAcTemperatureCalculator _temperatureCalculator;
     private readonly ILogger _logger;
 
-    public ClimateScheduler(
+    public ClimateSettingsResolver(
         Entities.IClimateSchedulerEntities entities,
+        IClimateSettingsProvider climateSettingsProvider,
         IAcTemperatureCalculator temperatureCalculator,
-        ILogger<ClimateScheduler> logger
+        ILogger<ClimateSettingsResolver> logger
     )
     {
-        _entities = entities;
+        _climateSettingsProvider = climateSettingsProvider;
         _powerSavingMode = entities.PowerSavingMode;
         _scheduler = SchedulerProvider.Current;
         _temperatureCalculator = temperatureCalculator;
@@ -28,8 +29,10 @@ public class ClimateScheduler : IClimateScheduler
 
     public IEnumerable<IDisposable> GetSchedules(Action action)
     {
-        foreach (var (timeBlock, setting) in GetCurrentAcScheduleSettings())
+        var settings = GetCurrentAcScheduleSettings();
+        foreach (var timeBlock in new[] { TimeBlock.Sunrise, TimeBlock.Sunset, TimeBlock.Midnight })
         {
+            var setting = settings.GetByTimeBlock(timeBlock);
             if (!setting.IsValidHourRange())
             {
                 _logger.LogWarning(
@@ -53,22 +56,21 @@ public class ClimateScheduler : IClimateScheduler
     }
 
     public IDisposable GetResetSchedule() =>
-        _scheduler.ScheduleCron(
-            "0 0 * * *",
-            () =>
-            {
-                _cachedAcSettings = null;
-                LogCurrentAcScheduleSettings();
-            }
-        );
+        _scheduler.ScheduleCron("0 0 * * *", () => LogCurrentAcScheduleSettings());
 
-    public bool TryGetSetting(TimeBlock timeBlock, [NotNullWhen(true)] out AcSettings? setting)
+    public bool TryGetCurrentSetting(out TimeBlock timeBlock, out ClimateSetting setting)
     {
-        var settings = GetCurrentAcScheduleSettings();
-        return settings.TryGetValue(timeBlock, out setting);
+        if (!TryFindCurrentTimeBlock(out timeBlock))
+        {
+            setting = default!;
+            return false;
+        }
+
+        setting = GetCurrentAcScheduleSettings().GetByTimeBlock(timeBlock);
+        return true;
     }
 
-    public int CalculateTemperature(AcSettings settings, bool isOccupied, bool isDoorOpen) =>
+    public int CalculateTemperature(ClimateSetting settings, bool isOccupied, bool isDoorOpen) =>
         _temperatureCalculator.CalculateTemperature(
             settings,
             isOccupied,
@@ -76,7 +78,10 @@ public class ClimateScheduler : IClimateScheduler
             _powerSavingMode.IsOn()
         );
 
-    public TimeBlock? FindCurrentTimeBlock()
+    public WeatherPowerSavingSettings GetWeatherPowerSavingSettings() =>
+        GetCurrentAcScheduleSettings().WeatherPowerSaving;
+
+    private bool TryFindCurrentTimeBlock(out TimeBlock timeBlock)
     {
         var currentTime = _scheduler.Now.LocalDateTime;
         _logger.LogDebug("Finding time block for current time: {CurrentTime}", currentTime);
@@ -85,24 +90,26 @@ public class ClimateScheduler : IClimateScheduler
 
         // Find the first time block that matches current time
         // Let TimeRange.IsTimeInBetween handle all the overnight range logic
-        foreach (var (timeBlock, setting) in settings)
+        foreach (var block in new[] { TimeBlock.Sunrise, TimeBlock.Sunset, TimeBlock.Midnight })
         {
+            var setting = settings.GetByTimeBlock(block);
             if (
                 TimeRange.IsTimeInBetween(currentTime.TimeOfDay, setting.HourStart, setting.HourEnd)
             )
             {
+                timeBlock = block;
                 _logger.LogDebug(
                     "Found matching time block: {TimeBlock} (range: {StartHour}-{EndHour})",
-                    timeBlock,
+                    block,
                     setting.HourStart,
                     setting.HourEnd
                 );
-                return timeBlock;
+                return true;
             }
 
             _logger.LogDebug(
                 "Time block {TimeBlock} (range: {StartHour}-{EndHour}) does not match current time {CurrentTime}",
-                timeBlock,
+                block,
                 setting.HourStart,
                 setting.HourEnd,
                 currentTime.TimeOfDay
@@ -110,71 +117,27 @@ public class ClimateScheduler : IClimateScheduler
         }
 
         _logger.LogDebug("No time block found for current hour {CurrentHour}", currentTime.Hour);
-        return null;
+        timeBlock = default;
+        return false;
     }
 
-    private Dictionary<TimeBlock, AcSettings>? _cachedAcSettings;
+    private ClimateSettings GetCurrentAcScheduleSettings() => LoadClimateConfig();
 
-    private Dictionary<TimeBlock, AcSettings> GetCurrentAcScheduleSettings()
-    {
-        if (_cachedAcSettings != null)
-        {
-            return _cachedAcSettings;
-        }
-
-        _cachedAcSettings = new()
-        {
-            [TimeBlock.Sunrise] = new(
-                DoorOpenTemp: 25,
-                EcoAwayTemp: 27,
-                ComfortTemp: 24,
-                AwayTemp: 27,
-                Mode: HaEntityStates.COOL,
-                ActivateFan: true,
-                HourStart: _entities.SunRising.ToLocalHour(),
-                HourEnd: _entities.SunSetting.ToLocalHour()
-            ),
-
-            [TimeBlock.Sunset] = new(
-                DoorOpenTemp: 25,
-                EcoAwayTemp: 27,
-                ComfortTemp: 23,
-                AwayTemp: 27,
-                Mode: HaEntityStates.COOL,
-                ActivateFan: false,
-                HourStart: _entities.SunSetting.ToLocalHour(),
-                HourEnd: _entities.SunMidnight.ToLocalHour()
-            ),
-
-            [TimeBlock.Midnight] = new(
-                DoorOpenTemp: 24,
-                EcoAwayTemp: 25,
-                ComfortTemp: 22,
-                AwayTemp: 25,
-                Mode: HaEntityStates.COOL,
-                ActivateFan: false,
-                HourStart: _entities.SunMidnight.ToLocalHour(),
-                HourEnd: _entities.SunRising.ToLocalHour()
-            ),
-        };
-
-        return _cachedAcSettings;
-    }
+    private ClimateSettings LoadClimateConfig() => _climateSettingsProvider.GetSettings();
 
     private void LogCurrentAcScheduleSettings()
     {
-        _logger.LogDebug(
-            "AC schedule settings initialized based on current sun sensor values. HourStart and HourEnd may vary daily depending on sunrise, sunset, and midnight times."
-        );
-        foreach (var kvp in GetCurrentAcScheduleSettings())
+        _logger.LogDebug("AC schedule settings initialized from Bedroom area config.");
+        var settings = GetCurrentAcScheduleSettings();
+        foreach (var timeBlock in new[] { TimeBlock.Sunrise, TimeBlock.Sunset, TimeBlock.Midnight })
         {
-            var setting = kvp.Value;
+            var setting = settings.GetByTimeBlock(timeBlock);
             _logger.LogDebug(
                 "TimeBlock {TimeBlock}: DoorOpenTemp={DoorOpenTemp},"
                     + " EcoAwayTemp={EcoAwayTemp}, ComfortTemp={ComfortTemp},"
                     + " AwayTemp={AwayTemp}, Mode={Mode}, ActivateFan={ActivateFan},"
                     + " HourStart={HourStart}, HourEnd={HourEnd}",
-                kvp.Key,
+                timeBlock,
                 setting.DoorOpenTemp,
                 setting.EcoAwayTemp,
                 setting.ComfortTemp,

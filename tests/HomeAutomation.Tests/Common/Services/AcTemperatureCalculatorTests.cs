@@ -1,3 +1,4 @@
+using HomeAutomation.apps.Area.Bedroom.Config;
 using HomeAutomation.apps.Area.Bedroom.Services.Schedulers;
 
 namespace HomeAutomation.Tests.Common.Services;
@@ -14,17 +15,8 @@ public class AcTemperatureCalculatorTests
         _calculator = new AcTemperatureCalculator(_mockLogger.Object);
     }
 
-    private static AcSettings CreateDefaultSetting() =>
-        new(
-            DoorOpenTemp: 26,
-            EcoAwayTemp: 28,
-            ComfortTemp: 23,
-            AwayTemp: 29,
-            Mode: "cool",
-            ActivateFan: true,
-            HourStart: 6,
-            HourEnd: 18
-        );
+    private static ClimateSetting CreateDefaultSetting() =>
+        new(26, 28, 23, 29, "cool", true, 6, 18);
 
     [Theory]
     [InlineData(true, false, false, 23, "Occupied + door closed = ComfortTemp")]
