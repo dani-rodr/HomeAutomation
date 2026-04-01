@@ -8,10 +8,10 @@ public enum TimeBlock
 }
 
 public record AcSettings(
-    int NormalTemp,
-    int PowerSavingTemp,
-    int CoolTemp,
-    int PassiveTemp,
+    int DoorOpenTemp,
+    int EcoAwayTemp,
+    int ComfortTemp,
+    int AwayTemp,
     string Mode,
     bool ActivateFan,
     int HourStart,

@@ -8,43 +8,37 @@ public class AcTemperatureCalculator(
     ILogger<AcTemperatureCalculator> logger
 ) : IAcTemperatureCalculator
 {
-    private readonly WeatherEntity _weather = entities.Weather;
     private readonly InputBooleanEntity _isPowerSavingMode = entities.PowerSavingMode;
     private readonly ILogger<AcTemperatureCalculator> _logger = logger;
 
     public int CalculateTemperature(AcSettings settings, bool isOccupied, bool isDoorOpen)
     {
-        bool isColdWeather = !_weather.IsSunny();
         bool powerSaving = _isPowerSavingMode.IsOn();
 
         int temp;
-        if (powerSaving)
+        if (isOccupied && !isDoorOpen)
         {
-            temp = settings.PowerSavingTemp;
+            temp = settings.ComfortTemp;
         }
-        else if (isOccupied && !isDoorOpen)
+        else if (isOccupied)
         {
-            temp = settings.CoolTemp;
+            temp = settings.DoorOpenTemp;
         }
-        else if (isDoorOpen && isColdWeather)
+        else if (powerSaving)
         {
-            temp = settings.NormalTemp;
-        }
-        else if (isOccupied && isDoorOpen)
-        {
-            temp = settings.NormalTemp;
+            temp = settings.EcoAwayTemp;
         }
         else
         {
-            temp = settings.PassiveTemp;
+            temp = settings.AwayTemp;
         }
+
         _logger.LogDebug(
-            "Temperature calculation: {Temperature}°C for conditions (occupied:{Occupied}, doorOpen:{DoorOpen}, powerSaving:{PowerSaving}, coldWeather:{ColdWeather})",
+            "Temperature calculation: {Temperature}°C for conditions (occupied:{Occupied}, doorOpen:{DoorOpen}, powerSaving:{PowerSaving})",
             temp,
             isOccupied,
             isDoorOpen,
-            powerSaving,
-            isColdWeather
+            powerSaving
         );
 
         return temp;

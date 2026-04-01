@@ -63,10 +63,10 @@ public class ClimateSchedulerTests : HaContextTestBase
         setting.Should().NotBeNull();
         setting!.Mode.Should().Be("cool", "Sunrise period uses cool mode");
         setting.ActivateFan.Should().BeTrue("Sunrise period can activate fan");
-        setting.NormalTemp.Should().Be(25, "Sunrise NormalTemp should be 25°C");
-        setting.PowerSavingTemp.Should().Be(26, "Sunrise PowerSavingTemp should be 27°C");
-        setting.CoolTemp.Should().Be(24, "Sunrise CoolTemp should be 24°C");
-        setting.PassiveTemp.Should().Be(26, "Sunrise PassiveTemp should be 27°C");
+        setting.DoorOpenTemp.Should().Be(25, "Sunrise DoorOpenTemp should be 25°C");
+        setting.EcoAwayTemp.Should().Be(27, "Sunrise EcoAwayTemp should be 27°C");
+        setting.ComfortTemp.Should().Be(24, "Sunrise ComfortTemp should be 24°C");
+        setting.AwayTemp.Should().Be(27, "Sunrise AwayTemp should be 27°C");
     }
 
     [Fact]
@@ -80,10 +80,10 @@ public class ClimateSchedulerTests : HaContextTestBase
         setting.Should().NotBeNull();
         setting!.Mode.Should().Be("cool", "Sunset period uses cool mode");
         setting.ActivateFan.Should().BeFalse("Sunset period doesn't activate fan");
-        setting.NormalTemp.Should().Be(25, "Sunset NormalTemp should be 25°C");
-        setting.PowerSavingTemp.Should().Be(26, "Sunset PowerSavingTemp should be 27°C");
-        setting.CoolTemp.Should().Be(23, "Sunset CoolTemp should be 23°C");
-        setting.PassiveTemp.Should().Be(26, "Sunset PassiveTemp should be 27°C");
+        setting.DoorOpenTemp.Should().Be(25, "Sunset DoorOpenTemp should be 25°C");
+        setting.EcoAwayTemp.Should().Be(27, "Sunset EcoAwayTemp should be 27°C");
+        setting.ComfortTemp.Should().Be(23, "Sunset ComfortTemp should be 23°C");
+        setting.AwayTemp.Should().Be(27, "Sunset AwayTemp should be 27°C");
     }
 
     [Fact]
@@ -97,10 +97,10 @@ public class ClimateSchedulerTests : HaContextTestBase
         setting.Should().NotBeNull();
         setting!.Mode.Should().Be("cool", "Midnight period uses cool mode");
         setting.ActivateFan.Should().BeFalse("Midnight period doesn't activate fan");
-        setting.NormalTemp.Should().Be(24, "Midnight NormalTemp should be 24°C");
-        setting.PowerSavingTemp.Should().Be(25, "Midnight PowerSavingTemp should be 25°C");
-        setting.CoolTemp.Should().Be(22, "Midnight CoolTemp should be 22°C");
-        setting.PassiveTemp.Should().Be(25, "Midnight PassiveTemp should be 25°C");
+        setting.DoorOpenTemp.Should().Be(24, "Midnight DoorOpenTemp should be 24°C");
+        setting.EcoAwayTemp.Should().Be(25, "Midnight EcoAwayTemp should be 25°C");
+        setting.ComfortTemp.Should().Be(22, "Midnight ComfortTemp should be 22°C");
+        setting.AwayTemp.Should().Be(25, "Midnight AwayTemp should be 25°C");
     }
 
     #endregion
@@ -108,54 +108,30 @@ public class ClimateSchedulerTests : HaContextTestBase
     #region Temperature Selection Logic Tests
 
     [Theory]
-    [InlineData(true, true, true, true, "PowerSavingTemp", "PowerSaving mode takes precedence")]
-    [InlineData(true, false, false, true, "CoolTemp", "Occupied + closed door = CoolTemp")]
-    [InlineData(true, false, false, false, "CoolTemp", "Occupied + closed door = CoolTemp")]
+    [InlineData(true, false, true, "ComfortTemp", "Occupied + closed door ignores power saving")]
+    [InlineData(true, false, false, "ComfortTemp", "Occupied + closed door = ComfortTemp")]
+    [InlineData(true, true, true, "DoorOpenTemp", "Occupied + open door ignores power saving")]
+    [InlineData(true, true, false, "DoorOpenTemp", "Occupied + open door = DoorOpenTemp")]
+    [InlineData(false, false, true, "EcoAwayTemp", "Unoccupied + power saving = EcoAwayTemp")]
     [InlineData(
         false,
         true,
-        false,
         true,
-        "NormalTemp",
-        "Unoccupied + open door + cold weather = NormalTemp"
+        "EcoAwayTemp",
+        "Unoccupied + open door + power saving = EcoAwayTemp"
     )]
-    [InlineData(
-        true,
-        true,
-        false,
-        true,
-        "NormalTemp",
-        "Occupied + open door + cold weather = NormalTemp"
-    )]
-    [InlineData(
-        true,
-        true,
-        false,
-        false,
-        "NormalTemp",
-        "Occupied + open door + sunny weather = NormalTemp"
-    )]
+    [InlineData(false, false, false, "AwayTemp", "Unoccupied + no power saving = AwayTemp")]
     [InlineData(
         false,
         true,
         false,
-        false,
-        "PassiveTemp",
-        "Unoccupied + open door + sunny weather = PassiveTemp"
-    )]
-    [InlineData(
-        false,
-        false,
-        false,
-        false,
-        "PassiveTemp",
-        "Unoccupied + closed door = PassiveTemp"
+        "AwayTemp",
+        "Unoccupied + open door + no power saving = AwayTemp"
     )]
     public void GetTemperature_Various_Scenarios_Should_Return_Correct_Temperature(
         bool occupied,
         bool doorOpen,
         bool powerSaving,
-        bool isCold,
         string expectedTempType,
         string reason
     )
@@ -165,23 +141,21 @@ public class ClimateSchedulerTests : HaContextTestBase
         success.Should().BeTrue();
 
         // Act - Simulate the temperature selection logic
-        var actualTemp = (occupied, doorOpen, powerSaving, isCold) switch
+        var actualTemp = (occupied, doorOpen, powerSaving) switch
         {
-            (_, _, true, _) => setting!.PowerSavingTemp,
-            (true, false, false, _) => setting!.CoolTemp,
-            (false, true, false, true) => setting!.NormalTemp,
-            (true, true, false, _) => setting!.NormalTemp,
-            (false, true, false, false) => setting!.PassiveTemp,
-            _ => setting!.PassiveTemp,
+            (true, false, _) => setting!.ComfortTemp,
+            (true, true, _) => setting!.DoorOpenTemp,
+            (false, _, true) => setting!.EcoAwayTemp,
+            _ => setting!.AwayTemp,
         };
 
         // Assert
         var expectedTemp = expectedTempType switch
         {
-            "PowerSavingTemp" => setting!.PowerSavingTemp,
-            "CoolTemp" => setting!.CoolTemp,
-            "NormalTemp" => setting!.NormalTemp,
-            "PassiveTemp" => setting!.PassiveTemp,
+            "ComfortTemp" => setting!.ComfortTemp,
+            "DoorOpenTemp" => setting!.DoorOpenTemp,
+            "EcoAwayTemp" => setting!.EcoAwayTemp,
+            "AwayTemp" => setting!.AwayTemp,
             _ => throw new ArgumentException($"Unknown temp type: {expectedTempType}"),
         };
 

@@ -6,10 +6,10 @@ public class AcSettingsTests
 {
     private static AcSettings CreateDefaultSetting() =>
         new(
-            NormalTemp: 26,
-            PowerSavingTemp: 28,
-            CoolTemp: 23,
-            PassiveTemp: 29,
+            DoorOpenTemp: 26,
+            EcoAwayTemp: 28,
+            ComfortTemp: 23,
+            AwayTemp: 29,
             Mode: "cool",
             ActivateFan: true,
             HourStart: 6,
@@ -23,10 +23,10 @@ public class AcSettingsTests
     public void IsValidHourRange_ReturnsCorrectResult(int hourStart, int hourEnd, bool expected)
     {
         var setting = new AcSettings(
-            NormalTemp: 26,
-            PowerSavingTemp: 28,
-            CoolTemp: 23,
-            PassiveTemp: 29,
+            DoorOpenTemp: 26,
+            EcoAwayTemp: 28,
+            ComfortTemp: 23,
+            AwayTemp: 29,
             Mode: "cool",
             ActivateFan: true,
             HourStart: hourStart,
@@ -41,10 +41,10 @@ public class AcSettingsTests
     {
         var setting = CreateDefaultSetting();
 
-        Assert.Equal(26, setting.NormalTemp);
-        Assert.Equal(28, setting.PowerSavingTemp);
-        Assert.Equal(23, setting.CoolTemp);
-        Assert.Equal(29, setting.PassiveTemp);
+        Assert.Equal(26, setting.DoorOpenTemp);
+        Assert.Equal(28, setting.EcoAwayTemp);
+        Assert.Equal(23, setting.ComfortTemp);
+        Assert.Equal(29, setting.AwayTemp);
         Assert.Equal("cool", setting.Mode);
         Assert.True(setting.ActivateFan);
         Assert.Equal(6, setting.HourStart);

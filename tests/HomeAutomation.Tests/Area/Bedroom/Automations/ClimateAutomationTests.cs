@@ -63,10 +63,10 @@ public partial class ClimateAutomationTests : AutomationTestBase<ClimateAutomati
         // Setup default Sunset time block for existing tests
 
         var defaultSetting = new AcSettings(
-            NormalTemp: 25,
-            PowerSavingTemp: 27,
-            CoolTemp: 23,
-            PassiveTemp: 27,
+            DoorOpenTemp: 25,
+            EcoAwayTemp: 27,
+            ComfortTemp: 23,
+            AwayTemp: 27,
             Mode: "cool",
             ActivateFan: false,
             HourStart: 18,
@@ -101,11 +101,11 @@ public partial class ClimateAutomationTests : AutomationTestBase<ClimateAutomati
 
                     return (occupied, doorOpen) switch
                     {
-                        (true, false) => settings.CoolTemp, // occupied + closed = cool
+                        (true, false) => settings.ComfortTemp, // occupied + closed = cool
 
-                        (true, true) => settings.NormalTemp, // occupied + open = normal
+                        (true, true) => settings.DoorOpenTemp, // occupied + open = normal
 
-                        (false, _) => settings.PassiveTemp, // unoccupied = passive
+                        (false, _) => settings.AwayTemp, // unoccupied = away
                     };
                 }
             );
@@ -158,18 +158,18 @@ public partial class ClimateAutomationTests : AutomationTestBase<ClimateAutomati
 
                     return (occupied, doorOpen) switch
                     {
-                        (true, false) => settings.CoolTemp, // occupied + closed = cool
+                        (true, false) => settings.ComfortTemp, // occupied + closed = cool
 
-                        (true, true) => settings.NormalTemp, // occupied + open = normal
+                        (true, true) => settings.DoorOpenTemp, // occupied + open = normal
 
-                        (false, _) => settings.PassiveTemp, // unoccupied = passive
+                        (false, _) => settings.AwayTemp, // unoccupied = away
                     };
                 }
             );
     }
 
     [Fact]
-    public void GetTemperature_OccupiedClosedDoor_Should_ReturnCoolTemp()
+    public void GetTemperature_OccupiedClosedDoor_Should_ReturnComfortTemp()
     {
         _mockHaContext.SetEntityState(_entities.MotionSensor.EntityId, "on");
 
@@ -185,7 +185,7 @@ public partial class ClimateAutomationTests : AutomationTestBase<ClimateAutomati
     }
 
     [Fact]
-    public void GetTemperature_OccupiedOpenDoorHotWeather_Should_ReturnNormalTemp()
+    public void GetTemperature_OccupiedOpenDoor_Should_ReturnDoorOpenTemp()
     {
         _mockHaContext.SetEntityState(_entities.MotionSensor.EntityId, "on");
 
@@ -230,9 +230,9 @@ public partial class ClimateAutomationTests : AutomationTestBase<ClimateAutomati
 
         setting.ActivateFan.Should().BeFalse("Sunset period doesn't activate fan");
 
-        setting.CoolTemp.Should().Be(23, "Sunset CoolTemp should be 23°C");
+        setting.ComfortTemp.Should().Be(23, "Sunset ComfortTemp should be 23°C");
 
-        setting.PassiveTemp.Should().Be(27, "Sunset PassiveTemp should be 27°C");
+        setting.AwayTemp.Should().Be(27, "Sunset AwayTemp should be 27°C");
     }
 
     [Fact]
@@ -699,23 +699,23 @@ public partial class ClimateAutomationTests : AutomationTestBase<ClimateAutomati
 
 
     [Fact]
-    public void MockScheduler_Temperature_OccupiedClosedDoor_Should_UseCoolTemp()
+    public void MockScheduler_Temperature_OccupiedClosedDoor_Should_UseComfortTemp()
     {
-        // Test that GetTemperature returns CoolTemp for occupied + closed door scenario
+        // Test that GetTemperature returns ComfortTemp for occupied + closed door scenario
 
         var success = _mockScheduler.Object.TryGetSetting(TimeBlock.Sunset, out var setting);
 
         success.Should().BeTrue();
 
-        var expectedTemp = setting!.CoolTemp; // Should be 23 for Sunset
+        var expectedTemp = setting!.ComfortTemp; // Should be 23 for Sunset
 
         expectedTemp
             .Should()
-            .Be(23, "Occupied + closed door should use CoolTemp (23°C) in Sunset period");
+            .Be(23, "Occupied + closed door should use ComfortTemp (23°C) in Sunset period");
     }
 
     [Fact]
-    public void MockScheduler_Temperature_PowerSavingMode_Should_UsePowerSavingTemp()
+    public void MockScheduler_Temperature_PowerSavingMode_Should_UseEcoAwayTemp()
     {
         // Test that PowerSaving mode overrides all other conditions
 
@@ -723,9 +723,9 @@ public partial class ClimateAutomationTests : AutomationTestBase<ClimateAutomati
 
         success.Should().BeTrue();
 
-        var expectedTemp = setting!.PowerSavingTemp; // Should be 27 for Sunset
+        var expectedTemp = setting!.EcoAwayTemp; // Should be 27 for Sunset
 
-        expectedTemp.Should().Be(27, "PowerSaving mode should always use PowerSavingTemp (27°C)");
+        expectedTemp.Should().Be(27, "PowerSaving mode should use EcoAwayTemp (27°C)");
     }
 
     #endregion

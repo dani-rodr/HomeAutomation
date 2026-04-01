@@ -7,17 +7,10 @@ public partial class ClimateAutomationTests
     #region Comprehensive Theory Tests for Temperature Selection
 
     [Theory]
-    [InlineData(true, false, TimeBlock.Sunset, 23, "cool", "Occupied + closed door = CoolTemp")]
-    [InlineData(false, true, TimeBlock.Sunset, 27, "cool", "Unoccupied + open door = PassiveTemp")]
-    [InlineData(true, true, TimeBlock.Sunset, 25, "cool", "Occupied + open door = NormalTemp")]
-    [InlineData(
-        false,
-        false,
-        TimeBlock.Sunset,
-        27,
-        "cool",
-        "Unoccupied + closed door = PassiveTemp"
-    )]
+    [InlineData(true, false, TimeBlock.Sunset, 23, "cool", "Occupied + closed door = ComfortTemp")]
+    [InlineData(false, true, TimeBlock.Sunset, 27, "cool", "Unoccupied + open door = AwayTemp")]
+    [InlineData(true, true, TimeBlock.Sunset, 25, "cool", "Occupied + open door = DoorOpenTemp")]
+    [InlineData(false, false, TimeBlock.Sunset, 27, "cool", "Unoccupied + closed door = AwayTemp")]
     public void ClimateAutomation_TemperatureSelection_Should_Follow_Logic(
         bool occupied,
         bool doorOpen,
@@ -28,10 +21,10 @@ public partial class ClimateAutomationTests
     )
     {
         var testSetting = new AcSettings(
-            NormalTemp: 25,
-            PowerSavingTemp: 27,
-            CoolTemp: 23,
-            PassiveTemp: 27,
+            DoorOpenTemp: 25,
+            EcoAwayTemp: 27,
+            ComfortTemp: 23,
+            AwayTemp: 27,
             Mode: expectedMode,
             ActivateFan: false,
             HourStart: 18,
@@ -65,7 +58,7 @@ public partial class ClimateAutomationTests
         27,
         "dry",
         true,
-        "Sunrise: CoolTemp=24, PowerSaving=27, Mode=dry, Fan=true"
+        "Sunrise: ComfortTemp=24, EcoAwayTemp=27, Mode=dry, Fan=true"
     )]
     [InlineData(
         TimeBlock.Sunset,
@@ -74,7 +67,7 @@ public partial class ClimateAutomationTests
         27,
         "cool",
         false,
-        "Sunset: CoolTemp=23, PowerSaving=27, Mode=cool, Fan=false"
+        "Sunset: ComfortTemp=23, EcoAwayTemp=27, Mode=cool, Fan=false"
     )]
     [InlineData(
         TimeBlock.Midnight,
@@ -83,7 +76,7 @@ public partial class ClimateAutomationTests
         25,
         "cool",
         false,
-        "Midnight: CoolTemp=22, PowerSaving=25, Mode=cool, Fan=false"
+        "Midnight: ComfortTemp=22, EcoAwayTemp=25, Mode=cool, Fan=false"
     )]
     public void ClimateAutomation_TimeBlockVariations_Should_Use_Correct_Settings(
         TimeBlock timeBlock,
@@ -96,10 +89,10 @@ public partial class ClimateAutomationTests
     )
     {
         var testSetting = new AcSettings(
-            NormalTemp: 25,
-            PowerSavingTemp: powerSavingTemp,
-            CoolTemp: coolTemp,
-            PassiveTemp: passiveTemp,
+            DoorOpenTemp: 25,
+            EcoAwayTemp: powerSavingTemp,
+            ComfortTemp: coolTemp,
+            AwayTemp: passiveTemp,
             Mode: mode,
             ActivateFan: activateFan,
             HourStart: 18,
@@ -136,10 +129,10 @@ public partial class ClimateAutomationTests
     )
     {
         var testSetting = new AcSettings(
-            NormalTemp: 25,
-            PowerSavingTemp: 27,
-            CoolTemp: 23,
-            PassiveTemp: 27,
+            DoorOpenTemp: 25,
+            EcoAwayTemp: 27,
+            ComfortTemp: 23,
+            AwayTemp: 27,
             Mode: "cool",
             ActivateFan: activateFan,
             HourStart: 18,

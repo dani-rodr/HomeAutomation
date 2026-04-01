@@ -118,10 +118,10 @@ public class ClimateScheduler : IClimateScheduler
         _cachedAcSettings = new()
         {
             [TimeBlock.Sunrise] = new(
-                NormalTemp: 25,
-                PowerSavingTemp: 26,
-                CoolTemp: 24,
-                PassiveTemp: 26,
+                DoorOpenTemp: 25,
+                EcoAwayTemp: 27,
+                ComfortTemp: 24,
+                AwayTemp: 27,
                 Mode: HaEntityStates.COOL,
                 ActivateFan: true,
                 HourStart: _entities.SunRising.ToLocalHour(),
@@ -129,10 +129,10 @@ public class ClimateScheduler : IClimateScheduler
             ),
 
             [TimeBlock.Sunset] = new(
-                NormalTemp: 25,
-                PowerSavingTemp: 26,
-                CoolTemp: 23,
-                PassiveTemp: 26,
+                DoorOpenTemp: 25,
+                EcoAwayTemp: 27,
+                ComfortTemp: 23,
+                AwayTemp: 27,
                 Mode: HaEntityStates.COOL,
                 ActivateFan: false,
                 HourStart: _entities.SunSetting.ToLocalHour(),
@@ -140,10 +140,10 @@ public class ClimateScheduler : IClimateScheduler
             ),
 
             [TimeBlock.Midnight] = new(
-                NormalTemp: 24,
-                PowerSavingTemp: 25,
-                CoolTemp: 22,
-                PassiveTemp: 25,
+                DoorOpenTemp: 24,
+                EcoAwayTemp: 25,
+                ComfortTemp: 22,
+                AwayTemp: 25,
                 Mode: HaEntityStates.COOL,
                 ActivateFan: false,
                 HourStart: _entities.SunMidnight.ToLocalHour(),
@@ -163,15 +163,15 @@ public class ClimateScheduler : IClimateScheduler
         {
             var setting = kvp.Value;
             _logger.LogDebug(
-                "TimeBlock {TimeBlock}: NormalTemp={NormalTemp},"
-                    + " PowerSavingTemp={PowerSavingTemp}, CoolTemp={CoolTemp},"
-                    + " PassiveTemp={PassiveTemp}, Mode={Mode}, ActivateFan={ActivateFan},"
+                "TimeBlock {TimeBlock}: DoorOpenTemp={DoorOpenTemp},"
+                    + " EcoAwayTemp={EcoAwayTemp}, ComfortTemp={ComfortTemp},"
+                    + " AwayTemp={AwayTemp}, Mode={Mode}, ActivateFan={ActivateFan},"
                     + " HourStart={HourStart}, HourEnd={HourEnd}",
                 kvp.Key,
-                setting.NormalTemp,
-                setting.PowerSavingTemp,
-                setting.CoolTemp,
-                setting.PassiveTemp,
+                setting.DoorOpenTemp,
+                setting.EcoAwayTemp,
+                setting.ComfortTemp,
+                setting.AwayTemp,
                 setting.Mode,
                 setting.ActivateFan,
                 setting.HourStart,
