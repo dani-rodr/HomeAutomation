@@ -5,13 +5,12 @@ using HomeAutomation.apps.Area.Pantry.Devices;
 
 namespace HomeAutomation.apps.Area.Pantry;
 
-[AreaKey("pantry")]
 public class PantryApp(
     IPantryLightEntities motionEntities,
     MotionSensor motionSensor,
     IAppConfig<PantrySettings> settings,
     ILogger<LightAutomation> lightAutomationLogger
-) : AppBase<PantryApp, PantrySettings>(settings.Value)
+) : AppBase<PantrySettings>(settings)
 {
     protected override IEnumerable<IAutomation> CreateAutomations()
     {

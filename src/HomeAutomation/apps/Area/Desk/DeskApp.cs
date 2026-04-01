@@ -5,7 +5,6 @@ using HomeAutomation.apps.Area.Desk.Devices;
 
 namespace HomeAutomation.apps.Area.Desk;
 
-[AreaKey("desk")]
 public class DeskApp(
     IDeskLightEntities deskMotionEntities,
     IAppConfig<DeskSettings> settings,
@@ -14,7 +13,7 @@ public class DeskApp(
     MotionSensor motionSensor,
     ILogger<LightAutomation> lightAutomationLogger,
     ILogger<DisplayAutomation> displayAutomationLogger
-) : AppBase<DeskApp, DeskSettings>(settings.Value)
+) : AppBase<DeskSettings>(settings)
 {
     protected override IEnumerable<IAutomation> CreateAutomations()
     {

@@ -18,6 +18,7 @@ using HomeAutomation.apps.Area.LivingRoom.Devices.Entities;
 using HomeAutomation.apps.Area.Pantry;
 using HomeAutomation.apps.Area.Pantry.Automations.Entities;
 using HomeAutomation.apps.Area.Pantry.Config;
+using HomeAutomation.apps.Common.Base;
 using HomeAutomation.apps.Common.Services.Logging;
 using HomeAutomation.apps.Security;
 using HomeAutomation.apps.Security.Automations.Entities;
@@ -313,6 +314,7 @@ public class ServiceCollectionExtensionsTests : HaContextTestBase
             new TestAppConfig<LivingRoomSettings>(new())
         );
         services.AddSingleton<IAppConfig<PantrySettings>>(new TestAppConfig<PantrySettings>(new()));
+        services.AddSingleton<IAppConfig<NoAppSettings>>(new TestAppConfig<NoAppSettings>(new()));
         services.AddHomeAssistantGenerated();
         services.AddHomeEntitiesAndServices();
         services.AddTransient<BathroomApp>();

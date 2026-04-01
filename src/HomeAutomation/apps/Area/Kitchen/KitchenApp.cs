@@ -5,7 +5,6 @@ using HomeAutomation.apps.Area.Kitchen.Devices;
 
 namespace HomeAutomation.apps.Area.Kitchen;
 
-[AreaKey("kitchen")]
 public class KitchenApp(
     IKitchenLightEntities motionEntities,
     ICookingEntities cookingEntities,
@@ -13,7 +12,7 @@ public class KitchenApp(
     MotionSensor motionSensor,
     ILogger<LightAutomation> lightAutomationLogger,
     ILogger<CookingAutomation> cookingAutomationLogger
-) : AppBase<KitchenApp, KitchenSettings>(settings.Value)
+) : AppBase<KitchenSettings>(settings)
 {
     protected override IEnumerable<IAutomation> CreateAutomations()
     {

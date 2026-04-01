@@ -5,14 +5,13 @@ using HomeAutomation.apps.Area.Bathroom.Devices;
 
 namespace HomeAutomation.apps.Area.Bathroom;
 
-[AreaKey("bathroom")]
 public class BathroomApp(
     IBathroomLightEntities motionEntities,
     ILogger<LightAutomation> lightAutomationLogger,
     MotionSensor motionSensor,
     IAppConfig<BathroomSettings> settings,
     IDimmingLightControllerFactory dimmingLightControllerFactory
-) : AppBase<BathroomApp, BathroomSettings>(settings.Value)
+) : AppBase<BathroomSettings>(settings)
 {
     protected override IEnumerable<IAutomation> CreateAutomations()
     {

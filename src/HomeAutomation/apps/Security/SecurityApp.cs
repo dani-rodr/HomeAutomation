@@ -4,7 +4,6 @@ using HomeAutomation.apps.Security.People;
 
 namespace HomeAutomation.apps.Security;
 
-[AreaKey("security")]
 public class SecurityApp(
     ILockingEntities lockEntities,
     IAccessControlAutomationEntities locationEntities,
@@ -13,9 +12,10 @@ public class SecurityApp(
     DanielEntities danielEntities,
     AthenaEntities athenaEntities,
     IPersonControllerFactory personControllerFactory,
+    IAppConfig<NoAppSettings> settings,
     ILogger<AccessControlAutomation> accessControlAutomationLogger,
     ILogger<LockAutomation> lockAutomationLogger
-) : AppBase<SecurityApp, NoAppSettings>(NoAppSettings.Instance)
+) : AppBase<NoAppSettings>(settings)
 {
     protected override IEnumerable<IAutomation> CreateAutomations()
     {

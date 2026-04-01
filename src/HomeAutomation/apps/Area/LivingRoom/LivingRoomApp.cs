@@ -5,7 +5,6 @@ using HomeAutomation.apps.Area.LivingRoom.Devices;
 
 namespace HomeAutomation.apps.Area.LivingRoom;
 
-[AreaKey("livingroom")]
 public class LivingRoomApp(
     ILivingRoomLightEntities motionEntities,
     ILivingRoomFanEntities fanEntities,
@@ -17,7 +16,7 @@ public class LivingRoomApp(
     ILogger<FanAutomation> fanAutomationLogger,
     ILogger<AirQualityAutomation> airQualityAutomationLogger,
     ILogger<LightAutomation> lightAutomationLogger
-) : AppBase<LivingRoomApp, LivingRoomSettings>(settings.Value)
+) : AppBase<LivingRoomSettings>(settings)
 {
     protected override IEnumerable<IAutomation> CreateAutomations()
     {

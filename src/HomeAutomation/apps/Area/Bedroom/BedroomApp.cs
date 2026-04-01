@@ -7,7 +7,6 @@ using HomeAutomation.apps.Common.Settings;
 
 namespace HomeAutomation.apps.Area.Bedroom;
 
-[AreaKey("bedroom")]
 public class BedroomApp(
     ILogger<LightAutomation> lightAutomationLogger,
     ILogger<FanAutomation> fanAutomationLogger,
@@ -19,7 +18,7 @@ public class BedroomApp(
     IClimateSettingsResolver climateSettingsResolver,
     IAreaSettingsChangeNotifier areaSettingsChangeNotifier,
     MotionSensor motionSensor
-) : AppBase<BedroomApp, ClimateSettings>(settings.Value)
+) : AppBase<ClimateSettings>(settings)
 {
     protected override IEnumerable<IAutomation> CreateAutomations()
     {

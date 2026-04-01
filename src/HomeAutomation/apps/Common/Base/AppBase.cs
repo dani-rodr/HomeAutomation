@@ -1,18 +1,17 @@
 namespace HomeAutomation.apps.Common.Base;
 
 [NetDaemonApp]
-public abstract class AppBase<TArea, TSettings> : IAreaApp, IDisposable
-    where TArea : class
-    where TSettings : class
+public abstract class AppBase<TSettings> : IDisposable
+    where TSettings : class, new()
 {
     private readonly List<IAutomation> _automations = [];
 
-    protected AppBase(TSettings settings)
+    protected AppBase(IAppConfig<TSettings> appConfig)
     {
-        ArgumentNullException.ThrowIfNull(settings);
+        ArgumentNullException.ThrowIfNull(appConfig);
+        ArgumentNullException.ThrowIfNull(appConfig.Value);
 
-        AreaKey = ResolveAreaKey();
-        Settings = settings;
+        Settings = appConfig.Value;
 
         _automations.AddRange(CreateAutomations());
 
@@ -22,33 +21,9 @@ public abstract class AppBase<TArea, TSettings> : IAreaApp, IDisposable
         }
     }
 
-    public string AreaKey { get; }
-
     protected TSettings Settings { get; }
 
     protected abstract IEnumerable<IAutomation> CreateAutomations();
-
-    private static string ResolveAreaKey()
-    {
-        if (
-            Attribute.GetCustomAttribute(typeof(TArea), typeof(AreaKeyAttribute), inherit: true)
-            is not AreaKeyAttribute attribute
-        )
-        {
-            throw new InvalidOperationException(
-                $"Type '{typeof(TArea).FullName}' must be decorated with [{nameof(AreaKeyAttribute)}(\"<area-key>\")] to be used by {nameof(AppBase<TArea, TSettings>)}."
-            );
-        }
-
-        if (string.IsNullOrWhiteSpace(attribute.AreaKey))
-        {
-            throw new InvalidOperationException(
-                $"Type '{typeof(TArea).FullName}' has an invalid [{nameof(AreaKeyAttribute)}] value. The area key must be a non-empty string."
-            );
-        }
-
-        return attribute.AreaKey;
-    }
 
     public virtual void Dispose()
     {
