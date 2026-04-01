@@ -2,7 +2,6 @@ using HomeAutomation.apps.Area.Bathroom.Automations;
 using HomeAutomation.apps.Area.Bathroom.Automations.Entities;
 using HomeAutomation.apps.Area.Bathroom.Config;
 using HomeAutomation.apps.Area.Bathroom.Devices;
-using HomeAutomation.apps.Common.Config;
 
 namespace HomeAutomation.apps.Area.Bathroom;
 
@@ -11,9 +10,9 @@ public class BathroomApp(
     IBathroomLightEntities motionEntities,
     ILogger<LightAutomation> lightAutomationLogger,
     MotionSensor motionSensor,
-    IAreaConfigStore areaConfigStore,
+    IAppConfig<BathroomSettings> settings,
     IDimmingLightControllerFactory dimmingLightControllerFactory
-) : AppBase<BathroomApp, BathroomSettings>(areaConfigStore)
+) : AppBase<BathroomApp, BathroomSettings>(settings.Value)
 {
     protected override IEnumerable<IAutomation> CreateAutomations()
     {

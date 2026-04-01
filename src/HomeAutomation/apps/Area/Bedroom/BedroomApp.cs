@@ -3,7 +3,7 @@ using HomeAutomation.apps.Area.Bedroom.Automations.Entities;
 using HomeAutomation.apps.Area.Bedroom.Config;
 using HomeAutomation.apps.Area.Bedroom.Devices;
 using HomeAutomation.apps.Area.Bedroom.Services.Schedulers;
-using HomeAutomation.apps.Common.Config;
+using HomeAutomation.apps.Common.Settings;
 
 namespace HomeAutomation.apps.Area.Bedroom;
 
@@ -15,11 +15,11 @@ public class BedroomApp(
     IBedroomLightEntities motionEntities,
     IBedroomFanEntities fanEntities,
     IClimateEntities climateEntities,
-    IAreaConfigStore areaConfigStore,
+    IAppConfig<ClimateSettings> settings,
     IClimateSettingsResolver climateSettingsResolver,
-    IAreaConfigChangeNotifier areaConfigChangeNotifier,
+    IAreaSettingsChangeNotifier areaSettingsChangeNotifier,
     MotionSensor motionSensor
-) : AppBase<BedroomApp, ClimateSettings>(areaConfigStore)
+) : AppBase<BedroomApp, ClimateSettings>(settings.Value)
 {
     protected override IEnumerable<IAutomation> CreateAutomations()
     {
@@ -32,7 +32,7 @@ public class BedroomApp(
         yield return new ClimateAutomation(
             climateEntities,
             climateSettingsResolver,
-            areaConfigChangeNotifier,
+            areaSettingsChangeNotifier,
             climateAutomationLogger
         );
     }

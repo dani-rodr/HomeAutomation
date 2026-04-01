@@ -1,4 +1,3 @@
-using HomeAutomation.apps.Common.Config;
 using HomeAutomation.apps.Security.Automations;
 using HomeAutomation.apps.Security.Automations.Entities;
 using HomeAutomation.apps.Security.People;
@@ -14,10 +13,9 @@ public class SecurityApp(
     DanielEntities danielEntities,
     AthenaEntities athenaEntities,
     IPersonControllerFactory personControllerFactory,
-    IAreaConfigStore areaConfigStore,
     ILogger<AccessControlAutomation> accessControlAutomationLogger,
     ILogger<LockAutomation> lockAutomationLogger
-) : AppBase<SecurityApp, NoAppSettings>(areaConfigStore)
+) : AppBase<SecurityApp, NoAppSettings>(NoAppSettings.Instance)
 {
     protected override IEnumerable<IAutomation> CreateAutomations()
     {

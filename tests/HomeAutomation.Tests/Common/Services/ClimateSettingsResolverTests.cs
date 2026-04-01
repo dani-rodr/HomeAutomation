@@ -1,6 +1,6 @@
 using HomeAutomation.apps.Area.Bedroom.Config;
 using HomeAutomation.apps.Area.Bedroom.Services.Schedulers.Entities;
-using HomeAutomation.apps.Common.Config;
+using HomeAutomation.apps.Common.Settings;
 
 namespace HomeAutomation.Tests.Common.Services;
 
@@ -11,7 +11,7 @@ public class ClimateSettingsResolverTests : HaContextTestBase
         ILogger<HomeAutomation.apps.Area.Bedroom.Services.Schedulers.ClimateSettingsResolver>
     > _mockLogger;
     private readonly Mock<HomeAutomation.apps.Area.Bedroom.Services.Schedulers.IAcTemperatureCalculator> _mockCalculator;
-    private readonly Mock<IAreaConfigStore> _mockAreaConfigStore;
+    private readonly Mock<IAreaSettingsStore> _mockAreaConfigStore;
     private readonly TestSchedulerEntities _schedulerEntities;
     private readonly HomeAutomation.apps.Area.Bedroom.Services.Schedulers.ClimateSettingsResolver _scheduler;
 
@@ -23,10 +23,10 @@ public class ClimateSettingsResolverTests : HaContextTestBase
             >();
         _mockCalculator =
             new Mock<HomeAutomation.apps.Area.Bedroom.Services.Schedulers.IAcTemperatureCalculator>();
-        _mockAreaConfigStore = new Mock<IAreaConfigStore>();
+        _mockAreaConfigStore = new Mock<IAreaSettingsStore>();
         _schedulerEntities = new TestSchedulerEntities(_mockHaContext);
         _mockAreaConfigStore
-            .Setup(x => x.GetConfig<ClimateSettings>("bedroom"))
+            .Setup(x => x.GetSettings<ClimateSettings>("bedroom"))
             .Returns(CreateClimateSettings());
 
         _scheduler =
@@ -106,9 +106,9 @@ public class ClimateSettingsResolverTests : HaContextTestBase
     [Fact]
     public void GetSchedules_WithInvalidHours_ShouldLogWarningAndSkipInvalidBlock()
     {
-        var invalidStore = new Mock<IAreaConfigStore>();
+        var invalidStore = new Mock<IAreaSettingsStore>();
         invalidStore
-            .Setup(x => x.GetConfig<ClimateSettings>("bedroom"))
+            .Setup(x => x.GetSettings<ClimateSettings>("bedroom"))
             .Returns(CreateClimateSettings(sunriseHourStart: 27));
         var scheduler =
             new HomeAutomation.apps.Area.Bedroom.Services.Schedulers.ClimateSettingsResolver(
@@ -137,9 +137,9 @@ public class ClimateSettingsResolverTests : HaContextTestBase
     [Fact]
     public void TryGetCurrentSetting_WithNoMatchingRange_ShouldReturnFalse()
     {
-        var store = new Mock<IAreaConfigStore>();
+        var store = new Mock<IAreaSettingsStore>();
         store
-            .Setup(x => x.GetConfig<ClimateSettings>("bedroom"))
+            .Setup(x => x.GetSettings<ClimateSettings>("bedroom"))
             .Returns(
                 new ClimateSettings
                 {

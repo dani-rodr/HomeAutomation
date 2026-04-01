@@ -1,22 +1,29 @@
 using HomeAutomation.apps.Area.Bathroom;
 using HomeAutomation.apps.Area.Bathroom.Automations.Entities;
+using HomeAutomation.apps.Area.Bathroom.Config;
 using HomeAutomation.apps.Area.Bedroom;
 using HomeAutomation.apps.Area.Bedroom.Automations.Entities;
+using HomeAutomation.apps.Area.Bedroom.Config;
 using HomeAutomation.apps.Area.Desk;
 using HomeAutomation.apps.Area.Desk.Automations.Entities;
+using HomeAutomation.apps.Area.Desk.Config;
 using HomeAutomation.apps.Area.Desk.Devices.Entities;
 using HomeAutomation.apps.Area.Kitchen;
 using HomeAutomation.apps.Area.Kitchen.Automations.Entities;
+using HomeAutomation.apps.Area.Kitchen.Config;
 using HomeAutomation.apps.Area.LivingRoom;
 using HomeAutomation.apps.Area.LivingRoom.Automations.Entities;
+using HomeAutomation.apps.Area.LivingRoom.Config;
 using HomeAutomation.apps.Area.LivingRoom.Devices.Entities;
 using HomeAutomation.apps.Area.Pantry;
 using HomeAutomation.apps.Area.Pantry.Automations.Entities;
+using HomeAutomation.apps.Area.Pantry.Config;
 using HomeAutomation.apps.Common.Services.Logging;
 using HomeAutomation.apps.Security;
 using HomeAutomation.apps.Security.Automations.Entities;
 using HomeAutomation.apps.Security.People;
 using Microsoft.Extensions.DependencyInjection;
+using NetDaemon.AppModel;
 
 namespace HomeAutomation.Tests.Common.Containers;
 
@@ -292,6 +299,20 @@ public class ServiceCollectionExtensionsTests : HaContextTestBase
         services.AddLogging();
         services.AddSingleton<IHaContext>(HaContext);
         services.AddSingleton<IScheduler>(HaContext.Scheduler);
+        services.AddSingleton<IAppConfig<BathroomSettings>>(
+            new TestAppConfig<BathroomSettings>(new())
+        );
+        services.AddSingleton<IAppConfig<ClimateSettings>>(
+            new TestAppConfig<ClimateSettings>(new())
+        );
+        services.AddSingleton<IAppConfig<DeskSettings>>(new TestAppConfig<DeskSettings>(new()));
+        services.AddSingleton<IAppConfig<KitchenSettings>>(
+            new TestAppConfig<KitchenSettings>(new())
+        );
+        services.AddSingleton<IAppConfig<LivingRoomSettings>>(
+            new TestAppConfig<LivingRoomSettings>(new())
+        );
+        services.AddSingleton<IAppConfig<PantrySettings>>(new TestAppConfig<PantrySettings>(new()));
         services.AddHomeAssistantGenerated();
         services.AddHomeEntitiesAndServices();
         services.AddTransient<BathroomApp>();
@@ -305,5 +326,11 @@ public class ServiceCollectionExtensionsTests : HaContextTestBase
         return services.BuildServiceProvider(
             new ServiceProviderOptions { ValidateOnBuild = true, ValidateScopes = true }
         );
+    }
+
+    private sealed class TestAppConfig<T>(T value) : IAppConfig<T>
+        where T : class, new()
+    {
+        public T Value { get; } = value;
     }
 }

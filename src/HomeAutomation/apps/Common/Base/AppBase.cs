@@ -1,7 +1,5 @@
 namespace HomeAutomation.apps.Common.Base;
 
-using HomeAutomation.apps.Common.Config;
-
 [NetDaemonApp]
 public abstract class AppBase<TArea, TSettings> : IAreaApp, IDisposable
     where TArea : class
@@ -9,12 +7,12 @@ public abstract class AppBase<TArea, TSettings> : IAreaApp, IDisposable
 {
     private readonly List<IAutomation> _automations = [];
 
-    protected AppBase(IAreaConfigStore areaConfigStore)
+    protected AppBase(TSettings settings)
     {
-        ArgumentNullException.ThrowIfNull(areaConfigStore);
+        ArgumentNullException.ThrowIfNull(settings);
 
         AreaKey = ResolveAreaKey();
-        Settings = ResolveSettings(areaConfigStore);
+        Settings = settings;
 
         _automations.AddRange(CreateAutomations());
 
@@ -29,16 +27,6 @@ public abstract class AppBase<TArea, TSettings> : IAreaApp, IDisposable
     protected TSettings Settings { get; }
 
     protected abstract IEnumerable<IAutomation> CreateAutomations();
-
-    private TSettings ResolveSettings(IAreaConfigStore areaConfigStore)
-    {
-        if (typeof(TSettings) == typeof(NoAppSettings))
-        {
-            return (TSettings)(object)NoAppSettings.Instance;
-        }
-
-        return areaConfigStore.GetConfig<TSettings>(AreaKey);
-    }
 
     private static string ResolveAreaKey()
     {

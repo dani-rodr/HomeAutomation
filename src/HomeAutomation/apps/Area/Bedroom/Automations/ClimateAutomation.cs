@@ -1,14 +1,14 @@
 using System.Linq;
 using HomeAutomation.apps.Area.Bedroom.Automations.Entities;
 using HomeAutomation.apps.Area.Bedroom.Services.Schedulers;
-using HomeAutomation.apps.Common.Config;
+using HomeAutomation.apps.Common.Settings;
 
 namespace HomeAutomation.apps.Area.Bedroom.Automations;
 
 public class ClimateAutomation(
     IClimateEntities entities,
     IClimateSettingsResolver scheduler,
-    IAreaConfigChangeNotifier configChangeNotifier,
+    IAreaSettingsChangeNotifier settingsChangeNotifier,
     ILogger<ClimateAutomation> logger
 ) : ToggleableAutomation(entities.MasterSwitch, logger)
 {
@@ -34,9 +34,9 @@ public class ClimateAutomation(
 
         yield return _weather.StateAllChanges().Subscribe(ApplyPowerSavingModeFromWeather);
 
-        yield return configChangeNotifier
+        yield return settingsChangeNotifier
             .Changes.Where(x => x.AreaKey == "bedroom")
-            .Subscribe(HandleBedroomConfigChanged);
+            .Subscribe(HandleBedroomSettingsChanged);
 
         yield return _motionSensor
             .OnCleared(new(Hours: automationSettings.MasterSwitchReenableWhenNoMotionHours))
@@ -201,12 +201,12 @@ public class ClimateAutomation(
         );
     }
 
-    private void HandleBedroomConfigChanged(AreaConfigChangedEvent changeEvent)
+    private void HandleBedroomSettingsChanged(AreaSettingsChangedEvent changeEvent)
     {
         if (MasterSwitch.IsOff())
         {
             Logger.LogDebug(
-                "Config changed for area {AreaKey} ({ChangeType}) but master switch is off.",
+                "Settings changed for area {AreaKey} ({ChangeType}) but master switch is off.",
                 changeEvent.AreaKey,
                 changeEvent.ChangeType
             );
@@ -215,7 +215,7 @@ public class ClimateAutomation(
         }
 
         Logger.LogInformation(
-            "Config changed for area {AreaKey} ({ChangeType}), reapplying climate settings.",
+            "Settings changed for area {AreaKey} ({ChangeType}), reapplying climate settings.",
             changeEvent.AreaKey,
             changeEvent.ChangeType
         );

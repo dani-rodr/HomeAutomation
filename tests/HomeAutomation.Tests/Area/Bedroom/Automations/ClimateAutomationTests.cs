@@ -1,7 +1,7 @@
 using HomeAutomation.apps.Area.Bedroom.Automations;
 using HomeAutomation.apps.Area.Bedroom.Automations.Entities;
 using HomeAutomation.apps.Area.Bedroom.Config;
-using HomeAutomation.apps.Common.Config;
+using HomeAutomation.apps.Common.Settings;
 
 namespace HomeAutomation.Tests.Area.Bedroom.Automations;
 
@@ -17,7 +17,7 @@ public partial class ClimateAutomationTests : AutomationTestBase<ClimateAutomati
 
     private readonly ClimateAutomation _automation;
 
-    private readonly AreaConfigChangeNotifier _areaConfigChangeNotifier;
+    private readonly AreaSettingsChangeNotifier _areaSettingsChangeNotifier;
 
     public ClimateAutomationTests()
     {
@@ -25,7 +25,7 @@ public partial class ClimateAutomationTests : AutomationTestBase<ClimateAutomati
             new Mock<HomeAutomation.apps.Area.Bedroom.Services.Schedulers.IClimateSettingsResolver>();
 
         _entities = new TestEntities(_mockHaContext);
-        _areaConfigChangeNotifier = new AreaConfigChangeNotifier();
+        _areaSettingsChangeNotifier = new AreaSettingsChangeNotifier();
 
         SetupDefaultEntityStates();
 
@@ -34,7 +34,7 @@ public partial class ClimateAutomationTests : AutomationTestBase<ClimateAutomati
         _automation = new ClimateAutomation(
             _entities,
             _mockScheduler.Object,
-            _areaConfigChangeNotifier,
+            _areaSettingsChangeNotifier,
             _mockLogger.Object
         );
 
@@ -211,12 +211,16 @@ public partial class ClimateAutomationTests : AutomationTestBase<ClimateAutomati
     }
 
     [Fact]
-    public void ConfigChange_ForBedroom_Should_ReapplyScheduledSettings()
+    public void SettingsChange_ForBedroom_Should_ReapplyScheduledSettings()
     {
         _mockScheduler.Invocations.Clear();
 
-        _areaConfigChangeNotifier.Publish(
-            new AreaConfigChangedEvent("bedroom", AreaConfigChangeType.Saved, DateTimeOffset.UtcNow)
+        _areaSettingsChangeNotifier.Publish(
+            new AreaSettingsChangedEvent(
+                "bedroom",
+                AreaSettingsChangeType.Saved,
+                DateTimeOffset.UtcNow
+            )
         );
 
         _mockScheduler.Verify(
@@ -230,12 +234,16 @@ public partial class ClimateAutomationTests : AutomationTestBase<ClimateAutomati
     }
 
     [Fact]
-    public void ConfigChange_ForDifferentArea_Should_NotReapplyScheduledSettings()
+    public void SettingsChange_ForDifferentArea_Should_NotReapplyScheduledSettings()
     {
         _mockScheduler.Invocations.Clear();
 
-        _areaConfigChangeNotifier.Publish(
-            new AreaConfigChangedEvent("kitchen", AreaConfigChangeType.Saved, DateTimeOffset.UtcNow)
+        _areaSettingsChangeNotifier.Publish(
+            new AreaSettingsChangedEvent(
+                "kitchen",
+                AreaSettingsChangeType.Saved,
+                DateTimeOffset.UtcNow
+            )
         );
 
         _mockScheduler.Verify(

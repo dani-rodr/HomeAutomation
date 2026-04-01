@@ -1,0 +1,6 @@
+HomeAutomation.apps.Area.Desk.Config.DeskSettings:
+  light:
+    longSensorDelaySeconds: 60
+    shortSensorDelaySeconds: 20
+    brightnessWhenSalaOn: 230
+    brightnessWhenSalaOff: 125

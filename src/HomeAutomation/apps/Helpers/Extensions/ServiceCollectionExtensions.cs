@@ -4,9 +4,9 @@ using HomeAutomation.apps.Area.Desk;
 using HomeAutomation.apps.Area.Kitchen;
 using HomeAutomation.apps.Area.LivingRoom;
 using HomeAutomation.apps.Area.Pantry;
-using HomeAutomation.apps.Common.Config;
 using HomeAutomation.apps.Common.Devices;
 using HomeAutomation.apps.Common.Services.Logging;
+using HomeAutomation.apps.Common.Settings;
 using HomeAutomation.apps.Security;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -17,7 +17,7 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection AddHomeEntitiesAndServices(this IServiceCollection services)
     {
         return services
-            .AddAreaConfigEngine()
+            .AddAreaSettingsEngine()
             .AddTransient<IEventHandler, HaEventHandler>()
             .AddTransient<GlobalDevices>()
             .AddTransient<ITypedEntityFactory, EntityFactory>()

@@ -1,0 +1,4 @@
+HomeAutomation.apps.Area.Bathroom.Config.BathroomSettings:
+  light:
+    motionOnDelaySeconds: 2
+    masterSwitchDisableDelayMinutes: 5

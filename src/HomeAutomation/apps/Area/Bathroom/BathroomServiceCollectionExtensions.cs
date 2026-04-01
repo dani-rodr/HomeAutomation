@@ -1,6 +1,5 @@
 using HomeAutomation.apps.Area.Bathroom.Automations.Entities;
 using HomeAutomation.apps.Area.Bathroom.Devices;
-using HomeAutomation.apps.Common.Config;
 using Microsoft.Extensions.DependencyInjection;
 using BathroomLightEntityAdapter = HomeAutomation.apps.Area.Bathroom.Automations.Entities.LightEntities;
 
@@ -11,7 +10,6 @@ public static class BathroomServiceCollectionExtensions
     public static IServiceCollection AddBathroomServices(this IServiceCollection services)
     {
         return services
-            .AddAreaConfig("bathroom", "Bathroom", "Bathroom automation settings")
             .AddTransient<BathroomDevices>()
             .AddTransient<IBathroomLightEntities, BathroomLightEntityAdapter>();
     }

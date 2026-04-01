@@ -2,20 +2,19 @@ using HomeAutomation.apps.Area.Desk.Automations;
 using HomeAutomation.apps.Area.Desk.Automations.Entities;
 using HomeAutomation.apps.Area.Desk.Config;
 using HomeAutomation.apps.Area.Desk.Devices;
-using HomeAutomation.apps.Common.Config;
 
 namespace HomeAutomation.apps.Area.Desk;
 
 [AreaKey("desk")]
 public class DeskApp(
     IDeskLightEntities deskMotionEntities,
-    IAreaConfigStore areaConfigStore,
+    IAppConfig<DeskSettings> settings,
     ILgDisplay lgDisplay,
     IDesktop desktop,
     MotionSensor motionSensor,
     ILogger<LightAutomation> lightAutomationLogger,
     ILogger<DisplayAutomation> displayAutomationLogger
-) : AppBase<DeskApp, DeskSettings>(areaConfigStore)
+) : AppBase<DeskApp, DeskSettings>(settings.Value)
 {
     protected override IEnumerable<IAutomation> CreateAutomations()
     {

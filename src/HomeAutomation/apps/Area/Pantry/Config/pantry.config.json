@@ -1,7 +1,0 @@
-{
-  "light": {
-    "sensorWaitSeconds": 5,
-    "sensorActiveDelayValue": 5,
-    "bathroomAutomationTurnOffDelaySeconds": 60
-  }
-}

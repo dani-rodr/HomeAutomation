@@ -1,13 +1,13 @@
 using System.Linq;
 using System.Text.Json.Nodes;
-using HomeAutomation.apps.Common.Config;
+using HomeAutomation.apps.Common.Settings;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HomeAutomation.Web.Controllers;
 
 [ApiController]
 [Route("api/area-config")]
-public sealed class AreaConfigController(IAreaConfigStore store) : ControllerBase
+public sealed class AreaConfigController(IAreaSettingsStore store) : ControllerBase
 {
     [HttpGet]
     public IActionResult ListAreas()
@@ -35,7 +35,7 @@ public sealed class AreaConfigController(IAreaConfigStore store) : ControllerBas
                 .ListAreas()
                 .Select(descriptor =>
                 {
-                    var config = store.GetConfig(descriptor.Key);
+                    var config = store.GetSettings(descriptor.Key);
                     return new
                     {
                         key = descriptor.Key,
@@ -55,51 +55,12 @@ public sealed class AreaConfigController(IAreaConfigStore store) : ControllerBas
         }
     }
 
-    [HttpGet("{areaKey}/schema")]
-    public IActionResult GetSchema(string areaKey)
-    {
-        try
-        {
-            var descriptor = store.ListAreas().FirstOrDefault(x => x.Key == areaKey);
-            if (descriptor is null)
-            {
-                return NotFound(new { error = $"Unknown area '{areaKey}'." });
-            }
-
-            if (string.IsNullOrWhiteSpace(descriptor.SchemaFilePath))
-            {
-                return Ok(new JsonObject());
-            }
-
-            if (!System.IO.File.Exists(descriptor.SchemaFilePath))
-            {
-                return NotFound(new { error = $"Schema not found for area '{areaKey}'." });
-            }
-
-            var schemaJson = System.IO.File.ReadAllText(descriptor.SchemaFilePath);
-            var schema = JsonNode.Parse(schemaJson) as JsonObject;
-            if (schema is null)
-            {
-                return Problem(
-                    title: "Unable to load area schema.",
-                    detail: $"Schema for area '{areaKey}' is not a JSON object."
-                );
-            }
-
-            return Ok(schema);
-        }
-        catch (Exception ex)
-        {
-            return Problem(title: "Unable to load area schema.", detail: ex.Message);
-        }
-    }
-
     [HttpGet("{areaKey}")]
     public IActionResult GetConfig(string areaKey)
     {
         try
         {
-            var config = store.GetConfig(areaKey);
+            var config = store.GetSettings(areaKey);
             return Ok(config);
         }
         catch (KeyNotFoundException)
@@ -117,7 +78,7 @@ public sealed class AreaConfigController(IAreaConfigStore store) : ControllerBas
     {
         try
         {
-            var result = store.SaveConfig(areaKey, config);
+            var result = store.SaveSettings(areaKey, config);
             if (!result.IsValid)
             {
                 return BadRequest(new { errors = result.Errors });
@@ -140,7 +101,7 @@ public sealed class AreaConfigController(IAreaConfigStore store) : ControllerBas
     {
         try
         {
-            var config = store.ResetConfig(areaKey);
+            var config = store.ResetSettings(areaKey);
             return Ok(config);
         }
         catch (KeyNotFoundException)

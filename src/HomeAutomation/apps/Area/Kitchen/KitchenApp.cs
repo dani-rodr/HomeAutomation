@@ -2,7 +2,6 @@ using HomeAutomation.apps.Area.Kitchen.Automations;
 using HomeAutomation.apps.Area.Kitchen.Automations.Entities;
 using HomeAutomation.apps.Area.Kitchen.Config;
 using HomeAutomation.apps.Area.Kitchen.Devices;
-using HomeAutomation.apps.Common.Config;
 
 namespace HomeAutomation.apps.Area.Kitchen;
 
@@ -10,11 +9,11 @@ namespace HomeAutomation.apps.Area.Kitchen;
 public class KitchenApp(
     IKitchenLightEntities motionEntities,
     ICookingEntities cookingEntities,
-    IAreaConfigStore areaConfigStore,
+    IAppConfig<KitchenSettings> settings,
     MotionSensor motionSensor,
     ILogger<LightAutomation> lightAutomationLogger,
     ILogger<CookingAutomation> cookingAutomationLogger
-) : AppBase<KitchenApp, KitchenSettings>(areaConfigStore)
+) : AppBase<KitchenApp, KitchenSettings>(settings.Value)
 {
     protected override IEnumerable<IAutomation> CreateAutomations()
     {

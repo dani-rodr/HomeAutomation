@@ -19,14 +19,6 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </None>
-    <Content Update="$(MSBuildProjectDir)apps\Area\**\Config\*.config.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-    </Content>
-    <Content Update="$(MSBuildProjectDir)apps\Area\**\Config\*.config.schema.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-    </Content>
   </ItemGroup>
   <Target Name="AfterPublishMessage" AfterTargets="Publish">
     <Message
@@ -43,5 +35,6 @@
     <PackageReference Include="NetDaemon.Extensions.Scheduling" Version="26.11.0" />
     <PackageReference Include="NetDaemon.Extensions.Logging" Version="26.11.0" />
     <PackageReference Include="NetDaemon.Extensions.Tts" Version="26.11.0" />
+    <PackageReference Include="YamlDotNet" Version="16.3.0" />
   </ItemGroup>
 </Project>

@@ -2,7 +2,6 @@ using HomeAutomation.apps.Area.LivingRoom.Automations;
 using HomeAutomation.apps.Area.LivingRoom.Automations.Entities;
 using HomeAutomation.apps.Area.LivingRoom.Config;
 using HomeAutomation.apps.Area.LivingRoom.Devices;
-using HomeAutomation.apps.Common.Config;
 
 namespace HomeAutomation.apps.Area.LivingRoom;
 
@@ -11,14 +10,14 @@ public class LivingRoomApp(
     ILivingRoomLightEntities motionEntities,
     ILivingRoomFanEntities fanEntities,
     IAirQualityEntities airQualityEntities,
-    IAreaConfigStore areaConfigStore,
+    IAppConfig<LivingRoomSettings> settings,
     ITclDisplay tclDisplay,
     IDimmingLightControllerFactory dimmingLightControllerFactory,
     MotionSensor motionSensor,
     ILogger<FanAutomation> fanAutomationLogger,
     ILogger<AirQualityAutomation> airQualityAutomationLogger,
     ILogger<LightAutomation> lightAutomationLogger
-) : AppBase<LivingRoomApp, LivingRoomSettings>(areaConfigStore)
+) : AppBase<LivingRoomApp, LivingRoomSettings>(settings.Value)
 {
     protected override IEnumerable<IAutomation> CreateAutomations()
     {

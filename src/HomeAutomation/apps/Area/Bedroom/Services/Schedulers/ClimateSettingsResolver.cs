@@ -1,12 +1,12 @@
 using HomeAutomation.apps.Area.Bedroom.Config;
-using HomeAutomation.apps.Common.Config;
+using HomeAutomation.apps.Common.Settings;
 using NetDaemon.Extensions.Scheduler;
 
 namespace HomeAutomation.apps.Area.Bedroom.Services.Schedulers;
 
 public class ClimateSettingsResolver : IClimateSettingsResolver
 {
-    private readonly IAreaConfigStore _areaConfigStore;
+    private readonly IAreaSettingsStore _areaSettingsStore;
     private readonly InputBooleanEntity _powerSavingMode;
     private readonly IScheduler _scheduler;
     private readonly IAcTemperatureCalculator _temperatureCalculator;
@@ -14,12 +14,12 @@ public class ClimateSettingsResolver : IClimateSettingsResolver
 
     public ClimateSettingsResolver(
         Entities.IClimateSchedulerEntities entities,
-        IAreaConfigStore areaConfigStore,
+        IAreaSettingsStore areaSettingsStore,
         IAcTemperatureCalculator temperatureCalculator,
         ILogger<ClimateSettingsResolver> logger
     )
     {
-        _areaConfigStore = areaConfigStore;
+        _areaSettingsStore = areaSettingsStore;
         _powerSavingMode = entities.PowerSavingMode;
         _scheduler = SchedulerProvider.Current;
         _temperatureCalculator = temperatureCalculator;
@@ -131,11 +131,11 @@ public class ClimateSettingsResolver : IClimateSettingsResolver
     private ClimateSettings GetCurrentAcScheduleSettings() => LoadClimateConfig();
 
     private ClimateSettings LoadClimateConfig() =>
-        _areaConfigStore.GetConfig<ClimateSettings>("bedroom");
+        _areaSettingsStore.GetSettings<ClimateSettings>("bedroom");
 
     private void LogCurrentAcScheduleSettings()
     {
-        _logger.LogDebug("AC schedule settings initialized from Bedroom area config.");
+        _logger.LogDebug("AC schedule settings initialized from Bedroom area settings.");
         var settings = GetCurrentAcScheduleSettings();
         foreach (var timeBlock in new[] { TimeBlock.Sunrise, TimeBlock.Sunset, TimeBlock.Midnight })
         {

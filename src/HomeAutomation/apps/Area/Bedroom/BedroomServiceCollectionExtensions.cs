@@ -1,6 +1,5 @@
 using HomeAutomation.apps.Area.Bedroom.Automations.Entities;
 using HomeAutomation.apps.Area.Bedroom.Devices;
-using HomeAutomation.apps.Common.Config;
 using Microsoft.Extensions.DependencyInjection;
 using BedroomClimateEntityAdapter = HomeAutomation.apps.Area.Bedroom.Automations.Entities.ClimateEntities;
 using BedroomClimateSchedulerEntities = HomeAutomation.apps.Area.Bedroom.Services.Schedulers.Entities.GlobalClimateSchedulerEntities;
@@ -19,7 +18,6 @@ public static class BedroomServiceCollectionExtensions
     public static IServiceCollection AddBedroomServices(this IServiceCollection services)
     {
         return services
-            .AddAreaConfig("bedroom", "Bedroom", "Bedroom climate automation settings")
             .AddTransient<BedroomDevices>()
             .AddTransient<IBedroomLightEntities, BedroomLightEntityAdapter>()
             .AddTransient<IBedroomFanEntities, BedroomFanEntityAdapter>()
