@@ -5,8 +5,11 @@ using System.Text.Json.Nodes;
 
 namespace HomeAutomation.apps.Common.Config;
 
-public sealed class AreaConfigStore(IAreaConfigRegistry registry, ILogger<AreaConfigStore> logger)
-    : IAreaConfigStore
+public sealed class AreaConfigStore(
+    IAreaConfigRegistry registry,
+    IAreaConfigChangeNotifier changeNotifier,
+    ILogger<AreaConfigStore> logger
+) : IAreaConfigStore
 {
     private static readonly JsonSerializerOptions JsonOptions = new()
     {
@@ -76,6 +79,9 @@ public sealed class AreaConfigStore(IAreaConfigRegistry registry, ILogger<AreaCo
         }
 
         logger.LogInformation("Saved config override for area {AreaKey}", areaKey);
+        changeNotifier.Publish(
+            new AreaConfigChangedEvent(areaKey, AreaConfigChangeType.Saved, DateTimeOffset.UtcNow)
+        );
         return AreaConfigValidationResult.Success;
     }
 
@@ -91,6 +97,9 @@ public sealed class AreaConfigStore(IAreaConfigRegistry registry, ILogger<AreaCo
             }
 
             logger.LogInformation("Reset config override for area {AreaKey}", areaKey);
+            changeNotifier.Publish(
+                new AreaConfigChangedEvent(areaKey, AreaConfigChangeType.Reset, DateTimeOffset.UtcNow)
+            );
             return LoadJsonObject(descriptor.DefaultsFilePath);
         }
     }

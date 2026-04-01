@@ -8,6 +8,7 @@ public sealed class AreaConfigStoreTests : IDisposable
     private readonly AreaConfigDescriptor _descriptor;
     private readonly AreaConfigStore _store;
     private readonly string _schemaPath;
+    private readonly Mock<IAreaConfigChangeNotifier> _changeNotifier;
 
     public AreaConfigStoreTests()
     {
@@ -28,7 +29,12 @@ public sealed class AreaConfigStoreTests : IDisposable
         File.WriteAllText(_schemaPath, CreateSchemaJson());
 
         var registry = new AreaConfigRegistry([_descriptor]);
-        _store = new AreaConfigStore(registry, Mock.Of<ILogger<AreaConfigStore>>());
+        _changeNotifier = new Mock<IAreaConfigChangeNotifier>();
+        _store = new AreaConfigStore(
+            registry,
+            _changeNotifier.Object,
+            Mock.Of<ILogger<AreaConfigStore>>()
+        );
     }
 
     [Fact]
@@ -53,6 +59,16 @@ public sealed class AreaConfigStoreTests : IDisposable
 
         var loaded = _store.GetConfig("bedroom");
         loaded["sunrise"]?["comfortTemp"]?.GetValue<int>().Should().Be(21);
+        _changeNotifier
+            .Verify(
+                x =>
+                    x.Publish(
+                        It.Is<AreaConfigChangedEvent>(e =>
+                            e.AreaKey == "bedroom" && e.ChangeType == AreaConfigChangeType.Saved
+                        )
+                    ),
+                Times.Once
+            );
     }
 
     [Fact]
@@ -66,6 +82,7 @@ public sealed class AreaConfigStoreTests : IDisposable
         result.IsValid.Should().BeFalse();
         result.Errors.Should().ContainKey("sunrise.comfortTemp");
         File.Exists(_descriptor.OverridesFilePath).Should().BeFalse();
+        _changeNotifier.Verify(x => x.Publish(It.IsAny<AreaConfigChangedEvent>()), Times.Never);
     }
 
     [Fact]
@@ -113,6 +130,16 @@ public sealed class AreaConfigStoreTests : IDisposable
 
         reset["sunrise"]?["comfortTemp"]?.GetValue<int>().Should().Be(24);
         File.Exists(_descriptor.OverridesFilePath).Should().BeFalse();
+        _changeNotifier
+            .Verify(
+                x =>
+                    x.Publish(
+                        It.Is<AreaConfigChangedEvent>(e =>
+                            e.AreaKey == "bedroom" && e.ChangeType == AreaConfigChangeType.Reset
+                        )
+                    ),
+                Times.Once
+            );
     }
 
     public void Dispose()

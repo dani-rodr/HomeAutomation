@@ -11,6 +11,7 @@ public static class AreaConfigServiceCollectionExtensions
             .AddSingleton<IAreaConfigRegistry>(provider => new AreaConfigRegistry(
                 provider.GetServices<AreaConfigDescriptor>()
             ))
+            .AddSingleton<IAreaConfigChangeNotifier, AreaConfigChangeNotifier>()
             .AddSingleton<IAreaConfigStore, AreaConfigStore>();
     }
 
