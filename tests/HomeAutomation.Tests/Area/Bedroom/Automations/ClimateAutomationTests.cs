@@ -1,6 +1,7 @@
 using HomeAutomation.apps.Area.Bedroom.Automations;
 using HomeAutomation.apps.Area.Bedroom.Automations.Entities;
 using HomeAutomation.apps.Area.Bedroom.Config;
+using HomeAutomation.apps.Common.Config;
 
 namespace HomeAutomation.Tests.Area.Bedroom.Automations;
 
@@ -18,6 +19,8 @@ public partial class ClimateAutomationTests : AutomationTestBase<ClimateAutomati
 
     private readonly ClimateAutomation _automation;
 
+    private readonly AreaConfigChangeNotifier _areaConfigChangeNotifier;
+
     public ClimateAutomationTests()
     {
         _mockScheduler =
@@ -26,12 +29,18 @@ public partial class ClimateAutomationTests : AutomationTestBase<ClimateAutomati
             >();
 
         _entities = new TestEntities(_mockHaContext);
+        _areaConfigChangeNotifier = new AreaConfigChangeNotifier();
 
         SetupDefaultEntityStates();
 
         SetupDefaultSchedulerMock();
 
-        _automation = new ClimateAutomation(_entities, _mockScheduler.Object, _mockLogger.Object);
+        _automation = new ClimateAutomation(
+            _entities,
+            _mockScheduler.Object,
+            _areaConfigChangeNotifier,
+            _mockLogger.Object
+        );
 
         StartAutomation(_automation, _entities.MasterSwitch.EntityId);
     }
@@ -195,6 +204,46 @@ public partial class ClimateAutomationTests : AutomationTestBase<ClimateAutomati
                         (false, _) => settings.AwayTemp, // unoccupied = away
                     };
                 }
+            );
+    }
+
+    [Fact]
+    public void ConfigChange_ForBedroom_Should_ReapplyScheduledSettings()
+    {
+        _mockScheduler.Invocations.Clear();
+
+        _areaConfigChangeNotifier.Publish(
+            new AreaConfigChangedEvent("bedroom", AreaConfigChangeType.Saved, DateTimeOffset.UtcNow)
+        );
+
+        _mockScheduler
+            .Verify(
+                x =>
+                    x.TryGetCurrentSetting(
+                        out It.Ref<TimeBlock>.IsAny,
+                        out It.Ref<ClimateSetting>.IsAny
+                    ),
+                Times.AtLeastOnce
+            );
+    }
+
+    [Fact]
+    public void ConfigChange_ForDifferentArea_Should_NotReapplyScheduledSettings()
+    {
+        _mockScheduler.Invocations.Clear();
+
+        _areaConfigChangeNotifier.Publish(
+            new AreaConfigChangedEvent("kitchen", AreaConfigChangeType.Saved, DateTimeOffset.UtcNow)
+        );
+
+        _mockScheduler
+            .Verify(
+                x =>
+                    x.TryGetCurrentSetting(
+                        out It.Ref<TimeBlock>.IsAny,
+                        out It.Ref<ClimateSetting>.IsAny
+                    ),
+                Times.Never
             );
     }
 

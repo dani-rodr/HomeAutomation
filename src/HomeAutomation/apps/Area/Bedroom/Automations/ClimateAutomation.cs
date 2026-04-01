@@ -1,12 +1,14 @@
 using System.Linq;
 using HomeAutomation.apps.Area.Bedroom.Automations.Entities;
 using HomeAutomation.apps.Area.Bedroom.Services.Schedulers;
+using HomeAutomation.apps.Common.Config;
 
 namespace HomeAutomation.apps.Area.Bedroom.Automations;
 
 public class ClimateAutomation(
     IClimateEntities entities,
     IClimateSettingsResolver scheduler,
+    IAreaConfigChangeNotifier configChangeNotifier,
     ILogger<ClimateAutomation> logger
 ) : ToggleableAutomation(entities.MasterSwitch, logger)
 {
@@ -29,6 +31,10 @@ public class ClimateAutomation(
             .Subscribe(TurnOffMasterSwitchOnManualOperation);
 
         yield return _weather.StateAllChanges().Subscribe(ApplyPowerSavingModeFromWeather);
+
+        yield return configChangeNotifier
+            .Changes.Where(x => x.AreaKey == "bedroom")
+            .Subscribe(HandleBedroomConfigChanged);
 
         yield return _motionSensor
             .OnCleared(new(Hours: 1))
@@ -183,6 +189,28 @@ public class ClimateAutomation(
             uvIndex,
             outdoorTemperature
         );
+    }
+
+    private void HandleBedroomConfigChanged(AreaConfigChangedEvent changeEvent)
+    {
+        if (MasterSwitch.IsOff())
+        {
+            Logger.LogDebug(
+                "Config changed for area {AreaKey} ({ChangeType}) but master switch is off.",
+                changeEvent.AreaKey,
+                changeEvent.ChangeType
+            );
+
+            return;
+        }
+
+        Logger.LogInformation(
+            "Config changed for area {AreaKey} ({ChangeType}), reapplying climate settings.",
+            changeEvent.AreaKey,
+            changeEvent.ChangeType
+        );
+
+        ApplyScheduledAcSettings();
     }
 
     private IEnumerable<IDisposable> GetHousePresenceAutomations()
