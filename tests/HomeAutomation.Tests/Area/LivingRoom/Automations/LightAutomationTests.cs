@@ -1,5 +1,6 @@
 using HomeAutomation.apps.Area.LivingRoom.Automations;
 using HomeAutomation.apps.Area.LivingRoom.Automations.Entities;
+using HomeAutomation.apps.Area.LivingRoom.Config;
 using HomeAutomation.apps.Common.Interface;
 
 namespace HomeAutomation.Tests.Area.LivingRoom.Automations;
@@ -31,12 +32,21 @@ public class LightAutomationTests : AutomationTestBase<LightAutomation>
 
         _automation = new LightAutomation(
             _entities,
+            CreateSettings().Light,
             _mockDimmingController.Object,
             _mockLogger.Object
         );
 
         StartAutomation(_automation, _entities.MasterSwitch.EntityId);
     }
+
+    private static LivingRoomSettings CreateSettings() =>
+        new()
+        {
+            AirQuality = new LivingRoomAirQualitySettings(),
+            Light = new LivingRoomLightSettings(),
+            Fan = new LivingRoomFanSettings(),
+        };
 
     #region Dimming Controller Integration Tests
 

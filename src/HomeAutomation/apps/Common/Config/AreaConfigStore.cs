@@ -98,7 +98,11 @@ public sealed class AreaConfigStore(
 
             logger.LogInformation("Reset config override for area {AreaKey}", areaKey);
             changeNotifier.Publish(
-                new AreaConfigChangedEvent(areaKey, AreaConfigChangeType.Reset, DateTimeOffset.UtcNow)
+                new AreaConfigChangedEvent(
+                    areaKey,
+                    AreaConfigChangeType.Reset,
+                    DateTimeOffset.UtcNow
+                )
             );
             return LoadJsonObject(descriptor.DefaultsFilePath);
         }

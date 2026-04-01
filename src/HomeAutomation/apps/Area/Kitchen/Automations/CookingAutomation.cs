@@ -1,25 +1,34 @@
 using HomeAutomation.apps.Area.Kitchen.Automations.Entities;
+using HomeAutomation.apps.Area.Kitchen.Config;
 
 namespace HomeAutomation.apps.Area.Kitchen.Automations;
 
-public class CookingAutomation(ICookingEntities entities, ILogger<CookingAutomation> logger)
-    : ToggleableAutomation(entities.MasterSwitch, logger)
+public class CookingAutomation(
+    ICookingEntities entities,
+    KitchenCookingSettings cookingSettings,
+    ILogger<CookingAutomation> logger
+) : ToggleableAutomation(entities.MasterSwitch, logger)
 {
     private readonly ButtonEntity _inductionTurnOff = entities.InductionTurnOff;
 
     private readonly NumericSensorEntity _inductionPower = entities.InductionPower;
 
     protected override IEnumerable<IDisposable> GetPersistentAutomations() =>
-        [AutoTurnOffAfterBoilingWater(minutes: 12)];
+        [AutoTurnOffAfterBoilingWater()];
 
     protected override IEnumerable<IDisposable> GetToggleableAutomations() => [];
 
-    private IDisposable AutoTurnOffAfterBoilingWater(int minutes)
+    private IDisposable AutoTurnOffAfterBoilingWater()
     {
-        var boilingPowerThreshold = 1550;
+        var boilingPowerThreshold = cookingSettings.BoilingPowerThresholdWatts;
 
         return _inductionPower
-            .OnChanges(new(Minutes: minutes, Condition: s => s?.State > boilingPowerThreshold))
+            .OnChanges(
+                new(
+                    Minutes: cookingSettings.BoilingAutoOffMinutes,
+                    Condition: s => s?.State > boilingPowerThreshold
+                )
+            )
             .Where(_ => entities.AirFryerStatus.IsUnavailable())
             .Subscribe(_ =>
             {
@@ -27,7 +36,7 @@ public class CookingAutomation(ICookingEntities entities, ILogger<CookingAutomat
 
                 Logger.LogDebug(
                     "Auto-turned off induction cooker after {Minutes} minutes of boiling",
-                    minutes
+                    cookingSettings.BoilingAutoOffMinutes
                 );
             });
     }

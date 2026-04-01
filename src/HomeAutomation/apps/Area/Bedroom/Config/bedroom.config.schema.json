@@ -4,7 +4,16 @@
     "weatherPowerSaving.triggerUvIndex": { "type": "number", "required": true, "min": 0, "max": 20 },
     "weatherPowerSaving.triggerOutdoorTempC": { "type": "number", "required": true, "min": 10, "max": 45 },
     "weatherPowerSaving.recoveryUvIndex": { "type": "number", "required": true, "min": 0, "max": 20 },
-    "weatherPowerSaving.recoveryOutdoorTempC": { "type": "number", "required": true, "min": 10, "max": 45 }
+    "weatherPowerSaving.recoveryOutdoorTempC": { "type": "number", "required": true, "min": 10, "max": 45 },
+    "automation.masterSwitchReenableWhenNoMotionHours": { "type": "integer", "required": true, "min": 0, "max": 24 },
+    "automation.masterSwitchReenableAfterOffHours": { "type": "integer", "required": true, "min": 0, "max": 48 },
+    "automation.doorOpenReapplyMinutes": { "type": "integer", "required": true, "min": 0, "max": 120 },
+    "automation.motionClearedReapplyMinutes": { "type": "integer", "required": true, "min": 0, "max": 120 },
+    "automation.houseVacantTurnOffMinutes": { "type": "integer", "required": true, "min": 0, "max": 240 },
+    "automation.houseReturnMinVacantMinutes": { "type": "integer", "required": true, "min": 0, "max": 240 },
+    "automation.resetScheduleCron": { "type": "string", "required": true },
+    "light.sensorActiveDelayValue": { "type": "integer", "required": true, "min": 1, "max": 300 },
+    "light.lightSwitchDoubleClickTimeoutSeconds": { "type": "integer", "required": true, "min": 1, "max": 10 }
   },
   "blockFields": {
     "hourStart": { "type": "integer", "required": true, "min": 0, "max": 23 },

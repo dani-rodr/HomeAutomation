@@ -1,14 +1,18 @@
 using HomeAutomation.apps.Area.Bathroom.Automations.Entities;
+using HomeAutomation.apps.Area.Bathroom.Config;
 
 namespace HomeAutomation.apps.Area.Bathroom.Automations;
 
 public class LightAutomation(
     IBathroomLightEntities entities,
+    BathroomLightSettings settings,
     IDimmingLightController dimmingController,
     ILogger<LightAutomation> logger
 ) : LightAutomationBase(entities, logger)
 {
     private bool masterSwitchEnabledByPantry = true;
+
+    private readonly BathroomLightSettings _settings = settings;
 
     public override void StartAutomation()
     {
@@ -20,12 +24,12 @@ public class LightAutomation(
     protected override IEnumerable<IDisposable> GetAdditionalPersistentAutomations() =>
         [
             MotionSensor
-                .OnOccupied(new(Seconds: 2))
+                .OnOccupied(new(Seconds: _settings.MotionOnDelaySeconds))
                 .Where(_ => masterSwitchEnabledByPantry)
                 .Subscribe(_ => MasterSwitch.TurnOn()),
             MasterSwitch.OnTurnedOn().Subscribe(_ => masterSwitchEnabledByPantry = true),
             MasterSwitch
-                .OnTurnedOff(new(Minutes: 5))
+                .OnTurnedOff(new(Minutes: _settings.MasterSwitchDisableDelayMinutes))
                 .Subscribe(_ => masterSwitchEnabledByPantry = false),
         ];
 

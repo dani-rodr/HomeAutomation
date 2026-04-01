@@ -1,5 +1,6 @@
 using HomeAutomation.apps.Area.Bedroom.Automations;
 using HomeAutomation.apps.Area.Bedroom.Automations.Entities;
+using HomeAutomation.apps.Area.Bedroom.Config;
 
 namespace HomeAutomation.Tests.Area.Bedroom.Automations;
 
@@ -24,12 +25,27 @@ public class LightAutomationTests : AutomationTestBase<LightAutomation>
 
         _entities = new TestEntities(_mockHaContext);
 
-        _automation = new LightAutomation(_entities, _mockLogger.Object);
+        _automation = new LightAutomation(_entities, CreateSettings().Light, _mockLogger.Object);
 
         _mockHaContext.ShouldHaveCalledLightExactly(_entities.Light.EntityId, "toggle", 0);
 
         StartAutomation(_automation, _entities.MasterSwitch.EntityId);
     }
+
+    private static ClimateSettings CreateSettings() =>
+        new()
+        {
+            Sunrise = new ClimateSetting(),
+            Sunset = new ClimateSetting(),
+            Midnight = new ClimateSetting(),
+            WeatherPowerSaving = new WeatherPowerSavingSettings(),
+            Automation = new ClimateAutomationSettings(),
+            Light = new BedroomLightSettings
+            {
+                SensorActiveDelayValue = 45,
+                LightSwitchDoubleClickTimeoutSeconds = 2,
+            },
+        };
 
     [Fact]
     public void StartAutomation_ShouldNot_EnableMasterSwitchImmidiately()

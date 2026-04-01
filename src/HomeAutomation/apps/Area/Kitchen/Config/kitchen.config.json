@@ -1,0 +1,12 @@
+{
+  "cooking": {
+    "boilingAutoOffMinutes": 12,
+    "boilingPowerThresholdWatts": 1550
+  },
+  "light": {
+    "sensorWaitSeconds": 20,
+    "sensorActiveDelayValue": 20,
+    "sensorInactiveDelayValue": 3,
+    "motionOnDelaySeconds": 1
+  }
+}

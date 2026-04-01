@@ -59,16 +59,15 @@ public sealed class AreaConfigStoreTests : IDisposable
 
         var loaded = _store.GetConfig("bedroom");
         loaded["sunrise"]?["comfortTemp"]?.GetValue<int>().Should().Be(21);
-        _changeNotifier
-            .Verify(
-                x =>
-                    x.Publish(
-                        It.Is<AreaConfigChangedEvent>(e =>
-                            e.AreaKey == "bedroom" && e.ChangeType == AreaConfigChangeType.Saved
-                        )
-                    ),
-                Times.Once
-            );
+        _changeNotifier.Verify(
+            x =>
+                x.Publish(
+                    It.Is<AreaConfigChangedEvent>(e =>
+                        e.AreaKey == "bedroom" && e.ChangeType == AreaConfigChangeType.Saved
+                    )
+                ),
+            Times.Once
+        );
     }
 
     [Fact]
@@ -130,16 +129,15 @@ public sealed class AreaConfigStoreTests : IDisposable
 
         reset["sunrise"]?["comfortTemp"]?.GetValue<int>().Should().Be(24);
         File.Exists(_descriptor.OverridesFilePath).Should().BeFalse();
-        _changeNotifier
-            .Verify(
-                x =>
-                    x.Publish(
-                        It.Is<AreaConfigChangedEvent>(e =>
-                            e.AreaKey == "bedroom" && e.ChangeType == AreaConfigChangeType.Reset
-                        )
-                    ),
-                Times.Once
-            );
+        _changeNotifier.Verify(
+            x =>
+                x.Publish(
+                    It.Is<AreaConfigChangedEvent>(e =>
+                        e.AreaKey == "bedroom" && e.ChangeType == AreaConfigChangeType.Reset
+                    )
+                ),
+            Times.Once
+        );
     }
 
     public void Dispose()

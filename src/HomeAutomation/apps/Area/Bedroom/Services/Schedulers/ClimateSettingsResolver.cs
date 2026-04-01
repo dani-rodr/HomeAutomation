@@ -1,11 +1,12 @@
 using HomeAutomation.apps.Area.Bedroom.Config;
+using HomeAutomation.apps.Common.Config;
 using NetDaemon.Extensions.Scheduler;
 
 namespace HomeAutomation.apps.Area.Bedroom.Services.Schedulers;
 
 public class ClimateSettingsResolver : IClimateSettingsResolver
 {
-    private readonly IClimateSettingsProvider _climateSettingsProvider;
+    private readonly IAreaConfigStore _areaConfigStore;
     private readonly InputBooleanEntity _powerSavingMode;
     private readonly IScheduler _scheduler;
     private readonly IAcTemperatureCalculator _temperatureCalculator;
@@ -13,12 +14,12 @@ public class ClimateSettingsResolver : IClimateSettingsResolver
 
     public ClimateSettingsResolver(
         Entities.IClimateSchedulerEntities entities,
-        IClimateSettingsProvider climateSettingsProvider,
+        IAreaConfigStore areaConfigStore,
         IAcTemperatureCalculator temperatureCalculator,
         ILogger<ClimateSettingsResolver> logger
     )
     {
-        _climateSettingsProvider = climateSettingsProvider;
+        _areaConfigStore = areaConfigStore;
         _powerSavingMode = entities.PowerSavingMode;
         _scheduler = SchedulerProvider.Current;
         _temperatureCalculator = temperatureCalculator;
@@ -56,7 +57,10 @@ public class ClimateSettingsResolver : IClimateSettingsResolver
     }
 
     public IDisposable GetResetSchedule() =>
-        _scheduler.ScheduleCron("0 0 * * *", () => LogCurrentAcScheduleSettings());
+        _scheduler.ScheduleCron(
+            GetCurrentAcScheduleSettings().Automation.ResetScheduleCron,
+            () => LogCurrentAcScheduleSettings()
+        );
 
     public bool TryGetCurrentSetting(out TimeBlock timeBlock, out ClimateSetting setting)
     {
@@ -80,6 +84,9 @@ public class ClimateSettingsResolver : IClimateSettingsResolver
 
     public WeatherPowerSavingSettings GetWeatherPowerSavingSettings() =>
         GetCurrentAcScheduleSettings().WeatherPowerSaving;
+
+    public ClimateAutomationSettings GetAutomationSettings() =>
+        GetCurrentAcScheduleSettings().Automation;
 
     private bool TryFindCurrentTimeBlock(out TimeBlock timeBlock)
     {
@@ -123,7 +130,8 @@ public class ClimateSettingsResolver : IClimateSettingsResolver
 
     private ClimateSettings GetCurrentAcScheduleSettings() => LoadClimateConfig();
 
-    private ClimateSettings LoadClimateConfig() => _climateSettingsProvider.GetSettings();
+    private ClimateSettings LoadClimateConfig() =>
+        _areaConfigStore.GetConfig<ClimateSettings>("bedroom");
 
     private void LogCurrentAcScheduleSettings()
     {

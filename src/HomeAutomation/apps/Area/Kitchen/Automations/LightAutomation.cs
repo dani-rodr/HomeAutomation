@@ -1,21 +1,28 @@
 using HomeAutomation.apps.Area.Kitchen.Automations.Entities;
+using HomeAutomation.apps.Area.Kitchen.Config;
 
 namespace HomeAutomation.apps.Area.Kitchen.Automations;
 
-public class LightAutomation(IKitchenLightEntities entities, ILogger<LightAutomation> logger)
-    : LightAutomationBase(entities, logger)
+public class LightAutomation(
+    IKitchenLightEntities entities,
+    KitchenLightSettings settings,
+    ILogger<LightAutomation> logger
+) : LightAutomationBase(entities, logger)
 {
     private readonly BinarySensorEntity _powerPlug = entities.PowerPlug;
+    private readonly KitchenLightSettings _settings = settings;
 
-    protected override int SensorWaitTime => 20;
+    protected override int SensorWaitTime => _settings.SensorWaitSeconds;
 
-    protected override int SensorActiveDelayValue => 20;
+    protected override int SensorActiveDelayValue => _settings.SensorActiveDelayValue;
 
-    protected override int SensorInactiveDelayValue => 3;
+    protected override int SensorInactiveDelayValue => _settings.SensorInactiveDelayValue;
 
     protected override IEnumerable<IDisposable> GetLightAutomations() =>
         [
-            MotionSensor.OnOccupied(new(Seconds: 1)).Subscribe(_ => Light.TurnOn()),
+            MotionSensor
+                .OnOccupied(new(Seconds: _settings.MotionOnDelaySeconds))
+                .Subscribe(_ => Light.TurnOn()),
             MotionSensor.OnCleared().Subscribe(_ => Light.TurnOff()),
         ];
 

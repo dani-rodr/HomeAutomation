@@ -1,0 +1,20 @@
+{
+  "airQuality": {
+    "cleanThresholdPm25": 7,
+    "dirtyThresholdPm25": 75,
+    "manualOverrideResetMinutes": 10
+  },
+  "light": {
+    "sensorWaitSeconds": 30,
+    "sensorActiveDelayValue": 45,
+    "sensorInactiveDelayValue": 1,
+    "dimmingBrightnessPct": 80,
+    "dimmingDelaySeconds": 15,
+    "tvOffMasterSwitchReenableMinutes": 30,
+    "kitchenOccupancyDelaySeconds": 10
+  },
+  "fan": {
+    "motionOnDelaySeconds": 3,
+    "motionOffDelayMinutes": 1
+  }
+}

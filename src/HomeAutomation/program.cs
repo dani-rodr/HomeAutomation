@@ -1,7 +1,7 @@
-using System.Reflection;
 using System.IO;
-using Microsoft.AspNetCore.DataProtection;
+using System.Reflection;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;

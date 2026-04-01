@@ -1,10 +1,12 @@
 using System.Reactive.Disposables;
 using HomeAutomation.apps.Area.LivingRoom.Automations.Entities;
+using HomeAutomation.apps.Area.LivingRoom.Config;
 
 namespace HomeAutomation.apps.Area.LivingRoom.Automations;
 
 public class AirQualityAutomation(
     IAirQualityEntities entities,
+    LivingRoomAirQualitySettings settings,
     ILogger<AirQualityAutomation> logger
 ) : FanAutomationBase(entities, logger)
 {
@@ -19,14 +21,11 @@ public class AirQualityAutomation(
     private bool _isCleaningAir = false;
 
     private bool _wasSalaFanAutomationTurnedOff = false;
-
-    private const int CLEAN_AIR_THRESHOLD = 7;
-
-    private const int DIRTY_AIR_THRESHOLD = 75;
+    private readonly LivingRoomAirQualitySettings _settings = settings;
 
     protected override IEnumerable<IDisposable> GetToggleableAutomations()
     {
-        yield return SubscribeToFanStateChanges();
+        yield return SubscribeToMainFanStateChanges();
 
         yield return SubscribeToAirQuality();
 
@@ -46,14 +45,16 @@ public class AirQualityAutomation(
 
     private void HandleAirQuality(double airQuality)
     {
-        if (airQuality > DIRTY_AIR_THRESHOLD)
+        var airQualitySettings = _settings;
+
+        if (airQuality > airQualitySettings.DirtyThresholdPm25)
         {
             HandlePoorAirQuality();
 
             return;
         }
 
-        if (airQuality > CLEAN_AIR_THRESHOLD)
+        if (airQuality > airQualitySettings.CleanThresholdPm25)
         {
             HandleModerateAirQuality();
 
@@ -140,15 +141,15 @@ public class AirQualityAutomation(
 
     private IDisposable SubscribeToSupportingFanIdle() =>
         _supportingFan
-            .OnTurnedOff(new(Minutes: 10))
+            .OnTurnedOff(new(Minutes: _settings.ManualOverrideResetMinutes))
             .Subscribe(_ =>
             {
                 _activateSupportingFan = false;
 
-                Logger.LogInformation("Supporting fan idle for 10 minutes - override flag cleared");
+                Logger.LogInformation("Supporting fan idle - override flag cleared");
             });
 
-    private IDisposable SubscribeToFanStateChanges() =>
+    private IDisposable SubscribeToMainFanStateChanges() =>
         MainFan
             .OnChanges()
             .Subscribe(e =>

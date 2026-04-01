@@ -1,18 +1,22 @@
 using HomeAutomation.apps.Area.LivingRoom.Automations.Entities;
+using HomeAutomation.apps.Area.LivingRoom.Config;
 
 namespace HomeAutomation.apps.Area.LivingRoom.Automations;
 
 public class LightAutomation(
     ILivingRoomLightEntities entities,
+    LivingRoomLightSettings settings,
     IDimmingLightController dimmingController,
     ILogger<LightAutomation> logger
 ) : LightAutomationBase(entities, logger)
 {
-    protected override int SensorWaitTime => 30;
+    private LivingRoomLightSettings Settings => settings;
 
-    protected override int SensorActiveDelayValue => 45;
+    protected override int SensorWaitTime => Settings.SensorWaitSeconds;
 
-    protected override int SensorInactiveDelayValue => 1;
+    protected override int SensorActiveDelayValue => Settings.SensorActiveDelayValue;
+
+    protected override int SensorInactiveDelayValue => Settings.SensorInactiveDelayValue;
 
     public override void StartAutomation()
     {
@@ -20,7 +24,10 @@ public class LightAutomation(
 
         dimmingController.SetSensorActiveDelayValue(SensorActiveDelayValue);
 
-        dimmingController.SetDimParameters(brightnessPct: 80, delaySeconds: 15);
+        dimmingController.SetDimParameters(
+            brightnessPct: Settings.DimmingBrightnessPct,
+            delaySeconds: Settings.DimmingDelaySeconds
+        );
     }
 
     protected override IEnumerable<IDisposable> GetLightAutomations()
@@ -53,7 +60,7 @@ public class LightAutomation(
     private IDisposable TurnOnMotionSensorOnTvOff()
     {
         return MotionSensor
-            .OnCleared(new(Minutes: 30))
+            .OnCleared(new(Minutes: Settings.TvOffMasterSwitchReenableMinutes))
             .Where(_ => entities.TclTv.IsOff())
             .Subscribe(_ => MasterSwitch.TurnOn());
     }
@@ -61,7 +68,7 @@ public class LightAutomation(
     private IDisposable SetSensorDelayOnKitchenOccupancy()
     {
         return entities
-            .KitchenMotionSensor.OnOccupied(new(Seconds: 10))
+            .KitchenMotionSensor.OnOccupied(new(Seconds: Settings.KitchenOccupancyDelaySeconds))
             .Subscribe(_ => SensorDelay?.SetNumericValue(SensorActiveDelayValue));
     }
 

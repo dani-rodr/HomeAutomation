@@ -1,5 +1,6 @@
 using HomeAutomation.apps.Area.Kitchen.Automations;
 using HomeAutomation.apps.Area.Kitchen.Automations.Entities;
+using HomeAutomation.apps.Area.Kitchen.Config;
 
 namespace HomeAutomation.Tests.Area.Kitchen.Automations;
 
@@ -25,7 +26,17 @@ public class CookingAutomationTests : AutomationTestBase<CookingAutomation>
 
         _entities = new TestCookingEntities(_mockHaContext);
 
-        _automation = new CookingAutomation(_entities, _mockLogger.Object);
+        var kitchenSettings = new KitchenSettings
+        {
+            Cooking = new KitchenCookingSettings
+            {
+                BoilingAutoOffMinutes = 12,
+                BoilingPowerThresholdWatts = 1550,
+            },
+            Light = new KitchenLightSettings(),
+        };
+
+        _automation = new CookingAutomation(_entities, kitchenSettings.Cooking, _mockLogger.Object);
 
         // Start the automation to set up subscriptions
 

@@ -1,5 +1,6 @@
 using HomeAutomation.apps.Area.Desk.Automations;
 using HomeAutomation.apps.Area.Desk.Automations.Entities;
+using HomeAutomation.apps.Area.Desk.Config;
 using HomeAutomation.apps.Common.Interface;
 
 namespace HomeAutomation.Tests.Area.Desk.Automations;
@@ -37,7 +38,12 @@ public class LightAutomationTests : AutomationTestBase<LightAutomation>
 
         _entities = new TestEntities(_mockHaContext);
 
-        _automation = new LightAutomation(_entities, _mockLgDisplay.Object, _mockLogger.Object);
+        _automation = new LightAutomation(
+            _entities,
+            CreateSettings().Light,
+            _mockLgDisplay.Object,
+            _mockLogger.Object
+        );
 
         StartAutomation(_automation, _entities.MasterSwitch.EntityId);
     }
@@ -163,4 +169,6 @@ public class LightAutomationTests : AutomationTestBase<LightAutomation>
 
         public ButtonEntity Restart => new(haContext, "button.restart");
     }
+
+    private static DeskSettings CreateSettings() => new() { Light = new DeskLightSettings() };
 }

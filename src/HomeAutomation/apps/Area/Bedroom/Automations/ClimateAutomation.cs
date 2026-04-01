@@ -24,6 +24,8 @@ public class ClimateAutomation(
 
     protected override IEnumerable<IDisposable> GetPersistentAutomations()
     {
+        var automationSettings = scheduler.GetAutomationSettings();
+
         yield return scheduler.GetResetSchedule();
 
         yield return _ac.StateAllChanges()
@@ -37,11 +39,13 @@ public class ClimateAutomation(
             .Subscribe(HandleBedroomConfigChanged);
 
         yield return _motionSensor
-            .OnCleared(new(Hours: 1))
+            .OnCleared(new(Hours: automationSettings.MasterSwitchReenableWhenNoMotionHours))
             .Where(_ => MasterSwitch.IsOff())
             .Subscribe(_ => MasterSwitch.TurnOn());
 
-        yield return MasterSwitch.OnTurnedOff(new(Hours: 8)).Subscribe(_ => MasterSwitch.TurnOn());
+        yield return MasterSwitch
+            .OnTurnedOff(new(Hours: automationSettings.MasterSwitchReenableAfterOffHours))
+            .Subscribe(_ => MasterSwitch.TurnOn());
 
         yield return _doorSensor
             .OnClosed()
@@ -99,9 +103,15 @@ public class ClimateAutomation(
 
     private IEnumerable<IDisposable> GetSensorBasedAutomations()
     {
-        yield return _doorSensor.OnOpened(new(Minutes: 5)).Subscribe(ApplyTimeBasedAcSetting);
+        var automationSettings = scheduler.GetAutomationSettings();
 
-        yield return _motionSensor.OnCleared(new(Minutes: 10)).Subscribe(ApplyTimeBasedAcSetting);
+        yield return _doorSensor
+            .OnOpened(new(Minutes: automationSettings.DoorOpenReapplyMinutes))
+            .Subscribe(ApplyTimeBasedAcSetting);
+
+        yield return _motionSensor
+            .OnCleared(new(Minutes: automationSettings.MotionClearedReapplyMinutes))
+            .Subscribe(ApplyTimeBasedAcSetting);
 
         yield return _motionSensor.OnOccupied().Subscribe(ApplyTimeBasedAcSetting);
 
@@ -215,9 +225,12 @@ public class ClimateAutomation(
 
     private IEnumerable<IDisposable> GetHousePresenceAutomations()
     {
+        var automationSettings = scheduler.GetAutomationSettings();
         var houseOccupancy = entities.HouseMotionSensor;
 
-        yield return houseOccupancy.OnCleared(new(Minutes: 30)).Subscribe(_ => _ac.TurnOff());
+        yield return houseOccupancy
+            .OnCleared(new(Minutes: automationSettings.HouseVacantTurnOffMinutes))
+            .Subscribe(_ => _ac.TurnOff());
 
         yield return houseOccupancy
             .OnOccupied()
@@ -232,7 +245,7 @@ public class ClimateAutomation(
                     return;
                 }
 
-                var timeThresholdMinutes = 20;
+                var timeThresholdMinutes = automationSettings.HouseReturnMinVacantMinutes;
 
                 var durationEmptyMinutes = (current.Value - last.Value).TotalMinutes;
 

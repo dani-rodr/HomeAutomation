@@ -7,38 +7,10 @@ public partial class ClimateAutomationTests
     #region Comprehensive Theory Tests for Temperature Selection
 
     [Theory]
-    [InlineData(
-        true,
-        false,
-        TimeBlock.Sunset,
-        23,
-        "cool",
-        "Occupied + closed door = ComfortTemp"
-    )]
-    [InlineData(
-        false,
-        true,
-        TimeBlock.Sunset,
-        27,
-        "cool",
-        "Unoccupied + open door = AwayTemp"
-    )]
-    [InlineData(
-        true,
-        true,
-        TimeBlock.Sunset,
-        25,
-        "cool",
-        "Occupied + open door = DoorOpenTemp"
-    )]
-    [InlineData(
-        false,
-        false,
-        TimeBlock.Sunset,
-        27,
-        "cool",
-        "Unoccupied + closed door = AwayTemp"
-    )]
+    [InlineData(true, false, TimeBlock.Sunset, 23, "cool", "Occupied + closed door = ComfortTemp")]
+    [InlineData(false, true, TimeBlock.Sunset, 27, "cool", "Unoccupied + open door = AwayTemp")]
+    [InlineData(true, true, TimeBlock.Sunset, 25, "cool", "Occupied + open door = DoorOpenTemp")]
+    [InlineData(false, false, TimeBlock.Sunset, 27, "cool", "Unoccupied + closed door = AwayTemp")]
     public void ClimateAutomation_TemperatureSelection_Should_Follow_Logic(
         bool occupied,
         bool doorOpen,

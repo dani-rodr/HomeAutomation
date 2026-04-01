@@ -1,12 +1,17 @@
 using System.Reactive.Disposables;
 using HomeAutomation.apps.Area.LivingRoom.Automations.Entities;
+using HomeAutomation.apps.Area.LivingRoom.Config;
 
 namespace HomeAutomation.apps.Area.LivingRoom.Automations;
 
-public class FanAutomation(ILivingRoomFanEntities entities, ILogger<FanAutomation> logger)
-    : FanAutomationBase(entities, logger)
+public class FanAutomation(
+    ILivingRoomFanEntities entities,
+    LivingRoomFanSettings settings,
+    ILogger<FanAutomation> logger
+) : FanAutomationBase(entities, logger)
 {
     private readonly SwitchEntity ExhaustFan = entities.ExhaustFan;
+    private LivingRoomFanSettings Settings => settings;
 
     protected override IEnumerable<IDisposable> GetToggleableAutomations() =>
         [.. GetSalaFanAutomations()];
@@ -35,9 +40,13 @@ public class FanAutomation(ILivingRoomFanEntities entities, ILogger<FanAutomatio
 
     private IEnumerable<IDisposable> GetSalaFanAutomations()
     {
-        yield return MotionSensor.OnOccupied(new(Seconds: 3)).Subscribe(TurnOnFans);
+        yield return MotionSensor
+            .OnOccupied(new(Seconds: Settings.MotionOnDelaySeconds))
+            .Subscribe(TurnOnFans);
 
-        yield return MotionSensor.OnCleared(new(Minutes: 1)).Subscribe(TurnOffFans);
+        yield return MotionSensor
+            .OnCleared(new(Minutes: Settings.MotionOffDelayMinutes))
+            .Subscribe(TurnOffFans);
     }
 
     protected override IDisposable GetIdleOperationAutomations() => Disposable.Empty;

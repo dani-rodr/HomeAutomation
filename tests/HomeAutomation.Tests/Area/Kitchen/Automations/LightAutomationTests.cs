@@ -1,5 +1,6 @@
 using HomeAutomation.apps.Area.Kitchen.Automations;
 using HomeAutomation.apps.Area.Kitchen.Automations.Entities;
+using HomeAutomation.apps.Area.Kitchen.Config;
 
 namespace HomeAutomation.Tests.Area.Kitchen.Automations;
 
@@ -27,7 +28,7 @@ public class LightAutomationTests : AutomationTestBase<LightAutomation>
 
         _entities = new TestEntities(_mockHaContext);
 
-        _automation = new LightAutomation(_entities, _mockLogger.Object);
+        _automation = new LightAutomation(_entities, CreateSettings().Light, _mockLogger.Object);
 
         // Start the automation to set up subscriptions
 
@@ -36,6 +37,8 @@ public class LightAutomationTests : AutomationTestBase<LightAutomation>
 
     #region Custom Timing Tests (Kitchen-Specific)
 
+    private static KitchenSettings CreateSettings() =>
+        new() { Cooking = new KitchenCookingSettings(), Light = new KitchenLightSettings() };
 
     [Fact]
     public void MotionDetected_WithCustomTiming_Should_SetupCorrectSubscription()

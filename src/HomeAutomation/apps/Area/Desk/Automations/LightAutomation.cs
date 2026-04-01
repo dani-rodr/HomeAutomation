@@ -1,16 +1,16 @@
 using HomeAutomation.apps.Area.Desk.Automations.Entities;
+using HomeAutomation.apps.Area.Desk.Config;
 
 namespace HomeAutomation.apps.Area.Desk.Automations;
 
 public class LightAutomation(
     IDeskLightEntities entities,
+    DeskLightSettings settings,
     ILgDisplay monitor,
     ILogger<LightAutomation> logger
 ) : LightAutomationBase(entities, logger)
 {
-    private const double LONG_SENSOR_DELAY = 60;
-
-    private const double SHORT_SENSOR_DELAY = 20;
+    private DeskLightSettings Settings => settings;
 
     protected override IEnumerable<IDisposable> GetLightAutomations() =>
         [GetLightMotionAutomation(), GetSalaLightsAutomation()];
@@ -21,7 +21,9 @@ public class LightAutomation(
             .OnSourceChange()
             .Subscribe(source =>
             {
-                var delay = monitor.IsShowingPc ? LONG_SENSOR_DELAY : SHORT_SENSOR_DELAY;
+                var delay = monitor.IsShowingPc
+                    ? Settings.LongSensorDelaySeconds
+                    : Settings.ShortSensorDelaySeconds;
 
                 SensorDelay?.SetNumericValue(delay);
             });
@@ -54,7 +56,9 @@ public class LightAutomation(
             .Delay(TimeSpan.FromMilliseconds(1), SchedulerProvider.Current)
             .Subscribe(state =>
             {
-                var brightness = state.IsOn() ? 230 : 125;
+                var brightness = state.IsOn()
+                    ? Settings.BrightnessWhenSalaOn
+                    : Settings.BrightnessWhenSalaOff;
 
                 Logger.LogDebug(
                     "Updating Montior Brightness to {Brightness}. based on Sala Lights.",

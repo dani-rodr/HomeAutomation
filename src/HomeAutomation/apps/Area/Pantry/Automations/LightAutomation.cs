@@ -1,14 +1,20 @@
 using System.Linq;
 using HomeAutomation.apps.Area.Pantry.Automations.Entities;
+using HomeAutomation.apps.Area.Pantry.Config;
 
 namespace HomeAutomation.apps.Area.Pantry.Automations;
 
-public class LightAutomation(IPantryLightEntities entities, ILogger<LightAutomation> logger)
-    : LightAutomationBase(entities, logger)
+public class LightAutomation(
+    IPantryLightEntities entities,
+    PantryLightSettings settings,
+    ILogger<LightAutomation> logger
+) : LightAutomationBase(entities, logger)
 {
-    protected override int SensorWaitTime => 5;
+    private readonly PantryLightSettings _settings = settings;
 
-    protected override int SensorActiveDelayValue => 5;
+    protected override int SensorWaitTime => _settings.SensorWaitSeconds;
+
+    protected override int SensorActiveDelayValue => _settings.SensorActiveDelayValue;
 
     protected override IEnumerable<IDisposable> GetAdditionalPersistentAutomations() =>
         [.. AutoToggleBathroomMotionSensor()];
@@ -61,17 +67,19 @@ public class LightAutomation(IPantryLightEntities entities, ILogger<LightAutomat
     IDisposable DeactivateWhenBothSensorsClear(
         BinarySensorEntity triggerSensor,
         BinarySensorEntity otherSensor,
-        int turnOffDelay = 60
+        int? turnOffDelay = null
     ) =>
         triggerSensor
-            .OnCleared(new(Seconds: turnOffDelay))
+            .OnCleared(
+                new(Seconds: turnOffDelay ?? _settings.BathroomAutomationTurnOffDelaySeconds)
+            )
             .Where(_ => otherSensor.IsClear())
             .Subscribe(_ =>
             {
                 Logger.LogDebug(
                     "{Trigger} remained off for {turnOffDelay} seconds and {Other} is also off - deactivating bathroom automation {EntityId}",
                     triggerSensor.EntityId,
-                    turnOffDelay,
+                    turnOffDelay ?? _settings.BathroomAutomationTurnOffDelaySeconds,
                     otherSensor.EntityId,
                     entities.BathroomMotionAutomation.EntityId
                 );

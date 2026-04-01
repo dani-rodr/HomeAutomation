@@ -1,5 +1,6 @@
 using HomeAutomation.apps.Area.Bathroom.Automations;
 using HomeAutomation.apps.Area.Bathroom.Automations.Entities;
+using HomeAutomation.apps.Area.Bathroom.Config;
 using HomeAutomation.apps.Common.Interface;
 
 namespace HomeAutomation.Tests.Area.Bathroom.Automations;
@@ -30,6 +31,7 @@ public class LightAutomationTests : AutomationTestBase<LightAutomation>
 
         _automation = new LightAutomation(
             _entities,
+            CreateSettings().Light,
             _mockDimmingController.Object,
             _mockLogger.Object
         );
@@ -38,6 +40,16 @@ public class LightAutomationTests : AutomationTestBase<LightAutomation>
 
         StartAutomation(_automation, _entities.MasterSwitch.EntityId);
     }
+
+    private static BathroomSettings CreateSettings() =>
+        new()
+        {
+            Light = new BathroomLightSettings
+            {
+                MotionOnDelaySeconds = 2,
+                MasterSwitchDisableDelayMinutes = 5,
+            },
+        };
 
     [Fact]
     public void MotionDetected_Should_CallDimmingControllerOnMotionDetected()

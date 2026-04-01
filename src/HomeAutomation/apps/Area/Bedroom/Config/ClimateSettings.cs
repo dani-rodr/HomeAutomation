@@ -13,6 +13,8 @@ public sealed class ClimateSettings
     public required ClimateSetting Sunset { get; init; }
     public required ClimateSetting Midnight { get; init; }
     public required WeatherPowerSavingSettings WeatherPowerSaving { get; init; }
+    public required ClimateAutomationSettings Automation { get; init; }
+    public required BedroomLightSettings Light { get; init; }
 
     public ClimateSetting GetByTimeBlock(TimeBlock timeBlock) =>
         timeBlock switch
@@ -22,6 +24,23 @@ public sealed class ClimateSettings
             TimeBlock.Midnight => Midnight,
             _ => throw new ArgumentOutOfRangeException(nameof(timeBlock), timeBlock, null),
         };
+}
+
+public sealed class BedroomLightSettings
+{
+    public int SensorActiveDelayValue { get; init; } = 45;
+    public int LightSwitchDoubleClickTimeoutSeconds { get; init; } = 2;
+}
+
+public sealed class ClimateAutomationSettings
+{
+    public int MasterSwitchReenableWhenNoMotionHours { get; init; } = 1;
+    public int MasterSwitchReenableAfterOffHours { get; init; } = 8;
+    public int DoorOpenReapplyMinutes { get; init; } = 5;
+    public int MotionClearedReapplyMinutes { get; init; } = 10;
+    public int HouseVacantTurnOffMinutes { get; init; } = 30;
+    public int HouseReturnMinVacantMinutes { get; init; } = 20;
+    public string ResetScheduleCron { get; init; } = "0 0 * * *";
 }
 
 public sealed class WeatherPowerSavingSettings

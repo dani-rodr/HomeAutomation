@@ -1,5 +1,6 @@
 using HomeAutomation.apps.Area.LivingRoom.Automations;
 using HomeAutomation.apps.Area.LivingRoom.Automations.Entities;
+using HomeAutomation.apps.Area.LivingRoom.Config;
 
 namespace HomeAutomation.Tests.Area.LivingRoom.Automations;
 
@@ -21,7 +22,7 @@ public class FanAutomationTests : AutomationTestBase<FanAutomation>
 
         _entities = new TestEntities(_mockHaContext);
 
-        _automation = new FanAutomation(_entities, Logger.Object);
+        _automation = new FanAutomation(_entities, CreateSettings().Fan, Logger.Object);
 
         StartAutomation(_automation);
 
@@ -280,6 +281,14 @@ public class FanAutomationTests : AutomationTestBase<FanAutomation>
 
         base.Dispose(disposing);
     }
+
+    private static LivingRoomSettings CreateSettings() =>
+        new()
+        {
+            AirQuality = new LivingRoomAirQualitySettings(),
+            Light = new LivingRoomLightSettings(),
+            Fan = new LivingRoomFanSettings(),
+        };
 
     /// <summary>
     /// Test wrapper that implements ILivingRoomFanEntities interface

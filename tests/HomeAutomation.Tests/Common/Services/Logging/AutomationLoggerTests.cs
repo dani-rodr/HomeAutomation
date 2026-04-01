@@ -123,17 +123,13 @@ public sealed class AutomationLoggerTests
     {
         _policy.Setup(x => x.IsEnabled(LogLevel.Information)).Returns(false);
         _policy
-            .Setup(x => x.ShouldWriteToLogbook(typeof(SampleAutomation).FullName!, LogLevel.Information))
+            .Setup(x =>
+                x.ShouldWriteToLogbook(typeof(SampleAutomation).FullName!, LogLevel.Information)
+            )
             .Returns(true);
         var logger = CreateLogger<SampleAutomation>();
 
-        logger.Log(
-            LogLevel.Information,
-            default,
-            "state",
-            null,
-            static (_, _) => "important info"
-        );
+        logger.Log(LogLevel.Information, default, "state", null, static (_, _) => "important info");
 
         _innerLogger.Verify(
             x =>

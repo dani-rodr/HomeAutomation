@@ -34,5 +34,18 @@
     "triggerOutdoorTempC": 32.0,
     "recoveryUvIndex": 5.0,
     "recoveryOutdoorTempC": 30.0
+  },
+  "automation": {
+    "masterSwitchReenableWhenNoMotionHours": 1,
+    "masterSwitchReenableAfterOffHours": 8,
+    "doorOpenReapplyMinutes": 5,
+    "motionClearedReapplyMinutes": 10,
+    "houseVacantTurnOffMinutes": 30,
+    "houseReturnMinVacantMinutes": 20,
+    "resetScheduleCron": "0 0 * * *"
+  },
+  "light": {
+    "sensorActiveDelayValue": 45,
+    "lightSwitchDoubleClickTimeoutSeconds": 2
   }
 }

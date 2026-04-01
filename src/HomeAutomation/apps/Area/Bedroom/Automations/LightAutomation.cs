@@ -1,15 +1,21 @@
 using System.Linq;
 using HomeAutomation.apps.Area.Bedroom.Automations.Entities;
+using HomeAutomation.apps.Area.Bedroom.Config;
 
 namespace HomeAutomation.apps.Area.Bedroom.Automations;
 
-public class LightAutomation(IBedroomLightEntities entities, ILogger<LightAutomation> logger)
-    : LightAutomationBase(entities, logger)
+public class LightAutomation(
+    IBedroomLightEntities entities,
+    BedroomLightSettings settings,
+    ILogger<LightAutomation> logger
+) : LightAutomationBase(entities, logger)
 {
     private readonly SwitchEntity _rightSideEmptySwitch = entities.RightSideEmptySwitch;
 
     private readonly SwitchEntity _leftSideFanSwitch = entities.LeftSideFanSwitch;
-    protected override int SensorActiveDelayValue => 45;
+    private readonly BedroomLightSettings _settings = settings;
+
+    protected override int SensorActiveDelayValue => _settings.SensorActiveDelayValue;
 
     protected override IEnumerable<IDisposable> GetAdditionalPersistentAutomations() =>
         [.. GetLightSwitchAutomations(), .. GetSensorDelayAutomations()];
@@ -23,7 +29,7 @@ public class LightAutomation(IBedroomLightEntities entities, ILogger<LightAutoma
     private IEnumerable<IDisposable> GetLightSwitchAutomations()
     {
         yield return _leftSideFanSwitch
-            .OnDoubleClick(timeout: 2)
+            .OnDoubleClick(timeout: _settings.LightSwitchDoubleClickTimeoutSeconds)
             .Subscribe(e =>
             {
                 ToggleLightsViaSwitch(e.First());

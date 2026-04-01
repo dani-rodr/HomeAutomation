@@ -1,5 +1,6 @@
 using HomeAutomation.apps.Area.Pantry.Automations;
 using HomeAutomation.apps.Area.Pantry.Automations.Entities;
+using HomeAutomation.apps.Area.Pantry.Config;
 
 namespace HomeAutomation.Tests.Area.Pantry.Automations;
 
@@ -23,10 +24,21 @@ public class LightAutomationTests : AutomationTestBase<LightAutomation>
 
         _entities = new TestEntities(_mockHaContext);
 
-        _automation = new LightAutomation(_entities, _mockLogger.Object);
+        _automation = new LightAutomation(_entities, CreateSettings().Light, _mockLogger.Object);
 
         StartAutomation(_automation, _entities.MasterSwitch.EntityId);
     }
+
+    private static PantrySettings CreateSettings() =>
+        new()
+        {
+            Light = new PantryLightSettings
+            {
+                SensorWaitSeconds = 5,
+                SensorActiveDelayValue = 5,
+                BathroomAutomationTurnOffDelaySeconds = 60,
+            },
+        };
 
     [Fact]
     public void MotionDetected_Should_TurnOnPantryLight()
@@ -445,7 +457,11 @@ public class LightAutomationTests : AutomationTestBase<LightAutomation>
 
         // Create new automation to test initialization
 
-        using var testAutomation = new LightAutomation(_entities, _mockLogger.Object);
+        using var testAutomation = new LightAutomation(
+            _entities,
+            CreateSettings().Light,
+            _mockLogger.Object
+        );
 
         _mockHaContext.ClearServiceCalls();
 

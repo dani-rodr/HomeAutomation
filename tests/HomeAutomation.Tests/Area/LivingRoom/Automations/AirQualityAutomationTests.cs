@@ -1,5 +1,6 @@
 using HomeAutomation.apps.Area.LivingRoom.Automations;
 using HomeAutomation.apps.Area.LivingRoom.Automations.Entities;
+using HomeAutomation.apps.Area.LivingRoom.Config;
 
 namespace HomeAutomation.Tests.Area.LivingRoom.Automations;
 
@@ -14,6 +15,7 @@ public class AirQualityAutomationTests : AutomationTestBase<AirQualityAutomation
     private Mock<ILogger<AirQualityAutomation>> _mockLogger => Logger;
 
     private readonly TestEntities _entities;
+    private readonly LivingRoomSettings _settings;
 
     private readonly AirQualityAutomation _automation;
 
@@ -23,7 +25,19 @@ public class AirQualityAutomationTests : AutomationTestBase<AirQualityAutomation
 
         _entities = new TestEntities(_mockHaContext);
 
-        _automation = new AirQualityAutomation(_entities, _mockLogger.Object);
+        _settings = new LivingRoomSettings
+        {
+            AirQuality = new LivingRoomAirQualitySettings
+            {
+                CleanThresholdPm25 = 7,
+                DirtyThresholdPm25 = 75,
+                ManualOverrideResetMinutes = 10,
+            },
+            Light = new LivingRoomLightSettings(),
+            Fan = new LivingRoomFanSettings(),
+        };
+
+        _automation = new AirQualityAutomation(_entities, _settings.AirQuality, _mockLogger.Object);
 
         StartAutomation(_automation);
 
@@ -55,7 +69,11 @@ public class AirQualityAutomationTests : AutomationTestBase<AirQualityAutomation
 
         // Act: Recreate automation and enable it to trigger RunInitialActions
 
-        var automation = new AirQualityAutomation(_entities, _mockLogger.Object);
+        var automation = new AirQualityAutomation(
+            _entities,
+            _settings.AirQuality,
+            _mockLogger.Object
+        );
 
         automation.StartAutomation();
 
@@ -75,7 +93,11 @@ public class AirQualityAutomationTests : AutomationTestBase<AirQualityAutomation
 
         // Act: Recreate automation and start it
 
-        var automation = new AirQualityAutomation(_entities, _mockLogger.Object);
+        var automation = new AirQualityAutomation(
+            _entities,
+            _settings.AirQuality,
+            _mockLogger.Object
+        );
 
         automation.StartAutomation();
 

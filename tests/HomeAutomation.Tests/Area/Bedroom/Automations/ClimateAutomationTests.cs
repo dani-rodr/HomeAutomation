@@ -11,9 +11,7 @@ public partial class ClimateAutomationTests : AutomationTestBase<ClimateAutomati
 
     private Mock<ILogger<ClimateAutomation>> _mockLogger => Logger;
 
-    private readonly Mock<
-        HomeAutomation.apps.Area.Bedroom.Services.Schedulers.IClimateSettingsResolver
-    > _mockScheduler;
+    private readonly Mock<HomeAutomation.apps.Area.Bedroom.Services.Schedulers.IClimateSettingsResolver> _mockScheduler;
 
     private readonly TestEntities _entities;
 
@@ -24,9 +22,7 @@ public partial class ClimateAutomationTests : AutomationTestBase<ClimateAutomati
     public ClimateAutomationTests()
     {
         _mockScheduler =
-            new Mock<
-                HomeAutomation.apps.Area.Bedroom.Services.Schedulers.IClimateSettingsResolver
-            >();
+            new Mock<HomeAutomation.apps.Area.Bedroom.Services.Schedulers.IClimateSettingsResolver>();
 
         _entities = new TestEntities(_mockHaContext);
         _areaConfigChangeNotifier = new AreaConfigChangeNotifier();
@@ -98,6 +94,8 @@ public partial class ClimateAutomationTests : AutomationTestBase<ClimateAutomati
             RecoveryOutdoorTempC = 30,
         };
 
+        var automationSettings = new ClimateAutomationSettings();
+
         _mockScheduler
             .Setup(x =>
                 x.TryGetCurrentSetting(
@@ -115,6 +113,7 @@ public partial class ClimateAutomationTests : AutomationTestBase<ClimateAutomati
             );
 
         _mockScheduler.Setup(x => x.GetWeatherPowerSavingSettings()).Returns(weatherSettings);
+        _mockScheduler.Setup(x => x.GetAutomationSettings()).Returns(automationSettings);
 
         // Setup the new CalculateTemperature method
 
@@ -180,6 +179,10 @@ public partial class ClimateAutomationTests : AutomationTestBase<ClimateAutomati
                 }
             );
 
+        _mockScheduler
+            .Setup(x => x.GetAutomationSettings())
+            .Returns(new ClimateAutomationSettings());
+
         // Setup CalculateTemperature method for this specific setting
 
         _mockScheduler
@@ -216,15 +219,14 @@ public partial class ClimateAutomationTests : AutomationTestBase<ClimateAutomati
             new AreaConfigChangedEvent("bedroom", AreaConfigChangeType.Saved, DateTimeOffset.UtcNow)
         );
 
-        _mockScheduler
-            .Verify(
-                x =>
-                    x.TryGetCurrentSetting(
-                        out It.Ref<TimeBlock>.IsAny,
-                        out It.Ref<ClimateSetting>.IsAny
-                    ),
-                Times.AtLeastOnce
-            );
+        _mockScheduler.Verify(
+            x =>
+                x.TryGetCurrentSetting(
+                    out It.Ref<TimeBlock>.IsAny,
+                    out It.Ref<ClimateSetting>.IsAny
+                ),
+            Times.AtLeastOnce
+        );
     }
 
     [Fact]
@@ -236,15 +238,14 @@ public partial class ClimateAutomationTests : AutomationTestBase<ClimateAutomati
             new AreaConfigChangedEvent("kitchen", AreaConfigChangeType.Saved, DateTimeOffset.UtcNow)
         );
 
-        _mockScheduler
-            .Verify(
-                x =>
-                    x.TryGetCurrentSetting(
-                        out It.Ref<TimeBlock>.IsAny,
-                        out It.Ref<ClimateSetting>.IsAny
-                    ),
-                Times.Never
-            );
+        _mockScheduler.Verify(
+            x =>
+                x.TryGetCurrentSetting(
+                    out It.Ref<TimeBlock>.IsAny,
+                    out It.Ref<ClimateSetting>.IsAny
+                ),
+            Times.Never
+        );
     }
 
     [Fact]
