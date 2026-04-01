@@ -1,17 +1,17 @@
 using System.Diagnostics.CodeAnalysis;
 using NetDaemon.Extensions.Scheduler;
 
-namespace HomeAutomation.apps.Common.Services.Schedulers;
+namespace HomeAutomation.apps.Area.Bedroom.Services.Schedulers;
 
 public class ClimateScheduler : IClimateScheduler
 {
-    private readonly IClimateSchedulerEntities _entities;
+    private readonly Entities.IClimateSchedulerEntities _entities;
     private readonly IScheduler _scheduler;
     private readonly IAcTemperatureCalculator _temperatureCalculator;
     private readonly ILogger _logger;
 
     public ClimateScheduler(
-        IClimateSchedulerEntities entities,
+        Entities.IClimateSchedulerEntities entities,
         IAcTemperatureCalculator temperatureCalculator,
         ILogger<ClimateScheduler> logger
     )

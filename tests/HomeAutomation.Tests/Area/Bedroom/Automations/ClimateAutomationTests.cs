@@ -1,7 +1,6 @@
 using HomeAutomation.apps.Area.Bedroom.Automations;
 using HomeAutomation.apps.Area.Bedroom.Automations.Entities;
-using HomeAutomation.apps.Common.Interface;
-using HomeAutomation.apps.Common.Services.Schedulers;
+using HomeAutomation.apps.Area.Bedroom.Services.Schedulers;
 
 namespace HomeAutomation.Tests.Area.Bedroom.Automations;
 

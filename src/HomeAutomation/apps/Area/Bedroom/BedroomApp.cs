@@ -1,6 +1,7 @@
 using HomeAutomation.apps.Area.Bedroom.Automations;
 using HomeAutomation.apps.Area.Bedroom.Automations.Entities;
 using HomeAutomation.apps.Area.Bedroom.Devices;
+using HomeAutomation.apps.Area.Bedroom.Services.Schedulers;
 
 namespace HomeAutomation.apps.Area.Bedroom;
 

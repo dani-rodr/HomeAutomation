@@ -1,6 +1,6 @@
 using HomeAutomation.apps.Common.Devices;
 
-namespace HomeAutomation.apps.Common.Services.Schedulers;
+namespace HomeAutomation.apps.Area.Bedroom.Services.Schedulers.Entities;
 
 public class GlobalClimateSchedulerEntities(GlobalDevices devices) : IClimateSchedulerEntities
 {

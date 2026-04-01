@@ -1,5 +1,3 @@
-using System.Diagnostics.CodeAnalysis;
-
 namespace HomeAutomation.apps.Common.Interface;
 
 public interface IAutomationScheduler
@@ -10,11 +8,3 @@ public interface IAutomationScheduler
 public interface ILaptopShutdownScheduler : IAutomationScheduler;
 
 public interface IMotionSensorRestartScheduler : IAutomationScheduler;
-
-public interface IClimateScheduler : IAutomationScheduler
-{
-    IDisposable GetResetSchedule();
-    TimeBlock? FindCurrentTimeBlock();
-    bool TryGetSetting(TimeBlock timeBlock, [NotNullWhen(true)] out AcSettings? setting);
-    int CalculateTemperature(AcSettings settings, bool isOccupied, bool isDoorOpen);
-}

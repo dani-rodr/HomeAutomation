@@ -1,10 +1,10 @@
-namespace HomeAutomation.apps.Common.Services;
+namespace HomeAutomation.apps.Area.Bedroom.Services.Schedulers;
 
 /// <summary>
 /// Calculates appropriate AC temperature settings based on environmental conditions and user preferences.
 /// </summary>
 public class AcTemperatureCalculator(
-    IClimateSchedulerEntities entities,
+    Entities.IClimateSchedulerEntities entities,
     ILogger<AcTemperatureCalculator> logger
 ) : IAcTemperatureCalculator
 {

@@ -1,5 +1,7 @@
 using System.Linq;
 using HomeAutomation.apps.Area.Bedroom.Automations.Entities;
+using HomeAutomation.apps.Area.Bedroom.Services.Schedulers;
+using BedroomTimeBlock = HomeAutomation.apps.Area.Bedroom.Services.Schedulers.TimeBlock;
 
 namespace HomeAutomation.apps.Area.Bedroom.Automations;
 
@@ -173,7 +175,7 @@ public class ClimateAutomation(
             });
     }
 
-    private void ApplyScheduledAcSettings(TimeBlock? timeBlock)
+    private void ApplyScheduledAcSettings(BedroomTimeBlock? timeBlock)
     {
         Logger.LogDebug(
             "AC settings evaluation: TimeBlock={TimeBlock}, AC.IsOn={AcOn}",

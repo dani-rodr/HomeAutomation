@@ -1,4 +1,4 @@
-namespace HomeAutomation.apps.Common.Interface;
+namespace HomeAutomation.apps.Area.Bedroom.Services.Schedulers;
 
 /// <summary>
 /// Provides temperature calculation for AC settings based on occupancy and environmental factors.

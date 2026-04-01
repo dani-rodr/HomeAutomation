@@ -1,4 +1,4 @@
-namespace HomeAutomation.apps.Common.Services.Schedulers;
+namespace HomeAutomation.apps.Area.Bedroom.Services.Schedulers;
 
 public enum TimeBlock
 {

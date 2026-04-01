@@ -1,4 +1,4 @@
-using HomeAutomation.apps.Common.Services.Schedulers;
+using HomeAutomation.apps.Area.Bedroom.Services.Schedulers;
 
 namespace HomeAutomation.Tests.Common.Containers;
 
