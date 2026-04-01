@@ -12,21 +12,21 @@ public class ClimateSchedulerTests : HaContextTestBase
     private MockHaContext _mockHaContext => HaContext;
     private readonly Mock<ILogger<ClimateScheduler>> _mockLogger;
     private readonly Mock<IAcTemperatureCalculator> _mockCalculator;
-    private readonly TestWeatherEntities _weatherEntities;
+    private readonly TestSchedulerEntities _schedulerEntities;
     private readonly ClimateScheduler _scheduler;
 
     public ClimateSchedulerTests()
     {
         _mockLogger = new Mock<ILogger<ClimateScheduler>>();
         _mockCalculator = new Mock<IAcTemperatureCalculator>();
-        _weatherEntities = new TestWeatherEntities(_mockHaContext);
+        _schedulerEntities = new TestSchedulerEntities(_mockHaContext);
 
         // IMPORTANT: Setup sensor states BEFORE creating ClimateScheduler
         // because the constructor calls GetCurrentAcScheduleSettings() which reads sensor states
         SetupDefaultSunSensorStates();
 
         _scheduler = new ClimateScheduler(
-            _weatherEntities,
+            _schedulerEntities,
             _mockCalculator.Object,
             _mockLogger.Object
         );
@@ -36,10 +36,15 @@ public class ClimateSchedulerTests : HaContextTestBase
     {
         // Setup sun sensor times to match the original logs where 5AM should be Sunrise
         // Original logs show: Sunrise: 5-18, Sunset: 18-0, Midnight: 0-5
-        _mockHaContext.SetEntityState(_weatherEntities.SunRising.EntityId, "2024-01-01T05:00:00");
-        _mockHaContext.SetEntityState(_weatherEntities.SunSetting.EntityId, "2024-01-01T18:00:00");
-        _mockHaContext.SetEntityState(_weatherEntities.SunMidnight.EntityId, "2024-01-01T00:00:00");
-        _mockHaContext.SetEntityState(_weatherEntities.Weather.EntityId, "sunny");
+        _mockHaContext.SetEntityState(_schedulerEntities.SunRising.EntityId, "2024-01-01T05:00:00");
+        _mockHaContext.SetEntityState(
+            _schedulerEntities.SunSetting.EntityId,
+            "2024-01-01T18:00:00"
+        );
+        _mockHaContext.SetEntityState(
+            _schedulerEntities.SunMidnight.EntityId,
+            "2024-01-01T00:00:00"
+        );
     }
 
     private void SetSchedulerToLocalTime(int hour, int minute = 0)
@@ -174,7 +179,7 @@ public class ClimateSchedulerTests : HaContextTestBase
 
         // 6 AM - start of Sunrise
         var scheduler6 = new ClimateScheduler(
-            _weatherEntities,
+            _schedulerEntities,
             _mockCalculator.Object,
             _mockLogger.Object
         );
@@ -187,7 +192,7 @@ public class ClimateSchedulerTests : HaContextTestBase
         _mockHaContext.AdvanceTimeByHours(12);
 
         var scheduler18 = new ClimateScheduler(
-            _weatherEntities,
+            _schedulerEntities,
             _mockCalculator.Object,
             _mockLogger.Object
         );
@@ -200,7 +205,7 @@ public class ClimateSchedulerTests : HaContextTestBase
 
         // 0 (12 AM) - start of Midnight
         var scheduler0 = new ClimateScheduler(
-            _weatherEntities,
+            _schedulerEntities,
             _mockCalculator.Object,
             _mockLogger.Object
         );
@@ -217,7 +222,7 @@ public class ClimateSchedulerTests : HaContextTestBase
         // This test is designed to catch the bug where 5:00 AM incorrectly returns Midnight instead of Sunrise
         SetSchedulerToLocalTime(5);
         var scheduler5AM = new ClimateScheduler(
-            _weatherEntities,
+            _schedulerEntities,
             _mockCalculator.Object,
             _mockLogger.Object
         );
@@ -257,7 +262,7 @@ public class ClimateSchedulerTests : HaContextTestBase
         SetSchedulerToLocalTime(hour, minute);
 
         var scheduler = new ClimateScheduler(
-            _weatherEntities,
+            _schedulerEntities,
             _mockCalculator.Object,
             _mockLogger.Object
         );
@@ -308,13 +313,13 @@ public class ClimateSchedulerTests : HaContextTestBase
     public void InvalidSunSensorHours_Should_LogWarning()
     {
         // Arrange - Set invalid sun sensor hours
-        _mockHaContext.SetEntityState(_weatherEntities.SunRising.EntityId, "invalid");
-        _mockHaContext.SetEntityState(_weatherEntities.SunSetting.EntityId, "invalid");
-        _mockHaContext.SetEntityState(_weatherEntities.SunMidnight.EntityId, "invalid");
+        _mockHaContext.SetEntityState(_schedulerEntities.SunRising.EntityId, "invalid");
+        _mockHaContext.SetEntityState(_schedulerEntities.SunSetting.EntityId, "invalid");
+        _mockHaContext.SetEntityState(_schedulerEntities.SunMidnight.EntityId, "invalid");
 
         // Act - Try to create schedules
         var scheduler = new ClimateScheduler(
-            _weatherEntities,
+            _schedulerEntities,
             _mockCalculator.Object,
             _mockLogger.Object
         );
@@ -351,13 +356,12 @@ public class ClimateSchedulerTests : HaContextTestBase
 
     #endregion
 
-    private class TestWeatherEntities(IHaContext haContext) : IClimateSchedulerEntities
+    private class TestSchedulerEntities(IHaContext haContext) : IClimateSchedulerEntities
     {
         public SensorEntity SunRising { get; } = new SensorEntity(haContext, "sensor.sun_rising");
         public SensorEntity SunSetting { get; } = new SensorEntity(haContext, "sensor.sun_setting");
         public SensorEntity SunMidnight { get; } =
             new SensorEntity(haContext, "sensor.sun_midnight");
-        public WeatherEntity Weather { get; } = new WeatherEntity(haContext, "weather.home");
         public InputBooleanEntity PowerSavingMode { get; } =
             new InputBooleanEntity(haContext, "input_boolean.power_saving_mode");
     }

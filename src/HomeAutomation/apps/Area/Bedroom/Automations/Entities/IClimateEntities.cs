@@ -3,6 +3,7 @@ namespace HomeAutomation.apps.Area.Bedroom.Automations.Entities;
 public interface IClimateEntities : IMotionBase
 {
     ClimateEntity AirConditioner { get; }
+    WeatherEntity Weather { get; }
     BinarySensorEntity Door { get; }
     BinarySensorEntity HouseMotionSensor { get; }
     ButtonEntity AcFanModeToggle { get; }

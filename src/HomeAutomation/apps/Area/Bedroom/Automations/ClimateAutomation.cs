@@ -19,6 +19,8 @@ public class ClimateAutomation(
 
     private readonly InputBooleanEntity _powerSavingMode = entities.PowerSavingMode;
 
+    private readonly WeatherEntity _weather = entities.Weather;
+
     protected override IEnumerable<IDisposable> GetPersistentAutomations()
     {
         yield return scheduler.GetResetSchedule();
@@ -26,6 +28,8 @@ public class ClimateAutomation(
         yield return _ac.StateAllChanges()
             .IsManuallyOperated()
             .Subscribe(TurnOffMasterSwitchOnManualOperation);
+
+        yield return _weather.StateAllChanges().Subscribe(ApplyPowerSavingModeFromWeather);
 
         yield return _motionSensor
             .OnCleared(new(Hours: 1))
@@ -108,6 +112,84 @@ public class ClimateAutomation(
         );
 
         ApplyScheduledAcSettings(scheduler.FindCurrentTimeBlock());
+    }
+
+    private void ApplyPowerSavingModeFromWeather(StateChange e)
+    {
+        const double weatherTriggerUvIndex = 8.0;
+
+        const double weatherTriggerOutdoorTempC = 32.0;
+
+        const double weatherRecoveryUvIndex = 5.0;
+
+        const double weatherRecoveryOutdoorTempC = 30.0;
+
+        var (_, uvIndex) = e.GetAttributeChange<double?>("uv_index");
+
+        var (_, outdoorTemperature) = e.GetAttributeChange<double?>("temperature");
+
+        if (!(uvIndex.HasValue && outdoorTemperature.HasValue))
+        {
+            Logger.LogDebug(
+                "Skipping power-saving weather check: missing weather data (UvIndex={UvIndex}, OutdoorTemp={OutdoorTemp})",
+                uvIndex,
+                outdoorTemperature
+            );
+
+            return;
+        }
+
+        var shouldEnablePowerSaving =
+            uvIndex.Value >= weatherTriggerUvIndex
+            || outdoorTemperature.Value >= weatherTriggerOutdoorTempC;
+
+        var shouldDisablePowerSaving =
+            uvIndex.Value <= weatherRecoveryUvIndex
+            && outdoorTemperature.Value <= weatherRecoveryOutdoorTempC;
+
+        var toggleReason = uvIndex.Value >= weatherTriggerUvIndex ? "uv" : "temperature";
+
+        Logger.LogDebug(
+            "Weather power-saving evaluation: UvIndex={UvIndex}, OutdoorTemp={OutdoorTemp}, ModeIsOn={ModeIsOn}, ShouldEnable={ShouldEnable}, ShouldDisable={ShouldDisable}",
+            uvIndex,
+            outdoorTemperature,
+            _powerSavingMode.IsOn(),
+            shouldEnablePowerSaving,
+            shouldDisablePowerSaving
+        );
+
+        if (_powerSavingMode.IsOff() && shouldEnablePowerSaving)
+        {
+            _powerSavingMode.TurnOn();
+
+            Logger.LogInformation(
+                "Enabled power-saving mode from weather (Reason={Reason}, UvIndex={UvIndex}, OutdoorTemp={OutdoorTemp})",
+                toggleReason,
+                uvIndex,
+                outdoorTemperature
+            );
+
+            return;
+        }
+
+        if (_powerSavingMode.IsOn() && shouldDisablePowerSaving)
+        {
+            _powerSavingMode.TurnOff();
+
+            Logger.LogInformation(
+                "Disabled power-saving mode from weather (UvIndex={UvIndex}, OutdoorTemp={OutdoorTemp})",
+                uvIndex,
+                outdoorTemperature
+            );
+
+            return;
+        }
+
+        Logger.LogDebug(
+            "No power-saving toggle from weather (UvIndex={UvIndex}, OutdoorTemp={OutdoorTemp})",
+            uvIndex,
+            outdoorTemperature
+        );
     }
 
     private IEnumerable<IDisposable> GetHousePresenceAutomations()

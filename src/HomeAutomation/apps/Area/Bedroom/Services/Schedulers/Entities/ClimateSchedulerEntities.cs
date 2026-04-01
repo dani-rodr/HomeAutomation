@@ -7,6 +7,5 @@ public class GlobalClimateSchedulerEntities(GlobalDevices devices) : IClimateSch
     public SensorEntity SunRising => devices.SunRising;
     public SensorEntity SunSetting => devices.SunSetting;
     public SensorEntity SunMidnight => devices.SunMidnight;
-    public WeatherEntity Weather => devices.Weather;
     public InputBooleanEntity PowerSavingMode => devices.PowerSavingMode;
 }

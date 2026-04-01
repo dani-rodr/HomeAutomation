@@ -56,6 +56,18 @@ public partial class ClimateAutomationTests : AutomationTestBase<ClimateAutomati
         _mockHaContext.SetEntityState(_entities.HouseMotionSensor.EntityId, "on");
 
         _mockHaContext.SetEntityState(_entities.MasterSwitch.EntityId, "on");
+
+        _mockHaContext.SetEntityState(_entities.Weather.EntityId, "cloudy");
+
+        _mockHaContext.SetEntityAttributes(
+            _entities.Weather.EntityId,
+            new
+            {
+                uv_index = 4.0,
+
+                temperature = 28.0,
+            }
+        );
     }
 
     private void SetupDefaultSchedulerMock()
@@ -331,6 +343,190 @@ public partial class ClimateAutomationTests : AutomationTestBase<ClimateAutomati
         // Assert - Should apply time-based AC settings
 
         _mockHaContext.ShouldHaveCalledClimateSetTemperature(_entities.AirConditioner.EntityId);
+    }
+
+    #endregion
+
+
+    #region Weather Power Saving Toggle Tests
+
+
+    [Fact]
+    public void WeatherHighUv_WhenPowerSavingOff_Should_TurnOnPowerSaving()
+    {
+        _mockHaContext.SetEntityState(_entities.PowerSavingMode.EntityId, "off");
+
+        _mockHaContext.SetEntityAttributes(
+            _entities.Weather.EntityId,
+            new { uv_index = 8.0, temperature = 29.0 }
+        );
+
+        _mockHaContext.ClearServiceCalls();
+
+        _mockHaContext.SimulateStateChange(
+            _entities.Weather.EntityId,
+            "cloudy",
+            "sunny",
+            new { uv_index = 8.0, temperature = 29.0 }
+        );
+
+        _mockHaContext.ShouldHaveCalledService(
+            "input_boolean",
+            "turn_on",
+            _entities.PowerSavingMode.EntityId
+        );
+    }
+
+    [Fact]
+    public void WeatherHighTemp_WhenPowerSavingOff_Should_TurnOnPowerSaving()
+    {
+        _mockHaContext.SetEntityState(_entities.PowerSavingMode.EntityId, "off");
+
+        _mockHaContext.SetEntityAttributes(
+            _entities.Weather.EntityId,
+            new { uv_index = 4.5, temperature = 32.0 }
+        );
+
+        _mockHaContext.ClearServiceCalls();
+
+        _mockHaContext.SimulateStateChange(
+            _entities.Weather.EntityId,
+            "cloudy",
+            "partlycloudy",
+            new { uv_index = 4.5, temperature = 32.0 }
+        );
+
+        _mockHaContext.ShouldHaveCalledService(
+            "input_boolean",
+            "turn_on",
+            _entities.PowerSavingMode.EntityId
+        );
+    }
+
+    [Fact]
+    public void WeatherBelowTriggerThresholds_WhenPowerSavingOff_Should_NotTogglePowerSaving()
+    {
+        _mockHaContext.SetEntityState(_entities.PowerSavingMode.EntityId, "off");
+
+        _mockHaContext.SetEntityAttributes(
+            _entities.Weather.EntityId,
+            new { uv_index = 7.9, temperature = 31.9 }
+        );
+
+        _mockHaContext.ClearServiceCalls();
+
+        _mockHaContext.SimulateStateChange(
+            _entities.Weather.EntityId,
+            "cloudy",
+            "rainy",
+            new { uv_index = 7.9, temperature = 31.9 }
+        );
+
+        _mockHaContext.ShouldNotHaveCalledService(
+            "input_boolean",
+            "turn_on",
+            _entities.PowerSavingMode.EntityId
+        );
+    }
+
+    [Fact]
+    public void WeatherAtRecoveryThresholds_WhenPowerSavingOn_Should_TurnOffPowerSaving()
+    {
+        _mockHaContext.SetEntityState(_entities.PowerSavingMode.EntityId, "on");
+
+        _mockHaContext.SetEntityAttributes(
+            _entities.Weather.EntityId,
+            new { uv_index = 5.0, temperature = 30.0 }
+        );
+
+        _mockHaContext.ClearServiceCalls();
+
+        _mockHaContext.SimulateStateChange(
+            _entities.Weather.EntityId,
+            "sunny",
+            "cloudy",
+            new { uv_index = 5.0, temperature = 30.0 }
+        );
+
+        _mockHaContext.ShouldHaveCalledService(
+            "input_boolean",
+            "turn_off",
+            _entities.PowerSavingMode.EntityId
+        );
+    }
+
+    [Fact]
+    public void WeatherOnlyOneRecoveryConditionMet_WhenPowerSavingOn_Should_NotTurnOffPowerSaving()
+    {
+        _mockHaContext.SetEntityState(_entities.PowerSavingMode.EntityId, "on");
+
+        _mockHaContext.SetEntityAttributes(
+            _entities.Weather.EntityId,
+            new { uv_index = 4.0, temperature = 30.1 }
+        );
+
+        _mockHaContext.ClearServiceCalls();
+
+        _mockHaContext.SimulateStateChange(
+            _entities.Weather.EntityId,
+            "sunny",
+            "cloudy",
+            new { uv_index = 4.0, temperature = 30.1 }
+        );
+
+        _mockHaContext.ShouldNotHaveCalledService(
+            "input_boolean",
+            "turn_off",
+            _entities.PowerSavingMode.EntityId
+        );
+    }
+
+    [Fact]
+    public void WeatherMissingAttributes_Should_NotTogglePowerSaving()
+    {
+        _mockHaContext.SetEntityState(_entities.PowerSavingMode.EntityId, "off");
+
+        _mockHaContext.ClearServiceCalls();
+
+        _mockHaContext.SimulateStateChange(_entities.Weather.EntityId, "cloudy", "sunny");
+
+        _mockHaContext.ShouldNotHaveCalledService(
+            "input_boolean",
+            "turn_on",
+            _entities.PowerSavingMode.EntityId
+        );
+
+        _mockHaContext.ShouldNotHaveCalledService(
+            "input_boolean",
+            "turn_off",
+            _entities.PowerSavingMode.EntityId
+        );
+    }
+
+    [Fact]
+    public void WeatherAboveTrigger_WhenPowerSavingAlreadyOn_Should_NotCallTurnOnAgain()
+    {
+        _mockHaContext.SetEntityState(_entities.PowerSavingMode.EntityId, "on");
+
+        _mockHaContext.SetEntityAttributes(
+            _entities.Weather.EntityId,
+            new { uv_index = 10.0, temperature = 33.0 }
+        );
+
+        _mockHaContext.ClearServiceCalls();
+
+        _mockHaContext.SimulateStateChange(
+            _entities.Weather.EntityId,
+            "cloudy",
+            "sunny",
+            new { uv_index = 10.0, temperature = 33.0 }
+        );
+
+        _mockHaContext.ShouldNotHaveCalledService(
+            "input_boolean",
+            "turn_on",
+            _entities.PowerSavingMode.EntityId
+        );
     }
 
     #endregion
@@ -877,6 +1073,8 @@ public partial class ClimateAutomationTests : AutomationTestBase<ClimateAutomati
             new(haContext, "binary_sensor.bedroom_motion_sensors");
 
         public ClimateEntity AirConditioner => new(haContext, "climate.bedroom_ac");
+
+        public WeatherEntity Weather => new(haContext, "weather.home");
 
         public BinarySensorEntity Door => new(haContext, "binary_sensor.bedroom_door");
 

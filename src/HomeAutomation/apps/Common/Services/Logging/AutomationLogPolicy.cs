@@ -10,6 +10,7 @@ public sealed class AutomationLogPolicy(IServiceScopeFactory scopeFactory) : IAu
     private static readonly HashSet<string> InformationLogbookCategories =
     [
         "HomeAutomation.apps.Common.StartupApp",
+        "HomeAutomation.apps.Area.Bedroom.Automations.ClimateAutomation",
         "HomeAutomation.apps.Security.Automations.AccessControlAutomation",
         "HomeAutomation.apps.Security.Automations.LockAutomation",
     ];

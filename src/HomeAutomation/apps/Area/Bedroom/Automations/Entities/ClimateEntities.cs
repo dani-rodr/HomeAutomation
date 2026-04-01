@@ -7,6 +7,7 @@ public class ClimateEntities(BedroomDevices devices, GlobalDevices globalDevices
 {
     public SwitchEntity MasterSwitch => devices.ClimateAutomation;
     public ClimateEntity AirConditioner => devices.AirConditioner;
+    public WeatherEntity Weather => globalDevices.Weather;
     public BinarySensorEntity MotionSensor => devices.MotionSensor;
     public BinarySensorEntity Door => devices.Door;
     public BinarySensorEntity HouseMotionSensor => globalDevices.HouseMotionSensor;
