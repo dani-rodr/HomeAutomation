@@ -1,0 +1,798 @@
+@page "/"
+@inject IAreaConfigStore Store
+
+<main class="mx-auto max-w-7xl px-4 py-6 md:px-6 md:py-8">
+    <header class="mb-6 rounded-2xl border border-ha-line bg-ha-panel/95 p-5 shadow-panel backdrop-blur">
+        <h1 class="text-2xl font-extrabold tracking-tight text-ha-ink md:text-3xl">Area Config Dashboard</h1>
+        <p class="mt-1 text-sm text-ha-muted md:text-base">Field-based schema editor for all configured areas.</p>
+    </header>
+
+    <div class="mb-5 flex flex-wrap items-center gap-3">
+        <button class="ha-btn ha-btn-primary" @onclick="ReloadAll">Reload all</button>
+        @if (!string.IsNullOrWhiteSpace(GlobalStatus))
+        {
+            <span class="rounded-lg border px-3 py-2 text-sm font-semibold @(GlobalError ? "border-ha-danger/30 bg-ha-danger/10 text-ha-danger" : "border-ha-success/30 bg-ha-success/10 text-ha-success")">@GlobalStatus</span>
+        }
+    </div>
+
+    <section class="grid gap-5">
+        @foreach (var area in Areas)
+        {
+            <article @key="area.Key" class="rounded-2xl border border-ha-line bg-ha-panel shadow-panel">
+                <div class="flex flex-wrap items-start justify-between gap-3 p-5 md:p-6">
+                    <div class="flex items-start gap-3">
+                        <button
+                            class="icon-btn"
+                            title="Switch editor view"
+                            aria-label="Switch editor view"
+                            @onclick="() => ToggleJsonEditor(area)">
+                            @(area.ShowJsonEditor ? "Form" : "</>")
+                        </button>
+                        <button
+                            class="header-toggle"
+                            aria-expanded="@area.IsExpanded"
+                            @onclick="() => ToggleAreaExpanded(area)">
+                            <span class="chevron">@Chevron(area.IsExpanded)</span>
+                            <span class="text-xl font-bold text-ha-ink">@area.Name</span>
+                        </button>
+                    </div>
+                    <span class="text-xs font-semibold uppercase tracking-wide text-ha-muted">Area</span>
+                </div>
+
+                @if (area.IsExpanded)
+                {
+                    <div class="px-5 pb-5 md:px-6 md:pb-6">
+                        <p class="mt-1 text-sm text-ha-muted">@area.Description</p>
+
+                        @if (area.ShowJsonEditor)
+                        {
+                            <div class="mt-5 rounded-lg border border-ha-line/70 bg-slate-100/70 p-3">
+                                <div class="text-sm font-semibold text-ha-ink">JSON source</div>
+                                <textarea class="ha-input mt-3 min-h-[220px] font-mono text-xs md:text-sm" @bind="area.JsonEditorText" @bind:event="oninput"></textarea>
+                                <div class="mt-3 flex flex-wrap gap-2">
+                                    <button class="ha-btn" @onclick="() => ApplyJson(area)">Apply JSON</button>
+                                </div>
+                            </div>
+                        }
+                        else
+                        {
+                            @foreach (var group in GetGeneralFieldGroups(area.Schema))
+                            {
+                                var groupExpanded = IsGroupExpanded(area, group.Key);
+                                <section class="mt-4 rounded-xl border border-ha-line/70 bg-slate-50/70">
+                                    <button class="section-toggle" aria-expanded="@groupExpanded" @onclick="() => ToggleGroupExpanded(area, group.Key)">
+                                        <span class="chevron">@Chevron(groupExpanded)</span>
+                                        <span>@DisplayLabel(group.Key)</span>
+                                    </button>
+
+                                    @if (groupExpanded)
+                                    {
+                                        <div class="grid grid-cols-1 gap-3 px-4 pb-4 md:grid-cols-2 xl:grid-cols-3">
+                                            @foreach (var (path, rule) in group.Value.OrderBy(x => x.Key, StringComparer.OrdinalIgnoreCase))
+                                            {
+                                                <div class="space-y-1.5 rounded-lg border border-ha-line/70 bg-white p-3">
+                                                    <label class="text-sm font-semibold text-ha-ink">@DisplayLabel(GetLeaf(path))</label>
+                                                    @if (HasAllowedValues(rule))
+                                                    {
+                                                        <select
+                                                            class="ha-input"
+                                                            value="@GetStringValue(area.Config, path)"
+                                                            @onchange="e => OnStringChanged(area, path, rule, e.Value?.ToString() ?? string.Empty)">
+                                                            @foreach (var option in rule.AllowedValues)
+                                                            {
+                                                                <option value="@option">@option</option>
+                                                            }
+                                                        </select>
+                                                    }
+                                                    else if (IsBoolean(rule))
+                                                    {
+                                                        <div class="boolean-field">
+                                                            <span class="text-sm text-ha-muted">Enabled</span>
+                                                            <label class="switch">
+                                                                <input
+                                                                    type="checkbox"
+                                                                    checked="@GetBooleanValue(area.Config, path)"
+                                                                    @onchange="e => OnBooleanChanged(area, path, rule, e.Value)" />
+                                                                <span class="slider"></span>
+                                                            </label>
+                                                        </div>
+                                                    }
+                                                    else if (IsNumeric(rule))
+                                                    {
+                                                        <input
+                                                            class="ha-input"
+                                                            type="number"
+                                                            step="@(IsInteger(rule) ? "1" : "0.1")"
+                                                            value="@GetStringValue(area.Config, path)"
+                                                            min="@(rule.Min?.ToString(System.Globalization.CultureInfo.InvariantCulture))"
+                                                            max="@(rule.Max?.ToString(System.Globalization.CultureInfo.InvariantCulture))"
+                                                            @onchange="e => OnNumericChanged(area, path, rule, e.Value?.ToString() ?? string.Empty)" />
+                                                    }
+                                                    else
+                                                    {
+                                                        <input
+                                                            class="ha-input"
+                                                            type="text"
+                                                            value="@GetStringValue(area.Config, path)"
+                                                            @onchange="e => OnStringChanged(area, path, rule, e.Value?.ToString() ?? string.Empty)" />
+                                                    }
+                                                </div>
+                                            }
+                                        </div>
+                                    }
+                                </section>
+                            }
+
+                            @if (area.Schema.Blocks.Length > 0 && area.Schema.BlockFields.Count > 0)
+                            {
+                                @foreach (var block in area.Schema.Blocks)
+                                {
+                                    var blockExpanded = IsBlockExpanded(area, block);
+                                    <section class="mt-4 rounded-xl border border-ha-line/70 bg-sky-50/40">
+                                        <button class="section-toggle" aria-expanded="@blockExpanded" @onclick="() => ToggleBlockExpanded(area, block)">
+                                            <span class="chevron">@Chevron(blockExpanded)</span>
+                                            <span>@DisplayLabel(block)</span>
+                                        </button>
+
+                                        @if (blockExpanded)
+                                        {
+                                            <div class="grid grid-cols-1 gap-3 px-4 pb-4 md:grid-cols-2 xl:grid-cols-3">
+                                                @foreach (var blockField in area.Schema.BlockFields.OrderBy(x => x.Key, StringComparer.OrdinalIgnoreCase))
+                                                {
+                                                    var path = $"{block}.{blockField.Key}";
+                                                    var rule = blockField.Value;
+
+                                                    <div class="space-y-1.5 rounded-lg border border-ha-line/70 bg-white p-3">
+                                                        <label class="text-sm font-semibold text-ha-ink">@DisplayLabel(blockField.Key)</label>
+                                                        @if (HasAllowedValues(rule))
+                                                        {
+                                                            <select
+                                                                class="ha-input"
+                                                                value="@GetStringValue(area.Config, path)"
+                                                                @onchange="e => OnStringChanged(area, path, rule, e.Value?.ToString() ?? string.Empty)">
+                                                                @foreach (var option in rule.AllowedValues)
+                                                                {
+                                                                    <option value="@option">@option</option>
+                                                                }
+                                                            </select>
+                                                        }
+                                                        else if (IsBoolean(rule))
+                                                        {
+                                                            <div class="boolean-field">
+                                                                <span class="text-sm text-ha-muted">Enabled</span>
+                                                                <label class="switch">
+                                                                    <input
+                                                                        type="checkbox"
+                                                                        checked="@GetBooleanValue(area.Config, path)"
+                                                                        @onchange="e => OnBooleanChanged(area, path, rule, e.Value)" />
+                                                                    <span class="slider"></span>
+                                                                </label>
+                                                            </div>
+                                                        }
+                                                        else if (IsNumeric(rule))
+                                                        {
+                                                            <input
+                                                                class="ha-input"
+                                                                type="number"
+                                                                step="@(IsInteger(rule) ? "1" : "0.1")"
+                                                                value="@GetStringValue(area.Config, path)"
+                                                                min="@(rule.Min?.ToString(System.Globalization.CultureInfo.InvariantCulture))"
+                                                                max="@(rule.Max?.ToString(System.Globalization.CultureInfo.InvariantCulture))"
+                                                                @onchange="e => OnNumericChanged(area, path, rule, e.Value?.ToString() ?? string.Empty)" />
+                                                        }
+                                                        else
+                                                        {
+                                                            <input
+                                                                class="ha-input"
+                                                                type="text"
+                                                                value="@GetStringValue(area.Config, path)"
+                                                                @onchange="e => OnStringChanged(area, path, rule, e.Value?.ToString() ?? string.Empty)" />
+                                                        }
+                                                    </div>
+                                                }
+                                            </div>
+                                        }
+                                    </section>
+                                }
+                            }
+                        }
+
+                        @if (GetAllErrors(area).Count > 0)
+                        {
+                            <ul class="mt-4 space-y-1 rounded-lg border border-ha-danger/30 bg-ha-danger/10 p-3 text-sm text-ha-danger">
+                                @foreach (var error in GetAllErrors(area))
+                                {
+                                    <li><strong>@error.Key</strong>: @string.Join(", ", error.Value)</li>
+                                }
+                            </ul>
+                        }
+
+                        @if (!string.IsNullOrWhiteSpace(area.Status))
+                        {
+                            <div class="mt-4 rounded-lg border px-3 py-2 text-sm font-semibold @(area.IsError ? "border-ha-danger/30 bg-ha-danger/10 text-ha-danger" : "border-ha-success/30 bg-ha-success/10 text-ha-success")">@area.Status</div>
+                        }
+
+                        <div class="mt-4 flex flex-wrap gap-2">
+                            <button class="ha-btn ha-btn-primary" @onclick="() => Save(area)">Save</button>
+                            <button class="ha-btn" @onclick="() => Reset(area)">Reset</button>
+                            <button class="ha-btn" @onclick="() => Reload(area)">Reload</button>
+                        </div>
+                    </div>
+                }
+            </article>
+        }
+    </section>
+</main>
+
+@code {
+    private static readonly JsonSerializerOptions JsonOptions = new()
+    {
+        PropertyNameCaseInsensitive = true,
+        WriteIndented = true,
+    };
+
+    private readonly List<AreaEditorModel> Areas = [];
+    private string GlobalStatus = string.Empty;
+    private bool GlobalError;
+
+    protected override void OnInitialized() => ReloadAll();
+
+    private void ReloadAll()
+    {
+        var previousState = Areas.ToDictionary(
+            x => x.Key,
+            x => new AreaUiState(
+                x.ShowJsonEditor,
+                x.IsExpanded,
+                new Dictionary<string, bool>(x.GroupExpanded, StringComparer.OrdinalIgnoreCase),
+                new Dictionary<string, bool>(x.BlockExpanded, StringComparer.OrdinalIgnoreCase)
+            ),
+            StringComparer.OrdinalIgnoreCase
+        );
+
+        Areas.Clear();
+
+        foreach (var descriptor in Store.ListAreas().OrderBy(x => x.Name, StringComparer.OrdinalIgnoreCase))
+        {
+            var config = Store.GetConfig(descriptor.Key);
+            var schema = LoadSchema(descriptor.SchemaFilePath);
+            var groupKeys = GetGeneralFieldGroups(schema).Select(x => x.Key).ToArray();
+
+            var area = new AreaEditorModel
+            {
+                Key = descriptor.Key,
+                Name = descriptor.Name,
+                Description = descriptor.Description,
+                Schema = schema,
+                Config = config,
+                JsonEditorText = config.ToJsonString(JsonOptions),
+                GroupExpanded = groupKeys.ToDictionary(x => x, _ => true, StringComparer.OrdinalIgnoreCase),
+                BlockExpanded = schema.Blocks.ToDictionary(x => x, _ => true, StringComparer.OrdinalIgnoreCase),
+            };
+
+            if (previousState.TryGetValue(area.Key, out var uiState))
+            {
+                area.ShowJsonEditor = uiState.ShowJsonEditor;
+                area.IsExpanded = uiState.IsExpanded;
+
+                foreach (var key in groupKeys)
+                {
+                    if (uiState.GroupExpanded.TryGetValue(key, out var expanded))
+                    {
+                        area.GroupExpanded[key] = expanded;
+                    }
+                }
+
+                foreach (var key in schema.Blocks)
+                {
+                    if (uiState.BlockExpanded.TryGetValue(key, out var expanded))
+                    {
+                        area.BlockExpanded[key] = expanded;
+                    }
+                }
+            }
+
+            ValidateClient(area);
+            Areas.Add(area);
+        }
+
+        SetGlobalStatus($"Loaded {Areas.Count} area config(s).", isError: false);
+    }
+
+    private static AreaConfigSchema LoadSchema(string? schemaPath)
+    {
+        if (string.IsNullOrWhiteSpace(schemaPath) || !System.IO.File.Exists(schemaPath))
+        {
+            return new AreaConfigSchema();
+        }
+
+        try
+        {
+            var schemaJson = System.IO.File.ReadAllText(schemaPath);
+            return JsonSerializer.Deserialize<AreaConfigSchema>(schemaJson, JsonOptions)
+                ?? new AreaConfigSchema();
+        }
+        catch
+        {
+            return new AreaConfigSchema();
+        }
+    }
+
+    private static IReadOnlyDictionary<string, IReadOnlyList<KeyValuePair<string, AreaConfigFieldRule>>> GetGeneralFieldGroups(
+        AreaConfigSchema schema
+    )
+    {
+        var groups = new Dictionary<string, List<KeyValuePair<string, AreaConfigFieldRule>>>(
+            StringComparer.OrdinalIgnoreCase
+        );
+
+        foreach (var entry in schema.Fields)
+        {
+            var group = entry.Key.Split('.', 2)[0];
+            if (!groups.TryGetValue(group, out var values))
+            {
+                values = [];
+                groups[group] = values;
+            }
+
+            values.Add(entry);
+        }
+
+        return groups
+            .OrderBy(x => x.Key, StringComparer.OrdinalIgnoreCase)
+            .ToDictionary(
+                x => x.Key,
+                x => (IReadOnlyList<KeyValuePair<string, AreaConfigFieldRule>>)x.Value,
+                StringComparer.OrdinalIgnoreCase
+            );
+    }
+
+    private static string DisplayLabel(string key)
+    {
+        if (string.IsNullOrWhiteSpace(key))
+        {
+            return key;
+        }
+
+        var title = key.Replace("_", " ");
+        title = System.Text.RegularExpressions.Regex.Replace(title, "([a-z0-9])([A-Z])", "$1 $2");
+        return char.ToUpperInvariant(title[0]) + title[1..];
+    }
+
+    private static string GetLeaf(string path)
+    {
+        var parts = path.Split('.', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+        return parts.Length == 0 ? path : parts[^1];
+    }
+
+    private static bool HasAllowedValues(AreaConfigFieldRule rule) => rule.AllowedValues.Length > 0;
+
+    private static bool IsBoolean(AreaConfigFieldRule rule) =>
+        string.Equals(rule.Type, "boolean", StringComparison.OrdinalIgnoreCase);
+
+    private static bool IsInteger(AreaConfigFieldRule rule) =>
+        string.Equals(rule.Type, "integer", StringComparison.OrdinalIgnoreCase);
+
+    private static bool IsNumeric(AreaConfigFieldRule rule) =>
+        IsInteger(rule) || string.Equals(rule.Type, "number", StringComparison.OrdinalIgnoreCase);
+
+    private static JsonNode? GetNodeByPath(JsonObject root, string path)
+    {
+        JsonNode? current = root;
+        foreach (
+            var part in path.Split(
+                '.',
+                StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries
+            )
+        )
+        {
+            if (current is not JsonObject currentObject || !currentObject.TryGetPropertyValue(part, out current))
+            {
+                return null;
+            }
+        }
+
+        return current;
+    }
+
+    private static void SetNodeByPath(JsonObject root, string path, JsonNode? value)
+    {
+        var parts = path.Split('.', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+        JsonObject current = root;
+
+        for (var index = 0; index < parts.Length - 1; index++)
+        {
+            var part = parts[index];
+            if (current[part] is not JsonObject child)
+            {
+                child = new JsonObject();
+                current[part] = child;
+            }
+
+            current = child;
+        }
+
+        current[parts[^1]] = value;
+    }
+
+    private static string GetStringValue(JsonObject root, string path)
+    {
+        var node = GetNodeByPath(root, path);
+        return node is JsonValue value && value.TryGetValue<string>(out var stringValue)
+            ? stringValue
+            : node?.ToString() ?? string.Empty;
+    }
+
+    private static bool GetBooleanValue(JsonObject root, string path)
+    {
+        var node = GetNodeByPath(root, path);
+        return node is JsonValue value && value.TryGetValue<bool>(out var boolValue) && boolValue;
+    }
+
+    private void OnStringChanged(AreaEditorModel area, string path, AreaConfigFieldRule rule, string raw)
+    {
+        SetNodeByPath(area.Config, path, JsonValue.Create(raw));
+        ValidateClient(area);
+        area.JsonEditorText = area.Config.ToJsonString(JsonOptions);
+    }
+
+    private void OnBooleanChanged(AreaEditorModel area, string path, AreaConfigFieldRule rule, object? value)
+    {
+        var boolValue = value is bool asBool && asBool;
+        SetNodeByPath(area.Config, path, JsonValue.Create(boolValue));
+        ValidateClient(area);
+        area.JsonEditorText = area.Config.ToJsonString(JsonOptions);
+    }
+
+    private void OnNumericChanged(AreaEditorModel area, string path, AreaConfigFieldRule rule, string raw)
+    {
+        if (IsInteger(rule))
+        {
+            if (int.TryParse(raw, out var integer))
+            {
+                SetNodeByPath(area.Config, path, JsonValue.Create(integer));
+            }
+            else
+            {
+                area.ClientErrors[path] = ["Value must be an integer."];
+                return;
+            }
+        }
+        else
+        {
+            if (double.TryParse(raw, System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out var number))
+            {
+                SetNodeByPath(area.Config, path, JsonValue.Create(number));
+            }
+            else
+            {
+                area.ClientErrors[path] = ["Value must be numeric."];
+                return;
+            }
+        }
+
+        ValidateClient(area);
+        area.JsonEditorText = area.Config.ToJsonString(JsonOptions);
+    }
+
+    private static bool TryGetNumber(JsonNode node, out double number)
+    {
+        number = 0;
+        if (node is not JsonValue value)
+        {
+            return false;
+        }
+
+        if (value.TryGetValue<double>(out number))
+        {
+            return true;
+        }
+
+        if (value.TryGetValue<int>(out var asInt))
+        {
+            number = asInt;
+            return true;
+        }
+
+        if (value.TryGetValue<long>(out var asLong))
+        {
+            number = asLong;
+            return true;
+        }
+
+        return false;
+    }
+
+    private static void AddError(IDictionary<string, string[]> errors, string path, string message)
+    {
+        if (!errors.TryGetValue(path, out var existing))
+        {
+            errors[path] = [message];
+            return;
+        }
+
+        errors[path] = [.. existing, message];
+    }
+
+    private static double? GetNumericValue(JsonObject root, string path)
+    {
+        var node = GetNodeByPath(root, path);
+        return node is not null && TryGetNumber(node, out var number) ? number : null;
+    }
+
+    private static IEnumerable<KeyValuePair<string, AreaConfigFieldRule>> ExpandFieldRules(AreaConfigSchema schema)
+    {
+        foreach (var rule in schema.Fields)
+        {
+            yield return rule;
+        }
+
+        if (schema.Blocks.Length == 0 || schema.BlockFields.Count == 0)
+        {
+            yield break;
+        }
+
+        foreach (var block in schema.Blocks)
+        {
+            foreach (var (fieldName, rule) in schema.BlockFields)
+            {
+                yield return new KeyValuePair<string, AreaConfigFieldRule>($"{block}.{fieldName}", rule);
+            }
+        }
+    }
+
+    private static IEnumerable<AreaConfigComparisonRule> ExpandComparisons(AreaConfigSchema schema)
+    {
+        foreach (var comparison in schema.Comparisons)
+        {
+            yield return comparison;
+        }
+
+        if (schema.Blocks.Length == 0 || schema.BlockComparisons.Count == 0)
+        {
+            yield break;
+        }
+
+        foreach (var block in schema.Blocks)
+        {
+            foreach (var comparison in schema.BlockComparisons)
+            {
+                yield return new AreaConfigComparisonRule
+                {
+                    LeftPath = $"{block}.{comparison.LeftField}",
+                    RightPath = $"{block}.{comparison.RightField}",
+                    Operator = comparison.Operator,
+                    Message = comparison.Message,
+                };
+            }
+        }
+    }
+
+    private static void ValidateClient(AreaEditorModel area)
+    {
+        area.ClientErrors.Clear();
+
+        foreach (var (path, rule) in ExpandFieldRules(area.Schema))
+        {
+            var node = GetNodeByPath(area.Config, path);
+            if (node is null)
+            {
+                if (rule.Required)
+                {
+                    AddError(area.ClientErrors, path, "Value is required.");
+                }
+                continue;
+            }
+
+            if (IsBoolean(rule))
+            {
+                if (!(node is JsonValue boolNode && boolNode.TryGetValue<bool>(out _)))
+                {
+                    AddError(area.ClientErrors, path, "Value must be true/false.");
+                }
+                continue;
+            }
+
+            if (HasAllowedValues(rule))
+            {
+                if (
+                    !(
+                        node is JsonValue stringNode
+                        && stringNode.TryGetValue<string>(out var stringValue)
+                        && rule.AllowedValues.Contains(stringValue, StringComparer.OrdinalIgnoreCase)
+                    )
+                )
+                {
+                    AddError(
+                        area.ClientErrors,
+                        path,
+                        $"Value must be one of: {string.Join(", ", rule.AllowedValues)}."
+                    );
+                }
+                continue;
+            }
+
+            if (IsNumeric(rule))
+            {
+                if (!TryGetNumber(node, out var number))
+                {
+                    AddError(area.ClientErrors, path, "Value must be numeric.");
+                    continue;
+                }
+
+                if (IsInteger(rule) && number % 1 != 0)
+                {
+                    AddError(area.ClientErrors, path, "Value must be an integer.");
+                }
+
+                if (rule.Min.HasValue && number < rule.Min.Value)
+                {
+                    AddError(area.ClientErrors, path, $"Value must be >= {rule.Min.Value}.");
+                }
+
+                if (rule.Max.HasValue && number > rule.Max.Value)
+                {
+                    AddError(area.ClientErrors, path, $"Value must be <= {rule.Max.Value}.");
+                }
+            }
+        }
+
+        foreach (var comparison in ExpandComparisons(area.Schema))
+        {
+            var left = GetNumericValue(area.Config, comparison.LeftPath);
+            var right = GetNumericValue(area.Config, comparison.RightPath);
+            if (!left.HasValue || !right.HasValue)
+            {
+                continue;
+            }
+
+            var isValid = comparison.Operator.ToLowerInvariant() switch
+            {
+                "lte" => left.Value <= right.Value,
+                "gte" => left.Value >= right.Value,
+                _ => true,
+            };
+
+            if (isValid)
+            {
+                continue;
+            }
+
+            var message = string.IsNullOrWhiteSpace(comparison.Message)
+                ? $"Value must be {comparison.Operator} {comparison.RightPath}."
+                : comparison.Message;
+            AddError(area.ClientErrors, comparison.LeftPath, message);
+        }
+    }
+
+    private static IReadOnlyDictionary<string, string[]> GetAllErrors(AreaEditorModel area)
+    {
+        var merged = new Dictionary<string, string[]>(area.ClientErrors, StringComparer.OrdinalIgnoreCase);
+        foreach (var server in area.ServerErrors)
+        {
+            if (!merged.TryGetValue(server.Key, out var clientMessages))
+            {
+                merged[server.Key] = server.Value;
+                continue;
+            }
+
+            merged[server.Key] = [.. clientMessages, .. server.Value];
+        }
+
+        return merged;
+    }
+
+    private void Reload(AreaEditorModel area)
+    {
+        area.Config = Store.GetConfig(area.Key);
+        area.JsonEditorText = area.Config.ToJsonString(JsonOptions);
+        area.ServerErrors.Clear();
+        ValidateClient(area);
+        area.Status = "Reloaded.";
+        area.IsError = false;
+    }
+
+    private void Reset(AreaEditorModel area)
+    {
+        area.Config = Store.ResetConfig(area.Key);
+        area.JsonEditorText = area.Config.ToJsonString(JsonOptions);
+        area.ServerErrors.Clear();
+        ValidateClient(area);
+        area.Status = "Reset to defaults.";
+        area.IsError = false;
+    }
+
+    private void ApplyJson(AreaEditorModel area)
+    {
+        area.ServerErrors.Clear();
+        if (JsonNode.Parse(area.JsonEditorText) is not JsonObject parsed)
+        {
+            area.IsError = true;
+            area.Status = "JSON must be an object.";
+            return;
+        }
+
+        area.Config = parsed;
+        ValidateClient(area);
+        area.Status = "Applied JSON to fields.";
+        area.IsError = false;
+    }
+
+    private static void ToggleJsonEditor(AreaEditorModel area) =>
+        area.ShowJsonEditor = !area.ShowJsonEditor;
+
+    private static void ToggleAreaExpanded(AreaEditorModel area) => area.IsExpanded = !area.IsExpanded;
+
+    private static bool IsGroupExpanded(AreaEditorModel area, string key) =>
+        area.GroupExpanded.TryGetValue(key, out var expanded) ? expanded : true;
+
+    private static void ToggleGroupExpanded(AreaEditorModel area, string key)
+    {
+        area.GroupExpanded[key] = !IsGroupExpanded(area, key);
+    }
+
+    private static bool IsBlockExpanded(AreaEditorModel area, string key) =>
+        area.BlockExpanded.TryGetValue(key, out var expanded) ? expanded : true;
+
+    private static void ToggleBlockExpanded(AreaEditorModel area, string key)
+    {
+        area.BlockExpanded[key] = !IsBlockExpanded(area, key);
+    }
+
+    private static string Chevron(bool isExpanded) => isExpanded ? "▾" : "▸";
+
+    private void Save(AreaEditorModel area)
+    {
+        ValidateClient(area);
+        area.ServerErrors.Clear();
+
+        var result = Store.SaveConfig(area.Key, area.Config);
+        if (!result.IsValid)
+        {
+            area.IsError = true;
+            area.Status = "Validation failed.";
+            foreach (var entry in result.Errors)
+            {
+                area.ServerErrors[entry.Key] = entry.Value;
+            }
+
+            return;
+        }
+
+        area.Config = Store.GetConfig(area.Key);
+        area.JsonEditorText = area.Config.ToJsonString(JsonOptions);
+        area.IsError = false;
+        area.Status = "Saved.";
+    }
+
+    private void SetGlobalStatus(string message, bool isError)
+    {
+        GlobalStatus = message;
+        GlobalError = isError;
+    }
+
+    private sealed class AreaEditorModel
+    {
+        public required string Key { get; init; }
+        public required string Name { get; init; }
+        public required string Description { get; init; }
+        public required AreaConfigSchema Schema { get; init; }
+        public required JsonObject Config { get; set; }
+        public required string JsonEditorText { get; set; }
+        public bool ShowJsonEditor { get; set; }
+        public bool IsExpanded { get; set; } = true;
+        public Dictionary<string, bool> GroupExpanded { get; set; } = [];
+        public Dictionary<string, bool> BlockExpanded { get; set; } = [];
+        public string Status { get; set; } = string.Empty;
+        public bool IsError { get; set; }
+        public Dictionary<string, string[]> ClientErrors { get; } = [];
+        public Dictionary<string, string[]> ServerErrors { get; } = [];
+    }
+
+    private sealed record AreaUiState(
+        bool ShowJsonEditor,
+        bool IsExpanded,
+        Dictionary<string, bool> GroupExpanded,
+        Dictionary<string, bool> BlockExpanded
+    );
+}

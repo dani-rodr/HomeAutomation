@@ -1,32 +1,57 @@
 using System.Reflection;
-using Microsoft.Extensions.Hosting;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using NetDaemon.Extensions.Logging;
 using NetDaemon.Extensions.Scheduler;
 using NetDaemon.Extensions.Tts;
 using NetDaemon.Runtime;
 
-try
+var builder = WebApplication.CreateBuilder(args);
+
+var webServerSettings =
+    builder.Configuration.GetSection("WebServer").Get<WebServerSettings>()
+    ?? new WebServerSettings();
+
+builder.WebHost.ConfigureKestrel(options =>
 {
-    await Host.CreateDefaultBuilder(args)
-        .UseNetDaemonAppSettings()
-        .UseNetDaemonDefaultLogging()
-        .UseNetDaemonRuntime()
-        .UseNetDaemonTextToSpeech()
-        .ConfigureServices(
-            (_, services) =>
-                services
-                    .AddAppsFromAssembly(Assembly.GetExecutingAssembly())
-                    .AddNetDaemonStateManager()
-                    .AddNetDaemonScheduler()
-                    .AddHomeAssistantGenerated()
-                    .AddHomeEntitiesAndServices()
-        )
-        .Build()
-        .RunAsync()
-        .ConfigureAwait(false);
-}
-catch (Exception e)
+    options.ListenAnyIP(webServerSettings.HttpPort);
+    if (webServerSettings.UseHttps)
+    {
+        options.ListenAnyIP(webServerSettings.HttpsPort, listenOptions => listenOptions.UseHttps());
+    }
+});
+
+builder
+    .Host.UseNetDaemonAppSettings()
+    .UseNetDaemonDefaultLogging()
+    .UseNetDaemonRuntime()
+    .UseNetDaemonTextToSpeech();
+
+builder
+    .Services.AddAppsFromAssembly(Assembly.GetExecutingAssembly())
+    .AddNetDaemonStateManager()
+    .AddNetDaemonScheduler()
+    .AddHomeAssistantGenerated()
+    .AddHomeEntitiesAndServices();
+
+builder.Services.AddRazorPages();
+builder.Services.AddServerSideBlazor();
+builder.Services.AddControllers();
+
+var app = builder.Build();
+
+app.UseStaticFiles();
+app.MapControllers();
+app.MapBlazorHub();
+app.MapFallbackToPage("/_Host");
+
+await app.RunAsync().ConfigureAwait(false);
+
+internal sealed class WebServerSettings
 {
-    Console.WriteLine($"Failed to start host... {e}");
-    throw;
+    public int HttpPort { get; init; } = 10000;
+    public int HttpsPort { get; init; } = 10001;
+    public bool UseHttps { get; init; }
 }

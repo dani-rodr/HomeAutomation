@@ -1,20 +1,11 @@
-using HomeAutomation.apps.Area.Bedroom.Services.Schedulers;
+using HomeAutomation.apps.Area.Bedroom.Config;
 
 namespace HomeAutomation.Tests.Common.Containers;
 
 public class AcSettingsTests
 {
-    private static AcSettings CreateDefaultSetting() =>
-        new(
-            DoorOpenTemp: 26,
-            EcoAwayTemp: 28,
-            ComfortTemp: 23,
-            AwayTemp: 29,
-            Mode: "cool",
-            ActivateFan: true,
-            HourStart: 6,
-            HourEnd: 18
-        );
+    private static ClimateSetting CreateDefaultSetting() =>
+        new(26, 28, 23, 29, "cool", true, 6, 18);
 
     [Theory]
     [InlineData(0, 23, true)]
@@ -22,15 +13,15 @@ public class AcSettingsTests
     [InlineData(-1, 10, false)]
     public void IsValidHourRange_ReturnsCorrectResult(int hourStart, int hourEnd, bool expected)
     {
-        var setting = new AcSettings(
-            DoorOpenTemp: 26,
-            EcoAwayTemp: 28,
-            ComfortTemp: 23,
-            AwayTemp: 29,
-            Mode: "cool",
-            ActivateFan: true,
-            HourStart: hourStart,
-            HourEnd: hourEnd
+        var setting = new ClimateSetting(
+            doorOpenTemp: 26,
+            ecoAwayTemp: 28,
+            comfortTemp: 23,
+            awayTemp: 29,
+            mode: "cool",
+            activateFan: true,
+            hourStart: hourStart,
+            hourEnd: hourEnd
         );
 
         Assert.Equal(expected, setting.IsValidHourRange());

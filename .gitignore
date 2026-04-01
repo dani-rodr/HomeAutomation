@@ -59,6 +59,7 @@ appsettings.Release.json
 
 # NetDaemon specific
 *.gen
+*.config.local.json
 
 # JetBrains Rider
 .idea/

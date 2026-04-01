@@ -1,0 +1,41 @@
+{
+  "blocks": ["sunrise", "sunset", "midnight"],
+  "fields": {
+    "weatherPowerSaving.triggerUvIndex": { "type": "number", "required": true, "min": 0, "max": 20 },
+    "weatherPowerSaving.triggerOutdoorTempC": { "type": "number", "required": true, "min": 10, "max": 45 },
+    "weatherPowerSaving.recoveryUvIndex": { "type": "number", "required": true, "min": 0, "max": 20 },
+    "weatherPowerSaving.recoveryOutdoorTempC": { "type": "number", "required": true, "min": 10, "max": 45 }
+  },
+  "blockFields": {
+    "hourStart": { "type": "integer", "required": true, "min": 0, "max": 23 },
+    "hourEnd": { "type": "integer", "required": true, "min": 0, "max": 23 },
+    "doorOpenTemp": { "type": "integer", "required": true, "min": 16, "max": 30 },
+    "ecoAwayTemp": { "type": "integer", "required": true, "min": 16, "max": 30 },
+    "comfortTemp": { "type": "integer", "required": true, "min": 16, "max": 30 },
+    "awayTemp": { "type": "integer", "required": true, "min": 16, "max": 30 },
+    "mode": { "type": "string", "required": true, "allowedValues": ["cool", "dry", "auto", "fan_only"] },
+    "activateFan": { "type": "boolean", "required": true }
+  },
+  "comparisons": [
+    {
+      "leftPath": "weatherPowerSaving.triggerUvIndex",
+      "rightPath": "weatherPowerSaving.recoveryUvIndex",
+      "operator": "gte",
+      "message": "TriggerUvIndex must be greater than or equal to RecoveryUvIndex."
+    },
+    {
+      "leftPath": "weatherPowerSaving.triggerOutdoorTempC",
+      "rightPath": "weatherPowerSaving.recoveryOutdoorTempC",
+      "operator": "gte",
+      "message": "TriggerOutdoorTempC must be greater than or equal to RecoveryOutdoorTempC."
+    }
+  ],
+  "blockComparisons": [
+    {
+      "leftField": "comfortTemp",
+      "rightField": "doorOpenTemp",
+      "operator": "lte",
+      "message": "ComfortTemp must be less than or equal to DoorOpenTemp."
+    }
+  ]
+}

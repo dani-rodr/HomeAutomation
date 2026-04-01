@@ -1,13 +1,14 @@
 using System.Linq;
 using HomeAutomation.apps.Area.Bedroom.Automations.Entities;
 using HomeAutomation.apps.Area.Bedroom.Services.Schedulers;
-using BedroomTimeBlock = HomeAutomation.apps.Area.Bedroom.Services.Schedulers.TimeBlock;
+using HomeAutomation.apps.Common.Config;
 
 namespace HomeAutomation.apps.Area.Bedroom.Automations;
 
 public class ClimateAutomation(
     IClimateEntities entities,
-    IClimateScheduler scheduler,
+    IClimateSettingsResolver scheduler,
+    IAreaConfigChangeNotifier configChangeNotifier,
     ILogger<ClimateAutomation> logger
 ) : ToggleableAutomation(entities.MasterSwitch, logger)
 {
@@ -31,6 +32,10 @@ public class ClimateAutomation(
 
         yield return _weather.StateAllChanges().Subscribe(ApplyPowerSavingModeFromWeather);
 
+        yield return configChangeNotifier
+            .Changes.Where(x => x.AreaKey == "bedroom")
+            .Subscribe(HandleBedroomConfigChanged);
+
         yield return _motionSensor
             .OnCleared(new(Hours: 1))
             .Where(_ => MasterSwitch.IsOff())
@@ -50,7 +55,7 @@ public class ClimateAutomation(
         [
             .. scheduler.GetSchedules(() =>
             {
-                ApplyScheduledAcSettings(scheduler.FindCurrentTimeBlock());
+                ApplyScheduledAcSettings();
             }),
             .. GetSensorBasedAutomations(),
             .. GetHousePresenceAutomations(),
@@ -111,18 +116,12 @@ public class ClimateAutomation(
             e.New?.State
         );
 
-        ApplyScheduledAcSettings(scheduler.FindCurrentTimeBlock());
+        ApplyScheduledAcSettings();
     }
 
     private void ApplyPowerSavingModeFromWeather(StateChange e)
     {
-        const double weatherTriggerUvIndex = 8.0;
-
-        const double weatherTriggerOutdoorTempC = 32.0;
-
-        const double weatherRecoveryUvIndex = 5.0;
-
-        const double weatherRecoveryOutdoorTempC = 30.0;
+        var weatherThresholds = scheduler.GetWeatherPowerSavingSettings();
 
         var (_, uvIndex) = e.GetAttributeChange<double?>("uv_index");
 
@@ -140,14 +139,14 @@ public class ClimateAutomation(
         }
 
         var shouldEnablePowerSaving =
-            uvIndex.Value >= weatherTriggerUvIndex
-            || outdoorTemperature.Value >= weatherTriggerOutdoorTempC;
+            uvIndex.Value >= weatherThresholds.TriggerUvIndex
+            || outdoorTemperature.Value >= weatherThresholds.TriggerOutdoorTempC;
 
         var shouldDisablePowerSaving =
-            uvIndex.Value <= weatherRecoveryUvIndex
-            && outdoorTemperature.Value <= weatherRecoveryOutdoorTempC;
+            uvIndex.Value <= weatherThresholds.RecoveryUvIndex
+            && outdoorTemperature.Value <= weatherThresholds.RecoveryOutdoorTempC;
 
-        var toggleReason = uvIndex.Value >= weatherTriggerUvIndex ? "uv" : "temperature";
+        var toggleReason = uvIndex.Value >= weatherThresholds.TriggerUvIndex ? "uv" : "temperature";
 
         Logger.LogDebug(
             "Weather power-saving evaluation: UvIndex={UvIndex}, OutdoorTemp={OutdoorTemp}, ModeIsOn={ModeIsOn}, ShouldEnable={ShouldEnable}, ShouldDisable={ShouldDisable}",
@@ -190,6 +189,28 @@ public class ClimateAutomation(
             uvIndex,
             outdoorTemperature
         );
+    }
+
+    private void HandleBedroomConfigChanged(AreaConfigChangedEvent changeEvent)
+    {
+        if (MasterSwitch.IsOff())
+        {
+            Logger.LogDebug(
+                "Config changed for area {AreaKey} ({ChangeType}) but master switch is off.",
+                changeEvent.AreaKey,
+                changeEvent.ChangeType
+            );
+
+            return;
+        }
+
+        Logger.LogInformation(
+            "Config changed for area {AreaKey} ({ChangeType}), reapplying climate settings.",
+            changeEvent.AreaKey,
+            changeEvent.ChangeType
+        );
+
+        ApplyScheduledAcSettings();
     }
 
     private IEnumerable<IDisposable> GetHousePresenceAutomations()
@@ -257,30 +278,20 @@ public class ClimateAutomation(
             });
     }
 
-    private void ApplyScheduledAcSettings(BedroomTimeBlock? timeBlock)
+    private void ApplyScheduledAcSettings()
     {
-        Logger.LogDebug(
-            "AC settings evaluation: TimeBlock={TimeBlock}, AC.IsOn={AcOn}",
-            timeBlock?.ToString() ?? "None",
-            _ac.IsOn()
-        );
-
-        if (timeBlock is null)
+        if (!scheduler.TryGetCurrentSetting(out var timeBlock, out var setting))
         {
             Logger.LogDebug("Skipping AC settings: No active time block");
 
             return;
         }
 
-        if (!scheduler.TryGetSetting(timeBlock.Value, out var setting))
-        {
-            Logger.LogDebug(
-                "Skipping AC settings: No settings found for time block {TimeBlock}",
-                timeBlock.Value
-            );
-
-            return;
-        }
+        Logger.LogDebug(
+            "AC settings evaluation: TimeBlock={TimeBlock}, AC.IsOn={AcOn}",
+            timeBlock,
+            _ac.IsOn()
+        );
 
         if (!_ac.IsOn())
         {
@@ -314,7 +325,7 @@ public class ClimateAutomation(
 
         Logger.LogDebug(
             "Applying AC schedule for {TimeBlock}: {CurrentTemp}°C → {TargetTemp}°C, {CurrentMode} → {TargetMode}, ActivateFan={ActivateFan}",
-            timeBlock.Value,
+            timeBlock,
             currentTemp,
             targetTemp,
             currentMode,

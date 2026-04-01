@@ -1,6 +1,7 @@
 using HomeAutomation.apps.Area.Bedroom.Automations;
 using HomeAutomation.apps.Area.Bedroom.Automations.Entities;
-using HomeAutomation.apps.Area.Bedroom.Services.Schedulers;
+using HomeAutomation.apps.Area.Bedroom.Config;
+using HomeAutomation.apps.Common.Config;
 
 namespace HomeAutomation.Tests.Area.Bedroom.Automations;
 
@@ -10,23 +11,36 @@ public partial class ClimateAutomationTests : AutomationTestBase<ClimateAutomati
 
     private Mock<ILogger<ClimateAutomation>> _mockLogger => Logger;
 
-    private readonly Mock<IClimateScheduler> _mockScheduler;
+    private readonly Mock<
+        HomeAutomation.apps.Area.Bedroom.Services.Schedulers.IClimateSettingsResolver
+    > _mockScheduler;
 
     private readonly TestEntities _entities;
 
     private readonly ClimateAutomation _automation;
 
+    private readonly AreaConfigChangeNotifier _areaConfigChangeNotifier;
+
     public ClimateAutomationTests()
     {
-        _mockScheduler = new Mock<IClimateScheduler>();
+        _mockScheduler =
+            new Mock<
+                HomeAutomation.apps.Area.Bedroom.Services.Schedulers.IClimateSettingsResolver
+            >();
 
         _entities = new TestEntities(_mockHaContext);
+        _areaConfigChangeNotifier = new AreaConfigChangeNotifier();
 
         SetupDefaultEntityStates();
 
         SetupDefaultSchedulerMock();
 
-        _automation = new ClimateAutomation(_entities, _mockScheduler.Object, _mockLogger.Object);
+        _automation = new ClimateAutomation(
+            _entities,
+            _mockScheduler.Object,
+            _areaConfigChangeNotifier,
+            _mockLogger.Object
+        );
 
         StartAutomation(_automation, _entities.MasterSwitch.EntityId);
     }
@@ -74,39 +88,45 @@ public partial class ClimateAutomationTests : AutomationTestBase<ClimateAutomati
     {
         // Setup default Sunset time block for existing tests
 
-        var defaultSetting = new AcSettings(
-            DoorOpenTemp: 25,
-            EcoAwayTemp: 27,
-            ComfortTemp: 23,
-            AwayTemp: 27,
-            Mode: "cool",
-            ActivateFan: false,
-            HourStart: 18,
-            HourEnd: 0
-        );
+        var defaultSetting = new ClimateSetting(25, 27, 23, 27, "cool", false, 18, 0);
 
-        _mockScheduler.Setup(x => x.FindCurrentTimeBlock()).Returns(TimeBlock.Sunset);
+        var weatherSettings = new WeatherPowerSavingSettings
+        {
+            TriggerUvIndex = 8,
+            TriggerOutdoorTempC = 32,
+            RecoveryUvIndex = 5,
+            RecoveryOutdoorTempC = 30,
+        };
 
         _mockScheduler
-            .Setup(x => x.TryGetSetting(TimeBlock.Sunset, out It.Ref<AcSettings?>.IsAny))
-            .Returns(
-                new TryGetSettingCallback(
-                    (TimeBlock timeBlock, out AcSettings? setting) =>
-                    {
-                        setting = defaultSetting;
-
-                        return true;
-                    }
+            .Setup(x =>
+                x.TryGetCurrentSetting(
+                    out It.Ref<TimeBlock>.IsAny,
+                    out It.Ref<ClimateSetting>.IsAny
                 )
+            )
+            .Returns(
+                (out TimeBlock timeBlock, out ClimateSetting setting) =>
+                {
+                    timeBlock = TimeBlock.Sunset;
+                    setting = defaultSetting;
+                    return true;
+                }
             );
+
+        _mockScheduler.Setup(x => x.GetWeatherPowerSavingSettings()).Returns(weatherSettings);
 
         // Setup the new CalculateTemperature method
 
         _mockScheduler
             .Setup(x =>
-                x.CalculateTemperature(It.IsAny<AcSettings>(), It.IsAny<bool>(), It.IsAny<bool>())
+                x.CalculateTemperature(
+                    It.IsAny<ClimateSetting>(),
+                    It.IsAny<bool>(),
+                    It.IsAny<bool>()
+                )
             )
-            .Returns<AcSettings, bool, bool>(
+            .Returns<ClimateSetting, bool, bool>(
                 (settings, occupied, doorOpen) =>
                 {
                     // Simulate the temperature calculation logic for tests
@@ -127,29 +147,36 @@ public partial class ClimateAutomationTests : AutomationTestBase<ClimateAutomati
         _mockScheduler.Setup(x => x.GetResetSchedule()).Returns(Mock.Of<IDisposable>());
     }
 
-    private delegate bool TryGetSettingCallback(TimeBlock timeBlock, out AcSettings? setting);
-
-    private void SetupSchedulerMock(TimeBlock timeBlock, AcSettings expectedSetting)
+    private void SetupSchedulerMock(TimeBlock timeBlock, ClimateSetting expectedSetting)
     {
         _mockScheduler.Reset(); // Optional, but ensures clean state
 
-        _mockScheduler.Setup(x => x.FindCurrentTimeBlock()).Returns(timeBlock);
-
-        // Set the setting directly in out param
-
         _mockScheduler
             .Setup(x =>
-                x.TryGetSetting(
-                    It.Is<TimeBlock>(tb => tb == timeBlock),
-                    out It.Ref<AcSettings?>.IsAny
+                x.TryGetCurrentSetting(
+                    out It.Ref<TimeBlock>.IsAny,
+                    out It.Ref<ClimateSetting>.IsAny
                 )
             )
             .Returns(
-                (TimeBlock _, out AcSettings? s) =>
+                (out TimeBlock tb, out ClimateSetting s) =>
                 {
+                    tb = timeBlock;
                     s = expectedSetting;
 
                     return true;
+                }
+            );
+
+        _mockScheduler
+            .Setup(x => x.GetWeatherPowerSavingSettings())
+            .Returns(
+                new WeatherPowerSavingSettings
+                {
+                    TriggerUvIndex = 8,
+                    TriggerOutdoorTempC = 32,
+                    RecoveryUvIndex = 5,
+                    RecoveryOutdoorTempC = 30,
                 }
             );
 
@@ -158,12 +185,12 @@ public partial class ClimateAutomationTests : AutomationTestBase<ClimateAutomati
         _mockScheduler
             .Setup(x =>
                 x.CalculateTemperature(
-                    It.Is<AcSettings>(s => s == expectedSetting),
+                    It.Is<ClimateSetting>(s => s == expectedSetting),
                     It.IsAny<bool>(),
                     It.IsAny<bool>()
                 )
             )
-            .Returns<AcSettings, bool, bool>(
+            .Returns<ClimateSetting, bool, bool>(
                 (settings, occupied, doorOpen) =>
                 {
                     // Simulate the temperature calculation logic
@@ -177,6 +204,46 @@ public partial class ClimateAutomationTests : AutomationTestBase<ClimateAutomati
                         (false, _) => settings.AwayTemp, // unoccupied = away
                     };
                 }
+            );
+    }
+
+    [Fact]
+    public void ConfigChange_ForBedroom_Should_ReapplyScheduledSettings()
+    {
+        _mockScheduler.Invocations.Clear();
+
+        _areaConfigChangeNotifier.Publish(
+            new AreaConfigChangedEvent("bedroom", AreaConfigChangeType.Saved, DateTimeOffset.UtcNow)
+        );
+
+        _mockScheduler
+            .Verify(
+                x =>
+                    x.TryGetCurrentSetting(
+                        out It.Ref<TimeBlock>.IsAny,
+                        out It.Ref<ClimateSetting>.IsAny
+                    ),
+                Times.AtLeastOnce
+            );
+    }
+
+    [Fact]
+    public void ConfigChange_ForDifferentArea_Should_NotReapplyScheduledSettings()
+    {
+        _mockScheduler.Invocations.Clear();
+
+        _areaConfigChangeNotifier.Publish(
+            new AreaConfigChangedEvent("kitchen", AreaConfigChangeType.Saved, DateTimeOffset.UtcNow)
+        );
+
+        _mockScheduler
+            .Verify(
+                x =>
+                    x.TryGetCurrentSetting(
+                        out It.Ref<TimeBlock>.IsAny,
+                        out It.Ref<ClimateSetting>.IsAny
+                    ),
+                Times.Never
             );
     }
 
@@ -220,8 +287,13 @@ public partial class ClimateAutomationTests : AutomationTestBase<ClimateAutomati
     {
         // Mock scheduler is set to return Sunset time block
 
-        var currentTimeBlock = _mockScheduler.Object.FindCurrentTimeBlock();
+        var success = _mockScheduler.Object.TryGetCurrentSetting(
+            out var currentTimeBlock,
+            out var setting
+        );
 
+        success.Should().BeTrue("Mock scheduler should provide a current setting");
+        setting.Should().NotBeNull();
         currentTimeBlock
             .Should()
             .Be(TimeBlock.Sunset, "Mock scheduler is configured to return Sunset time block");
@@ -232,9 +304,13 @@ public partial class ClimateAutomationTests : AutomationTestBase<ClimateAutomati
     {
         // Test that the mock scheduler returns correct settings for Sunset time block
 
-        var success = _mockScheduler.Object.TryGetSetting(TimeBlock.Sunset, out var setting);
+        var success = _mockScheduler.Object.TryGetCurrentSetting(
+            out var timeBlock,
+            out var setting
+        );
 
         success.Should().BeTrue("Sunset time block should have valid settings");
+        timeBlock.Should().Be(TimeBlock.Sunset);
 
         setting.Should().NotBeNull();
 
@@ -899,9 +975,13 @@ public partial class ClimateAutomationTests : AutomationTestBase<ClimateAutomati
     {
         // Test that GetTemperature returns ComfortTemp for occupied + closed door scenario
 
-        var success = _mockScheduler.Object.TryGetSetting(TimeBlock.Sunset, out var setting);
+        var success = _mockScheduler.Object.TryGetCurrentSetting(
+            out var timeBlock,
+            out var setting
+        );
 
         success.Should().BeTrue();
+        timeBlock.Should().Be(TimeBlock.Sunset);
 
         var expectedTemp = setting!.ComfortTemp; // Should be 23 for Sunset
 
@@ -915,9 +995,13 @@ public partial class ClimateAutomationTests : AutomationTestBase<ClimateAutomati
     {
         // Test that PowerSaving mode overrides all other conditions
 
-        var success = _mockScheduler.Object.TryGetSetting(TimeBlock.Sunset, out var setting);
+        var success = _mockScheduler.Object.TryGetCurrentSetting(
+            out var timeBlock,
+            out var setting
+        );
 
         success.Should().BeTrue();
+        timeBlock.Should().Be(TimeBlock.Sunset);
 
         var expectedTemp = setting!.EcoAwayTemp; // Should be 27 for Sunset
 

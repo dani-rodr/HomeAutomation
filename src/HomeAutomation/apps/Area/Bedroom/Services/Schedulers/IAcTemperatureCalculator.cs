@@ -1,3 +1,5 @@
+using HomeAutomation.apps.Area.Bedroom.Config;
+
 namespace HomeAutomation.apps.Area.Bedroom.Services.Schedulers;
 
 /// <summary>
@@ -14,7 +16,7 @@ public interface IAcTemperatureCalculator
     /// <param name="powerSaving">Whether power saving mode is currently enabled</param>
     /// <returns>The calculated temperature in Celsius</returns>
     int CalculateTemperature(
-        AcSettings settings,
+        ClimateSetting settings,
         bool isOccupied,
         bool isDoorOpen,
         bool powerSaving

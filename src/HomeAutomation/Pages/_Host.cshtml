@@ -1,0 +1,49 @@
+@page "/"
+@namespace HomeAutomation.Pages
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@using HomeAutomation.Components
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <base href="~/" />
+    <title>Area Config</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;600;700;800&display=swap" rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Nunito Sans', 'ui-sans-serif', 'system-ui']
+                    },
+                    colors: {
+                        ha: {
+                            bg: '#f2f4f8',
+                            panel: '#ffffff',
+                            line: '#d7deea',
+                            ink: '#15253a',
+                            muted: '#5f6f86',
+                            accent: '#1f78c1',
+                            success: '#0f766e',
+                            danger: '#b42318'
+                        }
+                    },
+                    boxShadow: {
+                        panel: '0 10px 30px rgba(31, 57, 89, 0.08)'
+                    }
+                }
+            }
+        };
+    </script>
+    <link rel="stylesheet" href="app.css" />
+</head>
+<body>
+    <component type="typeof(App)" render-mode="ServerPrerendered" />
+    <script src="_framework/blazor.server.js"></script>
+</body>
+</html>

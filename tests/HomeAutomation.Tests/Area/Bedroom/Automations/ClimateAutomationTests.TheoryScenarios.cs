@@ -1,4 +1,4 @@
-using HomeAutomation.apps.Area.Bedroom.Services.Schedulers;
+using HomeAutomation.apps.Area.Bedroom.Config;
 
 namespace HomeAutomation.Tests.Area.Bedroom.Automations;
 
@@ -7,10 +7,38 @@ public partial class ClimateAutomationTests
     #region Comprehensive Theory Tests for Temperature Selection
 
     [Theory]
-    [InlineData(true, false, TimeBlock.Sunset, 23, "cool", "Occupied + closed door = ComfortTemp")]
-    [InlineData(false, true, TimeBlock.Sunset, 27, "cool", "Unoccupied + open door = AwayTemp")]
-    [InlineData(true, true, TimeBlock.Sunset, 25, "cool", "Occupied + open door = DoorOpenTemp")]
-    [InlineData(false, false, TimeBlock.Sunset, 27, "cool", "Unoccupied + closed door = AwayTemp")]
+    [InlineData(
+        true,
+        false,
+        TimeBlock.Sunset,
+        23,
+        "cool",
+        "Occupied + closed door = ComfortTemp"
+    )]
+    [InlineData(
+        false,
+        true,
+        TimeBlock.Sunset,
+        27,
+        "cool",
+        "Unoccupied + open door = AwayTemp"
+    )]
+    [InlineData(
+        true,
+        true,
+        TimeBlock.Sunset,
+        25,
+        "cool",
+        "Occupied + open door = DoorOpenTemp"
+    )]
+    [InlineData(
+        false,
+        false,
+        TimeBlock.Sunset,
+        27,
+        "cool",
+        "Unoccupied + closed door = AwayTemp"
+    )]
     public void ClimateAutomation_TemperatureSelection_Should_Follow_Logic(
         bool occupied,
         bool doorOpen,
@@ -20,16 +48,7 @@ public partial class ClimateAutomationTests
         string scenario
     )
     {
-        var testSetting = new AcSettings(
-            DoorOpenTemp: 25,
-            EcoAwayTemp: 27,
-            ComfortTemp: 23,
-            AwayTemp: 27,
-            Mode: expectedMode,
-            ActivateFan: false,
-            HourStart: 18,
-            HourEnd: 0
-        );
+        var testSetting = new ClimateSetting(25, 27, 23, 27, expectedMode, false, 18, 0);
 
         SetupSchedulerMock(timeBlock, testSetting);
         _mockHaContext.ClearServiceCalls();
@@ -88,15 +107,15 @@ public partial class ClimateAutomationTests
         string scenario
     )
     {
-        var testSetting = new AcSettings(
-            DoorOpenTemp: 25,
-            EcoAwayTemp: powerSavingTemp,
-            ComfortTemp: coolTemp,
-            AwayTemp: passiveTemp,
-            Mode: mode,
-            ActivateFan: activateFan,
-            HourStart: 18,
-            HourEnd: 0
+        var testSetting = new ClimateSetting(
+            25,
+            powerSavingTemp,
+            coolTemp,
+            passiveTemp,
+            mode,
+            activateFan,
+            18,
+            0
         );
 
         SetupSchedulerMock(timeBlock, testSetting);
@@ -128,16 +147,7 @@ public partial class ClimateAutomationTests
         string scenario
     )
     {
-        var testSetting = new AcSettings(
-            DoorOpenTemp: 25,
-            EcoAwayTemp: 27,
-            ComfortTemp: 23,
-            AwayTemp: 27,
-            Mode: "cool",
-            ActivateFan: activateFan,
-            HourStart: 18,
-            HourEnd: 0
-        );
+        var testSetting = new ClimateSetting(25, 27, 23, 27, "cool", activateFan, 18, 0);
 
         SetupSchedulerMock(TimeBlock.Sunset, testSetting);
 
