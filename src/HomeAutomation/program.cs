@@ -1,4 +1,6 @@
 using System.Reflection;
+using System.IO;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -35,6 +37,17 @@ builder
     .AddNetDaemonScheduler()
     .AddHomeAssistantGenerated()
     .AddHomeEntitiesAndServices();
+
+var dataProtectionKeyPath = Path.Combine(
+    AppContext.BaseDirectory,
+    ".aspnet",
+    "DataProtection-Keys"
+);
+Directory.CreateDirectory(dataProtectionKeyPath);
+builder
+    .Services.AddDataProtection()
+    .SetApplicationName("HomeAutomation")
+    .PersistKeysToFileSystem(new DirectoryInfo(dataProtectionKeyPath));
 
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
