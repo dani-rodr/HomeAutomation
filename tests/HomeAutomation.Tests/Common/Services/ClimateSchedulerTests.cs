@@ -167,6 +167,48 @@ public class ClimateSchedulerTests : HaContextTestBase
         actualTemp.Should().Be(expectedTemp, reason);
     }
 
+    [Theory]
+    [InlineData("on", true)]
+    [InlineData("off", false)]
+    public void CalculateTemperature_ShouldPassPowerSavingStateToCalculator(
+        string powerSavingState,
+        bool expectedPowerSaving
+    )
+    {
+        _mockHaContext.SetEntityState(
+            _schedulerEntities.PowerSavingMode.EntityId,
+            powerSavingState
+        );
+
+        var success = _scheduler.TryGetSetting(TimeBlock.Sunset, out var setting);
+        success.Should().BeTrue();
+
+        _mockCalculator
+            .Setup(x =>
+                x.CalculateTemperature(
+                    setting!,
+                    isOccupied: true,
+                    isDoorOpen: false,
+                    expectedPowerSaving
+                )
+            )
+            .Returns(26);
+
+        var result = _scheduler.CalculateTemperature(setting!, isOccupied: true, isDoorOpen: false);
+
+        result.Should().Be(26);
+        _mockCalculator.Verify(
+            x =>
+                x.CalculateTemperature(
+                    setting!,
+                    isOccupied: true,
+                    isDoorOpen: false,
+                    expectedPowerSaving
+                ),
+            Times.Once
+        );
+    }
+
     #endregion
 
     #region Time Block Detection Tests

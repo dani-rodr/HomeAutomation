@@ -1,25 +1,17 @@
 using HomeAutomation.apps.Area.Bedroom.Services.Schedulers;
-using HomeAutomation.apps.Area.Bedroom.Services.Schedulers.Entities;
 
 namespace HomeAutomation.Tests.Common.Services;
 
-public class AcTemperatureCalculatorTests : HaContextTestBase
+public class AcTemperatureCalculatorTests
 {
-    private MockHaContext _mockHaContext => HaContext;
-    private readonly InputBooleanEntity _powerSaving;
     private readonly Mock<ILogger<AcTemperatureCalculator>> _mockLogger;
-    private readonly Mock<IClimateSchedulerEntities> _mockEntities;
     private readonly IAcTemperatureCalculator _calculator;
 
     public AcTemperatureCalculatorTests()
     {
-        _powerSaving = new InputBooleanEntity(_mockHaContext, "input_boolean.power_saving_mode");
         _mockLogger = new Mock<ILogger<AcTemperatureCalculator>>();
-        _mockEntities = new Mock<IClimateSchedulerEntities>();
 
-        _mockEntities.Setup(e => e.PowerSavingMode).Returns(_powerSaving);
-
-        _calculator = new AcTemperatureCalculator(_mockEntities.Object, _mockLogger.Object);
+        _calculator = new AcTemperatureCalculator(_mockLogger.Object);
     }
 
     private static AcSettings CreateDefaultSetting() =>
@@ -35,26 +27,29 @@ public class AcTemperatureCalculatorTests : HaContextTestBase
         );
 
     [Theory]
-    [InlineData(true, false, "off", 23, "Occupied + door closed = ComfortTemp")]
-    [InlineData(true, false, "on", 23, "Occupied + door closed ignores power saving = ComfortTemp")]
-    [InlineData(true, true, "off", 26, "Occupied + door open = DoorOpenTemp")]
-    [InlineData(true, true, "on", 26, "Occupied + door open ignores power saving = DoorOpenTemp")]
-    [InlineData(false, false, "on", 28, "Unoccupied + power saving = EcoAwayTemp")]
-    [InlineData(false, true, "on", 28, "Unoccupied + door open + power saving = EcoAwayTemp")]
-    [InlineData(false, false, "off", 29, "Unoccupied + no power saving = AwayTemp")]
-    [InlineData(false, true, "off", 29, "Unoccupied + door open + no power saving = AwayTemp")]
+    [InlineData(true, false, false, 23, "Occupied + door closed = ComfortTemp")]
+    [InlineData(true, false, true, 23, "Occupied + door closed ignores power saving = ComfortTemp")]
+    [InlineData(true, true, false, 26, "Occupied + door open = DoorOpenTemp")]
+    [InlineData(true, true, true, 26, "Occupied + door open ignores power saving = DoorOpenTemp")]
+    [InlineData(false, false, true, 28, "Unoccupied + power saving = EcoAwayTemp")]
+    [InlineData(false, true, true, 28, "Unoccupied + door open + power saving = EcoAwayTemp")]
+    [InlineData(false, false, false, 29, "Unoccupied + no power saving = AwayTemp")]
+    [InlineData(false, true, false, 29, "Unoccupied + door open + no power saving = AwayTemp")]
     public void CalculateTemperature_ReturnsExpectedTemp(
         bool isOccupied,
         bool isDoorOpen,
-        string powerSavingState,
+        bool powerSaving,
         int expectedTemp,
         string _ // description, optional
     )
     {
-        _mockHaContext.SetEntityState(_powerSaving.EntityId, powerSavingState);
-
         var setting = CreateDefaultSetting();
-        var actualTemp = _calculator.CalculateTemperature(setting, isOccupied, isDoorOpen);
+        var actualTemp = _calculator.CalculateTemperature(
+            setting,
+            isOccupied,
+            isDoorOpen,
+            powerSaving
+        );
 
         Assert.Equal(expectedTemp, actualTemp);
     }
@@ -62,10 +57,8 @@ public class AcTemperatureCalculatorTests : HaContextTestBase
     [Fact]
     public void CalculateTemperature_LogsDebugInformation()
     {
-        _mockHaContext.SetEntityState(_powerSaving.EntityId, "off");
-
         var setting = CreateDefaultSetting();
-        _calculator.CalculateTemperature(setting, true, false);
+        _calculator.CalculateTemperature(setting, true, false, false);
 
         _mockLogger.Verify(
             l =>

@@ -3,18 +3,18 @@ namespace HomeAutomation.apps.Area.Bedroom.Services.Schedulers;
 /// <summary>
 /// Calculates appropriate AC temperature settings based on environmental conditions and user preferences.
 /// </summary>
-public class AcTemperatureCalculator(
-    Entities.IClimateSchedulerEntities entities,
-    ILogger<AcTemperatureCalculator> logger
-) : IAcTemperatureCalculator
+public class AcTemperatureCalculator(ILogger<AcTemperatureCalculator> logger)
+    : IAcTemperatureCalculator
 {
-    private readonly InputBooleanEntity _isPowerSavingMode = entities.PowerSavingMode;
     private readonly ILogger<AcTemperatureCalculator> _logger = logger;
 
-    public int CalculateTemperature(AcSettings settings, bool isOccupied, bool isDoorOpen)
+    public int CalculateTemperature(
+        AcSettings settings,
+        bool isOccupied,
+        bool isDoorOpen,
+        bool powerSaving
+    )
     {
-        bool powerSaving = _isPowerSavingMode.IsOn();
-
         int temp;
         if (isOccupied && !isDoorOpen)
         {
