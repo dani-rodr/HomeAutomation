@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Area Config</title>
+    <style>
+      :root {
+        --bg: #f3f0e8;
+        --card: #fffdf7;
+        --ink: #2b2925;
+        --accent: #2f6f5e;
+        --danger: #c1403d;
+        --border: #d6d0c4;
+      }
+
+      body {
+        margin: 0;
+        font-family: "Segoe UI", sans-serif;
+        color: var(--ink);
+        background: radial-gradient(circle at top right, #dfe9dd 0%, var(--bg) 55%);
+      }
+
+      .container {
+        max-width: 900px;
+        margin: 2rem auto;
+        padding: 0 1rem;
+      }
+
+      .panel {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 1rem;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
+      }
+
+      h1 {
+        margin: 0 0 1rem;
+        font-size: 1.6rem;
+      }
+
+      .row {
+        display: flex;
+        gap: 0.75rem;
+        align-items: center;
+        margin-bottom: 0.75rem;
+      }
+
+      select,
+      button,
+      textarea {
+        font: inherit;
+      }
+
+      select,
+      button {
+        border-radius: 8px;
+        border: 1px solid var(--border);
+        padding: 0.5rem 0.75rem;
+        background: white;
+      }
+
+      button.primary {
+        background: var(--accent);
+        color: white;
+        border-color: var(--accent);
+      }
+
+      button.danger {
+        background: #fff;
+        color: var(--danger);
+        border-color: var(--danger);
+      }
+
+      textarea {
+        width: 100%;
+        min-height: 420px;
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 0.75rem;
+        box-sizing: border-box;
+        font-family: Consolas, monospace;
+        line-height: 1.35;
+      }
+
+      .status {
+        margin-top: 0.75rem;
+        min-height: 1.25rem;
+      }
+    </style>
+  </head>
+  <body>
+    <main class="container">
+      <section class="panel">
+        <h1>Area Config Editor</h1>
+        <div class="row">
+          <label for="area">Area</label>
+          <select id="area"></select>
+          <button id="load">Load</button>
+          <button id="save" class="primary">Save</button>
+          <button id="reset" class="danger">Reset</button>
+        </div>
+        <textarea id="json"></textarea>
+        <div id="status" class="status"></div>
+      </section>
+    </main>
+    <script>
+      const areaSelect = document.getElementById("area");
+      const statusEl = document.getElementById("status");
+      const textArea = document.getElementById("json");
+
+      async function fetchJson(url, options) {
+        const response = await fetch(url, options);
+        const payload = await response.json().catch(() => ({}));
+        if (!response.ok) {
+          throw new Error(payload.error || payload.detail || JSON.stringify(payload));
+        }
+        return payload;
+      }
+
+      async function loadAreas() {
+        const areas = await fetchJson("/api/area-config");
+        areaSelect.innerHTML = "";
+        areas.forEach((area) => {
+          const option = document.createElement("option");
+          option.value = area.key;
+          option.textContent = `${area.name} (${area.key})`;
+          areaSelect.appendChild(option);
+        });
+      }
+
+      async function loadCurrent() {
+        const key = areaSelect.value;
+        const config = await fetchJson(`/api/area-config/${encodeURIComponent(key)}`);
+        textArea.value = JSON.stringify(config, null, 2);
+        statusEl.textContent = `Loaded ${key}`;
+      }
+
+      async function saveCurrent() {
+        const key = areaSelect.value;
+        let config;
+        try {
+          config = JSON.parse(textArea.value);
+        } catch {
+          statusEl.textContent = "Invalid JSON.";
+          return;
+        }
+
+        try {
+          await fetchJson(`/api/area-config/${encodeURIComponent(key)}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(config),
+          });
+          statusEl.textContent = `Saved ${key}`;
+        } catch (err) {
+          statusEl.textContent = `Save failed: ${err.message}`;
+        }
+      }
+
+      async function resetCurrent() {
+        const key = areaSelect.value;
+        const config = await fetchJson(`/api/area-config/${encodeURIComponent(key)}/reset`, {
+          method: "POST",
+        });
+        textArea.value = JSON.stringify(config, null, 2);
+        statusEl.textContent = `Reset ${key} to defaults`;
+      }
+
+      document.getElementById("load").addEventListener("click", () => loadCurrent().catch((err) => (statusEl.textContent = err.message)));
+      document.getElementById("save").addEventListener("click", saveCurrent);
+      document.getElementById("reset").addEventListener("click", () => resetCurrent().catch((err) => (statusEl.textContent = err.message)));
+
+      loadAreas()
+        .then(loadCurrent)
+        .catch((err) => {
+          statusEl.textContent = err.message;
+        });
+    </script>
+  </body>
+  </html>

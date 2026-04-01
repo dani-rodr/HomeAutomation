@@ -4,6 +4,7 @@ using HomeAutomation.apps.Area.Desk;
 using HomeAutomation.apps.Area.Kitchen;
 using HomeAutomation.apps.Area.LivingRoom;
 using HomeAutomation.apps.Area.Pantry;
+using HomeAutomation.apps.Common.Config;
 using HomeAutomation.apps.Common.Devices;
 using HomeAutomation.apps.Common.Services.Logging;
 using HomeAutomation.apps.Security;
@@ -16,6 +17,7 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection AddHomeEntitiesAndServices(this IServiceCollection services)
     {
         return services
+            .AddAreaConfigEngine()
             .AddTransient<IEventHandler, HaEventHandler>()
             .AddTransient<GlobalDevices>()
             .AddTransient<ITypedEntityFactory, EntityFactory>()
