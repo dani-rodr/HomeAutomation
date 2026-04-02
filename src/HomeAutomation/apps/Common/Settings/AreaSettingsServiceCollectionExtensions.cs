@@ -14,6 +14,6 @@ public static class AreaSettingsServiceCollectionExtensions
             )
             .AddSingleton<IAreaSettingsChangeNotifier, AreaSettingsChangeNotifier>()
             .AddSingleton<IAreaSettingsStore, AreaSettingsStore>()
-            .AddSingleton(typeof(ILiveAppConfig<>), typeof(LiveAreaAppConfig<>));
+            .AddTransient(typeof(ILiveAppConfig<>), typeof(LiveAreaAppConfig<>));
     }
 }
