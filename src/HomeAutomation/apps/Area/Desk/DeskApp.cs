@@ -11,8 +11,7 @@ public class DeskApp(
     ILgDisplay lgDisplay,
     IDesktop desktop,
     MotionSensor motionSensor,
-    ILogger<LightAutomation> lightAutomationLogger,
-    ILogger<DisplayAutomation> displayAutomationLogger
+    IAutomationFactory automationFactory
 ) : AppBase<DeskSettings>(settings)
 {
     protected override IEnumerable<IAutomation> CreateAutomations()
@@ -23,18 +22,16 @@ public class DeskApp(
 
         yield return motionSensor;
 
-        yield return new LightAutomation(
+        yield return automationFactory.Create<LightAutomation>(
             deskMotionEntities,
             Settings.Light,
-            lgDisplay,
-            lightAutomationLogger
+            lgDisplay
         );
 
-        yield return new DisplayAutomation(
+        yield return automationFactory.Create<DisplayAutomation>(
             lgDisplay,
             desktop,
-            deskMotionEntities.MasterSwitch,
-            displayAutomationLogger
+            deskMotionEntities.MasterSwitch
         );
     }
 }

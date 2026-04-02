@@ -21,6 +21,7 @@ public static class ServiceCollectionExtensions
             .AddTransient<IEventHandler, HaEventHandler>()
             .AddTransient<GlobalDevices>()
             .AddTransient<ITypedEntityFactory, EntityFactory>()
+            .AddTransient<IAutomationFactory, AutomationFactory>()
             .AddTransient<IServices, Services>()
             .AddTransient<INotificationServices, NotificationServices>()
             .AddSingleton<IAutomationLogPolicy, AutomationLogPolicy>()

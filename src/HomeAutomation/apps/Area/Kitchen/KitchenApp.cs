@@ -10,20 +10,15 @@ public class KitchenApp(
     ICookingEntities cookingEntities,
     IAppConfig<KitchenSettings> settings,
     MotionSensor motionSensor,
-    ILogger<LightAutomation> lightAutomationLogger,
-    ILogger<CookingAutomation> cookingAutomationLogger
+    IAutomationFactory automationFactory
 ) : AppBase<KitchenSettings>(settings)
 {
     protected override IEnumerable<IAutomation> CreateAutomations()
     {
         yield return motionSensor;
 
-        yield return new LightAutomation(motionEntities, Settings.Light, lightAutomationLogger);
+        yield return automationFactory.Create<LightAutomation>(motionEntities, Settings.Light);
 
-        yield return new CookingAutomation(
-            cookingEntities,
-            Settings.Cooking,
-            cookingAutomationLogger
-        );
+        yield return automationFactory.Create<CookingAutomation>(cookingEntities, Settings.Cooking);
     }
 }

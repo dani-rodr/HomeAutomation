@@ -9,13 +9,13 @@ public class PantryApp(
     IPantryLightEntities motionEntities,
     MotionSensor motionSensor,
     IAppConfig<PantrySettings> settings,
-    ILogger<LightAutomation> lightAutomationLogger
+    IAutomationFactory automationFactory
 ) : AppBase<PantrySettings>(settings)
 {
     protected override IEnumerable<IAutomation> CreateAutomations()
     {
         yield return motionSensor;
 
-        yield return new LightAutomation(motionEntities, Settings.Light, lightAutomationLogger);
+        yield return automationFactory.Create<LightAutomation>(motionEntities, Settings.Light);
     }
 }

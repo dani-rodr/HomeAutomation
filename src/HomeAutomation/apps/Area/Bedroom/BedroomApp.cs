@@ -7,29 +7,26 @@ using HomeAutomation.apps.Area.Bedroom.Services.Schedulers;
 namespace HomeAutomation.apps.Area.Bedroom;
 
 public class BedroomApp(
-    ILogger<LightAutomation> lightAutomationLogger,
-    ILogger<FanAutomation> fanAutomationLogger,
-    ILogger<ClimateAutomation> climateAutomationLogger,
     IBedroomLightEntities motionEntities,
     IBedroomFanEntities fanEntities,
     IClimateEntities climateEntities,
     IAppConfig<BedroomSettings> settings,
     IClimateSettingsResolver climateSettingsResolver,
-    MotionSensor motionSensor
+    MotionSensor motionSensor,
+    IAutomationFactory automationFactory
 ) : AppBase<BedroomSettings>(settings)
 {
     protected override IEnumerable<IAutomation> CreateAutomations()
     {
         yield return motionSensor;
 
-        yield return new LightAutomation(motionEntities, Settings.Light, lightAutomationLogger);
+        yield return automationFactory.Create<LightAutomation>(motionEntities, Settings.Light);
 
-        yield return new FanAutomation(fanEntities, fanAutomationLogger);
+        yield return automationFactory.Create<FanAutomation>(fanEntities);
 
-        yield return new ClimateAutomation(
+        yield return automationFactory.Create<ClimateAutomation>(
             climateEntities,
-            climateSettingsResolver,
-            climateAutomationLogger
+            climateSettingsResolver
         );
     }
 }

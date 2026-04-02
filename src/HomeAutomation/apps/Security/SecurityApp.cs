@@ -13,8 +13,7 @@ public class SecurityApp(
     AthenaEntities athenaEntities,
     IPersonControllerFactory personControllerFactory,
     IAppConfig<NoAppSettings> settings,
-    ILogger<AccessControlAutomation> accessControlAutomationLogger,
-    ILogger<LockAutomation> lockAutomationLogger
+    IAutomationFactory automationFactory
 ) : AppBase<NoAppSettings>(settings)
 {
     protected override IEnumerable<IAutomation> CreateAutomations()
@@ -24,16 +23,14 @@ public class SecurityApp(
 
         yield return danielController;
         yield return athenaController;
-        yield return new AccessControlAutomation(
-            [danielController, athenaController],
-            locationEntities,
-            accessControlAutomationLogger
+        yield return automationFactory.Create<AccessControlAutomation>(
+            new IPersonController[] { danielController, athenaController },
+            locationEntities
         );
-        yield return new LockAutomation(
+        yield return automationFactory.Create<LockAutomation>(
             lockEntities,
             notificationServices,
-            eventHandler,
-            lockAutomationLogger
+            eventHandler
         );
     }
 }

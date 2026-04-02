@@ -7,21 +7,20 @@ namespace HomeAutomation.apps.Area.Bathroom;
 
 public class BathroomApp(
     IBathroomLightEntities motionEntities,
-    ILogger<LightAutomation> lightAutomationLogger,
     MotionSensor motionSensor,
     IAppConfig<BathroomSettings> settings,
-    IDimmingLightControllerFactory dimmingLightControllerFactory
+    IDimmingLightControllerFactory dimmingLightControllerFactory,
+    IAutomationFactory automationFactory
 ) : AppBase<BathroomSettings>(settings)
 {
     protected override IEnumerable<IAutomation> CreateAutomations()
     {
         yield return motionSensor;
 
-        yield return new LightAutomation(
+        yield return automationFactory.Create<LightAutomation>(
             motionEntities,
             Settings.Light,
-            dimmingLightControllerFactory.Create(motionEntities.SensorDelay),
-            lightAutomationLogger
+            dimmingLightControllerFactory.Create(motionEntities.SensorDelay)
         );
     }
 }
