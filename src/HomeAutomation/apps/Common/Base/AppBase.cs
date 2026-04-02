@@ -15,9 +15,27 @@ public abstract class AppBase<TSettings> : IDisposable
 
         _automations.AddRange(CreateAutomations());
 
-        foreach (var automation in _automations)
+        var startedAutomations = new List<IAutomation>();
+
+        try
         {
-            automation.StartAutomation();
+            foreach (var automation in _automations)
+            {
+                startedAutomations.Add(automation);
+                automation.StartAutomation();
+            }
+        }
+        catch
+        {
+            foreach (var startedAutomation in startedAutomations)
+            {
+                if (startedAutomation is IDisposable disposable)
+                {
+                    disposable.Dispose();
+                }
+            }
+
+            throw;
         }
     }
 

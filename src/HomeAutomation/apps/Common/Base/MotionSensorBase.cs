@@ -1,4 +1,5 @@
 using System.Linq;
+using System.Reactive.Disposables;
 
 namespace HomeAutomation.apps.Common.Base;
 
@@ -9,6 +10,8 @@ public abstract class MotionSensorBase(
     ILogger logger
 ) : ToggleableAutomation(factory.Create<SwitchEntity>(deviceName, "auto_calibrate"), logger)
 {
+    private readonly SerialDisposable _pendingRestartOnClearSubscription = new();
+
     private readonly BinarySensorEntity SmartPresence = factory.Create<BinarySensorEntity>(
         deviceName,
         "smart_presence"
@@ -41,6 +44,7 @@ public abstract class MotionSensorBase(
 
     protected override IEnumerable<IDisposable> GetPersistentAutomations() =>
         [
+            _pendingRestartOnClearSubscription,
             .. HandleAutoCalibrateStateChange(),
             .. HandlePresenceRecoveryToClear(),
             .. HandleDailyRestart(),
@@ -93,6 +97,7 @@ public abstract class MotionSensorBase(
         {
             if (SmartPresence.IsClear())
             {
+                _pendingRestartOnClearSubscription.Disposable = null;
                 Logger.LogInformation(
                     "Scheduled restart: motion sensor is clear, pressing restart button."
                 );
@@ -103,7 +108,7 @@ public abstract class MotionSensorBase(
                 Logger.LogInformation(
                     "Scheduled restart: motion is active, waiting for it to clear."
                 );
-                SmartPresence
+                _pendingRestartOnClearSubscription.Disposable = SmartPresence
                     .OnCleared()
                     .Take(1)
                     .Subscribe(_ =>
@@ -112,6 +117,7 @@ public abstract class MotionSensorBase(
                             "Motion sensor is now clear, pressing restart button."
                         );
                         Restart.Press();
+                        _pendingRestartOnClearSubscription.Disposable = null;
                     });
             }
         });

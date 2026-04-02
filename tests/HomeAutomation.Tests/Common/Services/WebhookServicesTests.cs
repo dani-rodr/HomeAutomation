@@ -102,4 +102,18 @@ public class WebhookServicesTests
 
         _mockSubscription.Verify(s => s.Dispose(), Times.Exactly(2));
     }
+
+    [Fact]
+    public void Dispose_ShouldAllowReRegisteringSameWebhookId()
+    {
+        var service = CreateService();
+        service.Register("same_id", _ => { });
+
+        service.Dispose();
+
+        var result = service.Register("same_id", _ => { });
+
+        Assert.True(result);
+        _mockTriggerManager.Verify(m => m.RegisterTrigger(It.IsAny<object>()), Times.Exactly(2));
+    }
 }

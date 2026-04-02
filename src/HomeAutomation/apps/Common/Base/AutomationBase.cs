@@ -17,6 +17,23 @@ public abstract class AutomationBase(ILogger logger) : IAutomation
 
     public virtual void StartAutomation()
     {
-        _automations = [.. GetAutomations()];
+        _automations?.Dispose();
+
+        var automations = new CompositeDisposable();
+
+        try
+        {
+            foreach (var automation in GetAutomations())
+            {
+                automations.Add(automation);
+            }
+
+            _automations = automations;
+        }
+        catch
+        {
+            automations.Dispose();
+            throw;
+        }
     }
 }

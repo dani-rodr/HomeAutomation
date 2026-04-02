@@ -624,6 +624,52 @@ public class LaptopTests : HaContextTestBase
     }
 
     [Fact]
+    public void ScheduledShutdown_WhenWaitingForMotionOff_DisposeShouldCancelPendingMotionSubscription()
+    {
+        // Arrange
+        _laptop.Dispose();
+        _mockHaContext.ClearServiceCalls();
+
+        Action? scheduledAction = null;
+        var scheduler = new Mock<ILaptopShutdownScheduler>();
+        scheduler
+            .Setup(s => s.GetSchedules(It.IsAny<Action>()))
+            .Returns<Action>(action =>
+            {
+                scheduledAction = action;
+                return [];
+            });
+
+        var laptop = new Laptop(
+            _entities,
+            scheduler.Object,
+            _mockBatteryHandler.Object,
+            _mockEventHandler.Object,
+            _mockLogger.Object
+        );
+
+        laptop.StartAutomation();
+        _mockHaContext.SetEntityState(_entities.VirtualSwitch.EntityId, "on");
+        _mockHaContext.SetEntityState(_entities.Session.EntityId, "unlocked");
+        _mockHaContext.SetEntityState(_entities.MotionSensor.EntityId, "on");
+
+        // Act
+        scheduledAction.Should().NotBeNull();
+        scheduledAction!.Invoke();
+        laptop.Dispose();
+
+        _mockHaContext.ClearServiceCalls();
+        _mockHaContext.SimulateStateChange(_entities.MotionSensor.EntityId, "on", "off");
+
+        // Assert
+        _mockHaContext.ShouldHaveCalledSwitchExactly(
+            _entities.VirtualSwitch.EntityId,
+            "turn_off",
+            0
+        );
+    }
+
+    [Fact]
     public void Laptop_Should_ImplementIComputerInterface()
     {
         // Assert - Verify interface implementation

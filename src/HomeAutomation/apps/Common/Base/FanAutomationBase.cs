@@ -13,6 +13,10 @@ public abstract class FanAutomationBase : ToggleableAutomation
     {
         MotionSensor = entities.MotionSensor;
         Fans = entities.Fans;
+        if (!Fans.Any())
+        {
+            throw new InvalidOperationException("At least one fan must be configured.");
+        }
         MainFan = Fans.First();
     }
 

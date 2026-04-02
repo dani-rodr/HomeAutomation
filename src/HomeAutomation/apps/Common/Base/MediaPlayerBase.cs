@@ -25,7 +25,10 @@ public abstract class MediaPlayerBase(MediaPlayerEntity entity, ILogger logger)
     {
         base.StartAutomation();
         Sources = SourceList?.ToDictionary(s => s, s => s) ?? [];
-        ExtendedSources.ToList().ForEach(pair => Sources.Add(pair.Key, pair.Value));
+        foreach (var (key, value) in ExtendedSources)
+        {
+            Sources[key] = value;
+        }
     }
 
     protected override IEnumerable<IDisposable> GetAutomations() => [ShowQueuedSource()];

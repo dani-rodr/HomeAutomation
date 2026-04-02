@@ -262,6 +262,41 @@ public class MotionSensorBaseTests
         _mockHaContext.ShouldHaveCalledSwitchTurnOff(_engineeringMode.EntityId);
     }
 
+    [Fact]
+    public void DailyRestart_WhenWaitingForMotionClear_DisposeShouldCancelPendingClearSubscription()
+    {
+        // Arrange
+        Action? scheduledAction = null;
+        _scheduler
+            .Setup(s => s.GetSchedules(It.IsAny<Action>()))
+            .Returns<Action>(action =>
+            {
+                scheduledAction = action;
+                return [];
+            });
+
+        _mockHaContext.SetEntityState(_masterSwitch.EntityId, "on");
+        _mockHaContext.SetEntityState(_smartPresence.EntityId, "on");
+
+        _sut.StartAutomation();
+
+        // Act - schedule runs while motion is active, then automation is disposed before motion clears
+        scheduledAction.Should().NotBeNull();
+        scheduledAction!.Invoke();
+        _sut.Dispose();
+
+        _mockHaContext.ClearServiceCalls();
+        _mockHaContext.SimulateStateChange(_smartPresence.EntityId, "on", "off");
+
+        // Assert - no restart press should happen after dispose
+        _mockHaContext.ShouldHaveCalledDomainServiceExactly(
+            "button",
+            "press",
+            0,
+            _restart.EntityId
+        );
+    }
+
     private void SetupZoneTestData()
     {
         // Set up zone test data - make zone 0 trigger LogMotionTrigger

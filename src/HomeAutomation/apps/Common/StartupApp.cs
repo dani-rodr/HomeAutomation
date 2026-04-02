@@ -3,6 +3,8 @@ namespace HomeAutomation.apps.Common;
 [NetDaemonApp]
 public class StartupApp : AppBase<NoAppSettings>
 {
+    private static readonly TimeSpan DefaultNotificationDismissDelay = TimeSpan.FromSeconds(10);
+
     protected override IEnumerable<IAutomation> CreateAutomations() => [];
 
     public StartupApp(
@@ -26,16 +28,39 @@ public class StartupApp : AppBase<NoAppSettings>
                 NotificationId = "netdaemon_start",
             }
         );
-        _ = DismissNotificationLaterAsync(services);
+
+        _ = DismissNotificationLaterAsync(
+            () =>
+                services.PersistentNotification.Dismiss(
+                    new PersistentNotificationDismissParameters
+                    {
+                        NotificationId = "netdaemon_start",
+                    }
+                ),
+            logger,
+            DefaultNotificationDismissDelay
+        );
     }
 
-    private static async Task DismissNotificationLaterAsync(
-        HomeAssistantGenerated.Services services
+    public static async Task DismissNotificationLaterAsync(
+        Action dismissNotification,
+        ILogger logger,
+        TimeSpan delay,
+        CancellationToken cancellationToken = default
     )
     {
-        await Task.Delay(TimeSpan.FromSeconds(10));
-        services.PersistentNotification.Dismiss(
-            new PersistentNotificationDismissParameters { NotificationId = "netdaemon_start" }
-        );
+        try
+        {
+            await Task.Delay(delay, cancellationToken);
+            dismissNotification();
+        }
+        catch (OperationCanceledException)
+        {
+            logger.LogDebug("Notification dismissal was canceled.");
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Failed to dismiss startup notification.");
+        }
     }
 }

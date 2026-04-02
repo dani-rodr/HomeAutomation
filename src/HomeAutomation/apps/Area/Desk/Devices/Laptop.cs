@@ -1,4 +1,5 @@
 using System.Linq;
+using System.Reactive.Disposables;
 using HomeAutomation.apps.Area.Desk.Devices.Entities;
 
 namespace HomeAutomation.apps.Area.Desk.Devices;
@@ -11,6 +12,8 @@ public class Laptop(
     ILogger<Laptop> logger
 ) : ComputerBase(eventHandler, logger), ILaptop
 {
+    private readonly SerialDisposable _pendingMotionOffShutdown = new();
+
     protected override string ShowEvent { get; } = "show_laptop";
     protected override string HideEvent { get; } = "hide_laptop";
 
@@ -20,6 +23,7 @@ public class Laptop(
             .. GetSessionLockSwitchAutomation(),
             GetSessionUnlockSwitchAutomation(),
             batteryHandler.StartMonitoring(),
+            _pendingMotionOffShutdown,
             .. GetLogoffAutomations(scheduler),
         ];
 
@@ -86,44 +90,38 @@ public class Laptop(
                 }
             });
 
-    private List<IDisposable> GetLogoffAutomations(ILaptopShutdownScheduler scheduler)
-    {
-        var disposables = new List<IDisposable>();
+    private IEnumerable<IDisposable> GetLogoffAutomations(ILaptopShutdownScheduler scheduler) =>
+        scheduler.GetSchedules(() =>
+        {
+            _pendingMotionOffShutdown.Disposable = null;
 
-        disposables.AddRange(
-            scheduler.GetSchedules(() =>
+            if (!IsOn())
             {
-                if (!IsOn())
-                {
-                    Logger.LogDebug("Laptop is not on, skipping TurnOff.");
-                    return;
-                }
+                Logger.LogDebug("Laptop is not on, skipping TurnOff.");
+                return;
+            }
 
-                if (entities.MotionSensor.IsOff())
+            if (entities.MotionSensor.IsOff())
+            {
+                Logger.LogDebug("Motion sensor is already off, proceeding to TurnOff.");
+                TurnOff();
+                return;
+            }
+
+            Logger.LogDebug("Motion sensor is on, waiting for it to turn off.");
+
+            _pendingMotionOffShutdown.Disposable = entities
+                .MotionSensor.OnTurnedOff()
+                .Take(1)
+                .Subscribe(_ =>
                 {
-                    Logger.LogDebug("Motion sensor is already off, proceeding to TurnOff.");
+                    Logger.LogDebug(
+                        "Motion sensor turned off after schedule, proceeding to TurnOff."
+                    );
                     TurnOff();
-                    return;
-                }
-
-                Logger.LogDebug("Motion sensor is on, waiting for it to turn off.");
-
-                var motionSubscription = entities
-                    .MotionSensor.OnTurnedOff()
-                    .Take(1)
-                    .Subscribe(_ =>
-                    {
-                        Logger.LogDebug(
-                            "Motion sensor turned off after schedule, proceeding to TurnOff."
-                        );
-                        TurnOff();
-                    });
-                disposables.Add(motionSubscription);
-            })
-        );
-
-        return disposables;
-    }
+                    _pendingMotionOffShutdown.Disposable = null;
+                });
+        });
 
     private IEnumerable<IDisposable> GetSessionLockSwitchAutomation() =>
         [

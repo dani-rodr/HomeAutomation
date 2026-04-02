@@ -41,7 +41,7 @@ public class LightAutomation(
 
         yield return MotionSensor
             .OnCleared()
-            .Subscribe(async _ => await dimmingController.OnMotionStoppedAsync(Light));
+            .SubscribeAsync(async _ => await dimmingController.OnMotionStoppedAsync(Light));
     }
 
     public override void Dispose()

@@ -63,6 +63,8 @@ public class WebhookServices(ITriggerManager manager, ILogger<WebhookServices> l
             subscription.Dispose();
             logger.LogDebug("Webhook '{WebhookId}' disposed.", webhookId);
         }
+
+        _subscriptions.Clear();
         GC.SuppressFinalize(this);
     }
 }
