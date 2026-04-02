@@ -13,10 +13,10 @@ public class BedroomApp(
     IBedroomLightEntities motionEntities,
     IBedroomFanEntities fanEntities,
     IClimateEntities climateEntities,
-    IAppConfig<ClimateSettings> settings,
+    IAppConfig<BedroomSettings> settings,
     IClimateSettingsResolver climateSettingsResolver,
     MotionSensor motionSensor
-) : AppBase<ClimateSettings>(settings)
+) : AppBase<BedroomSettings>(settings)
 {
     protected override IEnumerable<IAutomation> CreateAutomations()
     {

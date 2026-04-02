@@ -11,7 +11,7 @@ public class ClimateSettingsResolverTests : HaContextTestBase
         ILogger<HomeAutomation.apps.Area.Bedroom.Services.Schedulers.ClimateSettingsResolver>
     > _mockLogger;
     private readonly Mock<HomeAutomation.apps.Area.Bedroom.Services.Schedulers.IAcTemperatureCalculator> _mockCalculator;
-    private readonly Mock<ILiveAppConfig<ClimateSettings>> _mockLiveSettings;
+    private readonly Mock<ILiveAppConfig<BedroomSettings>> _mockLiveSettings;
     private readonly TestSchedulerEntities _schedulerEntities;
     private readonly HomeAutomation.apps.Area.Bedroom.Services.Schedulers.ClimateSettingsResolver _scheduler;
 
@@ -23,12 +23,12 @@ public class ClimateSettingsResolverTests : HaContextTestBase
             >();
         _mockCalculator =
             new Mock<HomeAutomation.apps.Area.Bedroom.Services.Schedulers.IAcTemperatureCalculator>();
-        _mockLiveSettings = new Mock<ILiveAppConfig<ClimateSettings>>();
+        _mockLiveSettings = new Mock<ILiveAppConfig<BedroomSettings>>();
         _schedulerEntities = new TestSchedulerEntities(_mockHaContext);
-        var settings = CreateClimateSettings();
+        var settings = CreateBedroomSettings();
         _mockLiveSettings.SetupGet(x => x.Value).Returns(settings);
         _mockLiveSettings.SetupGet(x => x.Settings).Returns(settings);
-        _mockLiveSettings.SetupGet(x => x.Changes).Returns(Observable.Empty<ClimateSettings>());
+        _mockLiveSettings.SetupGet(x => x.Changes).Returns(Observable.Empty<BedroomSettings>());
 
         _scheduler =
             new HomeAutomation.apps.Area.Bedroom.Services.Schedulers.ClimateSettingsResolver(
@@ -107,11 +107,11 @@ public class ClimateSettingsResolverTests : HaContextTestBase
     [Fact]
     public void GetSchedules_WithInvalidHours_ShouldLogWarningAndSkipInvalidBlock()
     {
-        var invalidSettings = CreateClimateSettings(sunriseHourStart: 27);
-        var invalidLiveSettings = new Mock<ILiveAppConfig<ClimateSettings>>();
+        var invalidSettings = CreateBedroomSettings(sunriseHourStart: 27);
+        var invalidLiveSettings = new Mock<ILiveAppConfig<BedroomSettings>>();
         invalidLiveSettings.SetupGet(x => x.Value).Returns(invalidSettings);
         invalidLiveSettings.SetupGet(x => x.Settings).Returns(invalidSettings);
-        invalidLiveSettings.SetupGet(x => x.Changes).Returns(Observable.Empty<ClimateSettings>());
+        invalidLiveSettings.SetupGet(x => x.Changes).Returns(Observable.Empty<BedroomSettings>());
         var scheduler =
             new HomeAutomation.apps.Area.Bedroom.Services.Schedulers.ClimateSettingsResolver(
                 _schedulerEntities,
@@ -139,25 +139,28 @@ public class ClimateSettingsResolverTests : HaContextTestBase
     [Fact]
     public void TryGetCurrentSetting_WithNoMatchingRange_ShouldReturnFalse()
     {
-        var settings = new ClimateSettings
+        var settings = new BedroomSettings
         {
-            Sunrise = new ClimateSetting(25, 27, 24, 27, "cool", true, 27, 30),
-            Sunset = new ClimateSetting(25, 27, 23, 27, "cool", false, 27, 30),
-            Midnight = new ClimateSetting(24, 25, 22, 25, "cool", false, 27, 30),
-            WeatherPowerSaving = new WeatherPowerSavingSettings
+            Climate = new ClimateSettings
             {
-                TriggerUvIndex = 8,
-                TriggerOutdoorTempC = 32,
-                RecoveryUvIndex = 5,
-                RecoveryOutdoorTempC = 30,
+                Sunrise = new ClimateSetting(25, 27, 24, 27, "cool", true, 27, 30),
+                Sunset = new ClimateSetting(25, 27, 23, 27, "cool", false, 27, 30),
+                Midnight = new ClimateSetting(24, 25, 22, 25, "cool", false, 27, 30),
+                WeatherPowerSaving = new WeatherPowerSavingSettings
+                {
+                    TriggerUvIndex = 8,
+                    TriggerOutdoorTempC = 32,
+                    RecoveryUvIndex = 5,
+                    RecoveryOutdoorTempC = 30,
+                },
+                Automation = new ClimateAutomationSettings(),
             },
-            Automation = new ClimateAutomationSettings(),
             Light = new BedroomLightSettings(),
         };
-        var liveSettings = new Mock<ILiveAppConfig<ClimateSettings>>();
+        var liveSettings = new Mock<ILiveAppConfig<BedroomSettings>>();
         liveSettings.SetupGet(x => x.Value).Returns(settings);
         liveSettings.SetupGet(x => x.Settings).Returns(settings);
-        liveSettings.SetupGet(x => x.Changes).Returns(Observable.Empty<ClimateSettings>());
+        liveSettings.SetupGet(x => x.Changes).Returns(Observable.Empty<BedroomSettings>());
         var scheduler =
             new HomeAutomation.apps.Area.Bedroom.Services.Schedulers.ClimateSettingsResolver(
                 _schedulerEntities,
@@ -191,20 +194,23 @@ public class ClimateSettingsResolverTests : HaContextTestBase
             new InputBooleanEntity(haContext, "input_boolean.power_saving_mode");
     }
 
-    private static ClimateSettings CreateClimateSettings(int sunriseHourStart = 5) =>
+    private static BedroomSettings CreateBedroomSettings(int sunriseHourStart = 5) =>
         new()
         {
-            Sunrise = new ClimateSetting(25, 27, 24, 27, "cool", true, sunriseHourStart, 18),
-            Sunset = new ClimateSetting(25, 27, 23, 27, "cool", false, 18, 0),
-            Midnight = new ClimateSetting(24, 25, 22, 25, "cool", false, 0, 5),
-            WeatherPowerSaving = new WeatherPowerSavingSettings
+            Climate = new ClimateSettings
             {
-                TriggerUvIndex = 8,
-                TriggerOutdoorTempC = 32,
-                RecoveryUvIndex = 5,
-                RecoveryOutdoorTempC = 30,
+                Sunrise = new ClimateSetting(25, 27, 24, 27, "cool", true, sunriseHourStart, 18),
+                Sunset = new ClimateSetting(25, 27, 23, 27, "cool", false, 18, 0),
+                Midnight = new ClimateSetting(24, 25, 22, 25, "cool", false, 0, 5),
+                WeatherPowerSaving = new WeatherPowerSavingSettings
+                {
+                    TriggerUvIndex = 8,
+                    TriggerOutdoorTempC = 32,
+                    RecoveryUvIndex = 5,
+                    RecoveryOutdoorTempC = 30,
+                },
+                Automation = new ClimateAutomationSettings(),
             },
-            Automation = new ClimateAutomationSettings(),
             Light = new BedroomLightSettings(),
         };
 }

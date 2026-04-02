@@ -303,8 +303,8 @@ public class ServiceCollectionExtensionsTests : HaContextTestBase
         services.AddSingleton<IAppConfig<BathroomSettings>>(
             new TestAppConfig<BathroomSettings>(new())
         );
-        services.AddSingleton<IAppConfig<ClimateSettings>>(
-            new TestAppConfig<ClimateSettings>(new())
+        services.AddSingleton<IAppConfig<BedroomSettings>>(
+            new TestAppConfig<BedroomSettings>(new())
         );
         services.AddSingleton<IAppConfig<DeskSettings>>(new TestAppConfig<DeskSettings>(new()));
         services.AddSingleton<IAppConfig<KitchenSettings>>(

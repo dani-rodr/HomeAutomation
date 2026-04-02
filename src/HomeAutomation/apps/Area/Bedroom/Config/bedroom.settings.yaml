@@ -1,44 +1,45 @@
-HomeAutomation.apps.Area.Bedroom.Config.ClimateSettings:
-  sunrise:
-    hourStart: 5
-    hourEnd: 18
-    doorOpenTemp: 25
-    ecoAwayTemp: 27
-    comfortTemp: 24
-    awayTemp: 27
-    mode: cool
-    activateFan: true
-  sunset:
-    hourStart: 18
-    hourEnd: 0
-    doorOpenTemp: 25
-    ecoAwayTemp: 27
-    comfortTemp: 23
-    awayTemp: 27
-    mode: cool
-    activateFan: false
-  midnight:
-    hourStart: 0
-    hourEnd: 5
-    doorOpenTemp: 24
-    ecoAwayTemp: 25
-    comfortTemp: 22
-    awayTemp: 25
-    mode: cool
-    activateFan: false
-  weatherPowerSaving:
-    triggerUvIndex: 8.0
-    triggerOutdoorTempC: 32.0
-    recoveryUvIndex: 5.0
-    recoveryOutdoorTempC: 30.0
-  automation:
-    masterSwitchReenableWhenNoMotionHours: 1
-    masterSwitchReenableAfterOffHours: 8
-    doorOpenReapplyMinutes: 5
-    motionClearedReapplyMinutes: 10
-    houseVacantTurnOffMinutes: 30
-    houseReturnMinVacantMinutes: 20
-    resetScheduleCron: "0 0 * * *"
+HomeAutomation.apps.Area.Bedroom.Config.BedroomSettings:
+  climate:
+    sunrise:
+      hourStart: 5
+      hourEnd: 18
+      doorOpenTemp: 25
+      ecoAwayTemp: 27
+      comfortTemp: 24
+      awayTemp: 27
+      mode: cool
+      activateFan: true
+    sunset:
+      hourStart: 18
+      hourEnd: 0
+      doorOpenTemp: 25
+      ecoAwayTemp: 27
+      comfortTemp: 23
+      awayTemp: 27
+      mode: cool
+      activateFan: false
+    midnight:
+      hourStart: 0
+      hourEnd: 5
+      doorOpenTemp: 24
+      ecoAwayTemp: 25
+      comfortTemp: 22
+      awayTemp: 25
+      mode: cool
+      activateFan: false
+    weatherPowerSaving:
+      triggerUvIndex: 8.0
+      triggerOutdoorTempC: 32.0
+      recoveryUvIndex: 5.0
+      recoveryOutdoorTempC: 30.0
+    automation:
+      masterSwitchReenableWhenNoMotionHours: 1
+      masterSwitchReenableAfterOffHours: 8
+      doorOpenReapplyMinutes: 5
+      motionClearedReapplyMinutes: 10
+      houseVacantTurnOffMinutes: 30
+      houseReturnMinVacantMinutes: 20
+      resetScheduleCron: "0 0 * * *"
   light:
     sensorActiveDelayValue: 45
     lightSwitchDoubleClickTimeoutSeconds: 2

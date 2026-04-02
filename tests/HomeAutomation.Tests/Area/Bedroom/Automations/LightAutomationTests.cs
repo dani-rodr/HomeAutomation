@@ -32,14 +32,10 @@ public class LightAutomationTests : AutomationTestBase<LightAutomation>
         StartAutomation(_automation, _entities.MasterSwitch.EntityId);
     }
 
-    private static ClimateSettings CreateSettings() =>
+    private static BedroomSettings CreateSettings() =>
         new()
         {
-            Sunrise = new ClimateSetting(),
-            Sunset = new ClimateSetting(),
-            Midnight = new ClimateSetting(),
-            WeatherPowerSaving = new WeatherPowerSavingSettings(),
-            Automation = new ClimateAutomationSettings(),
+            Climate = new ClimateSettings(),
             Light = new BedroomLightSettings
             {
                 SensorActiveDelayValue = 45,

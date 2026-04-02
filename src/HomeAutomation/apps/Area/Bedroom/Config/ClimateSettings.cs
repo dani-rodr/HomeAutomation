@@ -12,6 +12,15 @@ public enum TimeBlock
 }
 
 [AreaSettings("bedroom", "Bedroom", "Bedroom climate automation settings")]
+public sealed class BedroomSettings
+{
+    [Required]
+    public ClimateSettings Climate { get; init; } = new();
+
+    [Required]
+    public BedroomLightSettings Light { get; init; } = new();
+}
+
 public sealed class ClimateSettings
 {
     [Required]
@@ -28,9 +37,6 @@ public sealed class ClimateSettings
 
     [Required]
     public ClimateAutomationSettings Automation { get; init; } = new();
-
-    [Required]
-    public BedroomLightSettings Light { get; init; } = new();
 
     public ClimateSetting GetByTimeBlock(TimeBlock timeBlock) =>
         timeBlock switch
