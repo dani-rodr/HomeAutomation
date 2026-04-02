@@ -1,11 +1,10 @@
 using HomeAutomation.apps.Area.Bedroom.Config;
-using HomeAutomation.apps.Common.Settings;
 
 namespace HomeAutomation.apps.Area.Bedroom.Services.Schedulers;
 
 public interface IClimateSettingsResolver : IAutomationScheduler
 {
-    IObservable<AreaSettingsChangedEvent> Changes { get; }
+    IObservable<ClimateSettings> Changes { get; }
 
     IDisposable GetResetSchedule();
     bool TryGetCurrentSetting(out TimeBlock timeBlock, out ClimateSetting setting);

@@ -2,7 +2,6 @@ using System.Reactive.Subjects;
 using HomeAutomation.apps.Area.Bedroom.Automations;
 using HomeAutomation.apps.Area.Bedroom.Automations.Entities;
 using HomeAutomation.apps.Area.Bedroom.Config;
-using HomeAutomation.apps.Common.Settings;
 
 namespace HomeAutomation.Tests.Area.Bedroom.Automations;
 
@@ -18,7 +17,7 @@ public partial class ClimateAutomationTests : AutomationTestBase<ClimateAutomati
 
     private readonly ClimateAutomation _automation;
 
-    private readonly Subject<AreaSettingsChangedEvent> _settingsChanges = new();
+    private readonly Subject<ClimateSettings> _settingsChanges = new();
 
     public ClimateAutomationTests()
     {
@@ -213,13 +212,7 @@ public partial class ClimateAutomationTests : AutomationTestBase<ClimateAutomati
     {
         _mockScheduler.Invocations.Clear();
 
-        _settingsChanges.OnNext(
-            new AreaSettingsChangedEvent(
-                "bedroom",
-                AreaSettingsChangeType.Saved,
-                DateTimeOffset.UtcNow
-            )
-        );
+        _settingsChanges.OnNext(new ClimateSettings());
 
         _mockScheduler.Verify(
             x =>
@@ -237,13 +230,7 @@ public partial class ClimateAutomationTests : AutomationTestBase<ClimateAutomati
         _mockHaContext.SetEntityState(_entities.MasterSwitch.EntityId, "off");
         _mockScheduler.Invocations.Clear();
 
-        _settingsChanges.OnNext(
-            new AreaSettingsChangedEvent(
-                "bedroom",
-                AreaSettingsChangeType.Saved,
-                DateTimeOffset.UtcNow
-            )
-        );
+        _settingsChanges.OnNext(new ClimateSettings());
 
         _mockScheduler.Verify(
             x =>

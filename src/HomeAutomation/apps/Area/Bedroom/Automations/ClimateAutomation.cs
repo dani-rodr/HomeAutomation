@@ -1,7 +1,7 @@
 using System.Linq;
 using HomeAutomation.apps.Area.Bedroom.Automations.Entities;
+using HomeAutomation.apps.Area.Bedroom.Config;
 using HomeAutomation.apps.Area.Bedroom.Services.Schedulers;
-using HomeAutomation.apps.Common.Settings;
 
 namespace HomeAutomation.apps.Area.Bedroom.Automations;
 
@@ -198,24 +198,16 @@ public class ClimateAutomation(
         );
     }
 
-    private void HandleBedroomSettingsChanged(AreaSettingsChangedEvent changeEvent)
+    private void HandleBedroomSettingsChanged(ClimateSettings _)
     {
         if (MasterSwitch.IsOff())
         {
-            Logger.LogDebug(
-                "Settings changed for area {AreaKey} ({ChangeType}) but master switch is off.",
-                changeEvent.AreaKey,
-                changeEvent.ChangeType
-            );
+            Logger.LogDebug("Climate settings changed but master switch is off.");
 
             return;
         }
 
-        Logger.LogInformation(
-            "Settings changed for area {AreaKey} ({ChangeType}), reapplying climate settings.",
-            changeEvent.AreaKey,
-            changeEvent.ChangeType
-        );
+        Logger.LogInformation("Climate settings changed, reapplying climate settings.");
 
         ApplyScheduledAcSettings();
     }

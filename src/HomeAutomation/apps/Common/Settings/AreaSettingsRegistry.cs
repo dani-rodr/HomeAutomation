@@ -9,10 +9,16 @@ public sealed class AreaSettingsRegistry(IEnumerable<AreaSettingsDescriptor> des
     private readonly Dictionary<string, AreaSettingsDescriptor> _descriptors =
         descriptors.ToDictionary(x => x.Key, StringComparer.OrdinalIgnoreCase);
 
+    private readonly Dictionary<Type, AreaSettingsDescriptor> _descriptorsByType =
+        descriptors.ToDictionary(x => x.SettingsType);
+
     public IReadOnlyCollection<AreaSettingsDescriptor> List() => _descriptors.Values.ToList();
 
     public bool TryGet(string areaKey, out AreaSettingsDescriptor descriptor) =>
         _descriptors.TryGetValue(areaKey, out descriptor!);
+
+    public bool TryGetBySettingsType(Type settingsType, out AreaSettingsDescriptor descriptor) =>
+        _descriptorsByType.TryGetValue(settingsType, out descriptor!);
 
     public static AreaSettingsRegistry CreateFromAssembly(Assembly assembly)
     {

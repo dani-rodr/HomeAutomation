@@ -1,52 +1,38 @@
-using System.Reactive.Subjects;
 using HomeAutomation.apps.Area.Bedroom.Config;
 using HomeAutomation.apps.Common.Settings;
 using NetDaemon.Extensions.Scheduler;
 
 namespace HomeAutomation.apps.Area.Bedroom.Services.Schedulers;
 
-public sealed class ClimateSettingsResolver : IClimateSettingsResolver, IDisposable
+public sealed class ClimateSettingsResolver : IClimateSettingsResolver
 {
-    private const string AreaKey = "bedroom";
-
-    private readonly IAreaSettingsStore _areaSettingsStore;
+    private readonly ILiveAppConfig<ClimateSettings> _settings;
     private readonly InputBooleanEntity _powerSavingMode;
     private readonly IScheduler _scheduler;
     private readonly IAcTemperatureCalculator _temperatureCalculator;
     private readonly ILogger<ClimateSettingsResolver> _logger;
-    private readonly Subject<AreaSettingsChangedEvent> _changes = new();
-    private readonly IDisposable _settingsChangesSubscription;
-    private ClimateSettings _currentSettings;
 
     public ClimateSettingsResolver(
         Entities.IClimateSchedulerEntities entities,
-        IAreaSettingsStore areaSettingsStore,
-        IAreaSettingsChangeNotifier areaSettingsChangeNotifier,
+        ILiveAppConfig<ClimateSettings> liveSettings,
         IAcTemperatureCalculator temperatureCalculator,
         ILogger<ClimateSettingsResolver> logger
     )
     {
-        _areaSettingsStore = areaSettingsStore;
+        _settings = liveSettings;
         _powerSavingMode = entities.PowerSavingMode;
         _scheduler = SchedulerProvider.Current;
         _temperatureCalculator = temperatureCalculator;
         _logger = logger;
-        _currentSettings = LoadClimateSettings();
-
-        _settingsChangesSubscription = areaSettingsChangeNotifier
-            .Changes.Where(change =>
-                string.Equals(change.AreaKey, AreaKey, StringComparison.OrdinalIgnoreCase)
-            )
-            .Subscribe(HandleSettingsChanged);
 
         LogCurrentAcScheduleSettings();
     }
 
-    public IObservable<AreaSettingsChangedEvent> Changes => _changes;
+    public IObservable<ClimateSettings> Changes => _settings.Changes;
 
     public IEnumerable<IDisposable> GetSchedules(Action action)
     {
-        var settings = _currentSettings;
+        var settings = _settings.Settings;
         foreach (var timeBlock in new[] { TimeBlock.Sunrise, TimeBlock.Sunset, TimeBlock.Midnight })
         {
             var setting = settings.GetByTimeBlock(timeBlock);
@@ -74,7 +60,7 @@ public sealed class ClimateSettingsResolver : IClimateSettingsResolver, IDisposa
 
     public IDisposable GetResetSchedule() =>
         _scheduler.ScheduleCron(
-            _currentSettings.Automation.ResetScheduleCron,
+            _settings.Settings.Automation.ResetScheduleCron,
             LogCurrentAcScheduleSettings
         );
 
@@ -86,7 +72,7 @@ public sealed class ClimateSettingsResolver : IClimateSettingsResolver, IDisposa
             return false;
         }
 
-        setting = _currentSettings.GetByTimeBlock(timeBlock);
+        setting = _settings.Settings.GetByTimeBlock(timeBlock);
         return true;
     }
 
@@ -99,22 +85,16 @@ public sealed class ClimateSettingsResolver : IClimateSettingsResolver, IDisposa
         );
 
     public WeatherPowerSavingSettings GetWeatherPowerSavingSettings() =>
-        _currentSettings.WeatherPowerSaving;
+        _settings.Settings.WeatherPowerSaving;
 
-    public ClimateAutomationSettings GetAutomationSettings() => _currentSettings.Automation;
-
-    public void Dispose()
-    {
-        _settingsChangesSubscription.Dispose();
-        _changes.Dispose();
-    }
+    public ClimateAutomationSettings GetAutomationSettings() => _settings.Settings.Automation;
 
     private bool TryFindCurrentTimeBlock(out TimeBlock timeBlock)
     {
         var currentTime = _scheduler.Now.LocalDateTime;
         _logger.LogDebug("Finding time block for current time: {CurrentTime}", currentTime);
 
-        var settings = _currentSettings;
+        var settings = _settings.Settings;
 
         // Find the first time block that matches current time
         // Let TimeRange.IsTimeInBetween handle all the overnight range logic
@@ -149,26 +129,10 @@ public sealed class ClimateSettingsResolver : IClimateSettingsResolver, IDisposa
         return false;
     }
 
-    private ClimateSettings LoadClimateSettings() =>
-        _areaSettingsStore.GetSettings<ClimateSettings>(AreaKey);
-
-    private void HandleSettingsChanged(AreaSettingsChangedEvent changeEvent)
-    {
-        _currentSettings = LoadClimateSettings();
-        _logger.LogInformation(
-            "Reloaded bedroom climate settings ({ChangeType}) at {OccurredAtUtc}.",
-            changeEvent.ChangeType,
-            changeEvent.OccurredAtUtc
-        );
-
-        LogCurrentAcScheduleSettings();
-        _changes.OnNext(changeEvent);
-    }
-
     private void LogCurrentAcScheduleSettings()
     {
         _logger.LogDebug("AC schedule settings initialized from Bedroom area settings.");
-        var settings = _currentSettings;
+        var settings = _settings.Settings;
         foreach (var timeBlock in new[] { TimeBlock.Sunrise, TimeBlock.Sunset, TimeBlock.Midnight })
         {
             var setting = settings.GetByTimeBlock(timeBlock);
