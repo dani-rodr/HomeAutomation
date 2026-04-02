@@ -5,7 +5,6 @@ using System.Reflection;
 namespace HomeAutomation.apps.Common.Settings;
 
 public sealed class AreaSettingsRegistry(IEnumerable<AreaSettingsDescriptor> descriptors)
-    : IAreaSettingsRegistry
 {
     private readonly Dictionary<string, AreaSettingsDescriptor> _descriptors =
         descriptors.ToDictionary(x => x.Key, StringComparer.OrdinalIgnoreCase);

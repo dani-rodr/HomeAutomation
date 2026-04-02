@@ -7,13 +7,12 @@ public static class AreaSettingsServiceCollectionExtensions
     public static IServiceCollection AddAreaSettingsEngine(this IServiceCollection services)
     {
         return services
-            .AddSingleton<IAreaSettingsRegistry>(_ =>
+            .AddSingleton(_ =>
                 AreaSettingsRegistry.CreateFromAssembly(
                     typeof(AreaSettingsServiceCollectionExtensions).Assembly
                 )
             )
             .AddSingleton<IAreaSettingsChangeNotifier, AreaSettingsChangeNotifier>()
-            .AddSingleton<IAreaSettingsValidator, AreaSettingsValidator>()
             .AddSingleton<IAreaSettingsStore, AreaSettingsStore>();
     }
 }

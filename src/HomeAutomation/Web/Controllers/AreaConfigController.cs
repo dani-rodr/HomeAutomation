@@ -78,10 +78,10 @@ public sealed class AreaConfigController(IAreaSettingsStore store) : ControllerB
     {
         try
         {
-            var result = store.SaveSettings(areaKey, config);
-            if (!result.IsValid)
+            var errors = store.SaveSettings(areaKey, config);
+            if (errors.Count > 0)
             {
-                return BadRequest(new { errors = result.Errors });
+                return BadRequest(new { errors });
             }
 
             return Ok(new { message = "Saved." });

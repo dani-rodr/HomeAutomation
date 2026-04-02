@@ -12,6 +12,7 @@ public class ClimateSettingsResolverTests : HaContextTestBase
     > _mockLogger;
     private readonly Mock<HomeAutomation.apps.Area.Bedroom.Services.Schedulers.IAcTemperatureCalculator> _mockCalculator;
     private readonly Mock<IAreaSettingsStore> _mockAreaConfigStore;
+    private readonly Mock<IAreaSettingsChangeNotifier> _mockSettingsChangeNotifier;
     private readonly TestSchedulerEntities _schedulerEntities;
     private readonly HomeAutomation.apps.Area.Bedroom.Services.Schedulers.ClimateSettingsResolver _scheduler;
 
@@ -24,15 +25,20 @@ public class ClimateSettingsResolverTests : HaContextTestBase
         _mockCalculator =
             new Mock<HomeAutomation.apps.Area.Bedroom.Services.Schedulers.IAcTemperatureCalculator>();
         _mockAreaConfigStore = new Mock<IAreaSettingsStore>();
+        _mockSettingsChangeNotifier = new Mock<IAreaSettingsChangeNotifier>();
         _schedulerEntities = new TestSchedulerEntities(_mockHaContext);
         _mockAreaConfigStore
             .Setup(x => x.GetSettings<ClimateSettings>("bedroom"))
             .Returns(CreateClimateSettings());
+        _mockSettingsChangeNotifier
+            .SetupGet(x => x.Changes)
+            .Returns(Observable.Empty<AreaSettingsChangedEvent>());
 
         _scheduler =
             new HomeAutomation.apps.Area.Bedroom.Services.Schedulers.ClimateSettingsResolver(
                 _schedulerEntities,
                 _mockAreaConfigStore.Object,
+                _mockSettingsChangeNotifier.Object,
                 _mockCalculator.Object,
                 _mockLogger.Object
             );
@@ -114,6 +120,7 @@ public class ClimateSettingsResolverTests : HaContextTestBase
             new HomeAutomation.apps.Area.Bedroom.Services.Schedulers.ClimateSettingsResolver(
                 _schedulerEntities,
                 invalidStore.Object,
+                _mockSettingsChangeNotifier.Object,
                 _mockCalculator.Object,
                 _mockLogger.Object
             );
@@ -161,6 +168,7 @@ public class ClimateSettingsResolverTests : HaContextTestBase
             new HomeAutomation.apps.Area.Bedroom.Services.Schedulers.ClimateSettingsResolver(
                 _schedulerEntities,
                 store.Object,
+                _mockSettingsChangeNotifier.Object,
                 _mockCalculator.Object,
                 _mockLogger.Object
             );
@@ -172,6 +180,7 @@ public class ClimateSettingsResolverTests : HaContextTestBase
         new HomeAutomation.apps.Area.Bedroom.Services.Schedulers.ClimateSettingsResolver(
             _schedulerEntities,
             _mockAreaConfigStore.Object,
+            _mockSettingsChangeNotifier.Object,
             _mockCalculator.Object,
             _mockLogger.Object
         );

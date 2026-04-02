@@ -8,7 +8,6 @@ namespace HomeAutomation.apps.Area.Bedroom.Automations;
 public class ClimateAutomation(
     IClimateEntities entities,
     IClimateSettingsResolver scheduler,
-    IAreaSettingsChangeNotifier settingsChangeNotifier,
     ILogger<ClimateAutomation> logger
 ) : ToggleableAutomation(entities.MasterSwitch, logger)
 {
@@ -34,9 +33,7 @@ public class ClimateAutomation(
 
         yield return _weather.StateAllChanges().Subscribe(ApplyPowerSavingModeFromWeather);
 
-        yield return settingsChangeNotifier
-            .Changes.Where(x => x.AreaKey == "bedroom")
-            .Subscribe(HandleBedroomSettingsChanged);
+        yield return scheduler.Changes.Subscribe(HandleBedroomSettingsChanged);
 
         yield return _motionSensor
             .OnCleared(new(Hours: automationSettings.MasterSwitchReenableWhenNoMotionHours))

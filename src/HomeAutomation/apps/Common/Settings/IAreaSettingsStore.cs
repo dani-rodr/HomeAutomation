@@ -13,7 +13,7 @@ public interface IAreaSettingsStore
 
     object GetSettings(string areaKey, Type settingsType);
 
-    AreaSettingsValidationResult SaveSettings(string areaKey, JsonObject settings);
+    IReadOnlyDictionary<string, string[]> SaveSettings(string areaKey, JsonObject settings);
 
     JsonObject ResetSettings(string areaKey);
 }

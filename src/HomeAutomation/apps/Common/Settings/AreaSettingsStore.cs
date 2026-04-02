@@ -8,8 +8,7 @@ using YamlDotNet.Serialization.NamingConventions;
 namespace HomeAutomation.apps.Common.Settings;
 
 public sealed class AreaSettingsStore(
-    IAreaSettingsRegistry registry,
-    IAreaSettingsValidator validator,
+    AreaSettingsRegistry registry,
     IAreaSettingsChangeNotifier changeNotifier,
     ILogger<AreaSettingsStore> logger
 ) : IAreaSettingsStore
@@ -68,7 +67,7 @@ public sealed class AreaSettingsStore(
         return DeserializeToType(section, settingsType);
     }
 
-    public AreaSettingsValidationResult SaveSettings(string areaKey, JsonObject settings)
+    public IReadOnlyDictionary<string, string[]> SaveSettings(string areaKey, JsonObject settings)
     {
         ArgumentNullException.ThrowIfNull(settings);
         var descriptor = ResolveDescriptor(areaKey);
@@ -81,18 +80,16 @@ public sealed class AreaSettingsStore(
         catch (Exception ex)
         {
             logger.LogWarning(ex, "Failed to deserialize settings for area '{AreaKey}'.", areaKey);
-            return AreaSettingsValidationResult.Failed(
-                new Dictionary<string, string[]>
-                {
-                    ["settings"] = ["Settings format is invalid for this area."],
-                }
-            );
+            return new Dictionary<string, string[]>
+            {
+                ["settings"] = ["Settings format is invalid for this area."],
+            };
         }
 
-        var errors = validator.Validate(typed);
+        var errors = AreaSettingsValidator.Validate(typed);
         if (errors.Count > 0)
         {
-            return AreaSettingsValidationResult.Failed(errors);
+            return errors;
         }
 
         SaveSectionToFile(descriptor, settings);
@@ -105,7 +102,7 @@ public sealed class AreaSettingsStore(
             )
         );
 
-        return AreaSettingsValidationResult.Success;
+        return EmptyValidationErrors;
     }
 
     public JsonObject ResetSettings(string areaKey)
@@ -327,4 +324,7 @@ public sealed class AreaSettingsStore(
 
         return char.ToLowerInvariant(value[0]) + value[1..];
     }
+
+    private static readonly IReadOnlyDictionary<string, string[]> EmptyValidationErrors =
+        new Dictionary<string, string[]>();
 }

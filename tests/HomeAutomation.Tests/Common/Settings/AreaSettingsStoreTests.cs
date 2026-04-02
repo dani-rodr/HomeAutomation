@@ -34,7 +34,6 @@ public sealed class AreaSettingsStoreTests : IDisposable
 
         _store = new AreaSettingsStore(
             registry,
-            new AreaSettingsValidator(),
             _changeNotifier.Object,
             Mock.Of<ILogger<AreaSettingsStore>>()
         );
@@ -54,9 +53,9 @@ public sealed class AreaSettingsStoreTests : IDisposable
         var settings = _store.GetSettings("bathroom");
         settings["light"]!["motionOnDelaySeconds"] = 5;
 
-        var result = _store.SaveSettings("bathroom", settings);
+        var errors = _store.SaveSettings("bathroom", settings);
 
-        result.IsValid.Should().BeTrue();
+        errors.Should().BeEmpty();
         _store
             .GetSettings("bathroom")["light"]
             ?["motionOnDelaySeconds"]?.GetValue<int>()
@@ -80,10 +79,9 @@ public sealed class AreaSettingsStoreTests : IDisposable
         var settings = _store.GetSettings("bathroom");
         settings["light"]!["motionOnDelaySeconds"] = 99;
 
-        var result = _store.SaveSettings("bathroom", settings);
+        var errors = _store.SaveSettings("bathroom", settings);
 
-        result.IsValid.Should().BeFalse();
-        result.Errors.Should().ContainKey("light.motionOnDelaySeconds");
+        errors.Should().ContainKey("light.motionOnDelaySeconds");
 
         _changeNotifier.Verify(x => x.Publish(It.IsAny<AreaSettingsChangedEvent>()), Times.Never);
     }
@@ -93,10 +91,9 @@ public sealed class AreaSettingsStoreTests : IDisposable
     {
         var malformed = new JsonObject { ["light"] = "not-an-object" };
 
-        var result = _store.SaveSettings("bathroom", malformed);
+        var errors = _store.SaveSettings("bathroom", malformed);
 
-        result.IsValid.Should().BeFalse();
-        result.Errors.Should().ContainKey("settings");
+        errors.Should().ContainKey("settings");
     }
 
     [Fact]

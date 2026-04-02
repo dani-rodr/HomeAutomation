@@ -1,3 +1,4 @@
+using System.Reactive.Subjects;
 using HomeAutomation.apps.Area.Bedroom.Automations;
 using HomeAutomation.apps.Area.Bedroom.Automations.Entities;
 using HomeAutomation.apps.Area.Bedroom.Config;
@@ -17,7 +18,7 @@ public partial class ClimateAutomationTests : AutomationTestBase<ClimateAutomati
 
     private readonly ClimateAutomation _automation;
 
-    private readonly AreaSettingsChangeNotifier _areaSettingsChangeNotifier;
+    private readonly Subject<AreaSettingsChangedEvent> _settingsChanges = new();
 
     public ClimateAutomationTests()
     {
@@ -25,18 +26,12 @@ public partial class ClimateAutomationTests : AutomationTestBase<ClimateAutomati
             new Mock<HomeAutomation.apps.Area.Bedroom.Services.Schedulers.IClimateSettingsResolver>();
 
         _entities = new TestEntities(_mockHaContext);
-        _areaSettingsChangeNotifier = new AreaSettingsChangeNotifier();
 
         SetupDefaultEntityStates();
 
         SetupDefaultSchedulerMock();
 
-        _automation = new ClimateAutomation(
-            _entities,
-            _mockScheduler.Object,
-            _areaSettingsChangeNotifier,
-            _mockLogger.Object
-        );
+        _automation = new ClimateAutomation(_entities, _mockScheduler.Object, _mockLogger.Object);
 
         StartAutomation(_automation, _entities.MasterSwitch.EntityId);
     }
@@ -144,6 +139,7 @@ public partial class ClimateAutomationTests : AutomationTestBase<ClimateAutomati
         _mockScheduler.Setup(x => x.GetSchedules(It.IsAny<Action>())).Returns([]);
 
         _mockScheduler.Setup(x => x.GetResetSchedule()).Returns(Mock.Of<IDisposable>());
+        _mockScheduler.Setup(x => x.Changes).Returns(_settingsChanges);
     }
 
     private void SetupSchedulerMock(TimeBlock timeBlock, ClimateSetting expectedSetting)
@@ -183,6 +179,8 @@ public partial class ClimateAutomationTests : AutomationTestBase<ClimateAutomati
             .Setup(x => x.GetAutomationSettings())
             .Returns(new ClimateAutomationSettings());
 
+        _mockScheduler.Setup(x => x.Changes).Returns(_settingsChanges);
+
         // Setup CalculateTemperature method for this specific setting
 
         _mockScheduler
@@ -215,7 +213,7 @@ public partial class ClimateAutomationTests : AutomationTestBase<ClimateAutomati
     {
         _mockScheduler.Invocations.Clear();
 
-        _areaSettingsChangeNotifier.Publish(
+        _settingsChanges.OnNext(
             new AreaSettingsChangedEvent(
                 "bedroom",
                 AreaSettingsChangeType.Saved,
@@ -234,13 +232,14 @@ public partial class ClimateAutomationTests : AutomationTestBase<ClimateAutomati
     }
 
     [Fact]
-    public void SettingsChange_ForDifferentArea_Should_NotReapplyScheduledSettings()
+    public void SettingsChange_WhenMasterSwitchIsOff_Should_NotReapplyScheduledSettings()
     {
+        _mockHaContext.SetEntityState(_entities.MasterSwitch.EntityId, "off");
         _mockScheduler.Invocations.Clear();
 
-        _areaSettingsChangeNotifier.Publish(
+        _settingsChanges.OnNext(
             new AreaSettingsChangedEvent(
-                "kitchen",
+                "bedroom",
                 AreaSettingsChangeType.Saved,
                 DateTimeOffset.UtcNow
             )

@@ -3,9 +3,9 @@ using System.Linq;
 
 namespace HomeAutomation.apps.Common.Settings;
 
-public sealed class AreaSettingsValidator : IAreaSettingsValidator
+public static class AreaSettingsValidator
 {
-    public IReadOnlyDictionary<string, string[]> Validate(object settings)
+    public static IReadOnlyDictionary<string, string[]> Validate(object settings)
     {
         var errors = new Dictionary<string, List<string>>(StringComparer.OrdinalIgnoreCase);
         ValidateObject(settings, string.Empty, errors);

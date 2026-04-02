@@ -143,10 +143,10 @@
             return;
         }
 
-        var result = Store.SaveSettings(area.Key, config);
-        if (!result.IsValid)
+        var errors = Store.SaveSettings(area.Key, config);
+        if (errors.Count > 0)
         {
-            foreach (var pair in result.Errors)
+            foreach (var pair in errors)
             {
                 area.Errors[pair.Key] = pair.Value;
             }
