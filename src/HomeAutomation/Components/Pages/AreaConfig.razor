@@ -1,4 +1,7 @@
 @page "/"
+@using System.ComponentModel.DataAnnotations
+@using System.Globalization
+@using System.Reflection
 @using System.Text.Json
 @using System.Text.Json.Nodes
 @using HomeAutomation.apps.Common.Settings
@@ -7,7 +10,7 @@
 <main class="mx-auto max-w-7xl px-4 py-6 md:px-6 md:py-8">
     <header class="mb-6 rounded-2xl border border-ha-line bg-ha-panel/95 p-5 shadow-panel backdrop-blur">
         <h1 class="text-2xl font-extrabold tracking-tight text-ha-ink md:text-3xl">Area Settings Dashboard</h1>
-        <p class="mt-1 text-sm text-ha-muted md:text-base">NetDaemon YAML-backed settings editor with live reload.</p>
+        <p class="mt-1 text-sm text-ha-muted md:text-base">Field editor + advanced JSON mode with shared validation.</p>
     </header>
 
     <div class="mb-5 flex flex-wrap items-center gap-3">
@@ -18,53 +21,112 @@
         }
     </div>
 
-    <section class="grid gap-5">
-        @foreach (var area in Areas)
-        {
-            <article @key="area.Key" class="rounded-2xl border border-ha-line bg-ha-panel shadow-panel">
-                <div class="flex flex-wrap items-start justify-between gap-3 p-5 md:p-6">
-                    <button class="header-toggle" aria-expanded="@area.IsExpanded" @onclick="() => area.IsExpanded = !area.IsExpanded">
-                        <span class="chevron">@(area.IsExpanded ? "▾" : "▸")</span>
-                        <span class="text-xl font-bold text-ha-ink">@area.Name</span>
-                    </button>
-                    <span class="text-xs font-semibold uppercase tracking-wide text-ha-muted">Area</span>
-                </div>
-
-                @if (area.IsExpanded)
+    @if (Areas.Count == 0)
+    {
+        <section class="rounded-2xl border border-ha-line bg-ha-panel p-6 shadow-panel text-ha-muted">No area settings are registered.</section>
+    }
+    else
+    {
+        <section class="rounded-2xl border border-ha-line bg-ha-panel shadow-panel">
+            <div class="flex flex-wrap gap-2 border-b border-ha-line p-4">
+                @foreach (var area in Areas)
                 {
-                    <div class="px-5 pb-5 md:px-6 md:pb-6">
-                        <p class="mt-1 text-sm text-ha-muted">@area.Description</p>
-
-                        <div class="mt-4 rounded-lg border border-ha-line/70 bg-slate-100/70 p-3">
-                            <div class="text-sm font-semibold text-ha-ink">JSON source</div>
-                            <textarea class="ha-input mt-3 min-h-[220px] font-mono text-xs md:text-sm" @bind="area.EditorText" @bind:event="oninput"></textarea>
-                        </div>
-
-                        @if (area.Errors.Count > 0)
-                        {
-                            <ul class="mt-4 space-y-1 rounded-lg border border-ha-danger/30 bg-ha-danger/10 p-3 text-sm text-ha-danger">
-                                @foreach (var error in area.Errors.OrderBy(x => x.Key, StringComparer.OrdinalIgnoreCase))
-                                {
-                                    <li><strong>@error.Key</strong>: @string.Join(", ", error.Value)</li>
-                                }
-                            </ul>
-                        }
-
-                        @if (!string.IsNullOrWhiteSpace(area.Status))
-                        {
-                            <div class="mt-4 rounded-lg border px-3 py-2 text-sm font-semibold @(area.IsError ? "border-ha-danger/30 bg-ha-danger/10 text-ha-danger" : "border-ha-success/30 bg-ha-success/10 text-ha-success")">@area.Status</div>
-                        }
-
-                        <div class="mt-4 flex flex-wrap gap-2">
-                            <button class="ha-btn ha-btn-primary" @onclick="() => Save(area)">Save</button>
-                            <button class="ha-btn" @onclick="() => Reset(area)">Reset</button>
-                            <button class="ha-btn" @onclick="() => Reload(area)">Reload</button>
-                        </div>
-                    </div>
+                    var isActive = string.Equals(ActiveAreaKey, area.Key, StringComparison.OrdinalIgnoreCase);
+                    <button class="ha-btn @(isActive ? "ha-btn-primary" : string.Empty)" @onclick="() => ActiveAreaKey = area.Key">@area.Name</button>
                 }
-            </article>
-        }
-    </section>
+            </div>
+
+            @if (ActiveArea is not null)
+            {
+                <div class="p-5 md:p-6">
+                    <div class="flex flex-wrap items-start justify-between gap-3">
+                        <div>
+                            <h2 class="text-xl font-bold text-ha-ink">@ActiveArea.Name</h2>
+                            <p class="mt-1 text-sm text-ha-muted">@ActiveArea.Description</p>
+                        </div>
+                        <button class="ha-btn" @onclick="() => ToggleAdvancedView(ActiveArea)">@(ActiveArea.ShowAdvanced ? "Basic fields" : "Advanced JSON")</button>
+                    </div>
+
+                    @if (!ActiveArea.ShowAdvanced)
+                    {
+                        <div class="mt-5 space-y-5">
+                            @foreach (var group in ActiveArea.Fields.GroupBy(x => x.GroupTitle, StringComparer.OrdinalIgnoreCase).OrderBy(x => x.Key, StringComparer.OrdinalIgnoreCase))
+                            {
+                                <section class="rounded-lg border border-ha-line/70 bg-slate-100/70 p-4">
+                                    @if (!string.IsNullOrWhiteSpace(group.Key))
+                                    {
+                                        <h3 class="mb-3 text-sm font-bold uppercase tracking-wide text-ha-muted">@group.Key</h3>
+                                    }
+
+                                    <div class="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
+                                        @foreach (var field in group.OrderBy(x => x.Label, StringComparer.OrdinalIgnoreCase))
+                                        {
+                                            var error = GetErrorForPath(ActiveArea, field.Path);
+                                            <label class="rounded-lg border border-ha-line bg-white/70 p-3">
+                                                <div class="mb-1 flex flex-wrap items-center gap-2">
+                                                    <span class="text-sm font-semibold text-ha-ink">@field.Label</span>
+                                                    @if (field.IsRequired)
+                                                    {
+                                                        <span class="text-xs font-bold uppercase text-ha-danger">required</span>
+                                                    }
+                                                </div>
+
+                                                @if (field.InputKind == FieldInputKind.Toggle)
+                                                {
+                                                    <input type="checkbox" checked="@GetBoolValue(ActiveArea, field.Path)" @onchange="args => OnBoolFieldChanged(ActiveArea, field, args)" />
+                                                }
+                                                else if (field.InputKind == FieldInputKind.Number)
+                                                {
+                                                    <input class="ha-input" type="number" value="@GetStringValue(ActiveArea, field.Path)" min="@field.Min" max="@field.Max" step="@(field.IsInteger ? "1" : "any")" @onchange="args => OnTextFieldChanged(ActiveArea, field, args)" />
+                                                }
+                                                else
+                                                {
+                                                    <input class="ha-input" type="text" value="@GetStringValue(ActiveArea, field.Path)" @onchange="args => OnTextFieldChanged(ActiveArea, field, args)" />
+                                                }
+
+                                                @if (!string.IsNullOrWhiteSpace(error))
+                                                {
+                                                    <div class="mt-2 text-xs font-semibold text-ha-danger">@error</div>
+                                                }
+                                            </label>
+                                        }
+                                    </div>
+                                </section>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="mt-5 rounded-lg border border-ha-line/70 bg-slate-100/70 p-3">
+                            <div class="text-sm font-semibold text-ha-ink">JSON source</div>
+                            <textarea class="ha-input mt-3 min-h-[260px] font-mono text-xs md:text-sm" value="@ActiveArea.EditorText" @oninput="args => OnJsonEditorChanged(ActiveArea, args)"></textarea>
+                        </div>
+                    }
+
+                    @if (ActiveArea.Errors.Count > 0)
+                    {
+                        <ul class="mt-4 space-y-1 rounded-lg border border-ha-danger/30 bg-ha-danger/10 p-3 text-sm text-ha-danger">
+                            @foreach (var error in ActiveArea.Errors.OrderBy(x => x.Key, StringComparer.OrdinalIgnoreCase))
+                            {
+                                <li><strong>@error.Key</strong>: @string.Join(", ", error.Value)</li>
+                            }
+                        </ul>
+                    }
+
+                    @if (!string.IsNullOrWhiteSpace(ActiveArea.Status))
+                    {
+                        <div class="mt-4 rounded-lg border px-3 py-2 text-sm font-semibold @(ActiveArea.IsError ? "border-ha-danger/30 bg-ha-danger/10 text-ha-danger" : "border-ha-success/30 bg-ha-success/10 text-ha-success")">@ActiveArea.Status</div>
+                    }
+
+                    <div class="mt-4 flex flex-wrap gap-2">
+                        <button class="ha-btn ha-btn-primary" @onclick="() => Save(ActiveArea)">Save</button>
+                        <button class="ha-btn" @onclick="() => Reset(ActiveArea)">Reset</button>
+                        <button class="ha-btn" @onclick="() => Reload(ActiveArea)">Reload</button>
+                    </div>
+                </div>
+            }
+        </section>
+    }
 </main>
 
 @code {
@@ -75,38 +137,161 @@
     };
 
     private readonly List<AreaEditorModel> Areas = [];
+    private string ActiveAreaKey = string.Empty;
     private string GlobalStatus = string.Empty;
     private bool GlobalError;
+
+    private AreaEditorModel? ActiveArea =>
+        Areas.FirstOrDefault(x => string.Equals(x.Key, ActiveAreaKey, StringComparison.OrdinalIgnoreCase));
 
     protected override void OnInitialized() => ReloadAll();
 
     private void ReloadAll()
     {
-        var previousState = Areas
-            .ToDictionary(x => x.Key, x => x.IsExpanded, StringComparer.OrdinalIgnoreCase);
+        var previousAdvancedState = Areas.ToDictionary(
+            x => x.Key,
+            x => x.ShowAdvanced,
+            StringComparer.OrdinalIgnoreCase
+        );
 
         Areas.Clear();
 
         foreach (var descriptor in Store.ListAreas().OrderBy(x => x.Name, StringComparer.OrdinalIgnoreCase))
         {
             var settings = Store.GetSettings(descriptor.Key);
-            Areas.Add(
-                new AreaEditorModel
-                {
-                    Key = descriptor.Key,
-                    Name = descriptor.Name,
-                    Description = descriptor.Description,
-                    Config = settings,
-                    EditorText = settings.ToJsonString(JsonOptions),
-                    IsExpanded = previousState.TryGetValue(descriptor.Key, out var isExpanded)
-                        ? isExpanded
-                        : false,
-                }
-            );
+            var area = new AreaEditorModel
+            {
+                Key = descriptor.Key,
+                Name = descriptor.Name,
+                Description = descriptor.Description,
+                SettingsType = descriptor.SettingsType,
+                Fields = BuildFieldDefinitions(descriptor.SettingsType),
+                Config = settings,
+                EditorText = settings.ToJsonString(JsonOptions),
+                ShowAdvanced = previousAdvancedState.TryGetValue(descriptor.Key, out var showAdvanced)
+                    && showAdvanced,
+            };
+
+            Revalidate(area, updateStatus: false);
+            Areas.Add(area);
+        }
+
+        if (string.IsNullOrWhiteSpace(ActiveAreaKey) || Areas.All(x => !x.Key.Equals(ActiveAreaKey, StringComparison.OrdinalIgnoreCase)))
+        {
+            ActiveAreaKey = Areas.FirstOrDefault()?.Key ?? string.Empty;
         }
 
         GlobalStatus = "Reloaded all settings.";
         GlobalError = false;
+    }
+
+    private static List<FieldDefinition> BuildFieldDefinitions(Type rootType)
+    {
+        var fields = new List<FieldDefinition>();
+        CollectFields(rootType, string.Empty, string.Empty, fields);
+        return fields;
+    }
+
+    private static void CollectFields(
+        Type currentType,
+        string currentPath,
+        string groupTitle,
+        ICollection<FieldDefinition> output
+    )
+    {
+        foreach (var property in currentType.GetProperties(BindingFlags.Instance | BindingFlags.Public))
+        {
+            if (!property.CanRead)
+            {
+                continue;
+            }
+
+            var jsonName = ToJsonName(property.Name);
+            var path = string.IsNullOrWhiteSpace(currentPath) ? jsonName : $"{currentPath}.{jsonName}";
+            var propertyType = Nullable.GetUnderlyingType(property.PropertyType) ?? property.PropertyType;
+
+            if (IsScalarType(propertyType))
+            {
+                output.Add(CreateFieldDefinition(property, propertyType, path, groupTitle));
+                continue;
+            }
+
+            var nextGroup = string.IsNullOrWhiteSpace(groupTitle)
+                ? Humanize(property.Name)
+                : $"{groupTitle} · {Humanize(property.Name)}";
+
+            CollectFields(propertyType, path, nextGroup, output);
+        }
+    }
+
+    private static FieldDefinition CreateFieldDefinition(
+        PropertyInfo property,
+        Type propertyType,
+        string path,
+        string groupTitle
+    )
+    {
+        var range = property.GetCustomAttribute<RangeAttribute>();
+        var isInteger = IsIntegerType(propertyType);
+
+        return new FieldDefinition
+        {
+            Path = path,
+            Label = Humanize(property.Name),
+            GroupTitle = groupTitle,
+            InputKind = propertyType == typeof(bool)
+                ? FieldInputKind.Toggle
+                : IsNumericType(propertyType)
+                    ? FieldInputKind.Number
+                    : FieldInputKind.Text,
+            IsRequired = property.GetCustomAttribute<RequiredAttribute>() is not null,
+            IsInteger = isInteger,
+            Min = range is null
+                ? null
+                : Convert.ToString(range.Minimum, CultureInfo.InvariantCulture),
+            Max = range is null
+                ? null
+                : Convert.ToString(range.Maximum, CultureInfo.InvariantCulture),
+        };
+    }
+
+    private void ToggleAdvancedView(AreaEditorModel area)
+    {
+        area.ShowAdvanced = !area.ShowAdvanced;
+        if (area.ShowAdvanced)
+        {
+            area.EditorText = area.Config.ToJsonString(JsonOptions);
+        }
+    }
+
+    private void OnJsonEditorChanged(AreaEditorModel area, ChangeEventArgs args)
+    {
+        area.EditorText = args.Value?.ToString() ?? string.Empty;
+        TrySyncConfigFromEditor(area, updateStatus: false);
+    }
+
+    private void OnTextFieldChanged(AreaEditorModel area, FieldDefinition field, ChangeEventArgs args)
+    {
+        var raw = args.Value?.ToString() ?? string.Empty;
+        if (!TryConvertToNode(field, raw, out var valueNode, out var errorMessage))
+        {
+            area.Errors[field.Path] = [errorMessage];
+            area.Status = "Validation failed.";
+            area.IsError = true;
+            return;
+        }
+
+        SetPathValue(area.Config, field.Path, valueNode);
+        area.EditorText = area.Config.ToJsonString(JsonOptions);
+        Revalidate(area, updateStatus: false);
+    }
+
+    private void OnBoolFieldChanged(AreaEditorModel area, FieldDefinition field, ChangeEventArgs args)
+    {
+        var isChecked = args.Value is bool value && value;
+        SetPathValue(area.Config, field.Path, JsonValue.Create(isChecked));
+        area.EditorText = area.Config.ToJsonString(JsonOptions);
+        Revalidate(area, updateStatus: false);
     }
 
     private void Reload(AreaEditorModel area)
@@ -115,7 +300,7 @@
         {
             area.Config = Store.GetSettings(area.Key);
             area.EditorText = area.Config.ToJsonString(JsonOptions);
-            area.Errors.Clear();
+            Revalidate(area, updateStatus: false);
             area.Status = "Reloaded.";
             area.IsError = false;
         }
@@ -128,24 +313,22 @@
 
     private void Save(AreaEditorModel area)
     {
-        area.Errors.Clear();
-
-        JsonObject config;
-        try
+        if (!TrySyncConfigFromEditor(area, updateStatus: true))
         {
-            config = JsonNode.Parse(area.EditorText)?.AsObject()
-                ?? throw new InvalidOperationException("JSON must be an object.");
+            return;
         }
-        catch (Exception ex)
+
+        if (area.Errors.Count > 0)
         {
-            area.Status = $"Invalid JSON: {ex.Message}";
+            area.Status = "Validation failed.";
             area.IsError = true;
             return;
         }
 
-        var errors = Store.SaveSettings(area.Key, config);
+        var errors = Store.SaveSettings(area.Key, area.Config);
         if (errors.Count > 0)
         {
+            area.Errors.Clear();
             foreach (var pair in errors)
             {
                 area.Errors[pair.Key] = pair.Value;
@@ -158,6 +341,7 @@
 
         area.Config = Store.GetSettings(area.Key);
         area.EditorText = area.Config.ToJsonString(JsonOptions);
+        Revalidate(area, updateStatus: false);
         area.Status = "Saved.";
         area.IsError = false;
     }
@@ -168,7 +352,7 @@
         {
             area.Config = Store.ResetSettings(area.Key);
             area.EditorText = area.Config.ToJsonString(JsonOptions);
-            area.Errors.Clear();
+            Revalidate(area, updateStatus: false);
             area.Status = "Reset to startup defaults.";
             area.IsError = false;
         }
@@ -179,6 +363,261 @@
         }
     }
 
+    private bool TrySyncConfigFromEditor(AreaEditorModel area, bool updateStatus)
+    {
+        try
+        {
+            area.Config = JsonNode.Parse(area.EditorText)?.AsObject()
+                ?? throw new InvalidOperationException("JSON must be an object.");
+            Revalidate(area, updateStatus);
+            return true;
+        }
+        catch (Exception ex)
+        {
+            area.Errors.Clear();
+            area.Errors["settings"] = [$"Invalid JSON: {ex.Message}"];
+            if (updateStatus)
+            {
+                area.Status = "Validation failed.";
+                area.IsError = true;
+            }
+
+            return false;
+        }
+    }
+
+    private static bool TryConvertToNode(
+        FieldDefinition field,
+        string raw,
+        out JsonNode? node,
+        out string errorMessage
+    )
+    {
+        errorMessage = string.Empty;
+
+        if (field.InputKind == FieldInputKind.Number)
+        {
+            if (field.IsInteger)
+            {
+                if (int.TryParse(raw, NumberStyles.Integer, CultureInfo.InvariantCulture, out var parsedInt))
+                {
+                    node = JsonValue.Create(parsedInt);
+                    return true;
+                }
+            }
+            else if (double.TryParse(raw, NumberStyles.Float, CultureInfo.InvariantCulture, out var parsedDouble))
+            {
+                node = JsonValue.Create(parsedDouble);
+                return true;
+            }
+
+            node = null;
+            errorMessage = "Enter a valid numeric value.";
+            return false;
+        }
+
+        node = JsonValue.Create(raw);
+        return true;
+    }
+
+    private static string GetStringValue(AreaEditorModel area, string path)
+    {
+        var node = TryGetPathValue(area.Config, path);
+        if (node is null)
+        {
+            return string.Empty;
+        }
+
+        if (node is JsonValue jsonValue)
+        {
+            if (jsonValue.TryGetValue<string>(out var asString))
+            {
+                return asString;
+            }
+
+            if (jsonValue.TryGetValue<int>(out var asInt))
+            {
+                return asInt.ToString(CultureInfo.InvariantCulture);
+            }
+
+            if (jsonValue.TryGetValue<long>(out var asLong))
+            {
+                return asLong.ToString(CultureInfo.InvariantCulture);
+            }
+
+            if (jsonValue.TryGetValue<double>(out var asDouble))
+            {
+                return asDouble.ToString(CultureInfo.InvariantCulture);
+            }
+
+            if (jsonValue.TryGetValue<bool>(out var asBool))
+            {
+                return asBool.ToString();
+            }
+        }
+
+        return node.ToJsonString();
+    }
+
+    private static bool GetBoolValue(AreaEditorModel area, string path)
+    {
+        var node = TryGetPathValue(area.Config, path);
+        if (node is JsonValue jsonValue && jsonValue.TryGetValue<bool>(out var value))
+        {
+            return value;
+        }
+
+        return false;
+    }
+
+    private static string GetErrorForPath(AreaEditorModel area, string path)
+    {
+        if (area.Errors.TryGetValue(path, out var messages))
+        {
+            return string.Join(", ", messages);
+        }
+
+        return string.Empty;
+    }
+
+    private static JsonNode? TryGetPathValue(JsonObject root, string path)
+    {
+        var segments = path.Split('.', StringSplitOptions.RemoveEmptyEntries);
+        JsonNode? current = root;
+
+        foreach (var segment in segments)
+        {
+            if (current is not JsonObject currentObject || !currentObject.TryGetPropertyValue(segment, out current))
+            {
+                return null;
+            }
+        }
+
+        return current;
+    }
+
+    private static void SetPathValue(JsonObject root, string path, JsonNode? value)
+    {
+        var segments = path.Split('.', StringSplitOptions.RemoveEmptyEntries);
+        var current = root;
+
+        for (var i = 0; i < segments.Length - 1; i++)
+        {
+            var segment = segments[i];
+            if (current[segment] is not JsonObject next)
+            {
+                next = [];
+                current[segment] = next;
+            }
+
+            current = next;
+        }
+
+        current[segments[^1]] = value;
+    }
+
+    private static bool IsScalarType(Type type) =>
+        type == typeof(string)
+        || type == typeof(bool)
+        || type == typeof(byte)
+        || type == typeof(short)
+        || type == typeof(int)
+        || type == typeof(long)
+        || type == typeof(float)
+        || type == typeof(double)
+        || type == typeof(decimal)
+        || type == typeof(Guid)
+        || type == typeof(DateTime)
+        || type.IsEnum;
+
+    private static bool IsNumericType(Type type) =>
+        type == typeof(byte)
+        || type == typeof(short)
+        || type == typeof(int)
+        || type == typeof(long)
+        || type == typeof(float)
+        || type == typeof(double)
+        || type == typeof(decimal);
+
+    private static bool IsIntegerType(Type type) =>
+        type == typeof(byte) || type == typeof(short) || type == typeof(int) || type == typeof(long);
+
+    private static string Humanize(string name)
+    {
+        if (string.IsNullOrWhiteSpace(name))
+        {
+            return name;
+        }
+
+        var chars = new List<char>(name.Length + 8);
+        chars.Add(name[0]);
+
+        for (var i = 1; i < name.Length; i++)
+        {
+            var current = name[i];
+            var previous = name[i - 1];
+
+            if (char.IsUpper(current) && !char.IsUpper(previous))
+            {
+                chars.Add(' ');
+            }
+
+            chars.Add(current);
+        }
+
+        return new string(chars.ToArray());
+    }
+
+    private static string ToJsonName(string name)
+    {
+        if (string.IsNullOrWhiteSpace(name))
+        {
+            return name;
+        }
+
+        return char.ToLowerInvariant(name[0]) + name[1..];
+    }
+
+    private static void Revalidate(AreaEditorModel area, bool updateStatus)
+    {
+        IReadOnlyDictionary<string, string[]> errors;
+
+        try
+        {
+            var typed = area.Config.Deserialize(area.SettingsType, JsonOptions)
+                ?? throw new InvalidOperationException("Settings format is invalid for this area.");
+            errors = AreaSettingsValidator.Validate(typed);
+        }
+        catch
+        {
+            errors = new Dictionary<string, string[]>
+            {
+                ["settings"] = ["Settings format is invalid for this area."],
+            };
+        }
+
+        area.Errors.Clear();
+        foreach (var pair in errors)
+        {
+            area.Errors[pair.Key] = pair.Value;
+        }
+
+        if (!updateStatus)
+        {
+            return;
+        }
+
+        if (area.Errors.Count == 0)
+        {
+            area.Status = "Ready to save.";
+            area.IsError = false;
+            return;
+        }
+
+        area.Status = "Validation failed.";
+        area.IsError = true;
+    }
+
     private sealed class AreaEditorModel
     {
         public required string Key { get; init; }
@@ -187,16 +626,46 @@
 
         public required string Description { get; init; }
 
+        public required Type SettingsType { get; init; }
+
+        public required List<FieldDefinition> Fields { get; init; }
+
         public required JsonObject Config { get; set; }
 
         public string EditorText { get; set; } = string.Empty;
+
+        public bool ShowAdvanced { get; set; }
 
         public Dictionary<string, string[]> Errors { get; } = new(StringComparer.OrdinalIgnoreCase);
 
         public string Status { get; set; } = string.Empty;
 
         public bool IsError { get; set; }
+    }
 
-        public bool IsExpanded { get; set; }
+    private sealed class FieldDefinition
+    {
+        public required string Path { get; init; }
+
+        public required string Label { get; init; }
+
+        public required string GroupTitle { get; init; }
+
+        public required FieldInputKind InputKind { get; init; }
+
+        public required bool IsRequired { get; init; }
+
+        public required bool IsInteger { get; init; }
+
+        public string? Min { get; init; }
+
+        public string? Max { get; init; }
+    }
+
+    private enum FieldInputKind
+    {
+        Text,
+        Number,
+        Toggle,
     }
 }
