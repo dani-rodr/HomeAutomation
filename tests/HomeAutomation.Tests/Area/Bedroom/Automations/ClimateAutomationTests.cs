@@ -1,4 +1,3 @@
-using System.Reactive.Subjects;
 using HomeAutomation.apps.Area.Bedroom.Automations;
 using HomeAutomation.apps.Area.Bedroom.Automations.Entities;
 using HomeAutomation.apps.Area.Bedroom.Config;
