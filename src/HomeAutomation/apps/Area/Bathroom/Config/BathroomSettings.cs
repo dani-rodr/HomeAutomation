@@ -12,9 +12,17 @@ public sealed class BathroomSettings
 
 public sealed class BathroomLightSettings
 {
+    [Display(
+        Name = "Motion On Delay (s)",
+        Description = "Seconds to wait after motion is detected before turning bathroom lights on."
+    )]
     [Range(0, 30)]
     public int MotionOnDelaySeconds { get; init; } = 2;
 
+    [Display(
+        Name = "Master Switch Disable Delay (min)",
+        Description = "Minutes to keep automations disabled after the bathroom master switch is turned off."
+    )]
     [Range(1, 60)]
     public int MasterSwitchDisableDelayMinutes { get; init; } = 5;
 }

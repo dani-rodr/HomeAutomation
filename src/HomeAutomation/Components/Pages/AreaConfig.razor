@@ -1,4 +1,5 @@
 @page "/"
+@using System.ComponentModel
 @using System.ComponentModel.DataAnnotations
 @using System.Globalization
 @using System.Reflection
@@ -65,6 +66,23 @@
                                             <label class="rounded-lg border border-ha-line bg-white/70 p-3">
                                                 <div class="mb-1 flex flex-wrap items-center gap-2">
                                                     <span class="text-sm font-semibold text-ha-ink">@field.Label</span>
+                                                    @if (!string.IsNullOrWhiteSpace(field.Description))
+                                                    {
+                                                        <span class="relative inline-flex">
+                                                            <button type="button"
+                                                                    class="inline-flex h-5 w-5 items-center justify-center rounded-full border border-ha-line bg-white text-xs font-bold text-ha-muted"
+                                                                    title="@field.Description"
+                                                                    aria-label="@field.Description"
+                                                                    aria-expanded="@(IsTooltipOpen(ActiveArea, field))"
+                                                                    @onclick="() => ToggleTooltip(ActiveArea, field)">i</button>
+                                                            @if (IsTooltipOpen(ActiveArea, field))
+                                                            {
+                                                                <span class="absolute left-1/2 top-7 z-20 w-64 -translate-x-1/2 rounded-lg border border-ha-line bg-white p-2 text-xs font-medium text-ha-ink shadow-panel">
+                                                                    @field.Description
+                                                                </span>
+                                                            }
+                                                        </span>
+                                                    }
                                                     @if (field.IsRequired)
                                                     {
                                                         <span class="text-xs font-bold uppercase text-ha-danger">required</span>
@@ -138,6 +156,7 @@
 
     private readonly List<AreaEditorModel> Areas = [];
     private string ActiveAreaKey = string.Empty;
+    private string OpenTooltipKey = string.Empty;
     private string GlobalStatus = string.Empty;
     private bool GlobalError;
 
@@ -237,7 +256,8 @@
         return new FieldDefinition
         {
             Path = path,
-            Label = Humanize(property.Name),
+            Label = GetFieldLabel(property),
+            Description = GetFieldDescription(property),
             GroupTitle = groupTitle,
             InputKind = propertyType == typeof(bool)
                 ? FieldInputKind.Toggle
@@ -258,11 +278,26 @@
     private void ToggleAdvancedView(AreaEditorModel area)
     {
         area.ShowAdvanced = !area.ShowAdvanced;
+        OpenTooltipKey = string.Empty;
         if (area.ShowAdvanced)
         {
             area.EditorText = area.Config.ToJsonString(JsonOptions);
         }
     }
+
+    private void ToggleTooltip(AreaEditorModel area, FieldDefinition field)
+    {
+        var key = BuildTooltipKey(area, field);
+        OpenTooltipKey = string.Equals(OpenTooltipKey, key, StringComparison.Ordinal)
+            ? string.Empty
+            : key;
+    }
+
+    private bool IsTooltipOpen(AreaEditorModel area, FieldDefinition field) =>
+        string.Equals(OpenTooltipKey, BuildTooltipKey(area, field), StringComparison.Ordinal);
+
+    private static string BuildTooltipKey(AreaEditorModel area, FieldDefinition field) =>
+        $"{area.Key}:{field.Path}";
 
     private void OnJsonEditorChanged(AreaEditorModel area, ChangeEventArgs args)
     {
@@ -568,6 +603,24 @@
         return new string(chars.ToArray());
     }
 
+    private static string GetFieldLabel(PropertyInfo property)
+    {
+        var display = property.GetCustomAttribute<DisplayAttribute>();
+        return !string.IsNullOrWhiteSpace(display?.Name) ? display!.Name! : Humanize(property.Name);
+    }
+
+    private static string GetFieldDescription(PropertyInfo property)
+    {
+        var display = property.GetCustomAttribute<DisplayAttribute>();
+        if (!string.IsNullOrWhiteSpace(display?.Description))
+        {
+            return display!.Description!;
+        }
+
+        var description = property.GetCustomAttribute<DescriptionAttribute>();
+        return description?.Description ?? string.Empty;
+    }
+
     private static string ToJsonName(string name)
     {
         if (string.IsNullOrWhiteSpace(name))
@@ -648,6 +701,8 @@
         public required string Path { get; init; }
 
         public required string Label { get; init; }
+
+        public required string Description { get; init; }
 
         public required string GroupTitle { get; init; }
 
