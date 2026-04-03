@@ -27,10 +27,6 @@ public class ClimateAutomation(
 
         yield return scheduler.GetResetSchedule();
 
-        yield return _ac.StateAllChanges()
-            .IsManuallyOperated()
-            .Subscribe(TurnOffMasterSwitchOnManualOperation);
-
         yield return _weather.StateAllChanges().Subscribe(ApplyPowerSavingModeFromWeather);
 
         yield return scheduler.Changes.Subscribe(HandleBedroomSettingsChanged);
@@ -62,41 +58,6 @@ public class ClimateAutomation(
             .. GetHousePresenceAutomations(),
             .. GetFanModeToggleAutomation(),
         ];
-
-    private void TurnOffMasterSwitchOnManualOperation(StateChange e)
-    {
-        if (e.Old.IsOff())
-        {
-            Logger.LogDebug("AC was off, skipping master switch turn-off.");
-
-            return;
-        }
-
-        if (e.New.IsUnavailable() || e.Old.IsUnavailable())
-        {
-            Logger.LogDebug("AC states is unavailable, skipping master switch turn-off.");
-
-            return;
-        }
-
-        var (oldTemp, newTemp) = e.GetAttributeChange<double?>("temperature");
-
-        var stateChanged = e.New?.State != e.Old?.State;
-
-        if (stateChanged || (oldTemp.HasValue && newTemp.HasValue && oldTemp != newTemp))
-        {
-            MasterSwitch.TurnOff();
-
-            Logger.LogDebug(
-                "AC state changed: {OldState} ➜ {NewState} | Temp: {OldTemp} ➜ {NewTemp} | By: {User}",
-                e.Old?.State,
-                e.New?.State,
-                oldTemp?.ToString() ?? "N/A",
-                newTemp?.ToString() ?? "N/A",
-                e.Username() ?? "unknown"
-            );
-        }
-    }
 
     private IEnumerable<IDisposable> GetSensorBasedAutomations()
     {

@@ -704,7 +704,7 @@ public partial class ClimateAutomationTests : AutomationTestBase<ClimateAutomati
     // The core automation logic is sound and tested in production
 
     [Fact]
-    public void AcStateChange_Should_DisableMasterSwitch()
+    public void AcStateChange_ShouldNot_UpdateMasterSwitch()
     {
         // Arrange - Set up AC with same temperature in attributes
 
@@ -726,9 +726,7 @@ public partial class ClimateAutomationTests : AutomationTestBase<ClimateAutomati
 
         _mockHaContext.EmitStateChange(stateChange);
 
-        // Assert - Should not turn off master switch (no temperature change detected)
-
-        _mockHaContext.ShouldHaveCalledSwitchTurnOff(_entities.MasterSwitch.EntityId);
+        _mockHaContext.ShouldNeverHaveCalledSwitch(_entities.MasterSwitch.EntityId);
     }
 
     [Fact]
@@ -749,7 +747,7 @@ public partial class ClimateAutomationTests : AutomationTestBase<ClimateAutomati
     }
 
     [Fact]
-    public void AcStateChangeWithTemperatureChange_Should_DisableMasterSwitch()
+    public void AcStateChangeWithTemperatureChange_ShouldNot_UpdateMasterSwitch()
     {
         // Act - Same state, temperature changes 25 -> 22
 
@@ -763,10 +761,7 @@ public partial class ClimateAutomationTests : AutomationTestBase<ClimateAutomati
         );
 
         _mockHaContext.EmitStateChange(stateChange);
-
-        // Assert - Should turn off master switch
-
-        _mockHaContext.ShouldHaveCalledSwitchTurnOff(_entities.MasterSwitch.EntityId);
+        _mockHaContext.ShouldNeverHaveCalledSwitch(_entities.MasterSwitch.EntityId);
     }
 
     [Fact]
