@@ -11,7 +11,7 @@ public class BedroomApp(
     IBedroomFanEntities fanEntities,
     IClimateEntities climateEntities,
     IAppConfig<BedroomSettings> settings,
-    IClimateSettingsResolver climateSettingsResolver,
+    IClimateAutomationScheduler climateAutomationScheduler,
     MotionSensor motionSensor,
     IAutomationFactory automationFactory
 ) : AppBase<BedroomSettings>(settings)
@@ -26,7 +26,7 @@ public class BedroomApp(
 
         yield return automationFactory.Create<ClimateAutomation>(
             climateEntities,
-            climateSettingsResolver
+            climateAutomationScheduler
         );
     }
 }

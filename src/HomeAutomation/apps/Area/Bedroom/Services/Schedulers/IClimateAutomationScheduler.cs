@@ -2,7 +2,7 @@ using HomeAutomation.apps.Area.Bedroom.Config;
 
 namespace HomeAutomation.apps.Area.Bedroom.Services.Schedulers;
 
-public interface IClimateSettingsResolver : IAutomationScheduler
+public interface IClimateAutomationScheduler : IAutomationScheduler
 {
     IObservable<ClimateSettings> Changes { get; }
 

@@ -4,22 +4,22 @@ using HomeAutomation.apps.Common.Settings;
 
 namespace HomeAutomation.Tests.Common.Services;
 
-public class ClimateSettingsResolverTests : HaContextTestBase
+public class ClimateAutomationSchedulerTests : HaContextTestBase
 {
     private MockHaContext _mockHaContext => HaContext;
     private readonly Mock<
-        ILogger<HomeAutomation.apps.Area.Bedroom.Services.Schedulers.ClimateSettingsResolver>
+        ILogger<HomeAutomation.apps.Area.Bedroom.Services.Schedulers.ClimateAutomationScheduler>
     > _mockLogger;
     private readonly Mock<HomeAutomation.apps.Area.Bedroom.Services.Schedulers.IAcTemperatureCalculator> _mockCalculator;
     private readonly Mock<ILiveAppConfig<BedroomSettings>> _mockLiveSettings;
     private readonly TestSchedulerEntities _schedulerEntities;
-    private readonly HomeAutomation.apps.Area.Bedroom.Services.Schedulers.ClimateSettingsResolver _scheduler;
+    private readonly HomeAutomation.apps.Area.Bedroom.Services.Schedulers.ClimateAutomationScheduler _climateAutomationScheduler;
 
-    public ClimateSettingsResolverTests()
+    public ClimateAutomationSchedulerTests()
     {
         _mockLogger =
             new Mock<
-                ILogger<HomeAutomation.apps.Area.Bedroom.Services.Schedulers.ClimateSettingsResolver>
+                ILogger<HomeAutomation.apps.Area.Bedroom.Services.Schedulers.ClimateAutomationScheduler>
             >();
         _mockCalculator =
             new Mock<HomeAutomation.apps.Area.Bedroom.Services.Schedulers.IAcTemperatureCalculator>();
@@ -30,8 +30,8 @@ public class ClimateSettingsResolverTests : HaContextTestBase
         _mockLiveSettings.SetupGet(x => x.Settings).Returns(settings);
         _mockLiveSettings.SetupGet(x => x.Changes).Returns(Observable.Empty<BedroomSettings>());
 
-        _scheduler =
-            new HomeAutomation.apps.Area.Bedroom.Services.Schedulers.ClimateSettingsResolver(
+        _climateAutomationScheduler =
+            new HomeAutomation.apps.Area.Bedroom.Services.Schedulers.ClimateAutomationScheduler(
                 _schedulerEntities,
                 _mockLiveSettings.Object,
                 _mockCalculator.Object,
@@ -51,9 +51,12 @@ public class ClimateSettingsResolverTests : HaContextTestBase
     )
     {
         SetSchedulerToLocalTime(hour);
-        var scheduler = CreateScheduler();
+        var climateAutomationScheduler = CreateClimateAutomationScheduler();
 
-        var success = scheduler.TryGetCurrentSetting(out var block, out var setting);
+        var success = climateAutomationScheduler.TryGetCurrentSetting(
+            out var block,
+            out var setting
+        );
 
         success.Should().BeTrue();
         block.Should().Be(expectedBlock);
@@ -75,7 +78,7 @@ public class ClimateSettingsResolverTests : HaContextTestBase
         );
         SetSchedulerToLocalTime(19);
 
-        _scheduler.TryGetCurrentSetting(out _, out var setting).Should().BeTrue();
+        _climateAutomationScheduler.TryGetCurrentSetting(out _, out var setting).Should().BeTrue();
 
         _mockCalculator
             .Setup(x =>
@@ -89,7 +92,11 @@ public class ClimateSettingsResolverTests : HaContextTestBase
             )
             .Returns(26);
 
-        var result = _scheduler.CalculateTemperature(setting, isOccupied: true, isDoorOpen: false);
+        var result = _climateAutomationScheduler.CalculateTemperature(
+            setting,
+            isOccupied: true,
+            isDoorOpen: false
+        );
 
         result.Should().Be(26);
     }
@@ -97,7 +104,7 @@ public class ClimateSettingsResolverTests : HaContextTestBase
     [Fact]
     public void GetWeatherPowerSavingSettings_ShouldReturnConfiguredThresholds()
     {
-        var settings = _scheduler.GetWeatherPowerSavingSettings();
+        var settings = _climateAutomationScheduler.GetWeatherPowerSavingSettings();
 
         settings.TriggerUvIndex.Should().Be(8);
         settings.TriggerOutdoorTempC.Should().Be(32);
@@ -113,15 +120,15 @@ public class ClimateSettingsResolverTests : HaContextTestBase
         invalidLiveSettings.SetupGet(x => x.Value).Returns(invalidSettings);
         invalidLiveSettings.SetupGet(x => x.Settings).Returns(invalidSettings);
         invalidLiveSettings.SetupGet(x => x.Changes).Returns(Observable.Empty<BedroomSettings>());
-        var scheduler =
-            new HomeAutomation.apps.Area.Bedroom.Services.Schedulers.ClimateSettingsResolver(
+        var climateAutomationScheduler =
+            new HomeAutomation.apps.Area.Bedroom.Services.Schedulers.ClimateAutomationScheduler(
                 _schedulerEntities,
                 invalidLiveSettings.Object,
                 _mockCalculator.Object,
                 _mockLogger.Object
             );
 
-        var schedules = scheduler.GetSchedules(() => { }).ToList();
+        var schedules = climateAutomationScheduler.GetSchedules(() => { }).ToList();
 
         schedules.Should().HaveCount(2);
         _mockLogger.Verify(
@@ -165,19 +172,19 @@ public class ClimateSettingsResolverTests : HaContextTestBase
         liveSettings.SetupGet(x => x.Value).Returns(settings);
         liveSettings.SetupGet(x => x.Settings).Returns(settings);
         liveSettings.SetupGet(x => x.Changes).Returns(Observable.Empty<BedroomSettings>());
-        var scheduler =
-            new HomeAutomation.apps.Area.Bedroom.Services.Schedulers.ClimateSettingsResolver(
+        var climateAutomationScheduler =
+            new HomeAutomation.apps.Area.Bedroom.Services.Schedulers.ClimateAutomationScheduler(
                 _schedulerEntities,
                 liveSettings.Object,
                 _mockCalculator.Object,
                 _mockLogger.Object
             );
 
-        scheduler.TryGetCurrentSetting(out _, out _).Should().BeFalse();
+        climateAutomationScheduler.TryGetCurrentSetting(out _, out _).Should().BeFalse();
     }
 
-    private HomeAutomation.apps.Area.Bedroom.Services.Schedulers.ClimateSettingsResolver CreateScheduler() =>
-        new HomeAutomation.apps.Area.Bedroom.Services.Schedulers.ClimateSettingsResolver(
+    private HomeAutomation.apps.Area.Bedroom.Services.Schedulers.ClimateAutomationScheduler CreateClimateAutomationScheduler() =>
+        new HomeAutomation.apps.Area.Bedroom.Services.Schedulers.ClimateAutomationScheduler(
             _schedulerEntities,
             _mockLiveSettings.Object,
             _mockCalculator.Object,

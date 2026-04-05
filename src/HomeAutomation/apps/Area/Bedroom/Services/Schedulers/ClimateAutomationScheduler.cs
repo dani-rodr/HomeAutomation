@@ -4,19 +4,19 @@ using NetDaemon.Extensions.Scheduler;
 
 namespace HomeAutomation.apps.Area.Bedroom.Services.Schedulers;
 
-public sealed class ClimateSettingsResolver : IClimateSettingsResolver
+public sealed class ClimateAutomationScheduler : IClimateAutomationScheduler
 {
     private readonly ILiveAppConfig<BedroomSettings> _settings;
     private readonly InputBooleanEntity _powerSavingMode;
     private readonly IScheduler _scheduler;
     private readonly IAcTemperatureCalculator _temperatureCalculator;
-    private readonly ILogger<ClimateSettingsResolver> _logger;
+    private readonly ILogger<ClimateAutomationScheduler> _logger;
 
-    public ClimateSettingsResolver(
+    public ClimateAutomationScheduler(
         Entities.IClimateSchedulerEntities entities,
         ILiveAppConfig<BedroomSettings> liveSettings,
         IAcTemperatureCalculator temperatureCalculator,
-        ILogger<ClimateSettingsResolver> logger
+        ILogger<ClimateAutomationScheduler> logger
     )
     {
         _settings = liveSettings;
