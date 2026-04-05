@@ -34,8 +34,7 @@ public partial class ClimateAutomationTests
 
         _mockHaContext.ShouldHaveCalledClimateSetTemperature(
             _entities.AirConditioner.EntityId,
-            expectedMode,
-            expectedTemp
+            expectedTemperature: expectedTemp
         );
 
         scenario.Should().NotBeEmpty("Test scenario should be documented");
@@ -89,8 +88,7 @@ public partial class ClimateAutomationTests
 
         _mockHaContext.ShouldHaveCalledClimateSetTemperature(
             _entities.AirConditioner.EntityId,
-            mode,
-            coolTemp
+            expectedTemperature: coolTemp
         );
 
         scenario.Should().NotBeEmpty("Test scenario should be documented");

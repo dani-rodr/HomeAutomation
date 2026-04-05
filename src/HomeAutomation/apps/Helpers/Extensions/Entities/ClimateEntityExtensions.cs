@@ -11,7 +11,12 @@ public static class ClimateEntityExtensions
         climate.StateInvariant() is HaEntityStates.COOL;
 
     public static bool IsOn([NotNullWhen(true)] this ClimateEntity? climate) =>
-        climate.StateInvariant() is HaEntityStates.DRY or HaEntityStates.COOL;
+        climate.StateInvariant()
+            is HaEntityStates.DRY
+                or HaEntityStates.COOL
+                or HaEntityStates.AUTO
+                or HaEntityStates.FAN_ONLY
+                or HaEntityStates.HEAT;
 }
 
 public static class WeatherEntityExtensions

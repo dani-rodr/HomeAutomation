@@ -189,6 +189,14 @@ public sealed class WeatherPowerSavingSettings : IValidatableObject
 
 public sealed class ClimateSetting : IValidatableObject
 {
+    public static readonly string[] AllowedModes =
+    [
+        HaEntityStates.COOL,
+        HaEntityStates.DRY,
+        HaEntityStates.AUTO,
+        HaEntityStates.FAN_ONLY,
+    ];
+
     public ClimateSetting() { }
 
     public ClimateSetting(
@@ -241,6 +249,7 @@ public sealed class ClimateSetting : IValidatableObject
     public int AwayTemp { get; init; }
 
     [Display(Name = "Mode", Description = "Climate mode to apply (cool, dry, auto, fan_only).")]
+    [SettingsSelectOptions(typeof(ClimateModeSelectOptionsProvider))]
     [Required]
     public string Mode { get; init; } = HaEntityStates.COOL;
 
@@ -248,15 +257,7 @@ public sealed class ClimateSetting : IValidatableObject
 
     public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
     {
-        if (
-            !new[]
-            {
-                HaEntityStates.COOL,
-                HaEntityStates.DRY,
-                HaEntityStates.AUTO,
-                "fan_only",
-            }.Contains(Mode, StringComparer.OrdinalIgnoreCase)
-        )
+        if (!AllowedModes.Contains(Mode, StringComparer.OrdinalIgnoreCase))
         {
             yield return new ValidationResult(
                 "Mode must be one of: cool, dry, auto, fan_only.",
@@ -272,4 +273,15 @@ public sealed class ClimateSetting : IValidatableObject
             );
         }
     }
+}
+
+public sealed class ClimateModeSelectOptionsProvider : ISettingsSelectOptionsProvider
+{
+    public IReadOnlyList<SettingsSelectOption> GetOptions() =>
+        [
+            new(HaEntityStates.COOL, "Cool"),
+            new(HaEntityStates.DRY, "Dry"),
+            new(HaEntityStates.AUTO, "Auto"),
+            new(HaEntityStates.FAN_ONLY, "Fan Only"),
+        ];
 }

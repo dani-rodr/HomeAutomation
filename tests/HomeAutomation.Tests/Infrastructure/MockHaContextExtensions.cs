@@ -441,6 +441,11 @@ public static class MockHaContextExtensions
             );
     }
 
+    public static void ShouldNeverHaveCalledClimateSetHvacMode(
+        this MockHaContext mock,
+        string entityId
+    ) => AssertNotCalled(mock, "climate", "set_hvac_mode", entityId);
+
     public static void ShouldHaveCalledClimateSetFanMode(
         this MockHaContext mock,
         string entityId

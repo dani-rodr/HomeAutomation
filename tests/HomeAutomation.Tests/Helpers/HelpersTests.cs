@@ -794,8 +794,10 @@ public partial class HelpersTests : HaContextTestBase
     [Theory]
     [InlineData("dry", true)]
     [InlineData("cool", true)]
+    [InlineData("auto", true)]
+    [InlineData("fan_only", true)]
+    [InlineData("heat", true)]
     [InlineData("off", false)]
-    [InlineData("heat", false)]
     public void ClimateEntity_IsOn_Should_CheckOnState(string state, bool expected)
     {
         // Arrange

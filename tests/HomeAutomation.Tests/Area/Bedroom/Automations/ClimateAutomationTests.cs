@@ -269,9 +269,10 @@ public partial class ClimateAutomationTests : AutomationTestBase<ClimateAutomati
 
         _mockHaContext.ShouldHaveCalledClimateSetTemperature(
             _entities.AirConditioner.EntityId,
-            "cool",
-            23.0
+            expectedTemperature: 23.0
         );
+
+        _mockHaContext.ShouldNeverHaveCalledClimateSetHvacMode(_entities.AirConditioner.EntityId);
     }
 
     [Fact]
@@ -285,9 +286,47 @@ public partial class ClimateAutomationTests : AutomationTestBase<ClimateAutomati
 
         _mockHaContext.ShouldHaveCalledClimateSetTemperature(
             _entities.AirConditioner.EntityId,
-            "cool",
-            24.0
+            expectedTemperature: 24.0
         );
+
+        _mockHaContext.ShouldNeverHaveCalledClimateSetHvacMode(_entities.AirConditioner.EntityId);
+    }
+
+    [Fact]
+    public void ApplyScheduledSettings_ModeChangeRequired_Should_SetHvacModeBeforeTemperature()
+    {
+        var drySetting = new ClimateSetting(24, 23, 25, HaEntityStates.DRY, 18, 0);
+        SetupSchedulerMock(TimeBlock.Sunset, drySetting);
+
+        _mockHaContext.SetEntityState(_entities.MotionSensor.EntityId, "on");
+        _mockHaContext.SetEntityState(_entities.Door.EntityId, "off");
+        _mockHaContext.SetEntityState(_entities.AirConditioner.EntityId, HaEntityStates.COOL);
+        _mockHaContext.SetEntityAttributes(
+            _entities.AirConditioner.EntityId,
+            new
+            {
+                temperature = 23.0,
+                current_temperature = 26.0,
+                hvac_modes = new[] { "auto", "cool", "dry", "fan_only" },
+                fan_mode = "auto",
+            }
+        );
+        _mockHaContext.ClearServiceCalls();
+
+        _settingsChanges.OnNext(new ClimateSettings());
+
+        _mockHaContext.ShouldHaveCalledClimateSetHvacMode(
+            _entities.AirConditioner.EntityId,
+            HaEntityStates.DRY
+        );
+        _mockHaContext.ShouldHaveCalledClimateSetTemperature(
+            _entities.AirConditioner.EntityId,
+            expectedTemperature: 23.0
+        );
+        _mockHaContext
+            .ServiceCalls.Select(call => $"{call.Domain}.{call.Service}")
+            .Should()
+            .ContainInOrder("climate.set_hvac_mode", "climate.set_temperature");
     }
 
     #region Scheduler Integration Tests

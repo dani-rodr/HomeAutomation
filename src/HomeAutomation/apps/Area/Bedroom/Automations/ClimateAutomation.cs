@@ -280,7 +280,25 @@ public class ClimateAutomation(
 
         var currentMode = _ac.State;
 
-        if (currentTemp == targetTemp && _ac.Is(setting.Mode))
+        var isModeChangeRequired = !_ac.Is(setting.Mode);
+
+        var supportedModes = _ac.Attributes?.HvacModes;
+
+        var isModeSupported =
+            supportedModes is null
+            || supportedModes.Contains(setting.Mode, StringComparer.OrdinalIgnoreCase);
+
+        if (!isModeSupported)
+        {
+            Logger.LogWarning(
+                "Skipping unsupported AC mode change for {EntityId}: DesiredMode={DesiredMode}, SupportedModes={SupportedModes}",
+                _ac.EntityId,
+                setting.Mode,
+                supportedModes is null ? "unknown" : string.Join(", ", supportedModes)
+            );
+        }
+
+        if (currentTemp == targetTemp && (!isModeChangeRequired || !isModeSupported))
         {
             Logger.LogDebug(
                 "Skipping AC settings: Already configured correctly - Temp: {CurrentTemp}°C = {TargetTemp}°C, Mode: {CurrentMode} = {TargetMode}",
@@ -303,7 +321,12 @@ public class ClimateAutomation(
             allowFanAssistEnable
         );
 
-        _ac.SetTemperature(temperature: targetTemp, hvacMode: setting.Mode);
+        if (isModeChangeRequired && isModeSupported)
+        {
+            _ac.SetHvacMode(setting.Mode);
+        }
+
+        _ac.SetTemperature(temperature: targetTemp);
     }
 
     private void ApplyFanAssist(int targetTemp, bool allowFanAssistEnable)

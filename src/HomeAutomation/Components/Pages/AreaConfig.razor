@@ -97,6 +97,15 @@
                                                 {
                                                     <input class="ha-input" type="number" value="@GetStringValue(ActiveArea, field.Path)" min="@field.Min" max="@field.Max" step="@(field.IsInteger ? "1" : "any")" @onchange="args => OnTextFieldChanged(ActiveArea, field, args)" />
                                                 }
+                                                else if (field.InputKind == FieldInputKind.Select)
+                                                {
+                                                    <select class="ha-input" value="@GetStringValue(ActiveArea, field.Path)" @onchange="args => OnTextFieldChanged(ActiveArea, field, args)">
+                                                        @foreach (var option in field.Options)
+                                                        {
+                                                            <option value="@option.Value">@option.Label</option>
+                                                        }
+                                                    </select>
+                                                }
                                                 else
                                                 {
                                                     <input class="ha-input" type="text" value="@GetStringValue(ActiveArea, field.Path)" @onchange="args => OnTextFieldChanged(ActiveArea, field, args)" />
@@ -251,6 +260,7 @@
     )
     {
         var range = property.GetCustomAttribute<RangeAttribute>();
+        var selectOptions = GetSelectOptions(property, propertyType);
         var isInteger = IsIntegerType(propertyType);
 
         return new FieldDefinition
@@ -261,9 +271,12 @@
             GroupTitle = groupTitle,
             InputKind = propertyType == typeof(bool)
                 ? FieldInputKind.Toggle
+                : selectOptions.Count > 0
+                    ? FieldInputKind.Select
                 : IsNumericType(propertyType)
                     ? FieldInputKind.Number
                     : FieldInputKind.Text,
+            Options = selectOptions,
             IsRequired = property.GetCustomAttribute<RequiredAttribute>() is not null,
             IsInteger = isInteger,
             Min = range is null
@@ -273,6 +286,29 @@
                 ? null
                 : Convert.ToString(range.Maximum, CultureInfo.InvariantCulture),
         };
+    }
+
+    private static IReadOnlyList<SelectOptionDefinition> GetSelectOptions(
+        PropertyInfo property,
+        Type propertyType
+    )
+    {
+        if (property.GetCustomAttribute<SettingsSelectOptionsAttribute>() is { } attribute)
+        {
+            return attribute
+                .CreateOptions()
+                .Select(option => new SelectOptionDefinition(option.Value, option.Label))
+                .ToList();
+        }
+
+        if (!propertyType.IsEnum)
+        {
+            return [];
+        }
+
+        return Enum.GetNames(propertyType)
+            .Select(name => new SelectOptionDefinition(name, Humanize(name)))
+            .ToList();
     }
 
     private void ToggleAdvancedView(AreaEditorModel area)
@@ -712,15 +748,20 @@
 
         public required bool IsInteger { get; init; }
 
+        public required IReadOnlyList<SelectOptionDefinition> Options { get; init; }
+
         public string? Min { get; init; }
 
         public string? Max { get; init; }
     }
+
+    private sealed record SelectOptionDefinition(string Value, string Label);
 
     private enum FieldInputKind
     {
         Text,
         Number,
         Toggle,
+        Select,
     }
 }
