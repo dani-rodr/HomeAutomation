@@ -29,20 +29,12 @@ public sealed class AreaSettingsStore(
         .WithNamingConvention(CamelCaseNamingConvention.Instance)
         .Build();
 
-    private readonly Dictionary<string, JsonObject> _bootDefaults = registry
-        .List()
-        .ToDictionary(
-            descriptor => descriptor.Key,
-            descriptor => LoadSectionFromFile(descriptor),
-            StringComparer.OrdinalIgnoreCase
-        );
-
     public IReadOnlyCollection<AreaSettingsDescriptor> ListAreas() => registry.List();
 
     public JsonObject GetSettings(string areaKey)
     {
         var descriptor = ResolveDescriptor(areaKey);
-        return LoadSectionFromFile(descriptor);
+        return SerializeToJsonObject(GetSettingsObject(descriptor));
     }
 
     public T GetSettings<T>(string areaKey)
@@ -63,8 +55,7 @@ public sealed class AreaSettingsStore(
             );
         }
 
-        var section = LoadSectionFromFile(descriptor);
-        return DeserializeToType(section, settingsType);
+        return GetSettingsObject(descriptor);
     }
 
     public IReadOnlyDictionary<string, string[]> SaveSettings(string areaKey, JsonObject settings)
@@ -108,7 +99,7 @@ public sealed class AreaSettingsStore(
     public JsonObject ResetSettings(string areaKey)
     {
         var descriptor = ResolveDescriptor(areaKey);
-        var defaultSettings = _bootDefaults[descriptor.Key].DeepClone().AsObject();
+        var defaultSettings = SerializeToJsonObject(CreateDefaultSettings(descriptor.SettingsType));
 
         SaveSectionToFile(descriptor, defaultSettings);
 
@@ -121,6 +112,21 @@ public sealed class AreaSettingsStore(
         );
 
         return defaultSettings;
+    }
+
+    private object GetSettingsObject(AreaSettingsDescriptor descriptor)
+    {
+        if (!File.Exists(descriptor.SettingsFilePath))
+        {
+            var defaultSettings = SerializeToJsonObject(
+                CreateDefaultSettings(descriptor.SettingsType)
+            );
+            SaveSectionToFile(descriptor, defaultSettings);
+            return DeserializeToType(defaultSettings, descriptor.SettingsType);
+        }
+
+        var section = LoadSectionFromFile(descriptor);
+        return DeserializeToType(section, descriptor.SettingsType);
     }
 
     private AreaSettingsDescriptor ResolveDescriptor(string areaKey)
@@ -186,6 +192,21 @@ public sealed class AreaSettingsStore(
         return typed
             ?? throw new InvalidOperationException(
                 $"Unable to deserialize settings to '{settingsType.Name}'."
+            );
+    }
+
+    private static object CreateDefaultSettings(Type settingsType) =>
+        Activator.CreateInstance(settingsType)
+        ?? throw new InvalidOperationException(
+            $"Unable to create default settings instance for '{settingsType.Name}'."
+        );
+
+    private static JsonObject SerializeToJsonObject(object settings)
+    {
+        var node = JsonSerializer.SerializeToNode(settings, settings.GetType(), JsonOptions);
+        return node as JsonObject
+            ?? throw new InvalidOperationException(
+                $"Unable to serialize settings '{settings.GetType().Name}' to a JSON object."
             );
     }
 

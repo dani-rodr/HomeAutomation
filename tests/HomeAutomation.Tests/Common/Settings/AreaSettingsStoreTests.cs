@@ -97,16 +97,28 @@ public sealed class AreaSettingsStoreTests : IDisposable
     }
 
     [Fact]
-    public void ResetSettings_ShouldRestoreBootDefaultsAndPublish()
+    public void ResetSettings_ShouldRestoreCodeDefaultsAndPublish()
     {
-        var settings = _store.GetSettings("bathroom");
-        settings["light"]!["motionOnDelaySeconds"] = 6;
-        _store.SaveSettings("bathroom", settings);
+        File.WriteAllText(
+            _descriptor.SettingsFilePath,
+            $"""
+            {typeof(BathroomSettings).FullName}:
+              light:
+                motionOnDelaySeconds: 9
+                masterSwitchDisableDelayMinutes: 10
+            """
+        );
 
-        var reset = _store.ResetSettings("bathroom");
+        var store = CreateStore();
+
+        var settings = store.GetSettings("bathroom");
+        settings["light"]!["motionOnDelaySeconds"] = 6;
+        store.SaveSettings("bathroom", settings);
+
+        var reset = store.ResetSettings("bathroom");
 
         reset["light"]?["motionOnDelaySeconds"]?.GetValue<int>().Should().Be(2);
-        _store
+        store
             .GetSettings("bathroom")["light"]
             ?["motionOnDelaySeconds"]?.GetValue<int>()
             .Should()
@@ -121,6 +133,38 @@ public sealed class AreaSettingsStoreTests : IDisposable
                 ),
             Times.Once
         );
+    }
+
+    [Fact]
+    public void GetSettings_WhenYamlMissingFields_ShouldFillFromCodeDefaults()
+    {
+        File.WriteAllText(
+            _descriptor.SettingsFilePath,
+            $"""
+            {typeof(BathroomSettings).FullName}:
+              light:
+                motionOnDelaySeconds: 4
+            """
+        );
+
+        var settings = CreateStore().GetSettings("bathroom");
+
+        settings["light"]?["motionOnDelaySeconds"]?.GetValue<int>().Should().Be(4);
+        settings["light"]?["masterSwitchDisableDelayMinutes"]?.GetValue<int>().Should().Be(5);
+    }
+
+    [Fact]
+    public void GetSettings_WhenYamlMissing_ShouldCreateFileFromCodeDefaults()
+    {
+        File.Delete(_descriptor.SettingsFilePath);
+
+        var store = CreateStore();
+
+        var settings = store.GetSettings("bathroom");
+
+        File.Exists(_descriptor.SettingsFilePath).Should().BeTrue();
+        settings["light"]?["motionOnDelaySeconds"]?.GetValue<int>().Should().Be(2);
+        settings["light"]?["masterSwitchDisableDelayMinutes"]?.GetValue<int>().Should().Be(5);
     }
 
     public void Dispose()
@@ -138,4 +182,11 @@ public sealed class AreaSettingsStoreTests : IDisposable
                 motionOnDelaySeconds: 2
                 masterSwitchDisableDelayMinutes: 5
             """;
+
+    private AreaSettingsStore CreateStore() =>
+        new(
+            new AreaSettingsRegistry([_descriptor]),
+            _changeNotifier.Object,
+            Mock.Of<ILogger<AreaSettingsStore>>()
+        );
 }

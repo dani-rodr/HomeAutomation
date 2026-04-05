@@ -4,29 +4,26 @@ HomeAutomation.apps.Area.Bedroom.Config.BedroomSettings:
       hourStart: 5
       hourEnd: 18
       doorOpenTemp: 25
-      ecoAwayTemp: 27
       comfortTemp: 24
-      awayTemp: 27
+      awayTemp: 25
       mode: cool
-      activateFan: true
     sunset:
       hourStart: 18
       hourEnd: 0
-      doorOpenTemp: 25
-      ecoAwayTemp: 27
+      doorOpenTemp: 24
       comfortTemp: 23
-      awayTemp: 27
+      awayTemp: 25
       mode: cool
-      activateFan: false
     midnight:
       hourStart: 0
       hourEnd: 5
       doorOpenTemp: 24
-      ecoAwayTemp: 25
       comfortTemp: 22
       awayTemp: 25
       mode: cool
-      activateFan: false
+    powerSavingTempOffsetC: 2
+    enableFanAssist: true
+    fanAssistAtOrAboveSetpointC: 25
     weatherPowerSaving:
       triggerUvIndex: 8.0
       triggerOutdoorTempC: 32.0
