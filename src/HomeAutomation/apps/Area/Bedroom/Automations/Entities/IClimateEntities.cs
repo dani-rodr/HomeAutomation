@@ -7,6 +7,7 @@ public interface IClimateEntities : IMotionBase
     BinarySensorEntity Door { get; }
     BinarySensorEntity HouseMotionSensor { get; }
     ButtonEntity AcFanModeToggle { get; }
+    SwitchEntity FanAutomation { get; }
     SwitchEntity Fan { get; }
     InputBooleanEntity PowerSavingMode { get; }
 }

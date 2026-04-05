@@ -4,7 +4,7 @@ namespace HomeAutomation.Tests.Common.Containers;
 
 public class AcSettingsTests
 {
-    private static ClimateSetting CreateDefaultSetting() => new(26, 23, 25, "cool", true, 6, 18);
+    private static ClimateSetting CreateDefaultSetting() => new(26, 23, 25, "cool", 6, 18);
 
     [Theory]
     [InlineData(0, 23, true)]
@@ -17,7 +17,6 @@ public class AcSettingsTests
             comfortTemp: 23,
             awayTemp: 25,
             mode: "cool",
-            activateFan: true,
             hourStart: hourStart,
             hourEnd: hourEnd
         );
@@ -34,7 +33,6 @@ public class AcSettingsTests
         Assert.Equal(23, setting.ComfortTemp);
         Assert.Equal(25, setting.AwayTemp);
         Assert.Equal("cool", setting.Mode);
-        Assert.True(setting.ActivateFan);
         Assert.Equal(6, setting.HourStart);
         Assert.Equal(18, setting.HourEnd);
     }

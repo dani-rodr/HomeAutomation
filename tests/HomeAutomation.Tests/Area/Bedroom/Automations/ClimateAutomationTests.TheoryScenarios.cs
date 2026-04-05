@@ -20,7 +20,7 @@ public partial class ClimateAutomationTests
         string scenario
     )
     {
-        var testSetting = new ClimateSetting(24, 23, 25, expectedMode, false, 18, 0);
+        var testSetting = new ClimateSetting(24, 23, 25, expectedMode, 18, 0);
 
         SetupSchedulerMock(timeBlock, testSetting);
         _mockHaContext.ClearServiceCalls();
@@ -48,7 +48,6 @@ public partial class ClimateAutomationTests
         25,
         25,
         "dry",
-        true,
         "Sunrise: ComfortTemp=24, AwayTemp=25, Mode=dry, Fan=true"
     )]
     [InlineData(
@@ -57,7 +56,6 @@ public partial class ClimateAutomationTests
         24,
         25,
         "cool",
-        false,
         "Sunset: ComfortTemp=23, AwayTemp=25, Mode=cool, Fan=false"
     )]
     [InlineData(
@@ -66,7 +64,6 @@ public partial class ClimateAutomationTests
         24,
         25,
         "cool",
-        false,
         "Midnight: ComfortTemp=22, AwayTemp=25, Mode=cool, Fan=false"
     )]
     public void ClimateAutomation_TimeBlockVariations_Should_Use_Correct_Settings(
@@ -75,19 +72,10 @@ public partial class ClimateAutomationTests
         int powerSavingTemp,
         int passiveTemp,
         string mode,
-        bool activateFan,
         string scenario
     )
     {
-        var testSetting = new ClimateSetting(
-            powerSavingTemp,
-            coolTemp,
-            passiveTemp,
-            mode,
-            activateFan,
-            18,
-            0
-        );
+        var testSetting = new ClimateSetting(powerSavingTemp, coolTemp, passiveTemp, mode, 18, 0);
 
         SetupSchedulerMock(timeBlock, testSetting);
         _mockHaContext.ClearServiceCalls();
@@ -104,49 +92,6 @@ public partial class ClimateAutomationTests
             mode,
             coolTemp
         );
-
-        scenario.Should().NotBeEmpty("Test scenario should be documented");
-    }
-
-    [Theory(
-        Skip = "Quarantined: fan activation feature removed | issue HA-TEST-2003 | expires 2026-06-30"
-    )]
-    [InlineData(true, "Fan should be activated when setting.ActivateFan is true")]
-    [InlineData(false, "Fan should not be activated when setting.ActivateFan is false")]
-    public void ClimateAutomation_FanActivation_Should_Follow_Setting(
-        bool activateFan,
-        string scenario
-    )
-    {
-        var testSetting = new ClimateSetting(24, 23, 25, "cool", activateFan, 18, 0);
-
-        SetupSchedulerMock(TimeBlock.Sunset, testSetting);
-
-        _mockHaContext.SetEntityState(_entities.MotionSensor.EntityId, "off");
-        _mockHaContext.SetEntityState(_entities.Door.EntityId, "off");
-        _mockHaContext.SetEntityState(_entities.AirConditioner.EntityId, "cool");
-        _mockHaContext.SetEntityAttributes(
-            _entities.AirConditioner.EntityId,
-            new
-            {
-                temperature = 23.0,
-                current_temperature = 28.0,
-                fan_mode = "auto",
-            }
-        );
-
-        _mockHaContext.ClearServiceCalls();
-
-        _mockHaContext.EmitMotionDetected(_entities.MotionSensor);
-
-        if (activateFan)
-        {
-            _mockHaContext.ShouldHaveCalledSwitchTurnOn(_entities.FanAutomation.EntityId);
-        }
-        else
-        {
-            _mockHaContext.ShouldHaveCalledSwitchTurnOff(_entities.FanAutomation.EntityId);
-        }
 
         scenario.Should().NotBeEmpty("Test scenario should be documented");
     }

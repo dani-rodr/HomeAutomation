@@ -24,16 +24,13 @@ public sealed class BedroomSettings
 public sealed class ClimateSettings
 {
     [Required]
-    public ClimateSetting Sunrise { get; init; } =
-        new(25, 24, 25, HaEntityStates.COOL, true, 5, 18);
+    public ClimateSetting Sunrise { get; init; } = new(25, 24, 25, HaEntityStates.COOL, 5, 18);
 
     [Required]
-    public ClimateSetting Sunset { get; init; } =
-        new(24, 23, 25, HaEntityStates.COOL, false, 18, 0);
+    public ClimateSetting Sunset { get; init; } = new(24, 23, 25, HaEntityStates.COOL, 18, 0);
 
     [Required]
-    public ClimateSetting Midnight { get; init; } =
-        new(24, 22, 25, HaEntityStates.COOL, false, 0, 5);
+    public ClimateSetting Midnight { get; init; } = new(24, 22, 25, HaEntityStates.COOL, 0, 5);
 
     [Display(
         Name = "Power Saving Temp Offset (C)",
@@ -41,6 +38,19 @@ public sealed class ClimateSettings
     )]
     [Range(0, 5)]
     public int PowerSavingTempOffsetC { get; init; } = 2;
+
+    [Display(
+        Name = "Enable Fan Assist",
+        Description = "Whether bedroom fan assist can be enabled from climate automation."
+    )]
+    public bool EnableFanAssist { get; init; } = true;
+
+    [Display(
+        Name = "Fan Assist At Or Above Setpoint (C)",
+        Description = "Enable fan assist when the selected AC setpoint is at or above this temperature."
+    )]
+    [Range(16, 30)]
+    public int FanAssistAtOrAboveSetpointC { get; init; } = 25;
 
     [Required]
     public WeatherPowerSavingSettings WeatherPowerSaving { get; init; } = new();
@@ -186,7 +196,6 @@ public sealed class ClimateSetting : IValidatableObject
         int comfortTemp,
         int awayTemp,
         string mode,
-        bool activateFan,
         int hourStart,
         int hourEnd
     )
@@ -195,7 +204,6 @@ public sealed class ClimateSetting : IValidatableObject
         ComfortTemp = comfortTemp;
         AwayTemp = awayTemp;
         Mode = mode;
-        ActivateFan = activateFan;
         HourStart = hourStart;
         HourEnd = hourEnd;
     }
@@ -235,12 +243,6 @@ public sealed class ClimateSetting : IValidatableObject
     [Display(Name = "Mode", Description = "Climate mode to apply (cool, dry, auto, fan_only).")]
     [Required]
     public string Mode { get; init; } = HaEntityStates.COOL;
-
-    [Display(
-        Name = "Activate Fan",
-        Description = "Whether fan mode enhancements should be enabled for this climate block."
-    )]
-    public bool ActivateFan { get; init; }
 
     public bool IsValidHourRange() => HourStart is >= 0 and <= 23 && HourEnd is >= 0 and <= 23;
 

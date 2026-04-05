@@ -77,7 +77,15 @@ public partial class ClimateAutomationTests : AutomationTestBase<ClimateAutomati
     {
         // Setup default Sunset time block for existing tests
 
-        var defaultSetting = new ClimateSetting(24, 23, 25, "cool", false, 18, 0);
+        var defaultSetting = new ClimateSetting(24, 23, 25, "cool", 18, 0);
+
+        var climateSettings = new ClimateSettings
+        {
+            Sunset = defaultSetting,
+            PowerSavingTempOffsetC = 2,
+            EnableFanAssist = true,
+            FanAssistAtOrAboveSetpointC = 25,
+        };
 
         var weatherSettings = new WeatherPowerSavingSettings
         {
@@ -107,6 +115,7 @@ public partial class ClimateAutomationTests : AutomationTestBase<ClimateAutomati
 
         _mockScheduler.Setup(x => x.GetWeatherPowerSavingSettings()).Returns(weatherSettings);
         _mockScheduler.Setup(x => x.GetAutomationSettings()).Returns(automationSettings);
+        _mockScheduler.Setup(x => x.GetCurrentSettings()).Returns(climateSettings);
 
         // Setup the new CalculateTemperature method
 
@@ -176,6 +185,20 @@ public partial class ClimateAutomationTests : AutomationTestBase<ClimateAutomati
         _mockScheduler
             .Setup(x => x.GetAutomationSettings())
             .Returns(new ClimateAutomationSettings());
+
+        _mockScheduler
+            .Setup(x => x.GetCurrentSettings())
+            .Returns(
+                new ClimateSettings
+                {
+                    Sunrise = expectedSetting,
+                    Sunset = expectedSetting,
+                    Midnight = expectedSetting,
+                    PowerSavingTempOffsetC = 2,
+                    EnableFanAssist = true,
+                    FanAssistAtOrAboveSetpointC = 25,
+                }
+            );
 
         _mockScheduler.Setup(x => x.Changes).Returns(_settingsChanges);
 
@@ -310,39 +333,75 @@ public partial class ClimateAutomationTests : AutomationTestBase<ClimateAutomati
 
         setting!.Mode.Should().Be("cool", "Sunset period uses cool mode");
 
-        setting.ActivateFan.Should().BeFalse("Sunset period doesn't activate fan");
-
         setting.ComfortTemp.Should().Be(23, "Sunset ComfortTemp should be 23°C");
 
         setting.AwayTemp.Should().Be(25, "Sunset AwayTemp should be 25°C");
     }
 
     [Fact]
-    public void ConditionallyActivateFan_CoolRoomOrUnoccupied_Should_NotTurnOnFan()
+    public void FanAssist_WhenRoomUnoccupied_Should_NotTurnOnFanAutomation()
     {
-        // Arrange - Cool room or unoccupied
-
         _mockHaContext.SetEntityState(_entities.MotionSensor.EntityId, "off"); // unoccupied
-
-        _mockHaContext.SetEntityAttributes(
-            _entities.AirConditioner.EntityId,
-            new
-            {
-                temperature = 25.0,
-
-                current_temperature = 24.0, // Cooler than target
-
-                fan_mode = "auto",
-            }
-        );
-
-        // Act - Trigger motion state change
 
         _mockHaContext.EmitMotionCleared(_entities.MotionSensor);
 
-        // Assert - Should not turn on fan switch
+        _mockHaContext.ShouldNeverHaveCalledSwitch(_entities.FanAutomation.EntityId);
+    }
+
+    [Fact]
+    public void FanAssist_WhenMotionDetectedAndTargetAtThreshold_Should_TurnOnFanAutomation()
+    {
+        var thresholdSetting = new ClimateSetting(25, 25, 25, "cool", 5, 18);
+        SetupSchedulerMock(TimeBlock.Sunrise, thresholdSetting);
+
+        _mockHaContext.SetEntityState(_entities.MotionSensor.EntityId, "on");
+        _mockHaContext.ClearServiceCalls();
+
+        _mockHaContext.EmitMotionDetected(_entities.MotionSensor);
+
+        _mockHaContext.ShouldHaveCalledSwitchTurnOn(_entities.FanAutomation.EntityId);
+    }
+
+    [Fact]
+    public void FanAssist_WhenTargetBelowThreshold_Should_NotTurnOnFanAutomation()
+    {
+        var lowTargetSetting = new ClimateSetting(24, 23, 24, "cool", 18, 0);
+        SetupSchedulerMock(TimeBlock.Sunset, lowTargetSetting);
+
+        _mockHaContext.SetEntityState(_entities.MotionSensor.EntityId, "on");
+
+        _mockHaContext.EmitMotionDetected(_entities.MotionSensor);
 
         _mockHaContext.ShouldNeverHaveCalledSwitch(_entities.FanAutomation.EntityId);
+    }
+
+    [Fact]
+    public void FanAssist_WhenManuallyOffAndPowerSavingChanges_Should_NotReenable()
+    {
+        var thresholdSetting = new ClimateSetting(25, 25, 25, "cool", 5, 18);
+        SetupSchedulerMock(TimeBlock.Sunrise, thresholdSetting);
+
+        _mockHaContext.SetEntityState(_entities.MotionSensor.EntityId, "on");
+        _mockHaContext.SetEntityState(_entities.FanAutomation.EntityId, "off");
+        _mockHaContext.ClearServiceCalls();
+
+        _mockHaContext.SimulateStateChange(_entities.PowerSavingMode.EntityId, "off", "on");
+
+        _mockHaContext.ShouldNeverHaveCalledSwitch(_entities.FanAutomation.EntityId);
+    }
+
+    [Fact]
+    public void FanAssist_WhenMasterSwitchTurnsOn_Should_ReenableOnMeaningfulReevaluation()
+    {
+        var thresholdSetting = new ClimateSetting(25, 25, 25, "cool", 5, 18);
+        SetupSchedulerMock(TimeBlock.Sunrise, thresholdSetting);
+
+        _mockHaContext.SetEntityState(_entities.MotionSensor.EntityId, "on");
+        _mockHaContext.ClearServiceCalls();
+
+        _mockHaContext.SimulateStateChange(_entities.MasterSwitch.EntityId, "off", "on");
+
+        _mockHaContext.ShouldHaveCalledSwitchTurnOn(_entities.FanAutomation.EntityId);
     }
 
     #endregion

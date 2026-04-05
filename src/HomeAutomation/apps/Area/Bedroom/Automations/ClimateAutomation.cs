@@ -7,11 +7,12 @@ namespace HomeAutomation.apps.Area.Bedroom.Automations;
 
 public class ClimateAutomation(
     IClimateEntities entities,
-    IClimateSettingsResolver scheduler,
+    IClimateSettingsResolver climateSettingsResolver,
     ILogger<ClimateAutomation> logger
 ) : ToggleableAutomation(entities.MasterSwitch, logger)
 {
     private readonly ClimateEntity _ac = entities.AirConditioner;
+    private readonly SwitchEntity _fanAutomation = entities.FanAutomation;
 
     private readonly BinarySensorEntity _motionSensor = entities.MotionSensor;
 
@@ -23,13 +24,13 @@ public class ClimateAutomation(
 
     protected override IEnumerable<IDisposable> GetPersistentAutomations()
     {
-        var automationSettings = scheduler.GetAutomationSettings();
+        var automationSettings = climateSettingsResolver.GetAutomationSettings();
 
-        yield return scheduler.GetResetSchedule();
+        yield return climateSettingsResolver.GetResetSchedule();
 
         yield return _weather.StateAllChanges().Subscribe(ApplyPowerSavingModeFromWeather);
 
-        yield return scheduler.Changes.Subscribe(HandleBedroomSettingsChanged);
+        yield return climateSettingsResolver.Changes.Subscribe(HandleBedroomSettingsChanged);
 
         yield return _motionSensor
             .OnCleared(new(Hours: automationSettings.MasterSwitchReenableWhenNoMotionHours))
@@ -43,14 +44,14 @@ public class ClimateAutomation(
         yield return _doorSensor
             .OnClosed()
             .Where(_ => MasterSwitch.IsOn())
-            .Subscribe(ApplyTimeBasedAcSetting);
+            .Subscribe(e => ApplyTimeBasedAcSetting(e));
 
-        yield return MasterSwitch.OnTurnedOn().Subscribe(ApplyTimeBasedAcSetting);
+        yield return MasterSwitch.OnTurnedOn().Subscribe(e => ApplyTimeBasedAcSetting(e));
     }
 
     protected override IEnumerable<IDisposable> GetToggleableAutomations() =>
         [
-            .. scheduler.GetSchedules(() =>
+            .. climateSettingsResolver.GetSchedules(() =>
             {
                 ApplyScheduledAcSettings();
             }),
@@ -61,22 +62,24 @@ public class ClimateAutomation(
 
     private IEnumerable<IDisposable> GetSensorBasedAutomations()
     {
-        var automationSettings = scheduler.GetAutomationSettings();
+        var automationSettings = climateSettingsResolver.GetAutomationSettings();
 
         yield return _doorSensor
             .OnOpened(new(Minutes: automationSettings.DoorOpenReapplyMinutes))
-            .Subscribe(ApplyTimeBasedAcSetting);
+            .Subscribe(e => ApplyTimeBasedAcSetting(e));
 
         yield return _motionSensor
             .OnCleared(new(Minutes: automationSettings.MotionClearedReapplyMinutes))
-            .Subscribe(ApplyTimeBasedAcSetting);
+            .Subscribe(e => ApplyTimeBasedAcSetting(e));
 
-        yield return _motionSensor.OnOccupied().Subscribe(ApplyTimeBasedAcSetting);
+        yield return _motionSensor.OnOccupied().Subscribe(e => ApplyTimeBasedAcSetting(e));
 
-        yield return _powerSavingMode.OnChanges().Subscribe(ApplyTimeBasedAcSetting);
+        yield return _powerSavingMode
+            .OnChanges()
+            .Subscribe(e => ApplyTimeBasedAcSetting(e, allowFanAssistEnable: false));
     }
 
-    private void ApplyTimeBasedAcSetting(StateChange e)
+    private void ApplyTimeBasedAcSetting(StateChange e, bool allowFanAssistEnable = true)
     {
         Logger.LogDebug(
             "ApplyTimeBasedAcSetting triggered by sensor: {EntityId}, NewState: {State}",
@@ -84,12 +87,12 @@ public class ClimateAutomation(
             e.New?.State
         );
 
-        ApplyScheduledAcSettings();
+        ApplyScheduledAcSettings(allowFanAssistEnable);
     }
 
     private void ApplyPowerSavingModeFromWeather(StateChange e)
     {
-        var weatherThresholds = scheduler.GetWeatherPowerSavingSettings();
+        var weatherThresholds = climateSettingsResolver.GetWeatherPowerSavingSettings();
 
         var (_, uvIndex) = e.GetAttributeChange<double?>("uv_index");
 
@@ -175,7 +178,7 @@ public class ClimateAutomation(
 
     private IEnumerable<IDisposable> GetHousePresenceAutomations()
     {
-        var automationSettings = scheduler.GetAutomationSettings();
+        var automationSettings = climateSettingsResolver.GetAutomationSettings();
         var houseOccupancy = entities.HouseMotionSensor;
 
         yield return houseOccupancy
@@ -241,9 +244,9 @@ public class ClimateAutomation(
             });
     }
 
-    private void ApplyScheduledAcSettings()
+    private void ApplyScheduledAcSettings(bool allowFanAssistEnable = true)
     {
-        if (!scheduler.TryGetCurrentSetting(out var timeBlock, out var setting))
+        if (!climateSettingsResolver.TryGetCurrentSetting(out var timeBlock, out var setting))
         {
             Logger.LogDebug("Skipping AC settings: No active time block");
 
@@ -258,16 +261,20 @@ public class ClimateAutomation(
 
         if (!_ac.IsOn())
         {
+            ApplyFanAssist(targetTemp: 0, allowFanAssistEnable: false);
+
             Logger.LogDebug("Skipping AC settings: AC is currently OFF");
 
             return;
         }
 
-        int targetTemp = scheduler.CalculateTemperature(
+        int targetTemp = climateSettingsResolver.CalculateTemperature(
             setting,
             _motionSensor.IsOccupied(),
             _doorSensor.IsOpen()
         );
+
+        ApplyFanAssist(targetTemp, allowFanAssistEnable);
 
         var currentTemp = _ac.Attributes?.Temperature;
 
@@ -287,15 +294,54 @@ public class ClimateAutomation(
         }
 
         Logger.LogDebug(
-            "Applying AC schedule for {TimeBlock}: {CurrentTemp}°C → {TargetTemp}°C, {CurrentMode} → {TargetMode}, ActivateFan={ActivateFan}",
+            "Applying AC schedule for {TimeBlock}: {CurrentTemp}°C → {TargetTemp}°C, {CurrentMode} → {TargetMode}, AllowFanAssistEnable={AllowFanAssistEnable}",
             timeBlock,
             currentTemp,
             targetTemp,
             currentMode,
             setting.Mode,
-            setting.ActivateFan
+            allowFanAssistEnable
         );
 
         _ac.SetTemperature(temperature: targetTemp, hvacMode: setting.Mode);
+    }
+
+    private void ApplyFanAssist(int targetTemp, bool allowFanAssistEnable)
+    {
+        var climateSettings = climateSettingsResolver.GetCurrentSettings();
+
+        var shouldEnableFanAssist =
+            climateSettings.EnableFanAssist
+            && _ac.IsOn()
+            && _motionSensor.IsOccupied()
+            && targetTemp >= climateSettings.FanAssistAtOrAboveSetpointC;
+
+        if (shouldEnableFanAssist)
+        {
+            if (allowFanAssistEnable && _fanAutomation.IsOff())
+            {
+                Logger.LogDebug(
+                    "Enabling fan assist: TargetTemp={TargetTemp}°C, Threshold={Threshold}°C",
+                    targetTemp,
+                    climateSettings.FanAssistAtOrAboveSetpointC
+                );
+
+                _fanAutomation.TurnOn();
+            }
+
+            return;
+        }
+
+        if (_fanAutomation.IsOn())
+        {
+            Logger.LogDebug(
+                "Disabling fan assist: TargetTemp={TargetTemp}°C, Occupied={Occupied}, AcIsOn={AcIsOn}",
+                targetTemp,
+                _motionSensor.IsOccupied(),
+                _ac.IsOn()
+            );
+
+            _fanAutomation.TurnOff();
+        }
     }
 }

@@ -16,7 +16,7 @@ public class AcTemperatureCalculatorTests
         _calculator = new AcTemperatureCalculator(_mockLogger.Object);
     }
 
-    private static ClimateSetting CreateDefaultSetting() => new(26, 23, 25, "cool", true, 6, 18);
+    private static ClimateSetting CreateDefaultSetting() => new(26, 23, 25, "cool", 6, 18);
 
     [Theory]
     [InlineData(true, false, false, 23, "Occupied + door closed = ComfortTemp")]

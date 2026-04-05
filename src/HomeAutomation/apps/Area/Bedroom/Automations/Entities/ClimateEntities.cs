@@ -12,6 +12,7 @@ public class ClimateEntities(BedroomDevices devices, GlobalDevices globalDevices
     public BinarySensorEntity Door => devices.Door;
     public BinarySensorEntity HouseMotionSensor => globalDevices.HouseMotionSensor;
     public ButtonEntity AcFanModeToggle => devices.AcFanModeToggle;
+    public SwitchEntity FanAutomation => devices.FanAutomation;
     public SwitchEntity Fan => devices.MainFan;
     public InputBooleanEntity PowerSavingMode => devices.PowerSavingMode;
 }

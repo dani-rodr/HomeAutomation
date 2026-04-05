@@ -77,6 +77,8 @@ public sealed class ClimateSettingsResolver : IClimateSettingsResolver
         return true;
     }
 
+    public ClimateSettings GetCurrentSettings() => _settings.Settings.Climate;
+
     public int CalculateTemperature(ClimateSetting settings, bool isOccupied, bool isDoorOpen) =>
         _temperatureCalculator.CalculateTemperature(
             settings,
@@ -142,17 +144,19 @@ public sealed class ClimateSettingsResolver : IClimateSettingsResolver
             _logger.LogDebug(
                 "TimeBlock {TimeBlock}: DoorOpenTemp={DoorOpenTemp},"
                     + " ComfortTemp={ComfortTemp},"
-                    + " AwayTemp={AwayTemp}, Mode={Mode}, ActivateFan={ActivateFan},"
-                    + " HourStart={HourStart}, HourEnd={HourEnd}, PowerSavingTempOffsetC={PowerSavingTempOffsetC}",
+                    + " AwayTemp={AwayTemp}, Mode={Mode},"
+                    + " HourStart={HourStart}, HourEnd={HourEnd}, PowerSavingTempOffsetC={PowerSavingTempOffsetC},"
+                    + " EnableFanAssist={EnableFanAssist}, FanAssistAtOrAboveSetpointC={FanAssistAtOrAboveSetpointC}",
                 timeBlock,
                 setting.DoorOpenTemp,
                 setting.ComfortTemp,
                 setting.AwayTemp,
                 setting.Mode,
-                setting.ActivateFan,
                 setting.HourStart,
                 setting.HourEnd,
-                settings.PowerSavingTempOffsetC
+                settings.PowerSavingTempOffsetC,
+                settings.EnableFanAssist,
+                settings.FanAssistAtOrAboveSetpointC
             );
         }
     }
