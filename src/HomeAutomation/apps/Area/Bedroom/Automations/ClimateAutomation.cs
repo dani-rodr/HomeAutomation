@@ -24,7 +24,7 @@ public class ClimateAutomation(
 
     protected override IEnumerable<IDisposable> GetPersistentAutomations()
     {
-        var automationSettings = climateAutomationScheduler.GetAutomationSettings();
+        var automationSettings = climateAutomationScheduler.GetCurrentSettings().Automation;
 
         yield return climateAutomationScheduler.GetResetSchedule();
 
@@ -62,7 +62,7 @@ public class ClimateAutomation(
 
     private IEnumerable<IDisposable> GetSensorBasedAutomations()
     {
-        var automationSettings = climateAutomationScheduler.GetAutomationSettings();
+        var automationSettings = climateAutomationScheduler.GetCurrentSettings().Automation;
 
         yield return _doorSensor
             .OnOpened(new(Minutes: automationSettings.DoorOpenReapplyMinutes))
@@ -92,7 +92,7 @@ public class ClimateAutomation(
 
     private void ApplyPowerSavingModeFromWeather(StateChange e)
     {
-        var weatherThresholds = climateAutomationScheduler.GetWeatherPowerSavingSettings();
+        var weatherThresholds = climateAutomationScheduler.GetCurrentSettings().WeatherPowerSaving;
 
         var (_, uvIndex) = e.GetAttributeChange<double?>("uv_index");
 
@@ -178,7 +178,7 @@ public class ClimateAutomation(
 
     private IEnumerable<IDisposable> GetHousePresenceAutomations()
     {
-        var automationSettings = climateAutomationScheduler.GetAutomationSettings();
+        var automationSettings = climateAutomationScheduler.GetCurrentSettings().Automation;
         var houseOccupancy = entities.HouseMotionSensor;
 
         yield return houseOccupancy

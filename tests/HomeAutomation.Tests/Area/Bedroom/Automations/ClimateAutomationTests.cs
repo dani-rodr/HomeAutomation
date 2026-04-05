@@ -89,17 +89,15 @@ public partial class ClimateAutomationTests : AutomationTestBase<ClimateAutomati
             PowerSavingTempOffsetC = 2,
             EnableFanAssist = true,
             FanAssistAtOrAboveSetpointC = 25,
+            WeatherPowerSaving = new WeatherPowerSavingSettings
+            {
+                TriggerUvIndex = 8,
+                TriggerOutdoorTempC = 32,
+                RecoveryUvIndex = 5,
+                RecoveryOutdoorTempC = 30,
+            },
+            Automation = new ClimateAutomationSettings(),
         };
-
-        var weatherSettings = new WeatherPowerSavingSettings
-        {
-            TriggerUvIndex = 8,
-            TriggerOutdoorTempC = 32,
-            RecoveryUvIndex = 5,
-            RecoveryOutdoorTempC = 30,
-        };
-
-        var automationSettings = new ClimateAutomationSettings();
 
         _mockClimateAutomationScheduler
             .Setup(x =>
@@ -117,12 +115,6 @@ public partial class ClimateAutomationTests : AutomationTestBase<ClimateAutomati
                 }
             );
 
-        _mockClimateAutomationScheduler
-            .Setup(x => x.GetWeatherPowerSavingSettings())
-            .Returns(weatherSettings);
-        _mockClimateAutomationScheduler
-            .Setup(x => x.GetAutomationSettings())
-            .Returns(automationSettings);
         _mockClimateAutomationScheduler.Setup(x => x.GetCurrentSettings()).Returns(climateSettings);
 
         // Setup the new CalculateTemperature method
@@ -181,22 +173,6 @@ public partial class ClimateAutomationTests : AutomationTestBase<ClimateAutomati
             );
 
         _mockClimateAutomationScheduler
-            .Setup(x => x.GetWeatherPowerSavingSettings())
-            .Returns(
-                new WeatherPowerSavingSettings
-                {
-                    TriggerUvIndex = 8,
-                    TriggerOutdoorTempC = 32,
-                    RecoveryUvIndex = 5,
-                    RecoveryOutdoorTempC = 30,
-                }
-            );
-
-        _mockClimateAutomationScheduler
-            .Setup(x => x.GetAutomationSettings())
-            .Returns(new ClimateAutomationSettings());
-
-        _mockClimateAutomationScheduler
             .Setup(x => x.GetCurrentSettings())
             .Returns(
                 new ClimateSettings
@@ -207,6 +183,14 @@ public partial class ClimateAutomationTests : AutomationTestBase<ClimateAutomati
                     PowerSavingTempOffsetC = 2,
                     EnableFanAssist = true,
                     FanAssistAtOrAboveSetpointC = 25,
+                    WeatherPowerSaving = new WeatherPowerSavingSettings
+                    {
+                        TriggerUvIndex = 8,
+                        TriggerOutdoorTempC = 32,
+                        RecoveryUvIndex = 5,
+                        RecoveryOutdoorTempC = 30,
+                    },
+                    Automation = new ClimateAutomationSettings(),
                 }
             );
 
@@ -1226,8 +1210,6 @@ public partial class ClimateAutomationTests : AutomationTestBase<ClimateAutomati
             new(haContext, "binary_sensor.house_motion_sensors");
 
         public ButtonEntity AcFanModeToggle => new(haContext, "button.bedroom_ac_fan_mode_toggle");
-
-        public SwitchEntity Fan => new(haContext, "switch.bedroom_fan");
 
         public InputBooleanEntity PowerSavingMode =>
             new(haContext, "input_boolean.power_saving_mode");

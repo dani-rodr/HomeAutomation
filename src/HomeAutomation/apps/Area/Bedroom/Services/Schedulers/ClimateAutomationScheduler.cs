@@ -88,12 +88,6 @@ public sealed class ClimateAutomationScheduler : IClimateAutomationScheduler
             _settings.Settings.Climate.PowerSavingTempOffsetC
         );
 
-    public WeatherPowerSavingSettings GetWeatherPowerSavingSettings() =>
-        _settings.Settings.Climate.WeatherPowerSaving;
-
-    public ClimateAutomationSettings GetAutomationSettings() =>
-        _settings.Settings.Climate.Automation;
-
     private bool TryFindCurrentTimeBlock(out TimeBlock timeBlock)
     {
         var currentTime = _scheduler.Now.LocalDateTime;

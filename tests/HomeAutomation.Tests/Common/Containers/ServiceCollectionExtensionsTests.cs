@@ -84,7 +84,6 @@ public class ServiceCollectionExtensionsTests : HaContextTestBase
         climateEntities.Door.EntityId.Should().Be("binary_sensor.contact_sensor_door");
         climateEntities.HouseMotionSensor.EntityId.Should().Be("binary_sensor.house");
         climateEntities.AcFanModeToggle.EntityId.Should().Be("button.ac_fan_mode_toggle");
-        climateEntities.Fan.EntityId.Should().Be("switch.sonoff_100238104e_1");
         climateEntities.PowerSavingMode.EntityId.Should().Be("input_boolean.ac_power_saving_mode");
     }
 

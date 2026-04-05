@@ -102,9 +102,9 @@ public class ClimateAutomationSchedulerTests : HaContextTestBase
     }
 
     [Fact]
-    public void GetWeatherPowerSavingSettings_ShouldReturnConfiguredThresholds()
+    public void GetCurrentSettings_ShouldReturnConfiguredThresholds()
     {
-        var settings = _climateAutomationScheduler.GetWeatherPowerSavingSettings();
+        var settings = _climateAutomationScheduler.GetCurrentSettings().WeatherPowerSaving;
 
         settings.TriggerUvIndex.Should().Be(8);
         settings.TriggerOutdoorTempC.Should().Be(32);
