@@ -83,7 +83,8 @@ public class ClimateSettingsResolverTests : HaContextTestBase
                     setting,
                     isOccupied: true,
                     isDoorOpen: false,
-                    expectedPowerSaving
+                    expectedPowerSaving,
+                    2
                 )
             )
             .Returns(26);
@@ -143,9 +144,10 @@ public class ClimateSettingsResolverTests : HaContextTestBase
         {
             Climate = new ClimateSettings
             {
-                Sunrise = new ClimateSetting(25, 27, 24, 27, "cool", true, 27, 30),
-                Sunset = new ClimateSetting(25, 27, 23, 27, "cool", false, 27, 30),
-                Midnight = new ClimateSetting(24, 25, 22, 25, "cool", false, 27, 30),
+                Sunrise = new ClimateSetting(25, 24, 25, "cool", true, 27, 30),
+                Sunset = new ClimateSetting(24, 23, 25, "cool", false, 27, 30),
+                Midnight = new ClimateSetting(24, 22, 25, "cool", false, 27, 30),
+                PowerSavingTempOffsetC = 2,
                 WeatherPowerSaving = new WeatherPowerSavingSettings
                 {
                     TriggerUvIndex = 8,
@@ -199,9 +201,10 @@ public class ClimateSettingsResolverTests : HaContextTestBase
         {
             Climate = new ClimateSettings
             {
-                Sunrise = new ClimateSetting(25, 27, 24, 27, "cool", true, sunriseHourStart, 18),
-                Sunset = new ClimateSetting(25, 27, 23, 27, "cool", false, 18, 0),
-                Midnight = new ClimateSetting(24, 25, 22, 25, "cool", false, 0, 5),
+                Sunrise = new ClimateSetting(25, 24, 25, "cool", true, sunriseHourStart, 18),
+                Sunset = new ClimateSetting(24, 23, 25, "cool", false, 18, 0),
+                Midnight = new ClimateSetting(24, 22, 25, "cool", false, 0, 5),
+                PowerSavingTempOffsetC = 2,
                 WeatherPowerSaving = new WeatherPowerSavingSettings
                 {
                     TriggerUvIndex = 8,

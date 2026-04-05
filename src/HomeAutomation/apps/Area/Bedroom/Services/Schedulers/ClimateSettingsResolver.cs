@@ -82,7 +82,8 @@ public sealed class ClimateSettingsResolver : IClimateSettingsResolver
             settings,
             isOccupied,
             isDoorOpen,
-            _powerSavingMode.IsOn()
+            _powerSavingMode.IsOn(),
+            _settings.Settings.Climate.PowerSavingTempOffsetC
         );
 
     public WeatherPowerSavingSettings GetWeatherPowerSavingSettings() =>
@@ -140,18 +141,18 @@ public sealed class ClimateSettingsResolver : IClimateSettingsResolver
             var setting = settings.GetByTimeBlock(timeBlock);
             _logger.LogDebug(
                 "TimeBlock {TimeBlock}: DoorOpenTemp={DoorOpenTemp},"
-                    + " EcoAwayTemp={EcoAwayTemp}, ComfortTemp={ComfortTemp},"
+                    + " ComfortTemp={ComfortTemp},"
                     + " AwayTemp={AwayTemp}, Mode={Mode}, ActivateFan={ActivateFan},"
-                    + " HourStart={HourStart}, HourEnd={HourEnd}",
+                    + " HourStart={HourStart}, HourEnd={HourEnd}, PowerSavingTempOffsetC={PowerSavingTempOffsetC}",
                 timeBlock,
                 setting.DoorOpenTemp,
-                setting.EcoAwayTemp,
                 setting.ComfortTemp,
                 setting.AwayTemp,
                 setting.Mode,
                 setting.ActivateFan,
                 setting.HourStart,
-                setting.HourEnd
+                setting.HourEnd,
+                settings.PowerSavingTempOffsetC
             );
         }
     }

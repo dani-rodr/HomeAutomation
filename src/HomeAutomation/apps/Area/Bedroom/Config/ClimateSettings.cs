@@ -24,13 +24,23 @@ public sealed class BedroomSettings
 public sealed class ClimateSettings
 {
     [Required]
-    public ClimateSetting Sunrise { get; init; } = new();
+    public ClimateSetting Sunrise { get; init; } =
+        new(25, 24, 25, HaEntityStates.COOL, true, 5, 18);
 
     [Required]
-    public ClimateSetting Sunset { get; init; } = new();
+    public ClimateSetting Sunset { get; init; } =
+        new(24, 23, 25, HaEntityStates.COOL, false, 18, 0);
 
     [Required]
-    public ClimateSetting Midnight { get; init; } = new();
+    public ClimateSetting Midnight { get; init; } =
+        new(24, 22, 25, HaEntityStates.COOL, false, 0, 5);
+
+    [Display(
+        Name = "Power Saving Temp Offset (C)",
+        Description = "Temperature increase applied while power-saving mode is enabled."
+    )]
+    [Range(0, 5)]
+    public int PowerSavingTempOffsetC { get; init; } = 2;
 
     [Required]
     public WeatherPowerSavingSettings WeatherPowerSaving { get; init; } = new();
@@ -173,7 +183,6 @@ public sealed class ClimateSetting : IValidatableObject
 
     public ClimateSetting(
         int doorOpenTemp,
-        int ecoAwayTemp,
         int comfortTemp,
         int awayTemp,
         string mode,
@@ -183,7 +192,6 @@ public sealed class ClimateSetting : IValidatableObject
     )
     {
         DoorOpenTemp = doorOpenTemp;
-        EcoAwayTemp = ecoAwayTemp;
         ComfortTemp = comfortTemp;
         AwayTemp = awayTemp;
         Mode = mode;
@@ -212,13 +220,6 @@ public sealed class ClimateSetting : IValidatableObject
     )]
     [Range(16, 30)]
     public int DoorOpenTemp { get; init; }
-
-    [Display(
-        Name = "Eco Away Temp",
-        Description = "Energy-saving away temperature for this climate block."
-    )]
-    [Range(16, 30)]
-    public int EcoAwayTemp { get; init; }
 
     [Display(
         Name = "Comfort Temp",

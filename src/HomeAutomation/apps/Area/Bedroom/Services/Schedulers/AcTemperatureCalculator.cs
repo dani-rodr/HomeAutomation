@@ -14,30 +14,24 @@ public class AcTemperatureCalculator(ILogger<AcTemperatureCalculator> logger)
         ClimateSetting settings,
         bool isOccupied,
         bool isDoorOpen,
-        bool powerSaving
+        bool powerSaving,
+        int powerSavingTempOffsetC
     )
     {
-        int temp;
-        if (isOccupied && !isDoorOpen)
+        var baseTemp = (isOccupied, isDoorOpen) switch
         {
-            temp = settings.ComfortTemp;
-        }
-        else if (isOccupied)
-        {
-            temp = settings.DoorOpenTemp;
-        }
-        else if (powerSaving)
-        {
-            temp = settings.EcoAwayTemp;
-        }
-        else
-        {
-            temp = settings.AwayTemp;
-        }
+            (true, false) => settings.ComfortTemp,
+            (true, true) => settings.DoorOpenTemp,
+            (false, _) => settings.AwayTemp,
+        };
+
+        var temp = powerSaving ? baseTemp + powerSavingTempOffsetC : baseTemp;
 
         _logger.LogDebug(
-            "Temperature calculation: {Temperature}°C for conditions (occupied:{Occupied}, doorOpen:{DoorOpen}, powerSaving:{PowerSaving})",
+            "Temperature calculation: {Temperature}°C (base:{BaseTemperature}°C, offset:{Offset}°C) for conditions (occupied:{Occupied}, doorOpen:{DoorOpen}, powerSaving:{PowerSaving})",
             temp,
+            baseTemp,
+            powerSaving ? powerSavingTempOffsetC : 0,
             isOccupied,
             isDoorOpen,
             powerSaving

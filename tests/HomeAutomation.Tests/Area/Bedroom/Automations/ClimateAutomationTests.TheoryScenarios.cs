@@ -8,9 +8,9 @@ public partial class ClimateAutomationTests
 
     [Theory]
     [InlineData(true, false, TimeBlock.Sunset, 23, "cool", "Occupied + closed door = ComfortTemp")]
-    [InlineData(false, true, TimeBlock.Sunset, 27, "cool", "Unoccupied + open door = AwayTemp")]
-    [InlineData(true, true, TimeBlock.Sunset, 25, "cool", "Occupied + open door = DoorOpenTemp")]
-    [InlineData(false, false, TimeBlock.Sunset, 27, "cool", "Unoccupied + closed door = AwayTemp")]
+    [InlineData(false, true, TimeBlock.Sunset, 25, "cool", "Unoccupied + open door = AwayTemp")]
+    [InlineData(true, true, TimeBlock.Sunset, 24, "cool", "Occupied + open door = DoorOpenTemp")]
+    [InlineData(false, false, TimeBlock.Sunset, 25, "cool", "Unoccupied + closed door = AwayTemp")]
     public void ClimateAutomation_TemperatureSelection_Should_Follow_Logic(
         bool occupied,
         bool doorOpen,
@@ -20,7 +20,7 @@ public partial class ClimateAutomationTests
         string scenario
     )
     {
-        var testSetting = new ClimateSetting(25, 27, 23, 27, expectedMode, false, 18, 0);
+        var testSetting = new ClimateSetting(24, 23, 25, expectedMode, false, 18, 0);
 
         SetupSchedulerMock(timeBlock, testSetting);
         _mockHaContext.ClearServiceCalls();
@@ -45,29 +45,29 @@ public partial class ClimateAutomationTests
     [InlineData(
         TimeBlock.Sunrise,
         24,
-        27,
-        27,
+        25,
+        25,
         "dry",
         true,
-        "Sunrise: ComfortTemp=24, EcoAwayTemp=27, Mode=dry, Fan=true"
+        "Sunrise: ComfortTemp=24, AwayTemp=25, Mode=dry, Fan=true"
     )]
     [InlineData(
         TimeBlock.Sunset,
         23,
-        27,
-        27,
+        24,
+        25,
         "cool",
         false,
-        "Sunset: ComfortTemp=23, EcoAwayTemp=27, Mode=cool, Fan=false"
+        "Sunset: ComfortTemp=23, AwayTemp=25, Mode=cool, Fan=false"
     )]
     [InlineData(
         TimeBlock.Midnight,
         22,
-        25,
+        24,
         25,
         "cool",
         false,
-        "Midnight: ComfortTemp=22, EcoAwayTemp=25, Mode=cool, Fan=false"
+        "Midnight: ComfortTemp=22, AwayTemp=25, Mode=cool, Fan=false"
     )]
     public void ClimateAutomation_TimeBlockVariations_Should_Use_Correct_Settings(
         TimeBlock timeBlock,
@@ -80,7 +80,6 @@ public partial class ClimateAutomationTests
     )
     {
         var testSetting = new ClimateSetting(
-            25,
             powerSavingTemp,
             coolTemp,
             passiveTemp,
@@ -119,7 +118,7 @@ public partial class ClimateAutomationTests
         string scenario
     )
     {
-        var testSetting = new ClimateSetting(25, 27, 23, 27, "cool", activateFan, 18, 0);
+        var testSetting = new ClimateSetting(24, 23, 25, "cool", activateFan, 18, 0);
 
         SetupSchedulerMock(TimeBlock.Sunset, testSetting);
 

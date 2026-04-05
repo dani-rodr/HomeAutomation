@@ -7,6 +7,7 @@ public class AcTemperatureCalculatorTests
 {
     private readonly Mock<ILogger<AcTemperatureCalculator>> _mockLogger;
     private readonly IAcTemperatureCalculator _calculator;
+    private const int DefaultPowerSavingOffsetC = 2;
 
     public AcTemperatureCalculatorTests()
     {
@@ -15,18 +16,29 @@ public class AcTemperatureCalculatorTests
         _calculator = new AcTemperatureCalculator(_mockLogger.Object);
     }
 
-    private static ClimateSetting CreateDefaultSetting() =>
-        new(26, 28, 23, 29, "cool", true, 6, 18);
+    private static ClimateSetting CreateDefaultSetting() => new(26, 23, 25, "cool", true, 6, 18);
 
     [Theory]
     [InlineData(true, false, false, 23, "Occupied + door closed = ComfortTemp")]
-    [InlineData(true, false, true, 23, "Occupied + door closed ignores power saving = ComfortTemp")]
+    [InlineData(
+        true,
+        false,
+        true,
+        25,
+        "Occupied + door closed + power saving = ComfortTemp + offset"
+    )]
     [InlineData(true, true, false, 26, "Occupied + door open = DoorOpenTemp")]
-    [InlineData(true, true, true, 26, "Occupied + door open ignores power saving = DoorOpenTemp")]
-    [InlineData(false, false, true, 28, "Unoccupied + power saving = EcoAwayTemp")]
-    [InlineData(false, true, true, 28, "Unoccupied + door open + power saving = EcoAwayTemp")]
-    [InlineData(false, false, false, 29, "Unoccupied + no power saving = AwayTemp")]
-    [InlineData(false, true, false, 29, "Unoccupied + door open + no power saving = AwayTemp")]
+    [InlineData(
+        true,
+        true,
+        true,
+        28,
+        "Occupied + door open + power saving = DoorOpenTemp + offset"
+    )]
+    [InlineData(false, false, true, 27, "Unoccupied + power saving = AwayTemp + offset")]
+    [InlineData(false, true, true, 27, "Unoccupied + door open + power saving = AwayTemp + offset")]
+    [InlineData(false, false, false, 25, "Unoccupied + no power saving = AwayTemp")]
+    [InlineData(false, true, false, 25, "Unoccupied + door open + no power saving = AwayTemp")]
     public void CalculateTemperature_ReturnsExpectedTemp(
         bool isOccupied,
         bool isDoorOpen,
@@ -40,7 +52,8 @@ public class AcTemperatureCalculatorTests
             setting,
             isOccupied,
             isDoorOpen,
-            powerSaving
+            powerSaving,
+            DefaultPowerSavingOffsetC
         );
 
         Assert.Equal(expectedTemp, actualTemp);
@@ -50,7 +63,7 @@ public class AcTemperatureCalculatorTests
     public void CalculateTemperature_LogsDebugInformation()
     {
         var setting = CreateDefaultSetting();
-        _calculator.CalculateTemperature(setting, true, false, false);
+        _calculator.CalculateTemperature(setting, true, false, false, DefaultPowerSavingOffsetC);
 
         _mockLogger.Verify(
             l =>

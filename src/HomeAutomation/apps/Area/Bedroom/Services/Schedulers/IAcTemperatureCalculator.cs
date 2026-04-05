@@ -14,11 +14,13 @@ public interface IAcTemperatureCalculator
     /// <param name="isOccupied">Whether the space is currently occupied</param>
     /// <param name="isDoorOpen">Whether the door is currently open</param>
     /// <param name="powerSaving">Whether power saving mode is currently enabled</param>
+    /// <param name="powerSavingTempOffsetC">Temperature offset applied while power saving is enabled</param>
     /// <returns>The calculated temperature in Celsius</returns>
     int CalculateTemperature(
         ClimateSetting settings,
         bool isOccupied,
         bool isDoorOpen,
-        bool powerSaving
+        bool powerSaving,
+        int powerSavingTempOffsetC
     );
 }

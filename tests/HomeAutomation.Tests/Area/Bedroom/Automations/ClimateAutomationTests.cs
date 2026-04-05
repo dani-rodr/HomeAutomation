@@ -77,7 +77,7 @@ public partial class ClimateAutomationTests : AutomationTestBase<ClimateAutomati
     {
         // Setup default Sunset time block for existing tests
 
-        var defaultSetting = new ClimateSetting(25, 27, 23, 27, "cool", false, 18, 0);
+        var defaultSetting = new ClimateSetting(24, 23, 25, "cool", false, 18, 0);
 
         var weatherSettings = new WeatherPowerSavingSettings
         {
@@ -269,7 +269,7 @@ public partial class ClimateAutomationTests : AutomationTestBase<ClimateAutomati
         _mockHaContext.ShouldHaveCalledClimateSetTemperature(
             _entities.AirConditioner.EntityId,
             "cool",
-            25.0
+            24.0
         );
     }
 
@@ -314,7 +314,7 @@ public partial class ClimateAutomationTests : AutomationTestBase<ClimateAutomati
 
         setting.ComfortTemp.Should().Be(23, "Sunset ComfortTemp should be 23°C");
 
-        setting.AwayTemp.Should().Be(27, "Sunset AwayTemp should be 27°C");
+        setting.AwayTemp.Should().Be(25, "Sunset AwayTemp should be 25°C");
     }
 
     [Fact]
@@ -980,9 +980,9 @@ public partial class ClimateAutomationTests : AutomationTestBase<ClimateAutomati
     }
 
     [Fact]
-    public void MockScheduler_Temperature_PowerSavingMode_Should_UseEcoAwayTemp()
+    public void MockScheduler_Temperature_PowerSavingMode_Should_AddOffsetToAwayTemp()
     {
-        // Test that PowerSaving mode overrides all other conditions
+        // Test that power-saving adds the configured offset to the base away temperature
 
         var success = _mockScheduler.Object.TryGetCurrentSetting(
             out var timeBlock,
@@ -992,9 +992,9 @@ public partial class ClimateAutomationTests : AutomationTestBase<ClimateAutomati
         success.Should().BeTrue();
         timeBlock.Should().Be(TimeBlock.Sunset);
 
-        var expectedTemp = setting!.EcoAwayTemp; // Should be 27 for Sunset
+        var expectedTemp = setting!.AwayTemp + 2; // Should be 27 for Sunset
 
-        expectedTemp.Should().Be(27, "PowerSaving mode should use EcoAwayTemp (27°C)");
+        expectedTemp.Should().Be(27, "PowerSaving mode should add the configured offset");
     }
 
     #endregion
