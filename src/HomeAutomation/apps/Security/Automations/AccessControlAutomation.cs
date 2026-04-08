@@ -40,12 +40,14 @@ public class AccessControlAutomation(
 
         foreach (var person in _personControllers)
         {
-            yield return person.OnArrived().Subscribe(triggerId => OnArrival(person, triggerId));
             yield return person
-                .OnDeparted(new(Seconds: LOCK_ON_AWAY_DELAY))
+                .OnArrived(new(StartImmediately: false))
+                .Subscribe(triggerId => OnArrival(person, triggerId));
+            yield return person
+                .OnDeparted(new(StartImmediately: false, Seconds: LOCK_ON_AWAY_DELAY))
                 .Subscribe(triggerId => OnDeparture(person, triggerId));
             yield return person
-                .OnUnlocked()
+                .OnUnlocked(new(StartImmediately: false))
                 .Subscribe(triggerId =>
                 {
                     Logger.LogInformation(

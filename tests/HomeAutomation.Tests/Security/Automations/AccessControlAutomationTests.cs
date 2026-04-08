@@ -579,6 +579,29 @@ public class AccessControlAutomationTests : AutomationTestBase<AccessControlAuto
         _mockPerson1Controller.Verify(p => p.SetHome(), Times.Once);
     }
 
+    [Fact]
+    public void StartAutomation_ShouldSubscribeToPersonTriggersWithoutImmediateReplay()
+    {
+        _mockPerson1Controller.Verify(
+            p => p.OnArrived(It.Is<BinaryDuration?>(d => d != null && d.StartImmediately == false)),
+            Times.Once
+        );
+        _mockPerson1Controller.Verify(
+            p =>
+                p.OnDeparted(
+                    It.Is<BinaryDuration?>(d =>
+                        d != null && d.StartImmediately == false && d.Seconds == 0
+                    )
+                ),
+            Times.Once
+        );
+        _mockPerson1Controller.Verify(
+            p =>
+                p.OnUnlocked(It.Is<BinaryDuration?>(d => d != null && d.StartImmediately == false)),
+            Times.Once
+        );
+    }
+
     #endregion
 
     #region Timing Integration Tests

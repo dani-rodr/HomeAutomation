@@ -96,6 +96,19 @@ public class PersonControllerTests : HaContextTestBase
     }
 
     [Fact]
+    public void ArrivedHome_WhenTriggerIsAlreadyOnBeforeSubscription_ShouldEmitImmediately()
+    {
+        _mockHaContext.SetEntityState(_entities.Person.EntityId, "not_home");
+        _mockHaContext.SetEntityState(_entities.HomeTrigger1.EntityId, "on");
+
+        var events = new List<string>();
+
+        using var subscription = _controller.OnArrived().Subscribe(events.Add);
+
+        events.Should().ContainSingle().Which.Should().Be(_entities.HomeTrigger1.EntityId);
+    }
+
+    [Fact]
     public void ArrivedHome_PersonIsHome_ShouldNotEmit()
     {
         // Arrange - Person is already home
@@ -199,6 +212,19 @@ public class PersonControllerTests : HaContextTestBase
 
         // Assert - Should not emit before delay completes
         Assert.NotEmpty(_leftHomeEvents);
+    }
+
+    [Fact]
+    public void Departed_WhenTriggerIsAlreadyOffBeforeSubscription_ShouldEmitImmediately()
+    {
+        _mockHaContext.SetEntityState(_entities.Person.EntityId, "home");
+        _mockHaContext.SetEntityState(_entities.AwayTrigger1.EntityId, "off");
+
+        var events = new List<string>();
+
+        using var subscription = _controller.OnDeparted().Subscribe(events.Add);
+
+        events.Should().ContainSingle().Which.Should().Be(_entities.AwayTrigger1.EntityId);
     }
 
     [Fact]
@@ -307,6 +333,18 @@ public class PersonControllerTests : HaContextTestBase
         // Assert - Should emit immediately (no delay)
         Assert.Single(_directUnlockEvents);
         Assert.Equal(_entities.DirectUnlockTrigger1.EntityId, _directUnlockEvents[0]);
+    }
+
+    [Fact]
+    public void DirectUnlock_WhenTriggerIsAlreadyOnBeforeSubscription_ShouldEmitImmediately()
+    {
+        _mockHaContext.SetEntityState(_entities.DirectUnlockTrigger1.EntityId, "on");
+
+        var events = new List<string>();
+
+        using var subscription = _controller.OnUnlocked().Subscribe(events.Add);
+
+        events.Should().ContainSingle().Which.Should().Be(_entities.DirectUnlockTrigger1.EntityId);
     }
 
     [Fact]

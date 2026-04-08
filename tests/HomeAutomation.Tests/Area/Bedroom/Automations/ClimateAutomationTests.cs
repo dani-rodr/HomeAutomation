@@ -459,6 +459,31 @@ public partial class ClimateAutomationTests : AutomationTestBase<ClimateAutomati
         _mockHaContext.ShouldHaveCalledClimateSetTemperature(_entities.AirConditioner.EntityId);
     }
 
+    [Fact]
+    public void MasterSwitch_WhenDoorIsUnavailable_ShouldNotApplyAcSetting()
+    {
+        _mockHaContext.ClearServiceCalls();
+
+        _mockHaContext.SetEntityState(_entities.Door.EntityId, "unavailable");
+
+        _mockHaContext.SimulateStateChange(_entities.MasterSwitch.EntityId, "on", "off");
+        _mockHaContext.SimulateStateChange(_entities.MasterSwitch.EntityId, "off", "on");
+
+        _mockHaContext.ShouldHaveNoServiceCallsForDomain("climate");
+    }
+
+    [Fact]
+    public void MotionDetected_WhenDoorIsUnknown_ShouldNotApplyAcSetting()
+    {
+        _mockHaContext.ClearServiceCalls();
+
+        _mockHaContext.SetEntityState(_entities.Door.EntityId, "unknown");
+
+        _mockHaContext.EmitMotionDetected(_entities.MotionSensor);
+
+        _mockHaContext.ShouldHaveNoServiceCallsForDomain("climate");
+    }
+
     [Fact(
         Skip = "Quarantined: bedroom automation logic under review | issue HA-TEST-2002 | expires 2026-06-30"
     )]

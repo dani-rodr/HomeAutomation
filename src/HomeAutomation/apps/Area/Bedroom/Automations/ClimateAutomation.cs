@@ -42,11 +42,13 @@ public class ClimateAutomation(
             .Subscribe(_ => MasterSwitch.TurnOn());
 
         yield return _doorSensor
-            .OnClosed()
+            .OnClosed(new(StartImmediately: false))
             .Where(_ => MasterSwitch.IsOn())
             .Subscribe(e => ApplyTimeBasedAcSetting(e));
 
-        yield return MasterSwitch.OnTurnedOn().Subscribe(e => ApplyTimeBasedAcSetting(e));
+        yield return MasterSwitch
+            .OnTurnedOn(new(StartImmediately: false))
+            .Subscribe(e => ApplyTimeBasedAcSetting(e));
     }
 
     protected override IEnumerable<IDisposable> GetToggleableAutomations() =>
@@ -72,10 +74,12 @@ public class ClimateAutomation(
             .OnCleared(new(Minutes: automationSettings.MotionClearedReapplyMinutes))
             .Subscribe(e => ApplyTimeBasedAcSetting(e));
 
-        yield return _motionSensor.OnOccupied().Subscribe(e => ApplyTimeBasedAcSetting(e));
+        yield return _motionSensor
+            .OnOccupied(new(StartImmediately: false))
+            .Subscribe(e => ApplyTimeBasedAcSetting(e));
 
         yield return _powerSavingMode
-            .OnChanges()
+            .OnChanges(new(StartImmediately: false))
             .Subscribe(e => ApplyTimeBasedAcSetting(e, allowFanAssistEnable: false));
     }
 
@@ -264,6 +268,16 @@ public class ClimateAutomation(
             ApplyFanAssist(targetTemp: 0, allowFanAssistEnable: false);
 
             Logger.LogDebug("Skipping AC settings: AC is currently OFF");
+
+            return;
+        }
+
+        if (_doorSensor.IsUnavailable() || _doorSensor.IsUnknown())
+        {
+            Logger.LogDebug(
+                "Skipping AC settings: door sensor is not ready ({DoorState})",
+                _doorSensor.State
+            );
 
             return;
         }

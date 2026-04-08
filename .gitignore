@@ -87,3 +87,6 @@ coverage*.info
 
 # Local git worktrees
 .worktrees/
+
+# Local OpenCode configuration
+opencode.json
