@@ -424,6 +424,44 @@ public partial class ClimateAutomationTests : AutomationTestBase<ClimateAutomati
     }
 
     [Fact]
+    public void FanAssist_WhenDoorOpensForReapplyDuration_Should_NotReenable()
+    {
+        var thresholdSetting = new ClimateSetting(25, 25, 25, "cool", 5, 18);
+        SetupSchedulerMock(TimeBlock.Sunrise, thresholdSetting);
+
+        _mockHaContext.SetEntityState(_entities.MotionSensor.EntityId, "on");
+        _mockHaContext.SetEntityState(_entities.Door.EntityId, "off");
+        _mockHaContext.SetEntityState(_entities.FanAutomation.EntityId, "off");
+        _mockHaContext.ClearServiceCalls();
+
+        _mockHaContext.SimulateStateChange(_entities.Door.EntityId, "off", "on");
+
+        _mockHaContext.ShouldNeverHaveCalledSwitch(_entities.FanAutomation.EntityId);
+
+        _mockHaContext.AdvanceTimeByMinutes(5);
+
+        _mockHaContext.ShouldHaveCalledClimateSetTemperature(_entities.AirConditioner.EntityId);
+        _mockHaContext.ShouldNeverHaveCalledSwitch(_entities.FanAutomation.EntityId);
+    }
+
+    [Fact]
+    public void FanAssist_WhenDoorCloses_Should_NotReenable()
+    {
+        var thresholdSetting = new ClimateSetting(25, 25, 25, "cool", 5, 18);
+        SetupSchedulerMock(TimeBlock.Sunrise, thresholdSetting);
+
+        _mockHaContext.SetEntityState(_entities.MotionSensor.EntityId, "on");
+        _mockHaContext.SetEntityState(_entities.Door.EntityId, "on");
+        _mockHaContext.SetEntityState(_entities.FanAutomation.EntityId, "off");
+        _mockHaContext.ClearServiceCalls();
+
+        _mockHaContext.SimulateStateChange(_entities.Door.EntityId, "on", "off");
+
+        _mockHaContext.ShouldHaveCalledClimateSetTemperature(_entities.AirConditioner.EntityId);
+        _mockHaContext.ShouldNeverHaveCalledSwitch(_entities.FanAutomation.EntityId);
+    }
+
+    [Fact]
     public void FanAssist_WhenMasterSwitchTurnsOn_Should_ReenableOnMeaningfulReevaluation()
     {
         var thresholdSetting = new ClimateSetting(25, 25, 25, "cool", 5, 18);

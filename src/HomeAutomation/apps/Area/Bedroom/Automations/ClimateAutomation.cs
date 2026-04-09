@@ -44,7 +44,7 @@ public class ClimateAutomation(
         yield return _doorSensor
             .OnClosed(new(StartImmediately: false))
             .Where(_ => MasterSwitch.IsOn())
-            .Subscribe(e => ApplyTimeBasedAcSetting(e));
+            .Subscribe(e => ApplyTimeBasedAcSetting(e, allowFanAssistEnable: false));
 
         yield return MasterSwitch
             .OnTurnedOn(new(StartImmediately: false))
@@ -68,7 +68,7 @@ public class ClimateAutomation(
 
         yield return _doorSensor
             .OnOpened(new(Minutes: automationSettings.DoorOpenReapplyMinutes))
-            .Subscribe(e => ApplyTimeBasedAcSetting(e));
+            .Subscribe(e => ApplyTimeBasedAcSetting(e, allowFanAssistEnable: false));
 
         yield return _motionSensor
             .OnCleared(new(Minutes: automationSettings.MotionClearedReapplyMinutes))
