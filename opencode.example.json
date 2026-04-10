@@ -4,7 +4,7 @@
     "home-assistant": {
       "type": "local",
       "command": [
-        "C:\\path\\to\\uv.exe",
+        "uv",
         "tool",
         "run",
         "mcp-proxy",
@@ -17,7 +17,7 @@
     "android": {
       "type": "local",
       "command": [
-        "C:\\path\\to\\uv.exe",
+        "uv",
         "tool",
         "run",
         "android-mcp"
