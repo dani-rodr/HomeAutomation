@@ -33,6 +33,7 @@ HomeAutomation.apps.Area.Bedroom.Config.BedroomSettings:
       masterSwitchReenableWhenNoMotionHours: 1
       masterSwitchReenableAfterOffHours: 8
       doorOpenReapplyMinutes: 5
+      motionOccupiedReapplyMinutes: 5
       motionClearedReapplyMinutes: 10
       houseVacantTurnOffMinutes: 30
       houseReturnMinVacantMinutes: 20

@@ -32,6 +32,10 @@ public partial class ClimateAutomationTests
 
         _mockHaContext.EmitMotionDetected(_entities.MotionSensor);
 
+        _mockHaContext.ShouldHaveNoServiceCallsForDomain("climate");
+
+        AdvanceMotionOccupiedDelay();
+
         _mockHaContext.ShouldHaveCalledClimateSetTemperature(
             _entities.AirConditioner.EntityId,
             expectedTemperature: expectedTemp
@@ -85,6 +89,10 @@ public partial class ClimateAutomationTests
         _mockHaContext.ClearServiceCalls();
 
         _mockHaContext.EmitMotionDetected(_entities.MotionSensor);
+
+        _mockHaContext.ShouldHaveNoServiceCallsForDomain("climate");
+
+        AdvanceMotionOccupiedDelay();
 
         _mockHaContext.ShouldHaveCalledClimateSetTemperature(
             _entities.AirConditioner.EntityId,

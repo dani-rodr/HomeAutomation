@@ -109,6 +109,13 @@ public sealed class ClimateAutomationSettings
     public int DoorOpenReapplyMinutes { get; init; } = 5;
 
     [Display(
+        Name = "Motion Occupied Reapply (min)",
+        Description = "Minutes after motion is detected before climate settings are re-applied."
+    )]
+    [Range(0, 120)]
+    public int MotionOccupiedReapplyMinutes { get; init; } = 5;
+
+    [Display(
         Name = "Motion Cleared Reapply (min)",
         Description = "Minutes after motion clears before climate settings are re-applied."
     )]

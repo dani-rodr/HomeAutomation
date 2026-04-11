@@ -6,6 +6,8 @@ namespace HomeAutomation.Tests.Area.Bedroom.Automations;
 
 public partial class ClimateAutomationTests : AutomationTestBase<ClimateAutomation>
 {
+    private const int MotionOccupiedReapplyMinutes = 5;
+
     private MockHaContext _mockHaContext => HaContext;
 
     private Mock<ILogger<ClimateAutomation>> _mockLogger => Logger;
@@ -223,6 +225,9 @@ public partial class ClimateAutomationTests : AutomationTestBase<ClimateAutomati
             );
     }
 
+    private void AdvanceMotionOccupiedDelay() =>
+        _mockHaContext.AdvanceTimeByMinutes(MotionOccupiedReapplyMinutes);
+
     [Fact]
     public void SettingsChange_ForBedroom_Should_ReapplyScheduledSettings()
     {
@@ -265,7 +270,13 @@ public partial class ClimateAutomationTests : AutomationTestBase<ClimateAutomati
 
         _mockHaContext.SetEntityState(_entities.Door.EntityId, "off");
 
+        _mockHaContext.ClearServiceCalls();
+
         _mockHaContext.EmitMotionDetected(_entities.MotionSensor);
+
+        _mockHaContext.ShouldHaveNoServiceCallsForDomain("climate");
+
+        AdvanceMotionOccupiedDelay();
 
         _mockHaContext.ShouldHaveCalledClimateSetTemperature(
             _entities.AirConditioner.EntityId,
@@ -282,7 +293,13 @@ public partial class ClimateAutomationTests : AutomationTestBase<ClimateAutomati
 
         _mockHaContext.SetEntityState(_entities.Door.EntityId, "on");
 
+        _mockHaContext.ClearServiceCalls();
+
         _mockHaContext.EmitMotionDetected(_entities.MotionSensor);
+
+        _mockHaContext.ShouldHaveNoServiceCallsForDomain("climate");
+
+        AdvanceMotionOccupiedDelay();
 
         _mockHaContext.ShouldHaveCalledClimateSetTemperature(
             _entities.AirConditioner.EntityId,
@@ -392,6 +409,10 @@ public partial class ClimateAutomationTests : AutomationTestBase<ClimateAutomati
 
         _mockHaContext.EmitMotionDetected(_entities.MotionSensor);
 
+        _mockHaContext.ShouldNeverHaveCalledSwitch(_entities.FanAutomation.EntityId);
+
+        AdvanceMotionOccupiedDelay();
+
         _mockHaContext.ShouldHaveCalledSwitchTurnOn(_entities.FanAutomation.EntityId);
     }
 
@@ -403,7 +424,13 @@ public partial class ClimateAutomationTests : AutomationTestBase<ClimateAutomati
 
         _mockHaContext.SetEntityState(_entities.MotionSensor.EntityId, "on");
 
+        _mockHaContext.ClearServiceCalls();
+
         _mockHaContext.EmitMotionDetected(_entities.MotionSensor);
+
+        _mockHaContext.ShouldNeverHaveCalledSwitch(_entities.FanAutomation.EntityId);
+
+        AdvanceMotionOccupiedDelay();
 
         _mockHaContext.ShouldNeverHaveCalledSwitch(_entities.FanAutomation.EntityId);
     }
@@ -520,6 +547,10 @@ public partial class ClimateAutomationTests : AutomationTestBase<ClimateAutomati
         _mockHaContext.EmitMotionDetected(_entities.MotionSensor);
 
         _mockHaContext.ShouldHaveNoServiceCallsForDomain("climate");
+
+        AdvanceMotionOccupiedDelay();
+
+        _mockHaContext.ShouldHaveNoServiceCallsForDomain("climate");
     }
 
     [Fact(
@@ -545,11 +576,36 @@ public partial class ClimateAutomationTests : AutomationTestBase<ClimateAutomati
     [Fact]
     public void MotionDetected_Should_TriggerAcSettingApplication()
     {
+        _mockHaContext.ClearServiceCalls();
+
         // Act - Simulate motion detected
 
         _mockHaContext.EmitMotionDetected(_entities.MotionSensor);
 
+        _mockHaContext.ShouldHaveNoServiceCallsForDomain("climate");
+
+        AdvanceMotionOccupiedDelay();
+
         // Assert - Should apply time-based AC settings
+
+        _mockHaContext.ShouldHaveCalledClimateSetTemperature(_entities.AirConditioner.EntityId);
+    }
+
+    [Fact]
+    public void MotionDetected_Should_ReapplyAcSettingsOnlyAfterConfiguredDelay()
+    {
+        _mockHaContext.SetEntityState(_entities.MotionSensor.EntityId, "on");
+        _mockHaContext.ClearServiceCalls();
+
+        _mockHaContext.EmitMotionDetected(_entities.MotionSensor);
+
+        _mockHaContext.ShouldHaveNoServiceCallsForDomain("climate");
+
+        _mockHaContext.AdvanceTimeByMinutes(MotionOccupiedReapplyMinutes - 1);
+
+        _mockHaContext.ShouldHaveNoServiceCallsForDomain("climate");
+
+        _mockHaContext.AdvanceTimeByMinutes(1);
 
         _mockHaContext.ShouldHaveCalledClimateSetTemperature(_entities.AirConditioner.EntityId);
     }
@@ -1047,6 +1103,8 @@ public partial class ClimateAutomationTests : AutomationTestBase<ClimateAutomati
 
         _mockHaContext.EmitMotionDetected(_entities.MotionSensor);
 
+        AdvanceMotionOccupiedDelay();
+
         // Assert - Should not apply settings when AC is off
 
         _mockHaContext.ShouldHaveNoServiceCalls();
@@ -1080,6 +1138,10 @@ public partial class ClimateAutomationTests : AutomationTestBase<ClimateAutomati
         // Act - Trigger motion detected
 
         _mockHaContext.EmitMotionDetected(_entities.MotionSensor);
+
+        _mockHaContext.ShouldHaveNoServiceCallsForDomain("climate");
+
+        AdvanceMotionOccupiedDelay();
 
         // Assert - Should apply new settings
 
@@ -1195,6 +1257,8 @@ public partial class ClimateAutomationTests : AutomationTestBase<ClimateAutomati
         // Act - Trigger AC setting application
 
         _mockHaContext.EmitMotionDetected(_entities.MotionSensor);
+
+        AdvanceMotionOccupiedDelay();
 
         // Assert - Should not throw and should attempt to apply settings
 

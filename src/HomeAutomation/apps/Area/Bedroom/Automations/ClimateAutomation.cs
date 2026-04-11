@@ -75,7 +75,12 @@ public class ClimateAutomation(
             .Subscribe(e => ApplyTimeBasedAcSetting(e));
 
         yield return _motionSensor
-            .OnOccupied(new(StartImmediately: false))
+            .OnOccupied(
+                new(
+                    StartImmediately: false,
+                    Minutes: automationSettings.MotionOccupiedReapplyMinutes
+                )
+            )
             .Subscribe(e => ApplyTimeBasedAcSetting(e));
 
         yield return _powerSavingMode
