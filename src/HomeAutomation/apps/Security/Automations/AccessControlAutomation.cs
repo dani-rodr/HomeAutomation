@@ -11,12 +11,12 @@ public class AccessControlAutomation(
     private readonly IEnumerable<IPersonController> _personControllers = personControllers;
     private readonly BinarySensorEntity _door = entities.Door;
     private readonly LockEntity _lock = entities.Lock;
+    private readonly Lock _pendingDeparturesSync = new();
+    private readonly HashSet<IPersonController> _pendingDepartures = [];
 
     private const int LOCK_ON_AWAY_DELAY = 0;
-    private const int DOOR_CLOSE_WINDOW_DELAY = 5;
     private const int UNLOCK_SUPPRESION_DELAY = 10;
     private volatile bool _autoLockOnDoorClose = false;
-    private volatile bool _doorRecentlyClosed = false;
     private volatile bool _wasHouseEmpty = false;
     private volatile bool _suppressUnlocks = false;
 
@@ -67,23 +67,13 @@ public class AccessControlAutomation(
                 .OnClosed()
                 .Subscribe(_ =>
                 {
-                    Logger.LogDebug("Door closed. Marking door as recently closed.");
-                    _doorRecentlyClosed = true;
-                    if (_autoLockOnDoorClose)
+                    Logger.LogDebug("Door closed.");
+                    var completedPendingDepartures = CompletePendingDepartures();
+                    if (_autoLockOnDoorClose || completedPendingDepartures)
                     {
                         _lock.Lock();
                         _autoLockOnDoorClose = false;
                     }
-                }),
-            _door
-                .OnClosed(new(Minutes: DOOR_CLOSE_WINDOW_DELAY))
-                .Subscribe(_ =>
-                {
-                    Logger.LogDebug(
-                        "Door has been closed for {Delay} minutes. Clearing 'recently closed' flag.",
-                        DOOR_CLOSE_WINDOW_DELAY
-                    );
-                    _doorRecentlyClosed = false;
                 }),
         ];
 
@@ -116,6 +106,7 @@ public class AccessControlAutomation(
             triggerEntityId
         );
 
+        CancelPendingDeparture(person);
         person.SetHome();
         Logger.LogDebug("{PersonName} is now home", person.Name);
 
@@ -156,16 +147,59 @@ public class AccessControlAutomation(
             triggerEntityId
         );
 
-        if (!_doorRecentlyClosed)
+        if (_door.IsClosed())
         {
+            person.SetAway();
             Logger.LogInformation(
-                "{PersonName} away trigger ignored — door was not recently closed",
+                "{PersonName} is now away, door already closed, locking door",
                 person.Name
             );
+            _lock.Lock();
             return;
         }
-        _lock.Lock();
-        person.SetAway();
-        Logger.LogInformation("{PersonName} is now away, locking door", person.Name);
+
+        AddPendingDeparture(person);
+        Logger.LogInformation(
+            "{PersonName} departure detected, waiting for door to close before marking away and locking",
+            person.Name
+        );
+    }
+
+    private void AddPendingDeparture(IPersonController person)
+    {
+        lock (_pendingDeparturesSync)
+        {
+            _pendingDepartures.Add(person);
+        }
+    }
+
+    private void CancelPendingDeparture(IPersonController person)
+    {
+        lock (_pendingDeparturesSync)
+        {
+            _pendingDepartures.Remove(person);
+        }
+    }
+
+    private bool CompletePendingDepartures()
+    {
+        IPersonController[] pendingDepartures;
+        lock (_pendingDeparturesSync)
+        {
+            if (_pendingDepartures.Count == 0)
+            {
+                return false;
+            }
+
+            pendingDepartures = [.. _pendingDepartures];
+            _pendingDepartures.Clear();
+        }
+
+        foreach (var pendingDeparture in pendingDepartures)
+        {
+            pendingDeparture.SetAway();
+        }
+
+        return true;
     }
 }

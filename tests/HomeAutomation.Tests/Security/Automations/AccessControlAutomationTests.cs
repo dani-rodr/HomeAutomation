@@ -140,140 +140,31 @@ public class AccessControlAutomationTests : AutomationTestBase<AccessControlAuto
     #region Away Trigger Tests
 
     [Fact]
-    public void AwayTrigger_SetupCorrectSubscription_ShouldHandleStateChanges()
+    public void AwayTrigger_WhenDoorAlreadyClosed_ShouldLockAndSetAway()
     {
-        // Note: Away trigger uses IsOffForSeconds(60) which creates a 60-second delay
-        // This test verifies the subscription is set up correctly
-        // Testing the actual delay would require a test scheduler
+        _mockHaContext.SetEntityState(_entities.Door.EntityId, "off");
 
-        // Simulate door being closed recently
-        var doorClosedChange = StateChangeHelpers.CreateStateChange(_entities.Door, "on", "off");
-        _mockHaContext.EmitStateChange(doorClosedChange);
-        _mockHaContext.ClearServiceCalls();
-
-        // Act - Person 1 away trigger turns off (should be processed by subscription)
-        var awayTriggerChange = StateChangeHelpers.CreateStateChange(
-            _entities.Person1AwayTrigger,
-            "on",
-            "off"
-        );
-        _mockHaContext.EmitStateChange(awayTriggerChange);
-
-        // Assert - No immediate action due to 60-second delay in actual automation
-        // The subscription is working, but timing logic prevents immediate execution
-        _mockHaContext.ShouldHaveNoServiceCalls();
-    }
-
-    [Fact]
-    public void AwayTrigger_PersonAlreadyAway_ShouldSetupSubscription()
-    {
-        // Note: This tests that the subscription is created for away triggers
-        // The actual trigger logic has timing delays that are complex to test
-
-        // Act - Person 1 away trigger state changes
-        var awayTriggerChange = StateChangeHelpers.CreateStateChange(
-            _entities.Person1AwayTrigger,
-            "on",
-            "off"
-        );
-        _mockHaContext.EmitStateChange(awayTriggerChange);
-
-        // Assert - No immediate action due to automation's timing logic
-        _mockHaContext.ShouldHaveNoServiceCalls();
-    }
-
-    [Fact]
-    public void AwayTrigger_SubscriptionHandlesStateChanges()
-    {
-        // Note: Away triggers use IsOffForSeconds(60) which requires time-based testing
-        // This test verifies the subscription processes state changes
-
-        // Act - Person 1 away trigger state changes
-        var awayTriggerChange = StateChangeHelpers.CreateStateChange(
-            _entities.Person1AwayTrigger,
-            "on",
-            "off"
-        );
-        _mockHaContext.EmitStateChange(awayTriggerChange);
-
-        // Assert - No immediate action due to timing and door state logic
-        _mockHaContext.ShouldHaveNoServiceCalls();
-    }
-
-    #endregion
-
-    #region Away Trigger Timing Tests
-
-    [Fact]
-    public void AwayTrigger_BeforeDelay_ShouldNotTrigger()
-    {
-        var doorClosedChange = StateChangeHelpers.CreateStateChange(_entities.Door, "on", "off");
-        _mockHaContext.EmitStateChange(doorClosedChange);
-        _mockHaContext.ClearServiceCalls();
-
-        // Act - Person 1 away trigger turns off (starts 60-second delay)
-        var awayTriggerChange = StateChangeHelpers.CreateStateChange(
-            _entities.Person1AwayTrigger,
-            "on",
-            "off"
-        );
-        _mockHaContext.EmitStateChange(awayTriggerChange);
-
-        // Advance time by 59 seconds (just before delay expires)
-        _mockHaContext.AdvanceTimeBySeconds(59);
-
-        // Assert - Should not trigger yet (delay not complete)
-        _mockHaContext.ShouldHaveNoServiceCalls();
-        _mockPerson1Controller.Verify(p => p.SetAway(), Times.Never);
-    }
-
-    [Fact]
-    public void AwayTrigger_AfterDelay_ShouldLockAndSetAway()
-    {
-        var doorClosedChange = StateChangeHelpers.CreateStateChange(_entities.Door, "on", "off");
-        _mockHaContext.EmitStateChange(doorClosedChange);
-        _mockHaContext.ClearServiceCalls();
-
-        // Act - Person 1 left home via person controller observable (after delay logic in PersonController)
         _person1LeftHome.OnNext(_entities.Person1AwayTrigger.EntityId);
-        // Advance time by exactly 60 seconds
-        _mockHaContext.AdvanceTimeBySeconds(60);
 
-        // Assert - Should now lock door and set person away
+        // Assert - Should lock immediately when the door is already closed
         _mockHaContext.ShouldHaveCalledLockLock(_entities.Lock.EntityId);
         _mockPerson1Controller.Verify(p => p.SetAway(), Times.Once);
     }
 
     [Fact]
-    public void AwayTrigger_CancelledByHomeReturn_ShouldNotTrigger()
+    public void AwayTrigger_WhenDoorIsOpen_ShouldSetAwayAndWaitForDoorClose()
     {
-        var doorClosedChange = StateChangeHelpers.CreateStateChange(_entities.Door, "on", "off");
-        _mockHaContext.EmitStateChange(doorClosedChange);
-        _mockHaContext.ClearServiceCalls();
+        _mockHaContext.SetEntityState(_entities.Door.EntityId, "on");
 
-        // Act - Person 1 away trigger turns off (starts 60-second delay)
-        var awayTriggerChange = StateChangeHelpers.CreateStateChange(
-            _entities.Person1AwayTrigger,
-            "on",
-            "off"
-        );
-        _mockHaContext.EmitStateChange(awayTriggerChange);
+        _person1LeftHome.OnNext(_entities.Person1AwayTrigger.EntityId);
 
-        // After 30 seconds, person 1 comes back (trigger turns on again - cancelling delay)
-        _mockHaContext.AdvanceTimeBySeconds(30);
-        var homeCancelChange = StateChangeHelpers.CreateStateChange(
-            _entities.Person1AwayTrigger,
-            "off",
-            "on"
-        );
-        _mockHaContext.EmitStateChange(homeCancelChange);
-
-        // Advance past original 60-second mark
-        _mockHaContext.AdvanceTimeBySeconds(40);
-
-        // Assert - Should not trigger because delay was cancelled
-        _mockHaContext.ShouldHaveNoServiceCalls();
         _mockPerson1Controller.Verify(p => p.SetAway(), Times.Never);
+        _mockHaContext.ShouldHaveNoServiceCalls();
+
+        _mockHaContext.SimulateStateChange(_entities.Door.EntityId, "on", "off");
+
+        _mockPerson1Controller.Verify(p => p.SetAway(), Times.Once);
+        _mockHaContext.ShouldHaveCalledLockLock(_entities.Lock.EntityId);
     }
 
     #endregion
@@ -301,61 +192,44 @@ public class AccessControlAutomationTests : AutomationTestBase<AccessControlAuto
     }
 
     [Fact]
-    public void DoorClosed_After5Minutes_ShouldClearRecentlyClosedFlag()
+    public void DoorClosed_WhenPendingDepartureLockExists_ShouldLockOnce()
     {
-        var doorClosedChange = StateChangeHelpers.CreateStateChange(_entities.Door, "on", "off");
-        _mockHaContext.EmitStateChange(doorClosedChange);
-        _mockHaContext.ClearServiceCalls();
+        _mockHaContext.SetEntityState(_entities.Door.EntityId, "on");
 
-        // Verify flag is set by triggering away logic (should work with recent door close)
         _person1LeftHome.OnNext(_entities.Person1AwayTrigger.EntityId);
+        _mockPerson1Controller.Verify(p => p.SetAway(), Times.Never);
+        _mockHaContext.ShouldHaveNoServiceCalls();
 
-        // Advance 60 seconds to trigger away logic (door recently closed = true)
-        _mockHaContext.AdvanceTimeBySeconds(60);
+        _mockHaContext.SimulateStateChange(_entities.Door.EntityId, "on", "off");
 
-        // Should have triggered because door was recently closed
         _mockHaContext.ShouldHaveCalledLockLock(_entities.Lock.EntityId);
         _mockPerson1Controller.Verify(p => p.SetAway(), Times.Once);
         _mockHaContext.ClearServiceCalls();
 
-        // Act - Advance time by 5 minutes (door recently closed flag should clear)
-        _mockHaContext.AdvanceTimeByMinutes(5);
+        _mockHaContext.SimulateStateChange(_entities.Door.EntityId, "off", "on");
+        _mockHaContext.SimulateStateChange(_entities.Door.EntityId, "on", "off");
 
-        // Trigger away logic again (door recently closed should now be false)
-        _person1LeftHome.OnNext(_entities.Person1AwayTrigger.EntityId);
-        _mockHaContext.AdvanceTimeBySeconds(60);
-
-        // Assert - Should not trigger because door recently closed flag was cleared
-        // Verify that SetAway was called exactly once (from the first trigger, not the second)
-        _mockHaContext.ShouldHaveNoServiceCalls();
-        _mockPerson1Controller.Verify(p => p.SetAway(), Times.Once);
+        _mockHaContext.ShouldNeverHaveCalledLock(_entities.Lock.EntityId);
     }
 
     [Fact]
-    public void AwayTrigger_AfterDoorWindowExpires_ShouldIgnore()
+    public void Arrival_ShouldClearPendingDepartureLock()
     {
-        var doorClosedChange = StateChangeHelpers.CreateStateChange(_entities.Door, "on", "off");
-        _mockHaContext.EmitStateChange(doorClosedChange);
+        _mockHaContext.SetEntityState(_entities.Door.EntityId, "on");
 
-        // Advance time past door window (5 minutes)
-        _mockHaContext.AdvanceTimeByMinutes(5);
+        _person1LeftHome.OnNext(_entities.Person1AwayTrigger.EntityId);
+        _mockPerson1Controller.Verify(p => p.SetAway(), Times.Never);
+        _mockHaContext.ShouldHaveNoServiceCalls();
 
+        _mockHaContext.SimulateStateChange(_entities.House.EntityId, "off", "on");
+        _person1ArrivedHome.OnNext(_entities.Person1HomeTrigger.EntityId);
         _mockHaContext.ClearServiceCalls();
 
-        // Act - Person 1 away trigger turns off after door window expired
-        var awayTriggerChange = StateChangeHelpers.CreateStateChange(
-            _entities.Person1AwayTrigger,
-            "on",
-            "off"
-        );
-        _mockHaContext.EmitStateChange(awayTriggerChange);
+        _mockHaContext.SimulateStateChange(_entities.Door.EntityId, "on", "off");
 
-        // Advance time by 60 seconds (away trigger delay)
-        _mockHaContext.AdvanceTimeBySeconds(60);
-
-        // Assert - Should not trigger because door window expired
         _mockHaContext.ShouldHaveNoServiceCalls();
         _mockPerson1Controller.Verify(p => p.SetAway(), Times.Never);
+        _mockPerson1Controller.Verify(p => p.SetHome(), Times.Once);
     }
 
     #endregion
@@ -513,21 +387,19 @@ public class AccessControlAutomationTests : AutomationTestBase<AccessControlAuto
     #region Multiple Person Scenarios
 
     [Fact]
-    public void MultiplePeople_BothAwayTriggers_ShouldSetupSubscriptions()
+    public void MultiplePeople_BothAwayTriggers_ShouldSetBothAwayAndLockOnNextDoorClose()
     {
-        // Note: Away triggers use IsOffForSeconds(60) which makes testing complex
-        // This test verifies both people's away triggers have subscriptions
+        _mockHaContext.SetEntityState(_entities.Door.EntityId, "on");
 
-        var doorClosedChange = StateChangeHelpers.CreateStateChange(_entities.Door, "on", "off");
-        _mockHaContext.EmitStateChange(doorClosedChange);
-        _mockHaContext.ClearServiceCalls();
-
-        // Act - Both people leave home via person controller observables (after delay logic in PersonController)
         _person1LeftHome.OnNext(_entities.Person1AwayTrigger.EntityId);
         _person2LeftHome.OnNext(_entities.Person2AwayTrigger.EntityId);
 
-        // Assert - Should trigger lock actions since door was recently closed and people left
-        // With new architecture, timing is handled in PersonController, so actions happen when observables fire
+        _mockPerson1Controller.Verify(p => p.SetAway(), Times.Never);
+        _mockPerson2Controller.Verify(p => p.SetAway(), Times.Never);
+        _mockHaContext.ShouldHaveNoServiceCalls();
+
+        _mockHaContext.SimulateStateChange(_entities.Door.EntityId, "on", "off");
+
         _mockHaContext.ShouldHaveCalledLockLock(_entities.Lock.EntityId);
         _mockPerson1Controller.Verify(p => p.SetAway(), Times.Once);
         _mockPerson2Controller.Verify(p => p.SetAway(), Times.Once);
@@ -640,12 +512,13 @@ public class AccessControlAutomationTests : AutomationTestBase<AccessControlAuto
         // Advance past suppression window (7 more minutes = 10 total)
         _mockHaContext.AdvanceTimeByMinutes(7);
 
-        // Now person 2 leaves (door closes, away trigger after delay)
-        var doorClosedChange = StateChangeHelpers.CreateStateChange(_entities.Door, "on", "off");
-        _mockHaContext.EmitStateChange(doorClosedChange);
-
+        // Now person 2 leaves while the door is still open, then the door closes.
+        _mockHaContext.SetEntityState(_entities.Door.EntityId, "on");
         _person2LeftHome.OnNext(_entities.Person2AwayTrigger.EntityId);
-        _mockHaContext.AdvanceTimeByMinutes(1);
+
+        _mockPerson2Controller.Verify(p => p.SetAway(), Times.Never);
+
+        _mockHaContext.SimulateStateChange(_entities.Door.EntityId, "on", "off");
 
         _mockPerson2Controller.Verify(p => p.SetAway(), Times.Once);
         _mockHaContext.ShouldHaveCalledLockLock(_entities.Lock.EntityId);
@@ -658,17 +531,34 @@ public class AccessControlAutomationTests : AutomationTestBase<AccessControlAuto
     }
 
     [Fact]
-    public void TimingEdgeCase_AwayTriggerAtDoorWindowBoundary()
+    public void TimingEdgeCase_PendingDepartureLock_ShouldNotExpireBeforeDoorCloses()
     {
-        // Test edge case: away trigger delay completes after door window expires
+        _mockHaContext.SetEntityState(_entities.Door.EntityId, "on");
 
-        var doorClosedChange = StateChangeHelpers.CreateStateChange(_entities.Door, "on", "off");
-        _mockHaContext.EmitStateChange(doorClosedChange);
-        _mockHaContext.ClearServiceCalls();
+        _person1LeftHome.OnNext(_entities.Person1AwayTrigger.EntityId);
+        _mockPerson1Controller.Verify(p => p.SetAway(), Times.Never);
+        _mockHaContext.AdvanceTimeByMinutes(6);
 
-        // Away trigger starts at 4 minutes 59 seconds after door close
-        _mockHaContext.AdvanceTimeBy(TimeSpan.FromMinutes(4).Add(TimeSpan.FromSeconds(59)));
+        _mockHaContext.SimulateStateChange(_entities.Door.EntityId, "on", "off");
 
+        _mockPerson1Controller.Verify(p => p.SetAway(), Times.Once);
+        _mockHaContext.ShouldHaveCalledLockLock(_entities.Lock.EntityId);
+    }
+
+    [Fact]
+    public void AwayTrigger_SubscriptionHandlesObservableEvents()
+    {
+        _mockHaContext.SetEntityState(_entities.Door.EntityId, "off");
+
+        _person1LeftHome.OnNext(_entities.Person1AwayTrigger.EntityId);
+
+        _mockPerson1Controller.Verify(p => p.SetAway(), Times.Once);
+        _mockHaContext.ShouldHaveCalledLockLock(_entities.Lock.EntityId);
+    }
+
+    [Fact]
+    public void AwayTrigger_StateChangeSubscription_ShouldNotTriggerWithoutPersonControllerEvent()
+    {
         var awayTriggerChange = StateChangeHelpers.CreateStateChange(
             _entities.Person1AwayTrigger,
             "on",
@@ -676,14 +566,6 @@ public class AccessControlAutomationTests : AutomationTestBase<AccessControlAuto
         );
         _mockHaContext.EmitStateChange(awayTriggerChange);
 
-        // Advance by 1 second (door window expires at exactly 5 minutes)
-        _mockHaContext.AdvanceTimeBySeconds(1);
-
-        // Advance by remaining 59 seconds (60-second away trigger delay completes)
-        _mockHaContext.AdvanceTimeBySeconds(59);
-
-        // Assert - Should NOT trigger because door window expired before away trigger logic executed
-        // At this point we're at 6:00 total time, door window expired at 5:00
         _mockHaContext.ShouldHaveNoServiceCalls();
         _mockPerson1Controller.Verify(p => p.SetAway(), Times.Never);
     }
