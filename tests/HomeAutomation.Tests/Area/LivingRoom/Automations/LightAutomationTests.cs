@@ -107,9 +107,9 @@ public class LightAutomationTests : AutomationTestBase<LightAutomation>
         // Assert - Verify dimming controller was configured with custom parameters
 
         _mockDimmingController.Verify(
-            x => x.SetSensorActiveDelayValue(45),
+            x => x.SetSensorActiveDelayValue(75),
             Times.Once,
-            "Should configure dimming controller with custom sensor active delay value of 45"
+            "Should configure dimming controller with custom sensor active delay value of 75"
         );
 
         _mockDimmingController.Verify(
@@ -458,7 +458,7 @@ public class LightAutomationTests : AutomationTestBase<LightAutomation>
     {
         // The automation should use custom sensor delay values
 
-        // SensorWaitTime => 30, SensorActiveDelayValue => 45, SensorInactiveDelayValue => 1
+        // SensorWaitTime => 15, SensorActiveDelayValue => 75, SensorInactiveDelayValue => 1
 
         // Act - Simulate motion sensor being on for the wait time (base class handles this)
 
@@ -466,7 +466,7 @@ public class LightAutomationTests : AutomationTestBase<LightAutomation>
 
         // Simulate the sensor delay automation from base class
 
-        _entities.SensorDelay.SetNumericValue(45); // SensorActiveDelayValue
+        _entities.SensorDelay.SetNumericValue(75); // SensorActiveDelayValue
 
         // Assert - Should set sensor delay to custom active value
 
@@ -504,7 +504,7 @@ public class LightAutomationTests : AutomationTestBase<LightAutomation>
 
         _mockHaContext.EmitMotionDetected(_entities.KitchenMotionSensor);
 
-        _entities.SensorDelay.SetNumericValue(45); // Simulate the delay change
+        _entities.SensorDelay.SetNumericValue(75); // Simulate the delay change
 
         // Act 3 - TV turns off (changes condition for master switch automation)
 

@@ -58,14 +58,14 @@ public sealed class LivingRoomLightSettings
         Description = "Base wait time for living room occupancy sensor transitions."
     )]
     [Range(1, 300)]
-    public int SensorWaitSeconds { get; init; } = 30;
+    public int SensorWaitSeconds { get; init; } = 15;
 
     [Display(
         Name = "Sensor Active Delay (s)",
         Description = "Delay in seconds before occupancy is considered active."
     )]
     [Range(1, 900)]
-    public int SensorActiveDelayValue { get; init; } = 45;
+    public int SensorActiveDelayValue { get; init; } = 75;
 
     [Display(
         Name = "Sensor Inactive Delay (s)",
