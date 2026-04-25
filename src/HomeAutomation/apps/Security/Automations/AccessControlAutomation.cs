@@ -8,17 +8,24 @@ public class AccessControlAutomation(
     ILogger<AccessControlAutomation> logger
 ) : AutomationBase(logger)
 {
+    private enum DoorCloseAction
+    {
+        None,
+        LockAfterArrival,
+        LockAfterDeparture,
+    }
+
     private readonly IEnumerable<IPersonController> _personControllers = personControllers;
     private readonly BinarySensorEntity _door = entities.Door;
     private readonly LockEntity _lock = entities.Lock;
 
-    private const int LOCK_ON_AWAY_DELAY = 0;
     private const int DOOR_CLOSE_WINDOW_DELAY = 5;
     private const int UNLOCK_SUPPRESION_DELAY = 10;
-    private volatile bool _autoLockOnDoorClose = false;
-    private volatile bool _doorRecentlyClosed = false;
+    private volatile bool _doorRecentlyOpened = false;
+    private volatile bool _waitingForArrivalDoorOpen = false;
     private volatile bool _wasHouseEmpty = false;
     private volatile bool _suppressUnlocks = false;
+    private volatile DoorCloseAction _doorCloseAction = DoorCloseAction.None;
 
     protected override IEnumerable<IDisposable> GetAutomations() =>
         [
@@ -44,7 +51,7 @@ public class AccessControlAutomation(
                 .OnArrived(new(StartImmediately: false))
                 .Subscribe(triggerId => OnArrival(person, triggerId));
             yield return person
-                .OnDeparted(new(StartImmediately: false, Seconds: LOCK_ON_AWAY_DELAY))
+                .OnDeparted(new(StartImmediately: false))
                 .Subscribe(triggerId => OnDeparture(person, triggerId));
             yield return person
                 .OnUnlocked(new(StartImmediately: false))
@@ -63,28 +70,11 @@ public class AccessControlAutomation(
 
     private IEnumerable<IDisposable> GetDoorAutoLockAutomations() =>
         [
-            _door
-                .OnClosed()
-                .Subscribe(_ =>
-                {
-                    Logger.LogDebug("Door closed. Marking door as recently closed.");
-                    _doorRecentlyClosed = true;
-                    if (_autoLockOnDoorClose)
-                    {
-                        _lock.Lock();
-                        _autoLockOnDoorClose = false;
-                    }
-                }),
+            _door.OnOpened().Subscribe(_ => HandleDoorOpened()),
+            _door.OnClosed().Subscribe(_ => HandleDoorClosed()),
             _door
                 .OnClosed(new(Minutes: DOOR_CLOSE_WINDOW_DELAY))
-                .Subscribe(_ =>
-                {
-                    Logger.LogDebug(
-                        "Door has been closed for {Delay} minutes. Clearing 'recently closed' flag.",
-                        DOOR_CLOSE_WINDOW_DELAY
-                    );
-                    _doorRecentlyClosed = false;
-                }),
+                .Subscribe(_ => ClearDoorInteractionState()),
         ];
 
     private IEnumerable<IDisposable> GetLockSuppressionDelayAutomation() =>
@@ -121,9 +111,7 @@ public class AccessControlAutomation(
 
         if (_wasHouseEmpty)
         {
-            Logger.LogInformation("House was empty. Unlocking once for {PersonName}", person.Name);
-            _lock.Unlock();
-            _autoLockOnDoorClose = true;
+            UnlockForArrival(person, wasHouseEmpty: true);
             _wasHouseEmpty = false;
 
             return;
@@ -138,34 +126,98 @@ public class AccessControlAutomation(
             return;
         }
 
-        _lock.Unlock();
-        _autoLockOnDoorClose = true;
-        Logger.LogInformation(
-            "House occupied. Unlocking for {PersonName}, Setting Auto Lock on Door Closed : {value}",
-            person.Name,
-            _autoLockOnDoorClose
-        );
+        UnlockForArrival(person, wasHouseEmpty: false);
     }
 
     private void OnDeparture(IPersonController person, string triggerEntityId)
     {
         Logger.LogInformation(
-            "{PersonName} away trigger activated after {LockDelay}s delay: {TriggerEntity}",
+            "{PersonName} away trigger activated: {TriggerEntity}",
             person.Name,
-            LOCK_ON_AWAY_DELAY,
             triggerEntityId
         );
 
-        if (!_doorRecentlyClosed)
+        if (!_doorRecentlyOpened)
         {
             Logger.LogInformation(
-                "{PersonName} away trigger ignored — door was not recently closed",
+                "{PersonName} away trigger ignored — door was not opened recently",
                 person.Name
             );
             return;
         }
-        _lock.Lock();
+
         person.SetAway();
-        Logger.LogInformation("{PersonName} is now away, locking door", person.Name);
+
+        if (_door.IsOpen())
+        {
+            Logger.LogInformation(
+                "{PersonName} is away while the door is still open. Locking will happen on close.",
+                person.Name
+            );
+            _doorCloseAction = DoorCloseAction.LockAfterDeparture;
+            return;
+        }
+
+        Logger.LogInformation(
+            "{PersonName} is now away and the door is already closed. Locking now.",
+            person.Name
+        );
+        _lock.Lock();
+        _doorCloseAction = DoorCloseAction.None;
+        _doorRecentlyOpened = false;
+    }
+
+    private void UnlockForArrival(IPersonController person, bool wasHouseEmpty)
+    {
+        var context = wasHouseEmpty ? "House was empty" : "House occupied";
+        Logger.LogInformation("{Context}. Unlocking for {PersonName}", context, person.Name);
+        _lock.Unlock();
+        _waitingForArrivalDoorOpen = true;
+        _doorCloseAction = _door.IsOpen() ? DoorCloseAction.LockAfterArrival : DoorCloseAction.None;
+    }
+
+    private void HandleDoorOpened()
+    {
+        Logger.LogDebug("Door opened. Marking door as recently opened.");
+        _doorRecentlyOpened = true;
+
+        if (_waitingForArrivalDoorOpen)
+        {
+            _doorCloseAction = DoorCloseAction.LockAfterArrival;
+        }
+    }
+
+    private void HandleDoorClosed()
+    {
+        Logger.LogDebug("Door closed.");
+
+        if (_doorCloseAction is DoorCloseAction.LockAfterDeparture)
+        {
+            Logger.LogInformation("Door closed after a confirmed departure. Locking now.");
+            _lock.Lock();
+            _doorCloseAction = DoorCloseAction.None;
+            _doorRecentlyOpened = false;
+            return;
+        }
+
+        if (_doorCloseAction is DoorCloseAction.LockAfterArrival)
+        {
+            Logger.LogInformation("Door closed after an arrival unlock. Locking now.");
+            _lock.Lock();
+            _waitingForArrivalDoorOpen = false;
+            _doorCloseAction = DoorCloseAction.None;
+            _doorRecentlyOpened = false;
+        }
+    }
+
+    private void ClearDoorInteractionState()
+    {
+        Logger.LogDebug(
+            "Door has been closed for {Delay} minutes. Clearing recent door interaction flags.",
+            DOOR_CLOSE_WINDOW_DELAY
+        );
+        _doorRecentlyOpened = false;
+        _waitingForArrivalDoorOpen = false;
+        _doorCloseAction = DoorCloseAction.None;
     }
 }

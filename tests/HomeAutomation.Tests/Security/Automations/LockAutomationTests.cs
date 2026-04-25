@@ -93,7 +93,7 @@ public class LockAutomationTests : AutomationTestBase<LockAutomation>
     [Fact]
     public void LockStateChanged_UnlockedByPhysicalOperation_Should_NotSetImmediateRelock()
     {
-        // Arrange - Set door to be closed for testing immediate relock behavior
+        // Arrange - Set door to be closed; LockAutomation should not relock on door close anymore.
         _mockHaContext.SetEntityState(_entities.Door.EntityId, "off"); // closed
 
         // Act - Simulate lock being unlocked by physical operation (no user ID)
@@ -117,9 +117,9 @@ public class LockAutomationTests : AutomationTestBase<LockAutomation>
     }
 
     [Fact]
-    public void LockStateChanged_UnlockedByAutomation_Should_SetImmediateRelock()
+    public void LockStateChanged_UnlockedByAutomation_Should_NotRelockOnDoorCycle()
     {
-        // Arrange - Set door to be closed and lock to be unlocked for testing immediate relock behavior
+        // Arrange - Arrival relock is now handled by AccessControlAutomation, not here.
         _mockHaContext.SetEntityState(_entities.Door.EntityId, "off"); // closed
         _mockHaContext.SetEntityState(_entities.Lock.EntityId, HaEntityStates.UNLOCKED);
 
@@ -135,12 +135,13 @@ public class LockAutomationTests : AutomationTestBase<LockAutomation>
         // Clear previous service calls
         _mockHaContext.ClearServiceCalls();
 
-        // Act - Now simulate door closing (should trigger immediate relock)
+        // Act - Simulate a real open-close cycle after the automation unlock.
+        _mockHaContext.EmitStateChange(StateChangeHelpers.DoorOpened(_entities.Door));
         var doorClosedChange = StateChangeHelpers.DoorClosed(_entities.Door);
         _mockHaContext.EmitStateChange(doorClosedChange);
 
-        // Assert - Should call lock service (immediate relock)
-        _mockHaContext.ShouldHaveCalledLockLock(_entities.Lock.EntityId);
+        // Assert - LockAutomation should not relock on this path anymore.
+        _mockHaContext.ShouldNeverHaveCalledLock(_entities.Lock.EntityId);
     }
 
     #endregion
@@ -163,9 +164,9 @@ public class LockAutomationTests : AutomationTestBase<LockAutomation>
     }
 
     [Fact]
-    public void DoorStateChanged_Closed_WithImmediateRelock_Should_LockDoor()
+    public void DoorStateChanged_Closed_ShouldNotTriggerRelock()
     {
-        // Arrange - First unlock the door by automation to set immediate relock flag
+        // Arrange - First unlock the door; close events should not relock from LockAutomation.
         _mockHaContext.SetEntityState(_entities.Lock.EntityId, HaEntityStates.UNLOCKED);
         var unlockChange = StateChangeHelpers.CreateStateChange(
             _entities.Lock,
@@ -178,47 +179,12 @@ public class LockAutomationTests : AutomationTestBase<LockAutomation>
         // Clear previous service calls
         _mockHaContext.ClearServiceCalls();
 
-        // Act - Simulate door closing
+        // Act - Simulate door closing.
         var stateChange = StateChangeHelpers.DoorClosed(_entities.Door);
         _mockHaContext.EmitStateChange(stateChange);
 
-        // Assert - Should lock the door immediately
-        _mockHaContext.ShouldHaveCalledLockLock(_entities.Lock.EntityId);
-    }
-
-    [Fact]
-    public void DoorStateChanged_Closed_WithoutImmediateRelock_Should_SendUnlockedNotification()
-    {
-        // Arrange - Unlock door by physical operation (should not set immediate relock)
-        var unlockChange = StateChangeHelpers.CreateStateChange(
-            _entities.Lock,
-            HaEntityStates.LOCKED,
-            HaEntityStates.UNLOCKED,
-            null
-        );
-        _mockHaContext.EmitStateChange(unlockChange);
-
-        // Clear previous service calls and notifications
-        _mockHaContext.ClearServiceCalls();
-        _mockNotificationServices.Reset();
-
-        // Act - Simulate door closing
-        var stateChange = StateChangeHelpers.DoorClosed(_entities.Door);
-        _mockHaContext.EmitStateChange(stateChange);
-
-        // Assert - Should send unlocked notification instead of locking
+        // Assert - Door close should not lock anymore.
         _mockHaContext.ShouldNeverHaveCalledLock(_entities.Lock.EntityId);
-
-        _mockNotificationServices.Verify(
-            x =>
-                x.NotifyPocoF4(
-                    "Door was physically unlocked",
-                    It.IsAny<object>(),
-                    "Home Assistant"
-                ),
-            Times.Once,
-            "Should send unlocked notification when door closes without immediate relock"
-        );
     }
 
     #endregion

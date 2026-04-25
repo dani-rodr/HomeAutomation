@@ -11,7 +11,6 @@ public class LockAutomation(
 {
     private const string LOCK_TAG = "lock";
     private const string LOCK_ACTION = "LOCK_ACTION";
-    private bool _isImmediateRelock = false;
     private const int AUTO_LOCK_IN_MINUTES = 5;
 
     protected override IEnumerable<IDisposable> GetPersistentAutomations() => [];
@@ -25,9 +24,8 @@ public class LockAutomation(
         yield return @lock.OnUnlocked().Subscribe(HandleDoorUnlocked);
         yield return @lock
             .OnUnlocked(new(Minutes: AUTO_LOCK_IN_MINUTES))
-            .Where(_ => entities.Door.IsClosed() && ShouldAutoLockAfterTime)
-            .Subscribe(Lock);
-        yield return door.OnClosed(new(StartImmediately: false)).Subscribe(HandleDoorClosed);
+            .Where(_ => door.IsClosed() && ShouldAutoLockUnlockedDoor)
+            .Subscribe(LockIfUnlocked);
         yield return door.OnOpened().Subscribe(SendDoorOpenedNotification);
         yield return door.OnOpened(new(Minutes: AUTO_LOCK_IN_MINUTES))
             .Subscribe(SendDoorOpenedNotification);
@@ -51,7 +49,7 @@ public class LockAutomation(
         }
     }
 
-    private void Lock(StateChange e)
+    private void LockIfUnlocked(StateChange _)
     {
         if (entities.Lock.IsUnlocked())
         {
@@ -59,14 +57,13 @@ public class LockAutomation(
         }
     }
 
-    private bool ShouldAutoLockAfterTime =>
+    private bool ShouldAutoLockUnlockedDoor =>
         (entities.MotionSensor.IsOn() || entities.HouseStatus.IsOff())
         && entities.Lock.IsUnlocked();
 
     private void HandleDoorLocked(StateChange e)
     {
         entities.Flytrap.TurnOff();
-        _isImmediateRelock = false;
         ClearLockNotification(e);
     }
 
@@ -74,19 +71,6 @@ public class LockAutomation(
     {
         entities.Flytrap.TurnOn();
         SendUnlockedNotification(e);
-        _isImmediateRelock = !e.IsPhysicallyOperated();
-    }
-
-    private void HandleDoorClosed(StateChange e)
-    {
-        if (_isImmediateRelock)
-        {
-            Lock(e);
-        }
-        else
-        {
-            SendUnlockedNotification(e);
-        }
     }
 
     private void ClearLockNotification(StateChange e) =>
