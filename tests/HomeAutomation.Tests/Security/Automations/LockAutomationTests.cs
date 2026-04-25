@@ -117,9 +117,9 @@ public class LockAutomationTests : AutomationTestBase<LockAutomation>
     }
 
     [Fact]
-    public void LockStateChanged_UnlockedByAutomation_Should_SetImmediateRelock()
+    public void LockStateChanged_UnlockedByAutomation_Should_RelockAfterDoorCycleAndDelay()
     {
-        // Arrange - Set door to be closed and lock to be unlocked for testing immediate relock behavior
+        // Arrange - Set door to be closed and lock to be unlocked for testing delayed relock behavior
         _mockHaContext.SetEntityState(_entities.Door.EntityId, "off"); // closed
         _mockHaContext.SetEntityState(_entities.Lock.EntityId, HaEntityStates.UNLOCKED);
 
@@ -135,11 +135,13 @@ public class LockAutomationTests : AutomationTestBase<LockAutomation>
         // Clear previous service calls
         _mockHaContext.ClearServiceCalls();
 
-        // Act - Now simulate door closing (should trigger immediate relock)
+        // Act - Simulate a real open-close cycle after the automation unlock.
+        _mockHaContext.EmitStateChange(StateChangeHelpers.DoorOpened(_entities.Door));
         var doorClosedChange = StateChangeHelpers.DoorClosed(_entities.Door);
         _mockHaContext.EmitStateChange(doorClosedChange);
+        _mockHaContext.AdvanceTimeBySeconds(45);
 
-        // Assert - Should call lock service (immediate relock)
+        // Assert - Should call lock service after the post-close delay.
         _mockHaContext.ShouldHaveCalledLockLock(_entities.Lock.EntityId);
     }
 
@@ -163,9 +165,9 @@ public class LockAutomationTests : AutomationTestBase<LockAutomation>
     }
 
     [Fact]
-    public void DoorStateChanged_Closed_WithImmediateRelock_Should_LockDoor()
+    public void DoorStateChanged_Closed_WithAutomationUnlock_ShouldLockDoorAfterDelay()
     {
-        // Arrange - First unlock the door by automation to set immediate relock flag
+        // Arrange - First unlock the door by automation to arm delayed relock after a real door cycle.
         _mockHaContext.SetEntityState(_entities.Lock.EntityId, HaEntityStates.UNLOCKED);
         var unlockChange = StateChangeHelpers.CreateStateChange(
             _entities.Lock,
@@ -178,11 +180,13 @@ public class LockAutomationTests : AutomationTestBase<LockAutomation>
         // Clear previous service calls
         _mockHaContext.ClearServiceCalls();
 
-        // Act - Simulate door closing
+        // Act - Simulate door opening and then closing.
+        _mockHaContext.EmitStateChange(StateChangeHelpers.DoorOpened(_entities.Door));
         var stateChange = StateChangeHelpers.DoorClosed(_entities.Door);
         _mockHaContext.EmitStateChange(stateChange);
+        _mockHaContext.AdvanceTimeBySeconds(45);
 
-        // Assert - Should lock the door immediately
+        // Assert - Should lock the door after the post-close delay.
         _mockHaContext.ShouldHaveCalledLockLock(_entities.Lock.EntityId);
     }
 
