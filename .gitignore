@@ -90,3 +90,6 @@ coverage*.info
 
 # Local OpenCode configuration
 opencode.json
+
+# ProxmoxMCP-Plus local job store
+proxmox-jobs.sqlite3*
