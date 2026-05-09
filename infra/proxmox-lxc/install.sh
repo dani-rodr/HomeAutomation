@@ -41,11 +41,26 @@ pick_storage() {
   pvesm status --enabled 1 --content rootdir 2>/dev/null | awk 'NR>1 {print $1; exit}'
 }
 
+extract_template_token() {
+  awk '{
+    for (i = 1; i <= NF; i++) {
+      if ($i ~ /debian-(12|13)-standard/ && $i ~ /\.tar\.(xz|zst|gz)$/) {
+        print $i
+        exit
+      }
+    }
+  }'
+}
+
 pick_template_volid() {
   local existing
-  existing="$(pveam list "${DEFAULT_TEMPLATE_STORAGE}" 2>/dev/null | awk '/debian-13-standard/ {print $2; exit}')"
+  existing="$(pveam list "${DEFAULT_TEMPLATE_STORAGE}" 2>/dev/null | extract_template_token | head -n 1)"
   if [[ -n "${existing}" ]]; then
-    printf '%s:%s\n' "${DEFAULT_TEMPLATE_STORAGE}" "${existing}"
+    if [[ "${existing}" == *:* ]]; then
+      printf '%s\n' "${existing}"
+    else
+      printf '%s:%s\n' "${DEFAULT_TEMPLATE_STORAGE}" "${existing}"
+    fi
     return
   fi
 
@@ -53,9 +68,16 @@ pick_template_volid() {
   pveam update >/dev/null
 
   local template_name
-  template_name="$(pveam available --section system 2>/dev/null | awk '/debian-13-standard/ {print $2; exit}')"
+  template_name="$(pveam available --section system 2>/dev/null | extract_template_token | head -n 1)"
   if [[ -z "${template_name}" ]]; then
-    template_name="$(pveam available --section system 2>/dev/null | awk '/debian-12-standard/ {print $2; exit}')"
+    template_name="$(pveam available --section system 2>/dev/null | awk '{
+      for (i = 1; i <= NF; i++) {
+        if ($i ~ /debian-12-standard/ && $i ~ /\.tar\.(xz|zst|gz)$/) {
+          print $i
+          exit
+        }
+      }
+    }' | head -n 1)"
   fi
   [[ -n "${template_name}" ]] || fail "Could not find a Debian LXC template."
 
