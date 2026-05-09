@@ -15,7 +15,7 @@ public class StartupApp : AppBase<NoAppSettings>
         : base(settings)
     {
         services.BrowserMod.Notification(
-            new() { Message = "NetDaemonApp has started", ActionText = "Dismiss" }
+            new() { Message = "NetDaemonApp started successfully", ActionText = "Dismiss" }
         );
         logger.LogDebug("NetDaemon V6 has started");
 
