@@ -1,0 +1,78 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+APP_USER="homeautomation"
+ENV_FILE="/etc/homeautomation-dev.env"
+CONFIG_DIR="/home/${APP_USER}/.config/opencode"
+CONFIG_PATH="${CONFIG_DIR}/opencode.json"
+REPO_DIR_DEFAULT="/opt/homeautomation/HomeAutomation"
+
+[[ -f "${ENV_FILE}" ]] || {
+  printf 'Missing %s. Run homeautomation-init first.\n' "${ENV_FILE}" >&2
+  exit 1
+}
+
+set -a
+# shellcheck disable=SC1090
+source "${ENV_FILE}"
+set +a
+
+export HOME="/home/${APP_USER}"
+export OPENCODE_CONFIG="${CONFIG_PATH}"
+export OPENCODE_SERVER_USERNAME="${OPENCODE_SERVER_USERNAME:-opencode}"
+export OPENCODE_SERVER_PASSWORD="${OPENCODE_SERVER_PASSWORD:?Missing OPENCODE_SERVER_PASSWORD in ${ENV_FILE}}"
+export BROWSER="${BROWSER:-/bin/true}"
+
+repo_dir="${REPO_DIR:-${REPO_DIR_DEFAULT}}"
+mkdir -p "${CONFIG_DIR}" "/home/${APP_USER}/.local/share/opencode"
+codex_usage_plugin="$(npm root -g)/opencode-codex-usage/dist/index.js"
+
+jq -n \
+  --arg codex_usage_plugin "${codex_usage_plugin}" \
+  --arg ha_mcp_url "${HA_MCP_URL:-}" \
+  '
+  {
+    "$schema": "https://opencode.ai/config.json",
+    "agent": {
+      "plan": {
+        "model": "openai/gpt-5.5"
+      },
+      "build": {
+        "model": "openai/gpt-5.4-fast",
+        "variant": "medium"
+      },
+      "general": {
+        "model": "opencode/gpt-5-nano"
+      },
+      "explore": {
+        "model": "opencode/ling-2.6-flash-free"
+      }
+    },
+    "permission": {
+      "websearch": "allow"
+    },
+    "plugin": [
+      "@tarquinen/opencode-dcp@latest",
+      "@rama_nigg/open-cursor@latest",
+      $codex_usage_plugin
+    ],
+    "mcp": {
+      "home-assistant": {
+        "type": "local",
+        "command": [
+          "uv",
+          "tool",
+          "run",
+          "mcp-proxy",
+          "--transport",
+          "streamablehttp",
+          $ha_mcp_url
+        ],
+        "enabled": ($ha_mcp_url != "" and ($ha_mcp_url | contains("REPLACE_ME") | not))
+      }
+    }
+  }
+  ' > "${CONFIG_PATH}"
+
+cd "${repo_dir}"
+exec opencode web --hostname "${OPENCODE_HOST:-0.0.0.0}" --port "${OPENCODE_PORT:-4096}"
