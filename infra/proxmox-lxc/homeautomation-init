@@ -1,0 +1,139 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+APP_USER="homeautomation"
+ENV_FILE="/etc/homeautomation-dev.env"
+
+prompt_default() {
+  local __var_name="$1"
+  local prompt="$2"
+  local default="$3"
+  local value
+  printf '%s [%s]: ' "${prompt}" "${default}"
+  read -r value
+  printf -v "${__var_name}" '%s' "${value:-${default}}"
+}
+
+prompt_required_secret() {
+  local __var_name="$1"
+  local prompt="$2"
+  local value=""
+  while :; do
+    printf '%s: ' "${prompt}"
+    read -r -s value
+    printf '\n'
+    [[ -n "${value}" ]] && break
+    printf 'A value is required.\n' >&2
+  done
+  printf -v "${__var_name}" '%s' "${value}"
+}
+
+prompt_optional_secret() {
+  local __var_name="$1"
+  local prompt="$2"
+  local value
+  printf '%s (leave blank to skip): ' "${prompt}"
+  read -r -s value
+  printf '\n'
+  printf -v "${__var_name}" '%s' "${value}"
+}
+
+prompt_required_secret_confirmed() {
+  local __var_name="$1"
+  local prompt="$2"
+  local value=""
+  local confirm=""
+  while :; do
+    prompt_required_secret value "${prompt}"
+    prompt_required_secret confirm "Confirm ${prompt,,}"
+    if [[ "${value}" == "${confirm}" ]]; then
+      printf -v "${__var_name}" '%s' "${value}"
+      return
+    fi
+    printf 'Values did not match. Try again.\n' >&2
+  done
+}
+
+write_env() {
+  umask 077
+  {
+    printf 'OPENCODE_HOST=%q\n' "0.0.0.0"
+    printf 'OPENCODE_PORT=%q\n' "4096"
+    printf 'OPENCODE_SERVER_USERNAME=%q\n' "${OPENCODE_SERVER_USERNAME}"
+    printf 'OPENCODE_SERVER_PASSWORD=%q\n' "${OPENCODE_SERVER_PASSWORD}"
+    printf 'GIT_USER_NAME=%q\n' "${GIT_USER_NAME}"
+    printf 'GIT_USER_EMAIL=%q\n' "${GIT_USER_EMAIL}"
+    printf 'HA_MCP_URL=%q\n' "${HA_MCP_URL}"
+    printf 'OPENAI_API_KEY=%q\n' "${OPENAI_API_KEY}"
+    printf 'ANTHROPIC_API_KEY=%q\n' "${ANTHROPIC_API_KEY}"
+    printf 'GOOGLE_GENERATIVE_AI_API_KEY=%q\n' "${GOOGLE_GENERATIVE_AI_API_KEY}"
+    printf 'GH_TOKEN=%q\n' "${GH_TOKEN}"
+    printf 'REPO_DIR=%q\n' "/opt/homeautomation/HomeAutomation"
+  } > "${ENV_FILE}"
+  chmod 600 "${ENV_FILE}"
+}
+
+configure_git() {
+  runuser -u "${APP_USER}" -- git config --global user.name "${GIT_USER_NAME}"
+  runuser -u "${APP_USER}" -- git config --global user.email "${GIT_USER_EMAIL}"
+}
+
+configure_github() {
+  if [[ -n "${GH_TOKEN}" ]]; then
+    runuser -u "${APP_USER}" -- env HOME="/home/${APP_USER}" GH_TOKEN="${GH_TOKEN}" bash -lc 'if ! gh auth status >/dev/null 2>&1; then printf %s "$GH_TOKEN" | gh auth login --with-token >/dev/null; fi' || true
+  fi
+}
+
+wait_for_web() {
+  local attempt status
+  for attempt in $(seq 1 30); do
+    status="$(curl -s -o /dev/null -w '%{http_code}' --max-time 2 "http://127.0.0.1:4096" || true)"
+    if [[ "${status}" == "200" || "${status}" == "401" || "${status}" == "302" ]]; then
+      return
+    fi
+    sleep 1
+  done
+
+  printf '\nOpenCode did not start listening on port 4096.\n' >&2
+  systemctl status homeautomation-opencode --no-pager || true
+  journalctl -u homeautomation-opencode -n 100 --no-pager || true
+  exit 1
+}
+
+show_url() {
+  local ip
+  ip="$(hostname -I | awk '{print $1}')"
+  if [[ -n "${ip}" ]]; then
+    printf '\nOpenCode Web: http://%s:4096\n' "${ip}"
+  fi
+}
+
+main() {
+  [[ ${EUID} -eq 0 ]] || { printf 'Run as root.\n' >&2; exit 1; }
+
+  printf '\nHomeAutomation OpenCode setup\n\n'
+  local OPENCODE_SERVER_USERNAME OPENCODE_SERVER_PASSWORD
+  local GIT_USER_NAME GIT_USER_EMAIL HA_MCP_URL
+  local OPENAI_API_KEY ANTHROPIC_API_KEY GOOGLE_GENERATIVE_AI_API_KEY GH_TOKEN
+
+  prompt_default OPENCODE_SERVER_USERNAME 'OpenCode username' 'opencode'
+  prompt_required_secret_confirmed OPENCODE_SERVER_PASSWORD 'OpenCode password'
+  prompt_default GIT_USER_NAME 'Git user name' 'Daniel Rodriguez'
+  prompt_default GIT_USER_EMAIL 'Git user email' 'your-email@example.com'
+  prompt_default HA_MCP_URL 'Home Assistant MCP URL' 'http://home-assistant-host:9583/private_REPLACE_ME'
+  prompt_optional_secret OPENAI_API_KEY 'OpenAI API key'
+  prompt_optional_secret ANTHROPIC_API_KEY 'Anthropic API key'
+  prompt_optional_secret GOOGLE_GENERATIVE_AI_API_KEY 'Google Gemini API key'
+  prompt_optional_secret GH_TOKEN 'GitHub token for gh auth'
+
+  write_env
+  configure_git
+  configure_github
+
+  systemctl enable --now homeautomation-opencode.service
+  wait_for_web
+  show_url
+  printf 'Service status: systemctl status homeautomation-opencode --no-pager\n\n'
+}
+
+main "$@"

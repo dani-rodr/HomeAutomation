@@ -1,0 +1,21 @@
+[Unit]
+Description=HomeAutomation OpenCode Web
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=homeautomation
+Group=homeautomation
+WorkingDirectory=/opt/homeautomation/HomeAutomation
+Environment=HOME=/home/homeautomation
+Environment=PATH=/usr/local/bin:/usr/bin:/bin
+Environment=BROWSER=/bin/true
+ExecStart=/usr/local/bin/homeautomation-opencode-start
+Restart=always
+RestartSec=5
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target
