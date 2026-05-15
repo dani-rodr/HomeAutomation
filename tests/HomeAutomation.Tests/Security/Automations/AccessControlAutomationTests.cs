@@ -256,19 +256,19 @@ public class AccessControlAutomationTests : AutomationTestBase<AccessControlAuto
     [Fact]
     public void AwayTrigger_AfterDelay_ShouldLockAndSetAway()
     {
-        _mockHaContext.EmitStateChange(
-            StateChangeHelpers.CreateStateChange(_entities.Door, "off", "on")
-        );
+        _mockHaContext.SimulateStateChange(_entities.Door.EntityId, "off", "on");
         _mockHaContext.ClearServiceCalls();
 
         // Act - Person 1 left home via person controller observable (after delay logic in PersonController)
         _person1LeftHome.OnNext(_entities.Person1AwayTrigger.EntityId);
-        // Advance time by exactly 60 seconds
-        _mockHaContext.AdvanceTimeBySeconds(60);
+
+        _mockPerson1Controller.Verify(p => p.SetAway(), Times.Once);
+        _mockHaContext.ShouldHaveNoServiceCalls();
+
+        _mockHaContext.SimulateStateChange(_entities.Door.EntityId, "on", "off");
 
         // Assert - Should now lock door and set person away
         _mockHaContext.ShouldHaveCalledLockLock(_entities.Lock.EntityId);
-        _mockPerson1Controller.Verify(p => p.SetAway(), Times.Once);
     }
 
     [Fact]
@@ -559,6 +559,37 @@ public class AccessControlAutomationTests : AutomationTestBase<AccessControlAuto
         _mockHaContext.ShouldHaveNoServiceCalls();
         _mockPerson1Controller.Verify(p => p.SetAway(), Times.Never);
         _mockPerson2Controller.Verify(p => p.SetAway(), Times.Never);
+    }
+
+    [Fact]
+    public void MultiplePeople_SameDoorInteraction_ShouldSetBothAway()
+    {
+        _mockHaContext.SimulateStateChange(_entities.Door.EntityId, "off", "on");
+        _mockHaContext.SimulateStateChange(_entities.Door.EntityId, "on", "off");
+        _mockHaContext.ClearServiceCalls();
+
+        _person1LeftHome.OnNext(_entities.Person1AwayTrigger.EntityId);
+        _person2LeftHome.OnNext(_entities.Person2AwayTrigger.EntityId);
+
+        _mockPerson1Controller.Verify(p => p.SetAway(), Times.Once);
+        _mockPerson2Controller.Verify(p => p.SetAway(), Times.Once);
+        _mockHaContext.ShouldHaveServiceCallCount(2);
+    }
+
+    [Fact]
+    public void AwayTrigger_BeforeObservedDoorClose_ShouldLockOnlyOnClose()
+    {
+        _mockHaContext.SimulateStateChange(_entities.Door.EntityId, "off", "on");
+        _mockHaContext.ClearServiceCalls();
+
+        _person1LeftHome.OnNext(_entities.Person1AwayTrigger.EntityId);
+
+        _mockPerson1Controller.Verify(p => p.SetAway(), Times.Once);
+        _mockHaContext.ShouldHaveNoServiceCalls();
+
+        _mockHaContext.SimulateStateChange(_entities.Door.EntityId, "on", "off");
+
+        _mockHaContext.ShouldHaveCalledLockLock(_entities.Lock.EntityId);
     }
 
     [Fact]

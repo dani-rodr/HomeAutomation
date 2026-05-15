@@ -22,6 +22,7 @@ public class AccessControlAutomation(
     private const int DOOR_CLOSE_WINDOW_DELAY = 5;
     private const int UNLOCK_SUPPRESION_DELAY = 10;
     private volatile bool _doorRecentlyOpened = false;
+    private volatile bool _doorClosedAfterRecentOpen = false;
     private volatile bool _waitingForArrivalDoorOpen = false;
     private volatile bool _wasHouseEmpty = false;
     private volatile bool _suppressUnlocks = false;
@@ -148,10 +149,10 @@ public class AccessControlAutomation(
 
         person.SetAway();
 
-        if (_door.IsOpen())
+        if (!_doorClosedAfterRecentOpen)
         {
             Logger.LogInformation(
-                "{PersonName} is away while the door is still open. Locking will happen on close.",
+                "{PersonName} is away before the door close was observed. Locking will happen on close.",
                 person.Name
             );
             _doorCloseAction = DoorCloseAction.LockAfterDeparture;
@@ -164,7 +165,6 @@ public class AccessControlAutomation(
         );
         _lock.Lock();
         _doorCloseAction = DoorCloseAction.None;
-        _doorRecentlyOpened = false;
     }
 
     private void UnlockForArrival(IPersonController person, bool wasHouseEmpty)
@@ -180,6 +180,7 @@ public class AccessControlAutomation(
     {
         Logger.LogDebug("Door opened. Marking door as recently opened.");
         _doorRecentlyOpened = true;
+        _doorClosedAfterRecentOpen = false;
 
         if (_waitingForArrivalDoorOpen)
         {
@@ -190,6 +191,7 @@ public class AccessControlAutomation(
     private void HandleDoorClosed()
     {
         Logger.LogDebug("Door closed.");
+        _doorClosedAfterRecentOpen = true;
 
         if (_doorCloseAction is DoorCloseAction.LockAfterDeparture)
         {
@@ -217,6 +219,7 @@ public class AccessControlAutomation(
             DOOR_CLOSE_WINDOW_DELAY
         );
         _doorRecentlyOpened = false;
+        _doorClosedAfterRecentOpen = false;
         _waitingForArrivalDoorOpen = false;
         _doorCloseAction = DoorCloseAction.None;
     }
