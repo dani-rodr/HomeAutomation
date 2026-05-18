@@ -81,6 +81,7 @@ public class AccessControlAutomationTests : AutomationTestBase<AccessControlAuto
         _mockHaContext.ClearServiceCalls();
         _mockHaContext.SimulateStateChange(_entities.Door.EntityId, "off", "on");
         _mockHaContext.SimulateStateChange(_entities.Door.EntityId, "on", "off");
+        _mockHaContext.AdvanceTimeBySeconds(3);
         _mockHaContext.ShouldHaveCalledLockLock(_entities.Lock.EntityId);
     }
 
@@ -100,6 +101,7 @@ public class AccessControlAutomationTests : AutomationTestBase<AccessControlAuto
         _mockHaContext.ClearServiceCalls();
         _mockHaContext.SimulateStateChange(_entities.Door.EntityId, "off", "on");
         _mockHaContext.SimulateStateChange(_entities.Door.EntityId, "on", "off");
+        _mockHaContext.AdvanceTimeBySeconds(3);
         _mockHaContext.ShouldHaveCalledLockLock(_entities.Lock.EntityId);
     }
 
@@ -113,6 +115,7 @@ public class AccessControlAutomationTests : AutomationTestBase<AccessControlAuto
 
         _mockHaContext.ClearServiceCalls();
         _mockHaContext.SimulateStateChange(_entities.Door.EntityId, "on", "off");
+        _mockHaContext.AdvanceTimeBySeconds(3);
 
         _mockHaContext.ShouldNeverHaveCalledLock(_entities.Lock.EntityId);
     }
@@ -128,6 +131,7 @@ public class AccessControlAutomationTests : AutomationTestBase<AccessControlAuto
         _mockHaContext.ClearServiceCalls();
         _mockHaContext.SimulateStateChange(_entities.Door.EntityId, "off", "on");
         _mockHaContext.SimulateStateChange(_entities.Door.EntityId, "on", "off");
+        _mockHaContext.AdvanceTimeBySeconds(3);
         _mockHaContext.ShouldHaveCalledLockLock(_entities.Lock.EntityId);
 
         _mockHaContext.ClearServiceCalls();
@@ -266,6 +270,7 @@ public class AccessControlAutomationTests : AutomationTestBase<AccessControlAuto
         _mockHaContext.ShouldHaveNoServiceCalls();
 
         _mockHaContext.SimulateStateChange(_entities.Door.EntityId, "on", "off");
+        _mockHaContext.AdvanceTimeBySeconds(3);
 
         // Assert - Should now lock door and set person away
         _mockHaContext.ShouldHaveCalledLockLock(_entities.Lock.EntityId);
@@ -341,6 +346,7 @@ public class AccessControlAutomationTests : AutomationTestBase<AccessControlAuto
         _mockHaContext.EmitStateChange(
             StateChangeHelpers.CreateStateChange(_entities.Door, "on", "off")
         );
+        _mockHaContext.AdvanceTimeBySeconds(3);
 
         // Should have triggered because the door was opened recently and then closed.
         _mockHaContext.ShouldHaveCalledLockLock(_entities.Lock.EntityId);
@@ -571,9 +577,11 @@ public class AccessControlAutomationTests : AutomationTestBase<AccessControlAuto
         _person1LeftHome.OnNext(_entities.Person1AwayTrigger.EntityId);
         _person2LeftHome.OnNext(_entities.Person2AwayTrigger.EntityId);
 
+        _mockHaContext.AdvanceTimeBySeconds(3);
+
         _mockPerson1Controller.Verify(p => p.SetAway(), Times.Once);
         _mockPerson2Controller.Verify(p => p.SetAway(), Times.Once);
-        _mockHaContext.ShouldHaveServiceCallCount(2);
+        _mockHaContext.ShouldHaveServiceCallCount(1);
     }
 
     [Fact]
@@ -588,6 +596,10 @@ public class AccessControlAutomationTests : AutomationTestBase<AccessControlAuto
         _mockHaContext.ShouldHaveNoServiceCalls();
 
         _mockHaContext.SimulateStateChange(_entities.Door.EntityId, "on", "off");
+
+        _mockHaContext.ShouldHaveNoServiceCalls();
+
+        _mockHaContext.AdvanceTimeBySeconds(3);
 
         _mockHaContext.ShouldHaveCalledLockLock(_entities.Lock.EntityId);
     }
@@ -688,6 +700,7 @@ public class AccessControlAutomationTests : AutomationTestBase<AccessControlAuto
         // Complete person 1's entry cycle so later door activity is not consumed by a stale arrival relock.
         _mockHaContext.SimulateStateChange(_entities.Door.EntityId, "off", "on");
         _mockHaContext.SimulateStateChange(_entities.Door.EntityId, "on", "off");
+        _mockHaContext.AdvanceTimeBySeconds(3);
         _mockHaContext.ClearServiceCalls();
 
         // Person 2 comes home 3 minutes later (during suppression)
@@ -713,6 +726,7 @@ public class AccessControlAutomationTests : AutomationTestBase<AccessControlAuto
 
         _person2LeftHome.OnNext(_entities.Person2AwayTrigger.EntityId);
         _mockPerson2Controller.Verify(p => p.SetAway(), Times.Once);
+        _mockHaContext.AdvanceTimeBySeconds(3);
         _mockHaContext.ShouldHaveCalledLockLock(_entities.Lock.EntityId);
         _mockHaContext.ClearServiceCalls();
 

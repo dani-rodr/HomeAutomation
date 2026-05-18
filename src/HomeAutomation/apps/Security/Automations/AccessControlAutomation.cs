@@ -19,6 +19,7 @@ public class AccessControlAutomation(
     private readonly BinarySensorEntity _door = entities.Door;
     private readonly LockEntity _lock = entities.Lock;
 
+    private const int DOOR_CLOSED_STABILITY_DELAY_SECONDS = 3;
     private const int DOOR_CLOSE_WINDOW_DELAY = 5;
     private const int UNLOCK_SUPPRESION_DELAY = 10;
     private volatile bool _doorRecentlyOpened = false;
@@ -72,7 +73,9 @@ public class AccessControlAutomation(
     private IEnumerable<IDisposable> GetDoorAutoLockAutomations() =>
         [
             _door.OnOpened().Subscribe(_ => HandleDoorOpened()),
-            _door.OnClosed().Subscribe(_ => HandleDoorClosed()),
+            _door
+                .OnClosed(new(Seconds: DOOR_CLOSED_STABILITY_DELAY_SECONDS))
+                .Subscribe(_ => HandleDoorClosed()),
             _door
                 .OnClosed(new(Minutes: DOOR_CLOSE_WINDOW_DELAY))
                 .Subscribe(_ => ClearDoorInteractionState()),
