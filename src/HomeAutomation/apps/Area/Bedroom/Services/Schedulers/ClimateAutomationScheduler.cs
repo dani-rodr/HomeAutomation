@@ -7,20 +7,17 @@ namespace HomeAutomation.apps.Area.Bedroom.Services.Schedulers;
 public sealed class ClimateAutomationScheduler : IClimateAutomationScheduler
 {
     private readonly ILiveAppConfig<BedroomSettings> _settings;
-    private readonly InputBooleanEntity _powerSavingMode;
     private readonly IScheduler _scheduler;
     private readonly IAcTemperatureCalculator _temperatureCalculator;
     private readonly ILogger<ClimateAutomationScheduler> _logger;
 
     public ClimateAutomationScheduler(
-        Entities.IClimateSchedulerEntities entities,
         ILiveAppConfig<BedroomSettings> liveSettings,
         IAcTemperatureCalculator temperatureCalculator,
         ILogger<ClimateAutomationScheduler> logger
     )
     {
         _settings = liveSettings;
-        _powerSavingMode = entities.PowerSavingMode;
         _scheduler = SchedulerProvider.Current;
         _temperatureCalculator = temperatureCalculator;
         _logger = logger;
@@ -79,12 +76,17 @@ public sealed class ClimateAutomationScheduler : IClimateAutomationScheduler
 
     public ClimateSettings GetCurrentSettings() => _settings.Settings.Climate;
 
-    public int CalculateTemperature(ClimateSetting settings, bool isOccupied, bool isDoorOpen) =>
+    public int CalculateTemperature(
+        ClimateSetting settings,
+        bool isOccupied,
+        bool isDoorOpen,
+        bool applyPowerSaving
+    ) =>
         _temperatureCalculator.CalculateTemperature(
             settings,
             isOccupied,
             isDoorOpen,
-            _powerSavingMode.IsOn(),
+            applyPowerSaving,
             _settings.Settings.Climate.PowerSavingTempOffsetC
         );
 

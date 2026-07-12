@@ -25,9 +25,7 @@ HomeAutomation.apps.Area.Bedroom.Config.BedroomSettings:
     enableFanAssist: true
     fanAssistAtOrAboveSetpointC: 25
     weatherPowerSaving:
-      triggerUvIndex: 8.0
       triggerOutdoorTempC: 32.0
-      recoveryUvIndex: 5.0
       recoveryOutdoorTempC: 30.0
     automation:
       masterSwitchReenableWhenNoMotionHours: 1

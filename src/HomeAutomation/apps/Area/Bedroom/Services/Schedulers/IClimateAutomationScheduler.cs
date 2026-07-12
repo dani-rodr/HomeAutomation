@@ -9,5 +9,10 @@ public interface IClimateAutomationScheduler : IAutomationScheduler
     IDisposable GetResetSchedule();
     bool TryGetCurrentSetting(out TimeBlock timeBlock, out ClimateSetting setting);
     ClimateSettings GetCurrentSettings();
-    int CalculateTemperature(ClimateSetting settings, bool isOccupied, bool isDoorOpen);
+    int CalculateTemperature(
+        ClimateSetting settings,
+        bool isOccupied,
+        bool isDoorOpen,
+        bool applyPowerSaving
+    );
 }

@@ -22,13 +22,17 @@ public class ClimateAutomation(
 
     private readonly WeatherEntity _weather = entities.Weather;
 
+    private bool _weatherPowerSavingActive;
+
     protected override IEnumerable<IDisposable> GetPersistentAutomations()
     {
         var automationSettings = climateAutomationScheduler.GetCurrentSettings().Automation;
 
         yield return climateAutomationScheduler.GetResetSchedule();
 
-        yield return _weather.StateAllChanges().Subscribe(ApplyPowerSavingModeFromWeather);
+        yield return _weather
+            .StateAllChanges()
+            .Subscribe(e => ApplyScheduledAcSettings(weatherChange: e));
 
         yield return climateAutomationScheduler.Changes.Subscribe(HandleBedroomSettingsChanged);
 
@@ -97,78 +101,6 @@ public class ClimateAutomation(
         );
 
         ApplyScheduledAcSettings(allowFanAssistEnable);
-    }
-
-    private void ApplyPowerSavingModeFromWeather(StateChange e)
-    {
-        var weatherThresholds = climateAutomationScheduler.GetCurrentSettings().WeatherPowerSaving;
-
-        var (_, uvIndex) = e.GetAttributeChange<double?>("uv_index");
-
-        var (_, outdoorTemperature) = e.GetAttributeChange<double?>("temperature");
-
-        if (!(uvIndex.HasValue && outdoorTemperature.HasValue))
-        {
-            Logger.LogDebug(
-                "Skipping power-saving weather check: missing weather data (UvIndex={UvIndex}, OutdoorTemp={OutdoorTemp})",
-                uvIndex,
-                outdoorTemperature
-            );
-
-            return;
-        }
-
-        var shouldEnablePowerSaving =
-            uvIndex.Value >= weatherThresholds.TriggerUvIndex
-            || outdoorTemperature.Value >= weatherThresholds.TriggerOutdoorTempC;
-
-        var shouldDisablePowerSaving =
-            uvIndex.Value <= weatherThresholds.RecoveryUvIndex
-            && outdoorTemperature.Value <= weatherThresholds.RecoveryOutdoorTempC;
-
-        var toggleReason = uvIndex.Value >= weatherThresholds.TriggerUvIndex ? "uv" : "temperature";
-
-        Logger.LogDebug(
-            "Weather power-saving evaluation: UvIndex={UvIndex}, OutdoorTemp={OutdoorTemp}, ModeIsOn={ModeIsOn}, ShouldEnable={ShouldEnable}, ShouldDisable={ShouldDisable}",
-            uvIndex,
-            outdoorTemperature,
-            _powerSavingMode.IsOn(),
-            shouldEnablePowerSaving,
-            shouldDisablePowerSaving
-        );
-
-        if (_powerSavingMode.IsOff() && shouldEnablePowerSaving)
-        {
-            _powerSavingMode.TurnOn();
-
-            Logger.LogInformation(
-                "Enabled power-saving mode from weather (Reason={Reason}, UvIndex={UvIndex}, OutdoorTemp={OutdoorTemp})",
-                toggleReason,
-                uvIndex,
-                outdoorTemperature
-            );
-
-            return;
-        }
-
-        if (_powerSavingMode.IsOn() && shouldDisablePowerSaving)
-        {
-            _powerSavingMode.TurnOff();
-
-            Logger.LogInformation(
-                "Disabled power-saving mode from weather (UvIndex={UvIndex}, OutdoorTemp={OutdoorTemp})",
-                uvIndex,
-                outdoorTemperature
-            );
-
-            return;
-        }
-
-        Logger.LogDebug(
-            "No power-saving toggle from weather (UvIndex={UvIndex}, OutdoorTemp={OutdoorTemp})",
-            uvIndex,
-            outdoorTemperature
-        );
     }
 
     private void HandleBedroomSettingsChanged(ClimateSettings _)
@@ -253,8 +185,13 @@ public class ClimateAutomation(
             });
     }
 
-    private void ApplyScheduledAcSettings(bool allowFanAssistEnable = true)
+    private void ApplyScheduledAcSettings(
+        bool allowFanAssistEnable = true,
+        StateChange? weatherChange = null
+    )
     {
+        UpdateWeatherPowerSavingState(weatherChange);
+
         if (!climateAutomationScheduler.TryGetCurrentSetting(out var timeBlock, out var setting))
         {
             Logger.LogDebug("Skipping AC settings: No active time block");
@@ -277,6 +214,13 @@ public class ClimateAutomation(
             return;
         }
 
+        if (MasterSwitch.IsOff())
+        {
+            Logger.LogDebug("Skipping AC settings: master switch is off.");
+
+            return;
+        }
+
         if (_doorSensor.IsUnavailable() || _doorSensor.IsUnknown())
         {
             Logger.LogDebug(
@@ -287,10 +231,13 @@ public class ClimateAutomation(
             return;
         }
 
+        var powerSavingApplied = _powerSavingMode.IsOn() && _weatherPowerSavingActive;
+
         int targetTemp = climateAutomationScheduler.CalculateTemperature(
             setting,
             _motionSensor.IsOccupied(),
-            _doorSensor.IsOpen()
+            _doorSensor.IsOpen(),
+            powerSavingApplied
         );
 
         ApplyFanAssist(targetTemp, allowFanAssistEnable);
@@ -385,5 +332,66 @@ public class ClimateAutomation(
 
             _fanAutomation.TurnOff();
         }
+    }
+
+    private void UpdateWeatherPowerSavingState(StateChange? weatherChange = null)
+    {
+        if (_powerSavingMode.IsOff())
+        {
+            _weatherPowerSavingActive = false;
+
+            return;
+        }
+
+        if (!TryGetOutdoorTemperature(weatherChange, out var outdoorTemperature))
+        {
+            return;
+        }
+
+        var thresholds = climateAutomationScheduler.GetCurrentSettings().WeatherPowerSaving;
+
+        if (outdoorTemperature >= thresholds.TriggerOutdoorTempC)
+        {
+            _weatherPowerSavingActive = true;
+            return;
+        }
+
+        if (outdoorTemperature <= thresholds.RecoveryOutdoorTempC)
+        {
+            _weatherPowerSavingActive = false;
+        }
+    }
+
+    private bool TryGetOutdoorTemperature(StateChange? weatherChange, out double outdoorTemperature)
+    {
+        if (weatherChange is not null)
+        {
+            var (_, newTemperature) = weatherChange.GetAttributeChange<double?>("temperature");
+
+            if (newTemperature.HasValue)
+            {
+                outdoorTemperature = newTemperature.Value;
+                return true;
+            }
+
+            Logger.LogDebug(
+                "Skipping power-saving check: weather temperature is unavailable or invalid in the current event payload."
+            );
+
+            outdoorTemperature = default;
+            return false;
+        }
+
+        var attributes = _weather.Attributes;
+
+        if (attributes?.Temperature is null)
+        {
+            Logger.LogDebug("Skipping power-saving check: weather temperature is unavailable.");
+            outdoorTemperature = default;
+            return false;
+        }
+
+        outdoorTemperature = attributes.Temperature.Value;
+        return true;
     }
 }

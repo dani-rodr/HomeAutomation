@@ -1,5 +1,4 @@
 using HomeAutomation.apps.Area.Bedroom.Config;
-using HomeAutomation.apps.Area.Bedroom.Services.Schedulers.Entities;
 using HomeAutomation.apps.Common.Settings;
 
 namespace HomeAutomation.Tests.Common.Services;
@@ -12,7 +11,6 @@ public class ClimateAutomationSchedulerTests : HaContextTestBase
     > _mockLogger;
     private readonly Mock<HomeAutomation.apps.Area.Bedroom.Services.Schedulers.IAcTemperatureCalculator> _mockCalculator;
     private readonly Mock<ILiveAppConfig<BedroomSettings>> _mockLiveSettings;
-    private readonly TestSchedulerEntities _schedulerEntities;
     private readonly HomeAutomation.apps.Area.Bedroom.Services.Schedulers.ClimateAutomationScheduler _climateAutomationScheduler;
 
     public ClimateAutomationSchedulerTests()
@@ -24,7 +22,6 @@ public class ClimateAutomationSchedulerTests : HaContextTestBase
         _mockCalculator =
             new Mock<HomeAutomation.apps.Area.Bedroom.Services.Schedulers.IAcTemperatureCalculator>();
         _mockLiveSettings = new Mock<ILiveAppConfig<BedroomSettings>>();
-        _schedulerEntities = new TestSchedulerEntities(_mockHaContext);
         var settings = CreateBedroomSettings();
         _mockLiveSettings.SetupGet(x => x.Value).Returns(settings);
         _mockLiveSettings.SetupGet(x => x.Settings).Returns(settings);
@@ -32,7 +29,6 @@ public class ClimateAutomationSchedulerTests : HaContextTestBase
 
         _climateAutomationScheduler =
             new HomeAutomation.apps.Area.Bedroom.Services.Schedulers.ClimateAutomationScheduler(
-                _schedulerEntities,
                 _mockLiveSettings.Object,
                 _mockCalculator.Object,
                 _mockLogger.Object
@@ -65,17 +61,12 @@ public class ClimateAutomationSchedulerTests : HaContextTestBase
     }
 
     [Theory]
-    [InlineData("on", true)]
-    [InlineData("off", false)]
+    [InlineData(true)]
+    [InlineData(false)]
     public void CalculateTemperature_ShouldPassPowerSavingStateToCalculator(
-        string powerSavingState,
         bool expectedPowerSaving
     )
     {
-        _mockHaContext.SetEntityState(
-            _schedulerEntities.PowerSavingMode.EntityId,
-            powerSavingState
-        );
         SetSchedulerToLocalTime(19);
 
         _climateAutomationScheduler.TryGetCurrentSetting(out _, out var setting).Should().BeTrue();
@@ -95,7 +86,8 @@ public class ClimateAutomationSchedulerTests : HaContextTestBase
         var result = _climateAutomationScheduler.CalculateTemperature(
             setting,
             isOccupied: true,
-            isDoorOpen: false
+            isDoorOpen: false,
+            applyPowerSaving: expectedPowerSaving
         );
 
         result.Should().Be(26);
@@ -106,9 +98,7 @@ public class ClimateAutomationSchedulerTests : HaContextTestBase
     {
         var settings = _climateAutomationScheduler.GetCurrentSettings().WeatherPowerSaving;
 
-        settings.TriggerUvIndex.Should().Be(8);
         settings.TriggerOutdoorTempC.Should().Be(32);
-        settings.RecoveryUvIndex.Should().Be(5);
         settings.RecoveryOutdoorTempC.Should().Be(30);
     }
 
@@ -122,7 +112,6 @@ public class ClimateAutomationSchedulerTests : HaContextTestBase
         invalidLiveSettings.SetupGet(x => x.Changes).Returns(Observable.Empty<BedroomSettings>());
         var climateAutomationScheduler =
             new HomeAutomation.apps.Area.Bedroom.Services.Schedulers.ClimateAutomationScheduler(
-                _schedulerEntities,
                 invalidLiveSettings.Object,
                 _mockCalculator.Object,
                 _mockLogger.Object
@@ -159,9 +148,7 @@ public class ClimateAutomationSchedulerTests : HaContextTestBase
                 FanAssistAtOrAboveSetpointC = 25,
                 WeatherPowerSaving = new WeatherPowerSavingSettings
                 {
-                    TriggerUvIndex = 8,
                     TriggerOutdoorTempC = 32,
-                    RecoveryUvIndex = 5,
                     RecoveryOutdoorTempC = 30,
                 },
                 Automation = new ClimateAutomationSettings(),
@@ -174,7 +161,6 @@ public class ClimateAutomationSchedulerTests : HaContextTestBase
         liveSettings.SetupGet(x => x.Changes).Returns(Observable.Empty<BedroomSettings>());
         var climateAutomationScheduler =
             new HomeAutomation.apps.Area.Bedroom.Services.Schedulers.ClimateAutomationScheduler(
-                _schedulerEntities,
                 liveSettings.Object,
                 _mockCalculator.Object,
                 _mockLogger.Object
@@ -185,7 +171,6 @@ public class ClimateAutomationSchedulerTests : HaContextTestBase
 
     private HomeAutomation.apps.Area.Bedroom.Services.Schedulers.ClimateAutomationScheduler CreateClimateAutomationScheduler() =>
         new HomeAutomation.apps.Area.Bedroom.Services.Schedulers.ClimateAutomationScheduler(
-            _schedulerEntities,
             _mockLiveSettings.Object,
             _mockCalculator.Object,
             _mockLogger.Object
@@ -197,12 +182,6 @@ public class ClimateAutomationSchedulerTests : HaContextTestBase
         var offset = TimeZoneInfo.Local.GetUtcOffset(localTime);
         var schedulerTime = new DateTimeOffset(localTime, offset).ToUniversalTime();
         _mockHaContext.AdvanceTimeTo(schedulerTime);
-    }
-
-    private class TestSchedulerEntities(IHaContext haContext) : IClimateSchedulerEntities
-    {
-        public InputBooleanEntity PowerSavingMode { get; } =
-            new InputBooleanEntity(haContext, "input_boolean.power_saving_mode");
     }
 
     private static BedroomSettings CreateBedroomSettings(int sunriseHourStart = 5) =>
@@ -218,9 +197,7 @@ public class ClimateAutomationSchedulerTests : HaContextTestBase
                 FanAssistAtOrAboveSetpointC = 25,
                 WeatherPowerSaving = new WeatherPowerSavingSettings
                 {
-                    TriggerUvIndex = 8,
                     TriggerOutdoorTempC = 32,
-                    RecoveryUvIndex = 5,
                     RecoveryOutdoorTempC = 30,
                 },
                 Automation = new ClimateAutomationSettings(),

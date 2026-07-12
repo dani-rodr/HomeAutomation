@@ -147,43 +147,21 @@ public sealed class ClimateAutomationSettings
 public sealed class WeatherPowerSavingSettings : IValidatableObject
 {
     [Display(
-        Name = "Trigger UV Index",
-        Description = "UV index threshold that enables weather-based power saving."
-    )]
-    [Range(0, 20)]
-    public double TriggerUvIndex { get; init; }
-
-    [Display(
         Name = "Trigger Outdoor Temp (C)",
-        Description = "Outdoor temperature threshold in Celsius that enables weather-based power saving."
+        Description = "Outdoor temperature threshold in Celsius that enables weather-based power saving while the manual switch is on."
     )]
     [Range(10, 45)]
     public double TriggerOutdoorTempC { get; init; }
 
     [Display(
-        Name = "Recovery UV Index",
-        Description = "UV index threshold below which weather-based power saving can recover."
-    )]
-    [Range(0, 20)]
-    public double RecoveryUvIndex { get; init; }
-
-    [Display(
         Name = "Recovery Outdoor Temp (C)",
-        Description = "Outdoor temperature threshold in Celsius below which weather-based power saving can recover."
+        Description = "Outdoor temperature threshold in Celsius below which weather-based power saving is disabled."
     )]
     [Range(10, 45)]
     public double RecoveryOutdoorTempC { get; init; }
 
     public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
     {
-        if (TriggerUvIndex < RecoveryUvIndex)
-        {
-            yield return new ValidationResult(
-                "TriggerUvIndex must be greater than or equal to RecoveryUvIndex.",
-                [nameof(TriggerUvIndex)]
-            );
-        }
-
         if (TriggerOutdoorTempC < RecoveryOutdoorTempC)
         {
             yield return new ValidationResult(
