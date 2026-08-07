@@ -2,7 +2,8 @@ namespace HomeAutomation.apps.Security.People;
 
 public class AthenaEntities(SecurityDevices devices) : IPersonEntities
 {
-    public PersonEntity Person => devices.AthenaPerson;
+    public string Name => "Athena Bezos";
+    public InputBooleanEntity Presence => devices.AthenaPresence;
     public ButtonEntity ToggleLocation => devices.AthenaToggle;
     public CounterEntity Counter => devices.PeopleCounter;
     public IEnumerable<BinarySensorEntity> HomeTriggers => devices.AthenaHomeTriggers;

@@ -13,11 +13,11 @@ public interface IPersonController : IAutomation
     IObservable<string> OnUnlocked(BinaryDuration? duration = null);
 }
 
-public class PersonController(IPersonEntities entities, IServices services, ILogger logger)
+public class PersonController(IPersonEntities entities, ILogger logger)
     : AutomationBase(logger),
         IPersonController
 {
-    private readonly PersonEntity _person = entities.Person;
+    private readonly InputBooleanEntity _presence = entities.Presence;
     private readonly CounterEntity _counter = entities.Counter;
     private readonly ButtonEntity _toggle = entities.ToggleLocation;
     private readonly Subject<string> _arrivedHomeSubject = new();
@@ -26,14 +26,14 @@ public class PersonController(IPersonEntities entities, IServices services, ILog
     public IObservable<string> OnArrived(BinaryDuration? duration = null) =>
         entities
             .HomeTriggers.OnTurnedOn(duration)
-            .Where(_ => _person.IsAway())
+            .Where(_ => _presence.IsOff())
             .Select(trigger => trigger.Entity.EntityId)
             .Merge(_arrivedHomeSubject);
 
     public IObservable<string> OnDeparted(BinaryDuration? duration = null) =>
         entities
             .AwayTriggers.OnTurnedOff(duration)
-            .Where(_ => _person.IsHome())
+            .Where(_ => _presence.IsOn())
             .Select(trigger => trigger.Entity.EntityId)
             .Merge(_leftHomeSubject);
 
@@ -42,30 +42,30 @@ public class PersonController(IPersonEntities entities, IServices services, ILog
             .DirectUnlockTriggers.OnTurnedOn(duration)
             .Select(trigger => trigger.Entity.EntityId);
 
-    public string Name => _person.Attributes?.FriendlyName ?? "Unknown";
+    public string Name => entities.Name;
 
     public void SetHome()
     {
-        if (_person.IsAway())
+        if (_presence.IsOff())
         {
             Logger.LogInformation(
                 "{PersonName} arrived home. Updating location and incrementing counter.",
-                _person.Attributes?.FriendlyName ?? "Unknown person"
+                Name
             );
-            SetLocation(HaEntityStates.HOME);
+            _presence.TurnOn();
             _counter.Increment();
         }
     }
 
     public void SetAway()
     {
-        if (_person.IsHome())
+        if (_presence.IsOn())
         {
             Logger.LogInformation(
                 "{PersonName} left home. Updating location and decrementing counter.",
-                _person.Attributes?.FriendlyName ?? "Unknown person"
+                Name
             );
-            SetLocation(HaEntityStates.AWAY);
+            _presence.TurnOff();
             _counter.Decrement();
         }
     }
@@ -75,19 +75,16 @@ public class PersonController(IPersonEntities entities, IServices services, ILog
 
     private void ToggleLocation(StateChange e)
     {
-        Logger.LogInformation("Toggle button pressed. Current state: {State}", _person.State);
-        if (_person.IsHome())
+        Logger.LogInformation("Toggle button pressed. Current state: {State}", _presence.State);
+        if (_presence.IsOn())
         {
             SetAway();
-            _leftHomeSubject.OnNext(_person.EntityId);
+            _leftHomeSubject.OnNext(_presence.EntityId);
         }
         else
         {
             SetHome();
-            _arrivedHomeSubject.OnNext(_person.EntityId);
+            _arrivedHomeSubject.OnNext(_presence.EntityId);
         }
     }
-
-    private void SetLocation(string location) =>
-        services.DeviceTracker.See(devId: _person.Attributes?.Id, locationName: location);
 }

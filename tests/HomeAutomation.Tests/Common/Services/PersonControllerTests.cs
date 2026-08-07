@@ -19,11 +19,7 @@ public class PersonControllerTests : HaContextTestBase
 
         _entities = new TestEntities(_mockHaContext);
 
-        _controller = new PersonController(
-            _entities,
-            new HomeAssistantGenerated.Services(_mockHaContext),
-            _mockLogger.Object
-        );
+        _controller = new PersonController(_entities, _mockLogger.Object);
         _controller.StartAutomation();
 
         // Subscribe to observables to collect events for testing
@@ -35,46 +31,46 @@ public class PersonControllerTests : HaContextTestBase
     [Fact]
     public void SetHome_Should_SetLocationToHome_And_IncrementCounter()
     {
-        _mockHaContext.SetEntityState(_entities.Person.EntityId, "not_home");
+        _mockHaContext.SetEntityState(_entities.Presence.EntityId, "off");
 
         _controller.SetHome();
 
-        _mockHaContext.ShouldHaveCalledService("device_tracker", "see");
+        _mockHaContext.ShouldHaveCalledService("input_boolean", "turn_on");
         _mockHaContext.ShouldHaveCalledCounterIncrement(_entities.Counter.EntityId);
     }
 
     [Fact]
     public void SetAway_Should_SetLocationToAway_And_DecrementCounter()
     {
-        _mockHaContext.SetEntityState(_entities.Person.EntityId, "home");
+        _mockHaContext.SetEntityState(_entities.Presence.EntityId, "on");
 
         _controller.SetAway();
 
-        _mockHaContext.ShouldHaveCalledService("device_tracker", "see");
+        _mockHaContext.ShouldHaveCalledService("input_boolean", "turn_off");
         _mockHaContext.ShouldHaveCalledCounterDecrement(_entities.Counter.EntityId);
     }
 
     [Fact]
     public void ToggleLocation_Should_ChangeWhenPersonIsHome()
     {
-        _mockHaContext.SetEntityState(_entities.Person.EntityId, "home");
+        _mockHaContext.SetEntityState(_entities.Presence.EntityId, "on");
 
         _mockHaContext.EmitStateChange(
             StateChangeHelpers.CreateButtonPress(_entities.ToggleLocation)
         );
-        _mockHaContext.ShouldHaveCalledService("device_tracker", "see");
+        _mockHaContext.ShouldHaveCalledService("input_boolean", "turn_off");
         _mockHaContext.ShouldHaveCalledCounterDecrement(_entities.Counter.EntityId);
     }
 
     [Fact]
     public void ToggleLocation_Should_ChangeWhenPersonIsAway()
     {
-        _mockHaContext.SetEntityState(_entities.Person.EntityId, "not_home");
+        _mockHaContext.SetEntityState(_entities.Presence.EntityId, "off");
 
         _mockHaContext.EmitStateChange(
             StateChangeHelpers.CreateButtonPress(_entities.ToggleLocation)
         );
-        _mockHaContext.ShouldHaveCalledService("device_tracker", "see");
+        _mockHaContext.ShouldHaveCalledService("input_boolean", "turn_on");
         _mockHaContext.ShouldHaveCalledCounterIncrement(_entities.Counter.EntityId);
     }
 
@@ -84,7 +80,7 @@ public class PersonControllerTests : HaContextTestBase
     public void ArrivedHome_PersonIsAway_SingleTrigger_ShouldEmitEntityId()
     {
         // Arrange - Person is away
-        _mockHaContext.SetEntityState(_entities.Person.EntityId, "not_home");
+        _mockHaContext.SetEntityState(_entities.Presence.EntityId, "off");
 
         // Act - Home trigger activates
         var stateChange = StateChangeHelpers.CreateStateChange(_entities.HomeTrigger1, "off", "on");
@@ -98,7 +94,7 @@ public class PersonControllerTests : HaContextTestBase
     [Fact]
     public void ArrivedHome_WhenTriggerIsAlreadyOnBeforeSubscription_ShouldEmitImmediately()
     {
-        _mockHaContext.SetEntityState(_entities.Person.EntityId, "not_home");
+        _mockHaContext.SetEntityState(_entities.Presence.EntityId, "off");
         _mockHaContext.SetEntityState(_entities.HomeTrigger1.EntityId, "on");
 
         var events = new List<string>();
@@ -112,7 +108,7 @@ public class PersonControllerTests : HaContextTestBase
     public void ArrivedHome_PersonIsHome_ShouldNotEmit()
     {
         // Arrange - Person is already home
-        _mockHaContext.SetEntityState(_entities.Person.EntityId, "home");
+        _mockHaContext.SetEntityState(_entities.Presence.EntityId, "on");
 
         // Act - Home trigger activates
         var stateChange = StateChangeHelpers.CreateStateChange(_entities.HomeTrigger1, "off", "on");
@@ -126,7 +122,7 @@ public class PersonControllerTests : HaContextTestBase
     public void ArrivedHome_MultipleTriggers_PersonIsAway_ShouldEmitCorrectEntityIds()
     {
         // Arrange - Person is away
-        _mockHaContext.SetEntityState(_entities.Person.EntityId, "not_home");
+        _mockHaContext.SetEntityState(_entities.Presence.EntityId, "off");
 
         // Act - Multiple home triggers activate
         var trigger1Change = StateChangeHelpers.CreateStateChange(
@@ -152,7 +148,7 @@ public class PersonControllerTests : HaContextTestBase
     public void ArrivedHome_TriggerTurnsOff_ShouldNotEmit()
     {
         // Arrange - Person is away
-        _mockHaContext.SetEntityState(_entities.Person.EntityId, "not_home");
+        _mockHaContext.SetEntityState(_entities.Presence.EntityId, "off");
 
         // Act - Home trigger turns off (not on)
         var stateChange = StateChangeHelpers.CreateStateChange(_entities.HomeTrigger1, "on", "off");
@@ -166,7 +162,7 @@ public class PersonControllerTests : HaContextTestBase
     public void LeftHome_PersonIsHome_After60Seconds_ShouldEmitEntityId()
     {
         // Arrange - Person is home
-        _mockHaContext.SetEntityState(_entities.Person.EntityId, "home");
+        _mockHaContext.SetEntityState(_entities.Presence.EntityId, "on");
 
         // Act - Away trigger turns off
         var stateChange = StateChangeHelpers.CreateStateChange(_entities.AwayTrigger1, "on", "off");
@@ -184,7 +180,7 @@ public class PersonControllerTests : HaContextTestBase
     public void LeftHome_PersonIsAway_ShouldNotEmit()
     {
         // Arrange - Person is already away
-        _mockHaContext.SetEntityState(_entities.Person.EntityId, "not_home");
+        _mockHaContext.SetEntityState(_entities.Presence.EntityId, "off");
 
         // Act - Away trigger turns off
         var stateChange = StateChangeHelpers.CreateStateChange(_entities.AwayTrigger1, "on", "off");
@@ -201,7 +197,7 @@ public class PersonControllerTests : HaContextTestBase
     public void Departed_Immediate_ShouldEmit()
     {
         // Arrange - Person is home
-        _mockHaContext.SetEntityState(_entities.Person.EntityId, "home");
+        _mockHaContext.SetEntityState(_entities.Presence.EntityId, "on");
 
         // Act - Away trigger turns off
         var stateChange = StateChangeHelpers.CreateStateChange(_entities.AwayTrigger1, "on", "off");
@@ -217,7 +213,7 @@ public class PersonControllerTests : HaContextTestBase
     [Fact]
     public void Departed_WhenTriggerIsAlreadyOffBeforeSubscription_ShouldEmitImmediately()
     {
-        _mockHaContext.SetEntityState(_entities.Person.EntityId, "home");
+        _mockHaContext.SetEntityState(_entities.Presence.EntityId, "on");
         _mockHaContext.SetEntityState(_entities.AwayTrigger1.EntityId, "off");
 
         var events = new List<string>();
@@ -231,7 +227,7 @@ public class PersonControllerTests : HaContextTestBase
     public void LeftHome_MultipleAwayTriggers_PersonIsHome_ShouldEmitForValidTriggers()
     {
         // Arrange - Person is home
-        _mockHaContext.SetEntityState(_entities.Person.EntityId, "home");
+        _mockHaContext.SetEntityState(_entities.Presence.EntityId, "on");
 
         // Act - Multiple away triggers turn off at slightly different times
         var trigger1Change = StateChangeHelpers.CreateStateChange(
@@ -268,7 +264,7 @@ public class PersonControllerTests : HaContextTestBase
     public void LeftHome_MultipleTriggersSequential_PersonIsHome_ShouldEmitBoth()
     {
         // Arrange - Person is home
-        _mockHaContext.SetEntityState(_entities.Person.EntityId, "home");
+        _mockHaContext.SetEntityState(_entities.Presence.EntityId, "on");
 
         // Act - First trigger turns off, wait for it to complete, then second trigger
         var trigger1Change = StateChangeHelpers.CreateStateChange(
@@ -306,7 +302,7 @@ public class PersonControllerTests : HaContextTestBase
     public void LeftHome_TriggerTurnsOn_ShouldNotEmit()
     {
         // Arrange - Person is home
-        _mockHaContext.SetEntityState(_entities.Person.EntityId, "home");
+        _mockHaContext.SetEntityState(_entities.Presence.EntityId, "on");
 
         // Act - Away trigger turns on (not off)
         var stateChange = StateChangeHelpers.CreateStateChange(_entities.AwayTrigger1, "off", "on");
@@ -386,13 +382,10 @@ public class PersonControllerTests : HaContextTestBase
     }
 
     [Fact]
-    public void Name_NoFriendlyName_ShouldReturnUnknown()
+    public void Name_ShouldReturnConfiguredName()
     {
-        // Arrange - No friendly name attribute
-        _mockHaContext.SetEntityState(_entities.Person.EntityId, "home");
-
         // Act & Assert
-        Assert.Equal("Unknown", _controller.Name);
+        Assert.Equal("Test Person", _controller.Name);
     }
 
     [Fact]
@@ -413,7 +406,7 @@ public class PersonControllerTests : HaContextTestBase
     public void ToggleLocation_PersonIsHome_ShouldTriggerLeftHomeSubjectAndSetAway()
     {
         // Arrange - Person is home
-        _mockHaContext.SetEntityState(_entities.Person.EntityId, "home");
+        _mockHaContext.SetEntityState(_entities.Presence.EntityId, "on");
 
         // Act - Press toggle button
         var buttonPress = StateChangeHelpers.CreateButtonPress(_entities.ToggleLocation);
@@ -421,8 +414,8 @@ public class PersonControllerTests : HaContextTestBase
 
         // Assert - Should emit person entity ID via subject and call SetAway
         Assert.Single(_leftHomeEvents);
-        Assert.Equal(_entities.Person.EntityId, _leftHomeEvents[0]);
-        _mockHaContext.ShouldHaveCalledService("device_tracker", "see");
+        Assert.Equal(_entities.Presence.EntityId, _leftHomeEvents[0]);
+        _mockHaContext.ShouldHaveCalledService("input_boolean", "turn_off");
         _mockHaContext.ShouldHaveCalledCounterDecrement(_entities.Counter.EntityId);
     }
 
@@ -430,7 +423,7 @@ public class PersonControllerTests : HaContextTestBase
     public void ToggleLocation_PersonIsAway_ShouldTriggerArrivedHomeSubjectAndSetHome()
     {
         // Arrange - Person is away
-        _mockHaContext.SetEntityState(_entities.Person.EntityId, "not_home");
+        _mockHaContext.SetEntityState(_entities.Presence.EntityId, "off");
 
         // Act - Press toggle button
         var buttonPress = StateChangeHelpers.CreateButtonPress(_entities.ToggleLocation);
@@ -438,8 +431,8 @@ public class PersonControllerTests : HaContextTestBase
 
         // Assert - Should emit person entity ID via subject and call SetHome
         Assert.Single(_arrivedHomeEvents);
-        Assert.Equal(_entities.Person.EntityId, _arrivedHomeEvents[0]);
-        _mockHaContext.ShouldHaveCalledService("device_tracker", "see");
+        Assert.Equal(_entities.Presence.EntityId, _arrivedHomeEvents[0]);
+        _mockHaContext.ShouldHaveCalledService("input_boolean", "turn_on");
         _mockHaContext.ShouldHaveCalledCounterIncrement(_entities.Counter.EntityId);
     }
 
@@ -447,7 +440,7 @@ public class PersonControllerTests : HaContextTestBase
     public void ArrivedHome_MergesPhysicalTriggersAndSubjectEvents()
     {
         // Arrange - Person is away
-        _mockHaContext.SetEntityState(_entities.Person.EntityId, "not_home");
+        _mockHaContext.SetEntityState(_entities.Presence.EntityId, "off");
 
         // Act - Trigger both physical sensor and toggle button
         var sensorTrigger = StateChangeHelpers.CreateStateChange(
@@ -463,14 +456,14 @@ public class PersonControllerTests : HaContextTestBase
         // Assert - Should have both events: sensor entity ID and person entity ID
         Assert.Equal(2, _arrivedHomeEvents.Count);
         Assert.Contains(_entities.HomeTrigger1.EntityId, _arrivedHomeEvents);
-        Assert.Contains(_entities.Person.EntityId, _arrivedHomeEvents);
+        Assert.Contains(_entities.Presence.EntityId, _arrivedHomeEvents);
     }
 
     [Fact]
     public void LeftHome_MergesPhysicalTriggersAndSubjectEvents()
     {
         // Arrange - Person is home
-        _mockHaContext.SetEntityState(_entities.Person.EntityId, "home");
+        _mockHaContext.SetEntityState(_entities.Presence.EntityId, "on");
 
         // Act - First trigger physical sensor
         var sensorTrigger = StateChangeHelpers.CreateStateChange(
@@ -494,25 +487,25 @@ public class PersonControllerTests : HaContextTestBase
         // Assert - Should have both events: sensor entity ID and person entity ID
         Assert.Equal(2, _leftHomeEvents.Count);
         Assert.Contains(_entities.AwayTrigger1.EntityId, _leftHomeEvents);
-        Assert.Contains(_entities.Person.EntityId, _leftHomeEvents);
+        Assert.Contains(_entities.Presence.EntityId, _leftHomeEvents);
     }
 
     [Fact]
     public void ToggleLocation_MultipleTogglesPresses_ShouldEmitMultipleEvents()
     {
         // Arrange - Person starts away
-        _mockHaContext.SetEntityState(_entities.Person.EntityId, "not_home");
+        _mockHaContext.SetEntityState(_entities.Presence.EntityId, "off");
 
         // Act - Toggle multiple times (away -> home -> away -> home)
         var buttonPress1 = StateChangeHelpers.CreateButtonPress(_entities.ToggleLocation);
         _mockHaContext.EmitStateChange(buttonPress1); // Should go home
 
-        _mockHaContext.SetEntityState(_entities.Person.EntityId, "home"); // Update state after SetHome
+        _mockHaContext.SetEntityState(_entities.Presence.EntityId, "on"); // Update state after SetHome
 
         var buttonPress2 = StateChangeHelpers.CreateButtonPress(_entities.ToggleLocation);
         _mockHaContext.EmitStateChange(buttonPress2); // Should go away
 
-        _mockHaContext.SetEntityState(_entities.Person.EntityId, "not_home"); // Update state after SetAway
+        _mockHaContext.SetEntityState(_entities.Presence.EntityId, "off"); // Update state after SetAway
 
         var buttonPress3 = StateChangeHelpers.CreateButtonPress(_entities.ToggleLocation);
         _mockHaContext.EmitStateChange(buttonPress3); // Should go home again
@@ -520,15 +513,15 @@ public class PersonControllerTests : HaContextTestBase
         // Assert - Should have alternating events
         Assert.Equal(2, _arrivedHomeEvents.Count); // Two arrivals (button 1 and 3)
         Assert.Single(_leftHomeEvents); // One departure (button 2)
-        Assert.All(_arrivedHomeEvents, eventId => Assert.Equal(_entities.Person.EntityId, eventId));
-        Assert.All(_leftHomeEvents, eventId => Assert.Equal(_entities.Person.EntityId, eventId));
+        Assert.All(_arrivedHomeEvents, eventId => Assert.Equal(_entities.Presence.EntityId, eventId));
+        Assert.All(_leftHomeEvents, eventId => Assert.Equal(_entities.Presence.EntityId, eventId));
     }
 
     [Fact]
     public void SubjectEventsEmitPersonEntityId_PhysicalTriggersEmitSensorEntityId()
     {
         // Arrange - Person is away for arrived test, home for left test
-        _mockHaContext.SetEntityState(_entities.Person.EntityId, "not_home");
+        _mockHaContext.SetEntityState(_entities.Presence.EntityId, "off");
 
         // Act & Assert - ArrivedHome: Physical trigger emits sensor ID
         var homeSensorTrigger = StateChangeHelpers.CreateStateChange(
@@ -542,7 +535,7 @@ public class PersonControllerTests : HaContextTestBase
         Assert.Equal(_entities.HomeTrigger1.EntityId, _arrivedHomeEvents[0]);
 
         // Change person to home for left test
-        _mockHaContext.SetEntityState(_entities.Person.EntityId, "home");
+        _mockHaContext.SetEntityState(_entities.Presence.EntityId, "on");
 
         // Act & Assert - LeftHome: Physical trigger emits sensor ID after delay
         var awaySensorTrigger = StateChangeHelpers.CreateStateChange(
@@ -561,14 +554,14 @@ public class PersonControllerTests : HaContextTestBase
         _mockHaContext.EmitStateChange(buttonPress);
 
         Assert.Equal(2, _leftHomeEvents.Count);
-        Assert.Equal(_entities.Person.EntityId, _leftHomeEvents[1]); // Second event should be person ID
+        Assert.Equal(_entities.Presence.EntityId, _leftHomeEvents[1]); // Second event should be presence ID
     }
 
     [Fact]
     public void SubjectsAfterDisposal_ShouldNotEmitEvents()
     {
         // Arrange - Person is away, set up initial state
-        _mockHaContext.SetEntityState(_entities.Person.EntityId, "not_home");
+        _mockHaContext.SetEntityState(_entities.Presence.EntityId, "off");
 
         // Act - Dispose the controller
         _controller.Dispose();
@@ -600,7 +593,8 @@ public class PersonControllerTests : HaContextTestBase
 
     private class TestEntities(IHaContext context) : IPersonEntities
     {
-        public PersonEntity Person => new(context, "person.test_person");
+        public string Name => "Test Person";
+        public InputBooleanEntity Presence => new(context, "input_boolean.test_presence");
         public CounterEntity Counter => new(context, "counter.test_home_counter");
         public ButtonEntity ToggleLocation => new(context, "button.test_toggle");
 

@@ -65,6 +65,6 @@ public class LightAutomation(
                     brightness
                 );
 
-                Light.TurnOn(brightness: brightness);
+                Light.TurnOn(brightnessPct: brightness);
             });
 }

@@ -4,10 +4,10 @@ namespace HomeAutomation.apps.Security;
 
 public class SecurityDevices(GlobalDevices globalDevices, Entities entities)
 {
-    public PersonEntity DanielPerson => globalDevices.DanielPerson;
+    public InputBooleanEntity DanielPresence => globalDevices.DanielPresence;
     public ButtonEntity DanielToggle => globalDevices.DanielToggle;
 
-    public PersonEntity AthenaPerson => globalDevices.AthenaPerson;
+    public InputBooleanEntity AthenaPresence => globalDevices.AthenaPresence;
     public ButtonEntity AthenaToggle => globalDevices.AthenaToggle;
 
     public CounterEntity PeopleCounter => globalDevices.PeopleCounter;
@@ -16,7 +16,7 @@ public class SecurityDevices(GlobalDevices globalDevices, Entities entities)
         [entities.BinarySensor.RedmiWatch5Ble, entities.BinarySensor.Oneplus13Ble];
 
     public IEnumerable<BinarySensorEntity> DanielAwayTriggers =>
-        [entities.BinarySensor.PocoF4GtBle, entities.BinarySensor.Oneplus13Ble];
+        [entities.BinarySensor.PocoF4GtBluetoothState, entities.BinarySensor.Oneplus13Ble];
 
     public IEnumerable<BinarySensorEntity> AthenaHomeTriggers =>
         [entities.BinarySensor.MiWatchBle, entities.BinarySensor.Iphone];

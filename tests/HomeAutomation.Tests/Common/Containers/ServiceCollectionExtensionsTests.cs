@@ -245,14 +245,14 @@ public class ServiceCollectionExtensionsTests : HaContextTestBase
         accessControlEntities.Lock.EntityId.Should().Be("lock.lock_wrapper");
         accessControlEntities.House.EntityId.Should().Be("binary_sensor.house");
 
-        danielEntities.Person.EntityId.Should().Be("person.daniel_rodriguez");
+        danielEntities.Presence.EntityId.Should().Be("input_boolean.daniel_home");
         danielEntities.ToggleLocation.EntityId.Should().Be("button.manual_tracker_button_daniel");
         danielEntities
             .HomeTriggers.Select(trigger => trigger.EntityId)
             .Should()
             .Contain(["binary_sensor.redmi_watch_5_ble", "binary_sensor.oneplus_13_ble"]);
 
-        athenaEntities.Person.EntityId.Should().Be("person.athena_bezos");
+        athenaEntities.Presence.EntityId.Should().Be("input_boolean.athena_home");
         athenaEntities.ToggleLocation.EntityId.Should().Be("button.manual_tracker_button_athena");
         athenaEntities
             .DirectUnlockTriggers.Select(trigger => trigger.EntityId)

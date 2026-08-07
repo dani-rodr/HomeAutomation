@@ -13,9 +13,9 @@ public class GlobalDevices(Entities entities)
     public SensorEntity SunMidnight { get; } = entities.Sensor.SunNextMidnight;
     public WeatherEntity Weather { get; } = entities.Weather.Home;
     public InputBooleanEntity PowerSavingMode { get; } = entities.InputBoolean.AcPowerSavingMode;
-    public PersonEntity DanielPerson { get; } = entities.Person.DanielRodriguez;
+    public InputBooleanEntity DanielPresence { get; } = entities.InputBoolean.DanielHome;
     public ButtonEntity DanielToggle { get; } = entities.Button.ManualTrackerButtonDaniel;
-    public PersonEntity AthenaPerson { get; } = entities.Person.AthenaBezos;
+    public InputBooleanEntity AthenaPresence { get; } = entities.InputBoolean.AthenaHome;
     public ButtonEntity AthenaToggle { get; } = entities.Button.ManualTrackerButtonAthena;
     public CounterEntity PeopleCounter { get; } = entities.Counter.People;
 }

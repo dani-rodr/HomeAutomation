@@ -2,7 +2,8 @@ namespace HomeAutomation.apps.Common.Security.People;
 
 public interface IPersonEntities
 {
-    PersonEntity Person { get; }
+    string Name { get; }
+    InputBooleanEntity Presence { get; }
     ButtonEntity ToggleLocation { get; }
     CounterEntity Counter { get; }
     IEnumerable<BinarySensorEntity> HomeTriggers { get; }

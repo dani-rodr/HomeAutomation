@@ -34,9 +34,19 @@
           "cSharpName": "BedLights1"
         },
         {
+          "id": "light.browser_mod_d407d4ae_c3026b27_screen",
+          "friendlyName": "browser_mod_d407d4ae_c3026b27 Screen",
+          "cSharpName": "BrowserModD407d4aeC3026b27Screen"
+        },
+        {
           "id": "light.controller_rgb_df1c0d",
           "friendlyName": "Controller RGB DF1C0D",
           "cSharpName": "ControllerRgbDf1c0d"
+        },
+        {
+          "id": "light.guest_screen",
+          "friendlyName": "Guest Screen",
+          "cSharpName": "GuestScreen"
         },
         {
           "id": "light.lg_display",
@@ -52,6 +62,11 @@
           "id": "light.mipad_screen",
           "friendlyName": "MiPad Screen",
           "cSharpName": "MipadScreen"
+        },
+        {
+          "id": "light.oneplus13_screen",
+          "friendlyName": "OnePlus13 Screen",
+          "cSharpName": "Oneplus13Screen"
         },
         {
           "id": "light.pantry_lights",
@@ -307,13 +322,23 @@
       "entities": [
         {
           "id": "media_player.65c755_television",
-          "friendlyName": "AirPlay",
+          "friendlyName": "65C755 Television",
           "cSharpName": "_65c755Television"
         },
         {
           "id": "media_player.adb_65c755",
           "friendlyName": "ADB 65C755",
           "cSharpName": "Adb65c755"
+        },
+        {
+          "id": "media_player.browser_mod_d407d4ae_c3026b27",
+          "friendlyName": "browser_mod_d407d4ae_c3026b27",
+          "cSharpName": "BrowserModD407d4aeC3026b27"
+        },
+        {
+          "id": "media_player.guest",
+          "friendlyName": "Guest",
+          "cSharpName": "Guest"
         },
         {
           "id": "media_player.lg_tv",
@@ -332,13 +357,8 @@
         },
         {
           "id": "media_player.lg_webos_tv_oled42c4psa",
-          "friendlyName": null,
-          "cSharpName": "LgWebosTvOled42c4psa"
-        },
-        {
-          "id": "media_player.lg_webos_tv_oled42c4psa_2",
           "friendlyName": "[LG] webOS TV OLED42C4PSA",
-          "cSharpName": "LgWebosTvOled42c4psa2"
+          "cSharpName": "LgWebosTvOled42c4psa"
         },
         {
           "id": "media_player.living_room_tv",
@@ -356,13 +376,23 @@
           "cSharpName": "Mipad"
         },
         {
+          "id": "media_player.mipad_esphome_media_player",
+          "friendlyName": "Mipad Esphome Media Player",
+          "cSharpName": "MipadEsphomeMediaPlayer"
+        },
+        {
+          "id": "media_player.oneplus13",
+          "friendlyName": "OnePlus13",
+          "cSharpName": "Oneplus13"
+        },
+        {
           "id": "media_player.projector",
-          "friendlyName": null,
+          "friendlyName": "Projector",
           "cSharpName": "Projector"
         },
         {
           "id": "media_player.projector_2",
-          "friendlyName": null,
+          "friendlyName": "Projector",
           "cSharpName": "Projector2"
         },
         {
@@ -384,11 +414,6 @@
           "id": "media_player.xiaomi_tv_box",
           "friendlyName": "Xiaomi TV Box",
           "cSharpName": "XiaomiTvBox"
-        },
-        {
-          "id": "media_player.xiaomi_tv_box_11",
-          "friendlyName": null,
-          "cSharpName": "XiaomiTvBox11"
         }
       ],
       "attributes": [
@@ -613,6 +638,11 @@
           "cSharpName": "NvidiaNemotron3SuperFree"
         },
         {
+          "id": "ai_task.openai_codex_account_1_codex_ai_task",
+          "friendlyName": "OpenAI Codex Account 1 Codex AI Task",
+          "cSharpName": "OpenaiCodexAccount1CodexAiTask"
+        },
+        {
           "id": "ai_task.openai_gpt_oss_120b_free",
           "friendlyName": "OpenAI: gpt-oss-120b (free)",
           "cSharpName": "OpenaiGptOss120bFree"
@@ -644,6 +674,16 @@
     {
       "domain": "automation",
       "entities": [
+        {
+          "id": "automation.daniel_pc_handle_shutdown_notification_actions",
+          "friendlyName": "Daniel PC - Handle Shutdown Notification Actions",
+          "cSharpName": "DanielPcHandleShutdownNotificationActions"
+        },
+        {
+          "id": "automation.daniel_pc_weekday_shutdown_prompt",
+          "friendlyName": "Daniel PC - Weekday Shutdown Prompt",
+          "cSharpName": "DanielPcWeekdayShutdownPrompt"
+        },
         {
           "id": "automation.set_theme",
           "friendlyName": "Home Assistant Started",
@@ -692,99 +732,9 @@
           "cSharpName": "AdguardHomeRunning"
         },
         {
-          "id": "binary_sensor.as104068_canleave",
-          "friendlyName": "as104068 canleave",
-          "cSharpName": "As104068Canleave"
-        },
-        {
-          "id": "binary_sensor.as104068_canpair",
-          "friendlyName": "as104068 canpair",
-          "cSharpName": "As104068Canpair"
-        },
-        {
-          "id": "binary_sensor.as104068_canreact",
-          "friendlyName": "as104068 canreact",
-          "cSharpName": "As104068Canreact"
-        },
-        {
-          "id": "binary_sensor.as104068_canstopsharing",
-          "friendlyName": "as104068 canstopsharing",
-          "cSharpName": "As104068Canstopsharing"
-        },
-        {
-          "id": "binary_sensor.as104068_cantoggleblur",
-          "friendlyName": "as104068 cantoggleblur",
-          "cSharpName": "As104068Cantoggleblur"
-        },
-        {
-          "id": "binary_sensor.as104068_cantogglechat",
-          "friendlyName": "as104068 cantogglechat",
-          "cSharpName": "As104068Cantogglechat"
-        },
-        {
-          "id": "binary_sensor.as104068_cantogglehand",
-          "friendlyName": "as104068 cantogglehand",
-          "cSharpName": "As104068Cantogglehand"
-        },
-        {
-          "id": "binary_sensor.as104068_cantogglemute",
-          "friendlyName": "as104068 cantogglemute",
-          "cSharpName": "As104068Cantogglemute"
-        },
-        {
-          "id": "binary_sensor.as104068_cantogglesharetray",
-          "friendlyName": "as104068 cantogglesharetray",
-          "cSharpName": "As104068Cantogglesharetray"
-        },
-        {
-          "id": "binary_sensor.as104068_cantogglevideo",
-          "friendlyName": "as104068 cantogglevideo",
-          "cSharpName": "As104068Cantogglevideo"
-        },
-        {
-          "id": "binary_sensor.as104068_hasunreadmessages",
-          "friendlyName": "as104068 hasunreadmessages",
-          "cSharpName": "As104068Hasunreadmessages"
-        },
-        {
-          "id": "binary_sensor.as104068_isinmeeting",
-          "friendlyName": "as104068 isinmeeting",
-          "cSharpName": "As104068Isinmeeting"
-        },
-        {
-          "id": "binary_sensor.as104068_isrecordingon",
-          "friendlyName": "as104068 isrecordingon",
-          "cSharpName": "As104068Isrecordingon"
-        },
-        {
-          "id": "binary_sensor.as104068_issharing",
-          "friendlyName": "as104068 issharing",
-          "cSharpName": "As104068Issharing"
-        },
-        {
-          "id": "binary_sensor.as104068_teamsrunning",
-          "friendlyName": "as104068 teamsrunning",
-          "cSharpName": "As104068Teamsrunning"
-        },
-        {
-          "id": "binary_sensor.baby_camera_cell_motion_detection_2",
-          "friendlyName": "Baby Camera Cell Motion Detection",
-          "cSharpName": "BabyCameraCellMotionDetection2"
-        },
-        {
-          "id": "binary_sensor.baby_camera_motion_alarm_2",
-          "friendlyName": "Baby Camera Motion Alarm",
-          "cSharpName": "BabyCameraMotionAlarm2"
-        },
-        {
           "id": "binary_sensor.baby_camera_noise",
           "friendlyName": "Baby Camera Noise",
           "cSharpName": "BabyCameraNoise"
-        },
-        {
-          "id": "binary_sensor.baby_camera_person_detection_2",
-          "friendlyName": "Baby Camera Person Detection",
-          "cSharpName": "BabyCameraPersonDetection2"
         },
         {
           "id": "binary_sensor.backups_stale",
@@ -867,6 +817,51 @@
           "cSharpName": "BrowserGuestOnline"
         },
         {
+          "id": "binary_sensor.browser_mod_d407d4ae_c3026b27",
+          "friendlyName": "browser_mod_d407d4ae_c3026b27",
+          "cSharpName": "BrowserModD407d4aeC3026b27"
+        },
+        {
+          "id": "binary_sensor.browser_mod_d407d4ae_c3026b27_browser_dark_mode",
+          "friendlyName": "browser_mod_d407d4ae_c3026b27 Browser dark mode",
+          "cSharpName": "BrowserModD407d4aeC3026b27BrowserDarkMode"
+        },
+        {
+          "id": "binary_sensor.browser_mod_d407d4ae_c3026b27_browser_fullykiosk",
+          "friendlyName": "browser_mod_d407d4ae_c3026b27 Browser FullyKiosk",
+          "cSharpName": "BrowserModD407d4aeC3026b27BrowserFullykiosk"
+        },
+        {
+          "id": "binary_sensor.budgetbakers_wallet_budgetbakers_wallet_api_status",
+          "friendlyName": "BudgetBakers Wallet BudgetBakers Wallet API Status",
+          "cSharpName": "BudgetbakersWalletBudgetbakersWalletApiStatus"
+        },
+        {
+          "id": "binary_sensor.budgetbakers_wallet_data_annotation_archived",
+          "friendlyName": "BudgetBakers Wallet Data Annotation Archived",
+          "cSharpName": "BudgetbakersWalletDataAnnotationArchived"
+        },
+        {
+          "id": "binary_sensor.budgetbakers_wallet_gotyme_archived",
+          "friendlyName": "BudgetBakers Wallet GoTyme Archived",
+          "cSharpName": "BudgetbakersWalletGotymeArchived"
+        },
+        {
+          "id": "binary_sensor.budgetbakers_wallet_maribank_archived",
+          "friendlyName": "BudgetBakers Wallet Maribank Archived",
+          "cSharpName": "BudgetbakersWalletMaribankArchived"
+        },
+        {
+          "id": "binary_sensor.budgetbakers_wallet_maya_archived",
+          "friendlyName": "BudgetBakers Wallet Maya Archived",
+          "cSharpName": "BudgetbakersWalletMayaArchived"
+        },
+        {
+          "id": "binary_sensor.budgetbakers_wallet_spaylater_archived",
+          "friendlyName": "BudgetBakers Wallet SPaylater Archived",
+          "cSharpName": "BudgetbakersWalletSpaylaterArchived"
+        },
+        {
           "id": "binary_sensor.ceiling_fan_cloud_connection",
           "friendlyName": "Ceiling Fan Cloud connection",
           "cSharpName": "CeilingFanCloudConnection"
@@ -887,6 +882,76 @@
           "cSharpName": "ContactSensorDoorTmp"
         },
         {
+          "id": "binary_sensor.daniel_pc_canleave",
+          "friendlyName": "daniel-pc canleave",
+          "cSharpName": "DanielPcCanleave"
+        },
+        {
+          "id": "binary_sensor.daniel_pc_canpair",
+          "friendlyName": "daniel-pc canpair",
+          "cSharpName": "DanielPcCanpair"
+        },
+        {
+          "id": "binary_sensor.daniel_pc_canreact",
+          "friendlyName": "daniel-pc canreact",
+          "cSharpName": "DanielPcCanreact"
+        },
+        {
+          "id": "binary_sensor.daniel_pc_canstopsharing",
+          "friendlyName": "daniel-pc canstopsharing",
+          "cSharpName": "DanielPcCanstopsharing"
+        },
+        {
+          "id": "binary_sensor.daniel_pc_cantoggleblur",
+          "friendlyName": "daniel-pc cantoggleblur",
+          "cSharpName": "DanielPcCantoggleblur"
+        },
+        {
+          "id": "binary_sensor.daniel_pc_cantogglechat",
+          "friendlyName": "daniel-pc cantogglechat",
+          "cSharpName": "DanielPcCantogglechat"
+        },
+        {
+          "id": "binary_sensor.daniel_pc_cantogglehand",
+          "friendlyName": "daniel-pc cantogglehand",
+          "cSharpName": "DanielPcCantogglehand"
+        },
+        {
+          "id": "binary_sensor.daniel_pc_cantogglemute",
+          "friendlyName": "daniel-pc cantogglemute",
+          "cSharpName": "DanielPcCantogglemute"
+        },
+        {
+          "id": "binary_sensor.daniel_pc_cantogglesharetray",
+          "friendlyName": "daniel-pc cantogglesharetray",
+          "cSharpName": "DanielPcCantogglesharetray"
+        },
+        {
+          "id": "binary_sensor.daniel_pc_cantogglevideo",
+          "friendlyName": "daniel-pc cantogglevideo",
+          "cSharpName": "DanielPcCantogglevideo"
+        },
+        {
+          "id": "binary_sensor.daniel_pc_hasunreadmessages",
+          "friendlyName": "daniel-pc hasunreadmessages",
+          "cSharpName": "DanielPcHasunreadmessages"
+        },
+        {
+          "id": "binary_sensor.daniel_pc_isinmeeting",
+          "friendlyName": "daniel-pc isinmeeting",
+          "cSharpName": "DanielPcIsinmeeting"
+        },
+        {
+          "id": "binary_sensor.daniel_pc_isrecordingon",
+          "friendlyName": "daniel-pc isrecordingon",
+          "cSharpName": "DanielPcIsrecordingon"
+        },
+        {
+          "id": "binary_sensor.daniel_pc_issharing",
+          "friendlyName": "daniel-pc issharing",
+          "cSharpName": "DanielPcIssharing"
+        },
+        {
           "id": "binary_sensor.daniel_pc_network_status",
           "friendlyName": "DANIEL-PC Network status",
           "cSharpName": "DanielPcNetworkStatus"
@@ -895,6 +960,21 @@
           "id": "binary_sensor.daniel_pc_ssh_status",
           "friendlyName": "DANIEL-PC SSH status",
           "cSharpName": "DanielPcSshStatus"
+        },
+        {
+          "id": "binary_sensor.daniel_pc_teamsrunning",
+          "friendlyName": "daniel-pc teamsrunning",
+          "cSharpName": "DanielPcTeamsrunning"
+        },
+        {
+          "id": "binary_sensor.data_annotation_can_withdraw",
+          "friendlyName": "Data Annotation Can Withdraw",
+          "cSharpName": "DataAnnotationCanWithdraw"
+        },
+        {
+          "id": "binary_sensor.data_annotation_in_progress_task",
+          "friendlyName": "Data Annotation In Progress Task",
+          "cSharpName": "DataAnnotationInProgressTask"
         },
         {
           "id": "binary_sensor.desk_motion_sensor_smart_presence",
@@ -907,18 +987,8 @@
           "cSharpName": "DeskMotionSensorSmartPresenceUnfiltered"
         },
         {
-          "id": "binary_sensor.disk_proxmox_kingston_sa400s37480g_health",
-          "friendlyName": "Health",
-          "cSharpName": "DiskProxmoxKingstonSa400s37480gHealth"
-        },
-        {
-          "id": "binary_sensor.disk_proxmox_pm991_nvme_samsung_256gb_health",
-          "friendlyName": "Disk proxmox: PM991 NVMe Samsung 256GB Health",
-          "cSharpName": "DiskProxmoxPm991NvmeSamsung256gbHealth"
-        },
-        {
           "id": "binary_sensor.door_wrapper",
-          "friendlyName": "Door Wrapper",
+          "friendlyName": "Front Door Wrapper",
           "cSharpName": "DoorWrapper"
         },
         {
@@ -938,13 +1008,33 @@
         },
         {
           "id": "binary_sensor.front_door",
-          "friendlyName": "Front Door",
+          "friendlyName": "Front Door Door",
           "cSharpName": "FrontDoor"
         },
         {
-          "id": "binary_sensor.front_door_door",
-          "friendlyName": "Front Door Door",
-          "cSharpName": "FrontDoorDoor"
+          "id": "binary_sensor.front_door_ui_wrapper",
+          "friendlyName": "Front Door UI",
+          "cSharpName": "FrontDoorUiWrapper"
+        },
+        {
+          "id": "binary_sensor.guest",
+          "friendlyName": "Guest",
+          "cSharpName": "Guest"
+        },
+        {
+          "id": "binary_sensor.guest_browser_dark_mode",
+          "friendlyName": "Guest Browser dark mode",
+          "cSharpName": "GuestBrowserDarkMode"
+        },
+        {
+          "id": "binary_sensor.guest_browser_fullykiosk",
+          "friendlyName": "Guest Browser FullyKiosk",
+          "cSharpName": "GuestBrowserFullykiosk"
+        },
+        {
+          "id": "binary_sensor.guest_kiosk_mode",
+          "friendlyName": "Guest Kiosk Mode",
+          "cSharpName": "GuestKioskMode"
         },
         {
           "id": "binary_sensor.house",
@@ -963,22 +1053,17 @@
         },
         {
           "id": "binary_sensor.internet",
-          "friendlyName": "Internet",
+          "friendlyName": "8.8.8.8 Internet",
           "cSharpName": "Internet"
         },
         {
-          "id": "binary_sensor.ipad_focus",
-          "friendlyName": "iPad Focus",
-          "cSharpName": "IpadFocus"
-        },
-        {
           "id": "binary_sensor.iphone",
-          "friendlyName": "IPhone",
+          "friendlyName": "iPhone Device Tracker IPhone",
           "cSharpName": "Iphone"
         },
         {
           "id": "binary_sensor.iphone_focus",
-          "friendlyName": "iPhone Focus",
+          "friendlyName": "Aenics iPhone Focus",
           "cSharpName": "IphoneFocus"
         },
         {
@@ -997,6 +1082,11 @@
           "cSharpName": "KitchenMotionSensors"
         },
         {
+          "id": "binary_sensor.krzl_kiosk_mode",
+          "friendlyName": "KRZL \uD83D\uDC78\uD83C\uDFFB Kiosk Mode",
+          "cSharpName": "KrzlKioskMode"
+        },
+        {
           "id": "binary_sensor.living_room_presence_sensors",
           "friendlyName": "Living Room Presence Sensors",
           "cSharpName": "LivingRoomPresenceSensors"
@@ -1008,7 +1098,7 @@
         },
         {
           "id": "binary_sensor.mi_watch_ble",
-          "friendlyName": "Mi Watch BLE",
+          "friendlyName": "bermuda_8c_ce_fd_a9_79_a6 Mi Watch BLE",
           "cSharpName": "MiWatchBle"
         },
         {
@@ -1027,14 +1117,19 @@
           "cSharpName": "MipadBrowserFullykiosk"
         },
         {
-          "id": "binary_sensor.node_proxmox_status",
-          "friendlyName": "Node proxmox Status",
-          "cSharpName": "NodeProxmoxStatus"
+          "id": "binary_sensor.mipad_esphome_face_detected",
+          "friendlyName": "Mipad Esphome Face Detected",
+          "cSharpName": "MipadEsphomeFaceDetected"
         },
         {
-          "id": "binary_sensor.node_proxmox_updates_packages",
-          "friendlyName": "Node proxmox Updates packages",
-          "cSharpName": "NodeProxmoxUpdatesPackages"
+          "id": "binary_sensor.mipad_esphome_redmi_watch_5_active_7e31_presence",
+          "friendlyName": "Mipad Esphome Redmi Watch 5 Active 7E31 Presence",
+          "cSharpName": "MipadEsphomeRedmiWatch5Active7e31Presence"
+        },
+        {
+          "id": "binary_sensor.mipad_esphome_server_status",
+          "friendlyName": "Mipad Esphome Server Status",
+          "cSharpName": "MipadEsphomeServerStatus"
         },
         {
           "id": "binary_sensor.oneplus_13_ble",
@@ -1047,44 +1142,24 @@
           "cSharpName": "Oneplus13Wifi"
         },
         {
-          "id": "binary_sensor.oneplus13_device_locked",
-          "friendlyName": "OnePlus13 Device locked",
-          "cSharpName": "Oneplus13DeviceLocked"
+          "id": "binary_sensor.oneplus13",
+          "friendlyName": "OnePlus13",
+          "cSharpName": "Oneplus13"
         },
         {
-          "id": "binary_sensor.oneplus13_device_secure",
-          "friendlyName": "OnePlus13 Device secure",
-          "cSharpName": "Oneplus13DeviceSecure"
+          "id": "binary_sensor.oneplus13_browser_charging",
+          "friendlyName": "OnePlus13 Browser charging",
+          "cSharpName": "Oneplus13BrowserCharging"
         },
         {
-          "id": "binary_sensor.oneplus13_headphones",
-          "friendlyName": "OnePlus13 Headphones",
-          "cSharpName": "Oneplus13Headphones"
+          "id": "binary_sensor.oneplus13_browser_dark_mode",
+          "friendlyName": "OnePlus13 Browser dark mode",
+          "cSharpName": "Oneplus13BrowserDarkMode"
         },
         {
-          "id": "binary_sensor.oneplus13_high_accuracy_mode",
-          "friendlyName": "OnePlus13 High accuracy mode",
-          "cSharpName": "Oneplus13HighAccuracyMode"
-        },
-        {
-          "id": "binary_sensor.oneplus13_is_charging",
-          "friendlyName": "OnePlus13 Is charging",
-          "cSharpName": "Oneplus13IsCharging"
-        },
-        {
-          "id": "binary_sensor.oneplus13_mobile_data",
-          "friendlyName": "OnePlus13 Mobile data",
-          "cSharpName": "Oneplus13MobileData"
-        },
-        {
-          "id": "binary_sensor.oneplus13_music_active",
-          "friendlyName": "OnePlus13 Music active",
-          "cSharpName": "Oneplus13MusicActive"
-        },
-        {
-          "id": "binary_sensor.oneplus13_wi_fi_state",
-          "friendlyName": "OnePlus13 Wi-Fi state",
-          "cSharpName": "Oneplus13WiFiState"
+          "id": "binary_sensor.oneplus13_browser_fullykiosk",
+          "friendlyName": "OnePlus13 Browser FullyKiosk",
+          "cSharpName": "Oneplus13BrowserFullykiosk"
         },
         {
           "id": "binary_sensor.pantry_lights_cloud_connection",
@@ -1112,34 +1187,14 @@
           "cSharpName": "PantryMotionSensors"
         },
         {
-          "id": "binary_sensor.poco_f4_gt_ble",
-          "friendlyName": "Poco F4 GT BLE",
-          "cSharpName": "PocoF4GtBle"
-        },
-        {
           "id": "binary_sensor.poco_f4_gt_bluetooth_state",
           "friendlyName": "POCO F4 GT Bluetooth state",
           "cSharpName": "PocoF4GtBluetoothState"
         },
         {
-          "id": "binary_sensor.poco_f4_gt_ping",
-          "friendlyName": "Poco F4 GT Ping",
-          "cSharpName": "PocoF4GtPing"
-        },
-        {
           "id": "binary_sensor.poco_f4_gt_work_profile",
           "friendlyName": "POCO F4 GT Work profile",
           "cSharpName": "PocoF4GtWorkProfile"
-        },
-        {
-          "id": "binary_sensor.qemu_homeassistant_local_100_health",
-          "friendlyName": "QEMU homeassistant.local (100) Health",
-          "cSharpName": "QemuHomeassistantLocal100Health"
-        },
-        {
-          "id": "binary_sensor.qemu_homeassistant_local_100_status",
-          "friendlyName": "QEMU homeassistant.local (100) Status",
-          "cSharpName": "QemuHomeassistantLocal100Status"
         },
         {
           "id": "binary_sensor.redmi_watch_5_ble",
@@ -1155,11 +1210,6 @@
           "id": "binary_sensor.rgb_light_strip_overheated",
           "friendlyName": "RGB Light Strip Overheated",
           "cSharpName": "RgbLightStripOverheated"
-        },
-        {
-          "id": "binary_sensor.rpi_power_status",
-          "friendlyName": "RPi Power status",
-          "cSharpName": "RpiPowerStatus"
         },
         {
           "id": "binary_sensor.sala_lights_2_cloud_connection",
@@ -1280,7 +1330,12 @@
         },
         {
           "jsonName": "friendly_name",
-          "cSharpName": "FriendlyName",
+          "cSharpName": "FriendlyName_0",
+          "clrType": "System.String"
+        },
+        {
+          "jsonName": "friendlyName",
+          "cSharpName": "FriendlyName_1",
           "clrType": "System.String"
         },
         {
@@ -1342,6 +1397,141 @@
           "jsonName": "observations",
           "cSharpName": "Observations",
           "clrType": "System.Collections.Generic.IReadOnlyList\u00601[System.Object]"
+        },
+        {
+          "jsonName": "trigger",
+          "cSharpName": "Trigger",
+          "clrType": "System.String"
+        },
+        {
+          "jsonName": "lastAttemptedSyncAt",
+          "cSharpName": "LastAttemptedSyncAt",
+          "clrType": "System.String"
+        },
+        {
+          "jsonName": "lastSuccessfulSyncAt",
+          "cSharpName": "LastSuccessfulSyncAt",
+          "clrType": "System.String"
+        },
+        {
+          "jsonName": "lastError",
+          "cSharpName": "LastError",
+          "clrType": null
+        },
+        {
+          "jsonName": "lastDataChangeAt",
+          "cSharpName": "LastDataChangeAt",
+          "clrType": "System.String"
+        },
+        {
+          "jsonName": "lastDataChangeRevision",
+          "cSharpName": "LastDataChangeRevision",
+          "clrType": "System.String"
+        },
+        {
+          "jsonName": "syncInProgress",
+          "cSharpName": "SyncInProgress",
+          "clrType": "System.Boolean"
+        },
+        {
+          "jsonName": "rateLimitRemaining",
+          "cSharpName": "RateLimitRemaining",
+          "clrType": "System.Double"
+        },
+        {
+          "jsonName": "rateLimitLimit",
+          "cSharpName": "RateLimitLimit",
+          "clrType": "System.Double"
+        },
+        {
+          "jsonName": "id",
+          "cSharpName": "Id",
+          "clrType": "System.String"
+        },
+        {
+          "jsonName": "slug",
+          "cSharpName": "Slug",
+          "clrType": "System.String"
+        },
+        {
+          "jsonName": "accountType",
+          "cSharpName": "AccountType",
+          "clrType": "System.String"
+        },
+        {
+          "jsonName": "archived",
+          "cSharpName": "Archived",
+          "clrType": "System.Boolean"
+        },
+        {
+          "jsonName": "excludeFromStats",
+          "cSharpName": "ExcludeFromStats",
+          "clrType": "System.Boolean"
+        },
+        {
+          "jsonName": "recordCount",
+          "cSharpName": "RecordCount",
+          "clrType": "System.Double"
+        },
+        {
+          "jsonName": "lastRecordDate",
+          "cSharpName": "LastRecordDate",
+          "clrType": "System.String"
+        },
+        {
+          "jsonName": "balance",
+          "cSharpName": "Balance",
+          "clrType": "System.Double"
+        },
+        {
+          "jsonName": "currencyCode",
+          "cSharpName": "CurrencyCode",
+          "clrType": "System.String"
+        },
+        {
+          "jsonName": "balanceSource",
+          "cSharpName": "BalanceSource",
+          "clrType": "System.String"
+        },
+        {
+          "jsonName": "balanceAsOf",
+          "cSharpName": "BalanceAsOf",
+          "clrType": null
+        },
+        {
+          "jsonName": "fetchedAt",
+          "cSharpName": "FetchedAt",
+          "clrType": "System.String"
+        },
+        {
+          "jsonName": "in_progress_task",
+          "cSharpName": "InProgressTask",
+          "clrType": "System.Boolean"
+        },
+        {
+          "jsonName": "in_progress_task_count",
+          "cSharpName": "InProgressTaskCount",
+          "clrType": "System.Double"
+        },
+        {
+          "jsonName": "in_progress_tasks",
+          "cSharpName": "InProgressTasks",
+          "clrType": "System.Collections.Generic.IReadOnlyList\u00601[System.Object]"
+        },
+        {
+          "jsonName": "in_progress_task_source",
+          "cSharpName": "InProgressTaskSource",
+          "clrType": "System.String"
+        },
+        {
+          "jsonName": "page_url",
+          "cSharpName": "PageUrl",
+          "clrType": "System.String"
+        },
+        {
+          "jsonName": "scraped_at",
+          "cSharpName": "ScrapedAt",
+          "clrType": "System.String"
         }
       ]
     },
@@ -1349,14 +1539,19 @@
       "domain": "button",
       "entities": [
         {
-          "id": "button.65c755_identify",
+          "id": "button.65c755_identify_2",
           "friendlyName": "65C755 Identify",
-          "cSharpName": "_65c755Identify"
+          "cSharpName": "_65c755Identify2"
         },
         {
           "id": "button.ac_fan_mode_toggle",
           "friendlyName": "AC Fan Mode Toggle",
           "cSharpName": "AcFanModeToggle"
+        },
+        {
+          "id": "button.ac_launch_app",
+          "friendlyName": "Launch App",
+          "cSharpName": "AcLaunchApp"
         },
         {
           "id": "button.baby_camera_calibrate",
@@ -1367,6 +1562,11 @@
           "id": "button.baby_camera_format_sd_card",
           "friendlyName": "Baby Camera Format SD Card",
           "cSharpName": "BabyCameraFormatSdCard"
+        },
+        {
+          "id": "button.baby_camera_launch_app",
+          "friendlyName": "Launch App",
+          "cSharpName": "BabyCameraLaunchApp"
         },
         {
           "id": "button.baby_camera_manual_alarm_start",
@@ -1414,6 +1614,11 @@
           "cSharpName": "BathroomLightsRestart"
         },
         {
+          "id": "button.bathroom_motion_sensor_launch_app",
+          "friendlyName": "Launch App",
+          "cSharpName": "BathroomMotionSensorLaunchApp"
+        },
+        {
           "id": "button.bathroom_motion_sensor_manual_clear",
           "friendlyName": "Bathroom Motion Sensor Manual Clear",
           "cSharpName": "BathroomMotionSensorManualClear"
@@ -1439,6 +1644,11 @@
           "cSharpName": "BedroomMotionSensorFactoryReset"
         },
         {
+          "id": "button.bedroom_motion_sensor_launch_app",
+          "friendlyName": "Launch App",
+          "cSharpName": "BedroomMotionSensorLaunchApp"
+        },
+        {
           "id": "button.bedroom_motion_sensor_manual_clear",
           "friendlyName": "Bedroom Motion Sensor Manual Clear",
           "cSharpName": "BedroomMotionSensorManualClear"
@@ -1459,6 +1669,11 @@
           "cSharpName": "BedroomMotionSensorRestartEsp32"
         },
         {
+          "id": "button.budgetbakers_wallet_budgetbakers_wallet_sync_now",
+          "friendlyName": "BudgetBakers Wallet BudgetBakers Wallet Sync Now",
+          "cSharpName": "BudgetbakersWalletBudgetbakersWalletSyncNow"
+        },
+        {
           "id": "button.ceiling_fan_restart",
           "friendlyName": "Ceiling Fan Restart",
           "cSharpName": "CeilingFanRestart"
@@ -1472,6 +1687,11 @@
           "id": "button.controller_rgb_df1c0d_unpair_remotes",
           "friendlyName": "Controller RGB DF1C0D Unpair remotes",
           "cSharpName": "ControllerRgbDf1c0dUnpairRemotes"
+        },
+        {
+          "id": "button.daniel_pc_applause",
+          "friendlyName": "daniel-pc applause",
+          "cSharpName": "DanielPcApplause"
         },
         {
           "id": "button.daniel_pc_hass_agent_big_picture_mode",
@@ -1504,6 +1724,11 @@
           "cSharpName": "DanielPcHassAgentPublishallsensors"
         },
         {
+          "id": "button.daniel_pc_hass_agent_startmsteams",
+          "friendlyName": "DANIEL-PC_hass-agent Start MS Teams",
+          "cSharpName": "DanielPcHassAgentStartmsteams"
+        },
+        {
           "id": "button.daniel_pc_hass_agent_update_all_esp_devices",
           "friendlyName": "DANIEL-PC_hass-agent Update All ESP Devices",
           "cSharpName": "DanielPcHassAgentUpdateAllEspDevices"
@@ -1519,6 +1744,21 @@
           "cSharpName": "DanielPcHassAgentUpdatePlugEspDevices"
         },
         {
+          "id": "button.daniel_pc_laugh",
+          "friendlyName": "daniel-pc laugh",
+          "cSharpName": "DanielPcLaugh"
+        },
+        {
+          "id": "button.daniel_pc_like",
+          "friendlyName": "daniel-pc like",
+          "cSharpName": "DanielPcLike"
+        },
+        {
+          "id": "button.daniel_pc_love",
+          "friendlyName": "daniel-pc love",
+          "cSharpName": "DanielPcLove"
+        },
+        {
           "id": "button.daniel_pc_power",
           "friendlyName": "DANIEL-PC Power",
           "cSharpName": "DanielPcPower"
@@ -1529,9 +1769,54 @@
           "cSharpName": "DanielPcRestart"
         },
         {
+          "id": "button.daniel_pc_wow",
+          "friendlyName": "daniel-pc wow",
+          "cSharpName": "DanielPcWow"
+        },
+        {
+          "id": "button.data_annotation_claim_project_learn_to_write_amazing_rationale_commen_2",
+          "friendlyName": "Data Annotation Claim Project - Learn to write amazing rationale commen\u2026",
+          "cSharpName": "DataAnnotationClaimProjectLearnToWriteAmazingRationaleCommen2"
+        },
+        {
+          "id": "button.data_annotation_claim_project_raccoon_swe",
+          "friendlyName": "Data Annotation Claim Project - Raccoon - SWE",
+          "cSharpName": "DataAnnotationClaimProjectRaccoonSwe"
+        },
+        {
+          "id": "button.data_annotation_claim_project_submit_this_task_if_you_need_the_passke",
+          "friendlyName": "Data Annotation Claim Project - Submit this task if you need the passke\u2026",
+          "cSharpName": "DataAnnotationClaimProjectSubmitThisTaskIfYouNeedThePasske"
+        },
+        {
+          "id": "button.data_annotation_clear_priority_cache",
+          "friendlyName": "Data Annotation Clear Priority Cache",
+          "cSharpName": "DataAnnotationClearPriorityCache"
+        },
+        {
+          "id": "button.data_annotation_rebuild_discovery",
+          "friendlyName": "Data Annotation Rebuild Discovery",
+          "cSharpName": "DataAnnotationRebuildDiscovery"
+        },
+        {
+          "id": "button.data_annotation_withdraw_funds",
+          "friendlyName": "Data Annotation Withdraw Funds",
+          "cSharpName": "DataAnnotationWithdrawFunds"
+        },
+        {
+          "id": "button.dataannotation_daniel_rodriguez_dataannotation_sync_now",
+          "friendlyName": "Data Annotation Sync Now",
+          "cSharpName": "DataannotationDanielRodriguezDataannotationSyncNow"
+        },
+        {
           "id": "button.desk_motion_sensor_factory_reset",
           "friendlyName": "Desk Motion Sensor factory reset",
           "cSharpName": "DeskMotionSensorFactoryReset"
+        },
+        {
+          "id": "button.desk_motion_sensor_launch_app",
+          "friendlyName": "Launch App",
+          "cSharpName": "DeskMotionSensorLaunchApp"
         },
         {
           "id": "button.desk_motion_sensor_manual_clear",
@@ -1552,6 +1837,11 @@
           "id": "button.desk_motion_sensor_restart_esp32",
           "friendlyName": "Desk Motion Sensor Restart ESP32",
           "cSharpName": "DeskMotionSensorRestartEsp32"
+        },
+        {
+          "id": "button.front_door_wake",
+          "friendlyName": "Front Door Wake",
+          "cSharpName": "FrontDoorWake"
         },
         {
           "id": "button.google_assistant_synchronize_devices",
@@ -1584,6 +1874,11 @@
           "cSharpName": "InductionCookerPower"
         },
         {
+          "id": "button.kitchen_motion_sensor_launch_app",
+          "friendlyName": "Launch App",
+          "cSharpName": "KitchenMotionSensorLaunchApp"
+        },
+        {
           "id": "button.kitchen_motion_sensor_manual_clear",
           "friendlyName": "Kitchen Motion Sensor Manual Clear",
           "cSharpName": "KitchenMotionSensorManualClear"
@@ -1604,9 +1899,9 @@
           "cSharpName": "KitchenMotionSensorRestartEsp32"
         },
         {
-          "id": "button.launch_mi_remote",
-          "friendlyName": "Launch Mi Remote",
-          "cSharpName": "LaunchMiRemote"
+          "id": "button.lg_webos_smart_tv_launch_app",
+          "friendlyName": "Launch App",
+          "cSharpName": "LgWebosSmartTvLaunchApp"
         },
         {
           "id": "button.lg_webos_tv_fe94_identify",
@@ -1624,14 +1919,54 @@
           "cSharpName": "ManualTrackerButtonDaniel"
         },
         {
-          "id": "button.meralco_electricity_rates_scan_now",
-          "friendlyName": "MERALCO Electricity Rates Scan Now",
-          "cSharpName": "MeralcoElectricityRatesScanNow"
+          "id": "button.mipad_esphome_apply_audio_fix",
+          "friendlyName": "Mipad Esphome Apply Audio Fix",
+          "cSharpName": "MipadEsphomeApplyAudioFix"
+        },
+        {
+          "id": "button.mipad_esphome_kill_app",
+          "friendlyName": "Mipad Esphome Kill App",
+          "cSharpName": "MipadEsphomeKillApp"
+        },
+        {
+          "id": "button.mipad_esphome_manual_wake",
+          "friendlyName": "Mipad Esphome Manual Wake",
+          "cSharpName": "MipadEsphomeManualWake"
+        },
+        {
+          "id": "button.mipad_esphome_reboot_device",
+          "friendlyName": "Mipad Esphome Reboot Device",
+          "cSharpName": "MipadEsphomeRebootDevice"
+        },
+        {
+          "id": "button.mipad_esphome_refresh_web",
+          "friendlyName": "Mipad Esphome Refresh Web",
+          "cSharpName": "MipadEsphomeRefreshWeb"
+        },
+        {
+          "id": "button.mipad_esphome_restart_server",
+          "friendlyName": "Mipad Esphome Restart Server",
+          "cSharpName": "MipadEsphomeRestartServer"
+        },
+        {
+          "id": "button.mipad_esphome_restart_service",
+          "friendlyName": "Mipad Esphome Restart Service",
+          "cSharpName": "MipadEsphomeRestartService"
+        },
+        {
+          "id": "button.mipad_esphome_toggle_flashlight",
+          "friendlyName": "Mipad Esphome Toggle Flashlight",
+          "cSharpName": "MipadEsphomeToggleFlashlight"
         },
         {
           "id": "button.pantry_motion_sensor_factory_reset",
           "friendlyName": "Pantry Motion Sensor factory reset",
           "cSharpName": "PantryMotionSensorFactoryReset"
+        },
+        {
+          "id": "button.pantry_motion_sensor_launch_app",
+          "friendlyName": "Launch App",
+          "cSharpName": "PantryMotionSensorLaunchApp"
         },
         {
           "id": "button.pantry_motion_sensor_manual_clear",
@@ -1654,11 +1989,6 @@
           "cSharpName": "PantryMotionSensorRestartEsp32"
         },
         {
-          "id": "button.qemu_homeassistant_local_100_reboot",
-          "friendlyName": "QEMU homeassistant.local (100) Reboot",
-          "cSharpName": "QemuHomeassistantLocal100Reboot"
-        },
-        {
           "id": "button.restart_esp_32",
           "friendlyName": "Restart ESP 32",
           "cSharpName": "RestartEsp32"
@@ -1667,6 +1997,11 @@
           "id": "button.rgb_light_strip_restart",
           "friendlyName": "RGB Light Strip Restart",
           "cSharpName": "RgbLightStripRestart"
+        },
+        {
+          "id": "button.sala_motion_sensor_launch_app",
+          "friendlyName": "Launch App",
+          "cSharpName": "SalaMotionSensorLaunchApp"
         },
         {
           "id": "button.sala_motion_sensor_manual_clear",
@@ -1689,39 +2024,19 @@
           "cSharpName": "SalaMotionSensorRestartEsp32"
         },
         {
-          "id": "button.thinkpadt14_lock",
-          "friendlyName": "ThinkpadT14 lock",
-          "cSharpName": "Thinkpadt14Lock"
-        },
-        {
-          "id": "button.thinkpadt14_monitorsleep",
-          "friendlyName": "ThinkpadT14 monitorsleep",
-          "cSharpName": "Thinkpadt14Monitorsleep"
-        },
-        {
-          "id": "button.thinkpadt14_monitorwake",
-          "friendlyName": "ThinkpadT14 monitorwake",
-          "cSharpName": "Thinkpadt14Monitorwake"
-        },
-        {
-          "id": "button.thinkpadt14_playsound",
-          "friendlyName": "ThinkpadT14 Play Sound",
-          "cSharpName": "Thinkpadt14Playsound"
-        },
-        {
-          "id": "button.thinkpadt14_sleep",
-          "friendlyName": "ThinkpadT14 sleep",
-          "cSharpName": "Thinkpadt14Sleep"
-        },
-        {
           "id": "button.thinkpadt14_wake_on_lan",
-          "friendlyName": null,
+          "friendlyName": "ThinkpadT14 Wake on LAN",
           "cSharpName": "Thinkpadt14WakeOnLan"
         },
         {
           "id": "button.thinkpadt14_wake_on_wlan",
-          "friendlyName": null,
+          "friendlyName": "ThinkpadT14 Wake on WLAN",
           "cSharpName": "Thinkpadt14WakeOnWlan"
+        },
+        {
+          "id": "button.tv_backlight_3_lite_launch_app",
+          "friendlyName": "Launch App",
+          "cSharpName": "TvBacklight3LiteLaunchApp"
         },
         {
           "id": "button.tv_backlight_3_lite_request_platform_api_state",
@@ -1740,7 +2055,7 @@
         },
         {
           "id": "button.watchman_report",
-          "friendlyName": "Report",
+          "friendlyName": "Watchman Report",
           "cSharpName": "WatchmanReport"
         },
         {
@@ -1822,7 +2137,7 @@
       "entities": [
         {
           "id": "climate.ac",
-          "friendlyName": "ac",
+          "friendlyName": "AC",
           "cSharpName": "Ac"
         }
       ],
@@ -1903,6 +2218,11 @@
       "domain": "conversation",
       "entities": [
         {
+          "id": "conversation.codex_conversation_account_1_codex_conversation",
+          "friendlyName": "Codex Conversation Account 1 Codex Conversation",
+          "cSharpName": "CodexConversationAccount1CodexConversation"
+        },
+        {
           "id": "conversation.google_generative_ai",
           "friendlyName": "Google Generative AI",
           "cSharpName": "GoogleGenerativeAi"
@@ -1977,11 +2297,6 @@
       "domain": "device_tracker",
       "entities": [
         {
-          "id": "device_tracker.030398d2_a1ca_4557_a88f_a2c37859e60f_100_40004",
-          "friendlyName": "030398d2-a1ca-4557-a88f-a2c37859e60f_100_40004",
-          "cSharpName": "_030398d2A1ca4557A88fA2c37859e60f10040004"
-        },
-        {
           "id": "device_tracker.21051182c",
           "friendlyName": "MiPad5",
           "cSharpName": "_21051182c"
@@ -1990,11 +2305,6 @@
           "id": "device_tracker.8_8_8_8",
           "friendlyName": "8.8.8.8",
           "cSharpName": "_8888"
-        },
-        {
-          "id": "device_tracker.887216f5_c9c0_4901_bf59_51c6e940bf11_100_40004",
-          "friendlyName": null,
-          "cSharpName": "_887216f5C9c04901Bf5951c6e940bf1110040004"
         },
         {
           "id": "device_tracker.athena_bezos",
@@ -2012,14 +2322,14 @@
           "cSharpName": "DanielRodriguez"
         },
         {
+          "id": "device_tracker.fa81a3f9_1759_480c_9a23_9defdca9aa14_100_40004",
+          "friendlyName": "fa81a3f9-1759-480c-9a23-9defdca9aa14_100_40004",
+          "cSharpName": "Fa81a3f91759480c9a239defdca9aa1410040004"
+        },
+        {
           "id": "device_tracker.guest",
           "friendlyName": "Guest",
           "cSharpName": "Guest"
-        },
-        {
-          "id": "device_tracker.ipad",
-          "friendlyName": "iPad",
-          "cSharpName": "Ipad"
         },
         {
           "id": "device_tracker.iphone",
@@ -2038,7 +2348,7 @@
         },
         {
           "id": "device_tracker.my_iphone",
-          "friendlyName": "My iPhone",
+          "friendlyName": "IPhone 11",
           "cSharpName": "MyIphone"
         },
         {
@@ -2050,11 +2360,6 @@
           "id": "device_tracker.oneplus13",
           "friendlyName": "OnePlus13",
           "cSharpName": "Oneplus13"
-        },
-        {
-          "id": "device_tracker.poco_f4_gt_ble_bermuda_tracker",
-          "friendlyName": "Poco F4 GT BLE Bermuda Tracker",
-          "cSharpName": "PocoF4GtBleBermudaTracker"
         },
         {
           "id": "device_tracker.poco_f4_gt_mobile",
@@ -2167,6 +2472,16 @@
           "jsonName": "supported_features",
           "cSharpName": "SupportedFeatures",
           "clrType": "System.Double"
+        },
+        {
+          "jsonName": "tracking_type",
+          "cSharpName": "TrackingType",
+          "clrType": "System.String"
+        },
+        {
+          "jsonName": "in_zones",
+          "cSharpName": "InZones",
+          "clrType": "System.Collections.Generic.IReadOnlyList\u00601[System.String]"
         }
       ]
     },
@@ -2293,9 +2608,19 @@
           "cSharpName": "AcPowerSavingMode"
         },
         {
+          "id": "input_boolean.athena_home",
+          "friendlyName": "Athena Home",
+          "cSharpName": "AthenaHome"
+        },
+        {
           "id": "input_boolean.baby_cam_hd",
           "friendlyName": "Baby Cam HD",
           "cSharpName": "BabyCamHd"
+        },
+        {
+          "id": "input_boolean.daniel_home",
+          "friendlyName": "Daniel Home",
+          "cSharpName": "DanielHome"
         },
         {
           "id": "input_boolean.hide_header",
@@ -2341,11 +2666,6 @@
           "id": "input_boolean.netdaemon_home_automation_apps_security_security_app",
           "friendlyName": "netdaemon_home_automation_apps_security_security_app",
           "cSharpName": "NetdaemonHomeAutomationAppsSecuritySecurityApp"
-        },
-        {
-          "id": "input_boolean.project_nation_week",
-          "friendlyName": "Project Nation Week",
-          "cSharpName": "ProjectNationWeek"
         }
       ],
       "attributes": [
@@ -2480,9 +2800,19 @@
           "cSharpName": "FrontDoor"
         },
         {
+          "id": "lock.front_door_2",
+          "friendlyName": "Front Door",
+          "cSharpName": "FrontDoor2"
+        },
+        {
           "id": "lock.lock_wrapper",
-          "friendlyName": "Lock Wrapper",
+          "friendlyName": "Front Door Lock Wrapper",
           "cSharpName": "LockWrapper"
+        },
+        {
+          "id": "lock.mipad_esphome_lock_display",
+          "friendlyName": "Mipad Esphome Lock Display",
+          "cSharpName": "MipadEsphomeLockDisplay"
         }
       ],
       "attributes": [
@@ -2500,6 +2830,11 @@
           "jsonName": "supported_features",
           "cSharpName": "SupportedFeatures",
           "clrType": "System.Double"
+        },
+        {
+          "jsonName": "icon",
+          "cSharpName": "Icon",
+          "clrType": "System.String"
         }
       ]
     },
@@ -2803,11 +3138,6 @@
           "cSharpName": "BedroomMotionSensorTimeout"
         },
         {
-          "id": "number.bermuda_030398d2a1ca4557a88fa2c37859e60f_100_40004_calibration_ref_power_at_1m_0_for_default",
-          "friendlyName": "OnePlus 13 Calibration Ref Power at 1m. 0 for default.",
-          "cSharpName": "Bermuda030398d2a1ca4557a88fa2c37859e60f10040004CalibrationRefPowerAt1m0ForDefault"
-        },
-        {
           "id": "number.ceiling_fan_turn_off_in",
           "friendlyName": "Ceiling Fan Turn off in",
           "cSharpName": "CeilingFanTurnOffIn"
@@ -3058,6 +3388,31 @@
           "cSharpName": "MiWatchLite79a6CalibrationRefPowerAt1m0ForDefault"
         },
         {
+          "id": "number.mipad_esphome_bluetooth_away_delay",
+          "friendlyName": "Mipad Esphome Bluetooth Away Delay",
+          "cSharpName": "MipadEsphomeBluetoothAwayDelay"
+        },
+        {
+          "id": "number.mipad_esphome_bluetooth_rssi_threshold",
+          "friendlyName": "Mipad Esphome Bluetooth RSSI Threshold",
+          "cSharpName": "MipadEsphomeBluetoothRssiThreshold"
+        },
+        {
+          "id": "number.mipad_esphome_microphone_volume",
+          "friendlyName": "Mipad Esphome Microphone Volume",
+          "cSharpName": "MipadEsphomeMicrophoneVolume"
+        },
+        {
+          "id": "number.mipad_esphome_screen_brightness",
+          "friendlyName": "Mipad Esphome Screen Brightness",
+          "cSharpName": "MipadEsphomeScreenBrightness"
+        },
+        {
+          "id": "number.oneplus_13_calibration_ref_power_at_1m_0_for_default",
+          "friendlyName": "OnePlus 13 Calibration Ref Power at 1m. 0 for default.",
+          "cSharpName": "Oneplus13CalibrationRefPowerAt1m0ForDefault"
+        },
+        {
           "id": "number.pantry_lights_smooth_off",
           "friendlyName": "Pantry Lights Smooth off",
           "cSharpName": "PantryLightsSmoothOff"
@@ -3183,14 +3538,19 @@
           "cSharpName": "PantryMotionSensorTimeout"
         },
         {
-          "id": "number.poco_f4_gt_ble_calibration_ref_power_at_1m_0_for_default",
-          "friendlyName": "Poco F4 GT BLE Calibration Ref Power at 1m. 0 for default.",
-          "cSharpName": "PocoF4GtBleCalibrationRefPowerAt1m0ForDefault"
-        },
-        {
           "id": "number.redmi_watch_5_active_7e31_calibration_ref_power_at_1m_0_for_default",
           "friendlyName": "Redmi Watch 5 Calibration Ref Power at 1m. 0 for default.",
           "cSharpName": "RedmiWatch5Active7e31CalibrationRefPowerAt1m0ForDefault"
+        },
+        {
+          "id": "number.rgb_light_strip_smooth_off",
+          "friendlyName": "RGB Light Strip Smooth off",
+          "cSharpName": "RgbLightStripSmoothOff"
+        },
+        {
+          "id": "number.rgb_light_strip_smooth_on",
+          "friendlyName": "RGB Light Strip Smooth on",
+          "cSharpName": "RgbLightStripSmoothOn"
         },
         {
           "id": "number.sala_lights_2_smooth_off",
@@ -3465,6 +3825,11 @@
           "jsonName": "gps_accuracy",
           "cSharpName": "GpsAccuracy",
           "clrType": "System.Double"
+        },
+        {
+          "jsonName": "in_zones",
+          "cSharpName": "InZones",
+          "clrType": "System.Collections.Generic.IReadOnlyList\u00601[System.String]"
         }
       ]
     },
@@ -3483,13 +3848,8 @@
         },
         {
           "id": "remote.projector",
-          "friendlyName": null,
+          "friendlyName": "Projector",
           "cSharpName": "Projector"
-        },
-        {
-          "id": "remote.xiaomi_tv_box_11",
-          "friendlyName": null,
-          "cSharpName": "XiaomiTvBox11"
         }
       ],
       "attributes": [
@@ -3546,19 +3906,14 @@
           "cSharpName": "_1714535235439"
         },
         {
+          "id": "script.ask_pc_shutdown",
+          "friendlyName": "Ask PC Shutdown ",
+          "cSharpName": "AskPcShutdown"
+        },
+        {
           "id": "script.launch_hlk_radar_tool",
           "friendlyName": "Launch HLK Radar Tool",
           "cSharpName": "LaunchHlkRadarTool"
-        },
-        {
-          "id": "script.launch_moonlight_on_mi_pad_5",
-          "friendlyName": "Launch Moonlight on Mi Pad 5",
-          "cSharpName": "LaunchMoonlightOnMiPad5"
-        },
-        {
-          "id": "script.send_tv_notification",
-          "friendlyName": "Send TV Notification",
-          "cSharpName": "SendTvNotification"
         },
         {
           "id": "script.set_poco_f4_gt_alarm",
@@ -3611,6 +3966,11 @@
           "id": "select.baby_camera_automatic_alarm",
           "friendlyName": "Baby Camera Automatic Alarm",
           "cSharpName": "BabyCameraAutomaticAlarm"
+        },
+        {
+          "id": "select.baby_camera_automatic_reboot_time",
+          "friendlyName": "Baby Camera Automatic Reboot - Time",
+          "cSharpName": "BabyCameraAutomaticRebootTime"
         },
         {
           "id": "select.baby_camera_baby_cry_detection",
@@ -3703,6 +4063,16 @@
           "cSharpName": "BedLightsLightPreset"
         },
         {
+          "id": "select.bedroom_lasco_dual_plug_indicator_light_mode",
+          "friendlyName": "Lasco Dual Plug Indicator light mode",
+          "cSharpName": "BedroomLascoDualPlugIndicatorLightMode"
+        },
+        {
+          "id": "select.bedroom_lasco_dual_plug_power_on_behavior",
+          "friendlyName": "Lasco Dual Plug Power-on behavior",
+          "cSharpName": "BedroomLascoDualPlugPowerOnBehavior"
+        },
+        {
           "id": "select.bedroom_motion_sensor_baud_rate",
           "friendlyName": "Bedroom Motion Sensor baud rate",
           "cSharpName": "BedroomMotionSensorBaudRate"
@@ -3783,6 +4153,51 @@
           "cSharpName": "LaptopChargerPowerOnBehavior"
         },
         {
+          "id": "select.mipad_esphome_assistant",
+          "friendlyName": "Mipad Esphome Assistant",
+          "cSharpName": "MipadEsphomeAssistant"
+        },
+        {
+          "id": "select.mipad_esphome_assistant_2",
+          "friendlyName": "Mipad Esphome Assistant 2",
+          "cSharpName": "MipadEsphomeAssistant2"
+        },
+        {
+          "id": "select.mipad_esphome_bluetooth_proxy_scan_mode",
+          "friendlyName": "Mipad Esphome Bluetooth Proxy Scan Mode",
+          "cSharpName": "MipadEsphomeBluetoothProxyScanMode"
+        },
+        {
+          "id": "select.mipad_esphome_bluetooth_scan_power",
+          "friendlyName": "Mipad Esphome Bluetooth Scan Power",
+          "cSharpName": "MipadEsphomeBluetoothScanPower"
+        },
+        {
+          "id": "select.mipad_esphome_finished_speaking_detection",
+          "friendlyName": "Mipad Esphome Finished speaking detection",
+          "cSharpName": "MipadEsphomeFinishedSpeakingDetection"
+        },
+        {
+          "id": "select.mipad_esphome_wake_word",
+          "friendlyName": "Mipad Esphome Wake word",
+          "cSharpName": "MipadEsphomeWakeWord"
+        },
+        {
+          "id": "select.mipad_esphome_wake_word_2",
+          "friendlyName": "Mipad Esphome Wake word 2",
+          "cSharpName": "MipadEsphomeWakeWord2"
+        },
+        {
+          "id": "select.pantry_lasco_dual_plug_indicator_light_mode",
+          "friendlyName": "Lasco Dual Plug Indicator light mode",
+          "cSharpName": "PantryLascoDualPlugIndicatorLightMode"
+        },
+        {
+          "id": "select.pantry_lasco_dual_plug_power_on_behavior",
+          "friendlyName": "Lasco Dual Plug Power-on behavior",
+          "cSharpName": "PantryLascoDualPlugPowerOnBehavior"
+        },
+        {
           "id": "select.pantry_lights_light_preset",
           "friendlyName": "Pantry Lights Light preset",
           "cSharpName": "PantryLightsLightPreset"
@@ -3854,27 +4269,27 @@
         },
         {
           "id": "select.sonoff_1002163cb5_startup",
-          "friendlyName": "Fridge Power Monitor Startup",
+          "friendlyName": "S31 Plug 1 (Fridge) Fridge Power Monitor Startup",
           "cSharpName": "Sonoff1002163cb5Startup"
         },
         {
           "id": "select.sonoff_1002352c40_1",
-          "friendlyName": "Bed Plug 2",
+          "friendlyName": "EWeLink Plug Bedroom 2 Bed Plug 2",
           "cSharpName": "Sonoff1002352c401"
         },
         {
           "id": "select.sonoff_1002380fe5_1",
-          "friendlyName": "Laptop Plug",
+          "friendlyName": "EWeLink Plug Sala 2 Laptop Plug",
           "cSharpName": "Sonoff1002380fe51"
         },
         {
           "id": "select.sonoff_1002381023_1",
-          "friendlyName": "Sala Stand Fan",
+          "friendlyName": "EWeLink Plug Sala 1 Sala Stand Fan",
           "cSharpName": "Sonoff10023810231"
         },
         {
           "id": "select.sonoff_100238104e_1",
-          "friendlyName": "Bed Plug 1",
+          "friendlyName": "EWeLink Plug Bedroom 1 Bed Plug 1",
           "cSharpName": "Sonoff100238104e1"
         },
         {
@@ -3935,11 +4350,6 @@
       "domain": "sensor",
       "entities": [
         {
-          "id": "sensor.887216f5_c9c0_4901_bf59_51c6e940bf11_100_40004_vendor",
-          "friendlyName": "Vendor",
-          "cSharpName": "_887216f5C9c04901Bf5951c6e940bf1110040004Vendor"
-        },
-        {
           "id": "sensor.adguard_home_newest_version",
           "friendlyName": "AdGuard Home Newest version",
           "cSharpName": "AdguardHomeNewestVersion"
@@ -3968,6 +4378,11 @@
           "id": "sensor.automations",
           "friendlyName": "Home Assistant Automations",
           "cSharpName": "Automations"
+        },
+        {
+          "id": "sensor.baby_camera_last_automatic_reboot_time",
+          "friendlyName": "Baby Camera Last Automatic Reboot Time",
+          "cSharpName": "BabyCameraLastAutomaticRebootTime"
         },
         {
           "id": "sensor.baby_camera_link_type",
@@ -4060,11 +4475,6 @@
           "cSharpName": "BedroomMotionSensorPresenceSensorVersion"
         },
         {
-          "id": "sensor.bermuda_030398d2a1ca4557a88fa2c37859e60f_100_40004_area",
-          "friendlyName": "OnePlus 13 Area",
-          "cSharpName": "Bermuda030398d2a1ca4557a88fa2c37859e60f10040004Area"
-        },
-        {
           "id": "sensor.bermuda_global_active_proxy_count",
           "friendlyName": "Bermuda Global Active proxy count",
           "cSharpName": "BermudaGlobalActiveProxyCount"
@@ -4078,6 +4488,216 @@
           "id": "sensor.binary_sensors",
           "friendlyName": "Home Assistant Binary sensors",
           "cSharpName": "BinarySensors"
+        },
+        {
+          "id": "sensor.browser_mod_d407d4ae_c3026b27_browser_id",
+          "friendlyName": "browser_mod_d407d4ae_c3026b27 Browser ID",
+          "cSharpName": "BrowserModD407d4aeC3026b27BrowserId"
+        },
+        {
+          "id": "sensor.browser_mod_d407d4ae_c3026b27_browser_path",
+          "friendlyName": "browser_mod_d407d4ae_c3026b27 Browser path",
+          "cSharpName": "BrowserModD407d4aeC3026b27BrowserPath"
+        },
+        {
+          "id": "sensor.browser_mod_d407d4ae_c3026b27_browser_user",
+          "friendlyName": "browser_mod_d407d4ae_c3026b27 Browser user",
+          "cSharpName": "BrowserModD407d4aeC3026b27BrowserUser"
+        },
+        {
+          "id": "sensor.browser_mod_d407d4ae_c3026b27_browser_useragent",
+          "friendlyName": "browser_mod_d407d4ae_c3026b27 Browser userAgent",
+          "cSharpName": "BrowserModD407d4aeC3026b27BrowserUseragent"
+        },
+        {
+          "id": "sensor.browser_mod_d407d4ae_c3026b27_browser_visibility",
+          "friendlyName": "browser_mod_d407d4ae_c3026b27 Browser visibility",
+          "cSharpName": "BrowserModD407d4aeC3026b27BrowserVisibility"
+        },
+        {
+          "id": "sensor.browser_mod_d407d4ae_c3026b27_panel",
+          "friendlyName": "browser_mod_d407d4ae_c3026b27 Panel",
+          "cSharpName": "BrowserModD407d4aeC3026b27Panel"
+        },
+        {
+          "id": "sensor.budgetbakers_wallet_bpi_balance",
+          "friendlyName": "BudgetBakers Wallet BPI Balance",
+          "cSharpName": "BudgetbakersWalletBpiBalance"
+        },
+        {
+          "id": "sensor.budgetbakers_wallet_bpi_last_record_date",
+          "friendlyName": "BudgetBakers Wallet BPI Last Record Date",
+          "cSharpName": "BudgetbakersWalletBpiLastRecordDate"
+        },
+        {
+          "id": "sensor.budgetbakers_wallet_budgetbakers_wallet_accounts",
+          "friendlyName": "BudgetBakers Wallet BudgetBakers Wallet Accounts",
+          "cSharpName": "BudgetbakersWalletBudgetbakersWalletAccounts"
+        },
+        {
+          "id": "sensor.budgetbakers_wallet_budgetbakers_wallet_last_sync",
+          "friendlyName": "BudgetBakers Wallet BudgetBakers Wallet Last Sync",
+          "cSharpName": "BudgetbakersWalletBudgetbakersWalletLastSync"
+        },
+        {
+          "id": "sensor.budgetbakers_wallet_budgetbakers_wallet_recent_transactions",
+          "friendlyName": "BudgetBakers Wallet BudgetBakers Wallet Recent Transactions",
+          "cSharpName": "BudgetbakersWalletBudgetbakersWalletRecentTransactions"
+        },
+        {
+          "id": "sensor.budgetbakers_wallet_cash_balance",
+          "friendlyName": "BudgetBakers Wallet Cash Balance",
+          "cSharpName": "BudgetbakersWalletCashBalance"
+        },
+        {
+          "id": "sensor.budgetbakers_wallet_cash_currency",
+          "friendlyName": "BudgetBakers Wallet Cash Currency",
+          "cSharpName": "BudgetbakersWalletCashCurrency"
+        },
+        {
+          "id": "sensor.budgetbakers_wallet_data_annotation_balance",
+          "friendlyName": "BudgetBakers Wallet Data Annotation Balance",
+          "cSharpName": "BudgetbakersWalletDataAnnotationBalance"
+        },
+        {
+          "id": "sensor.budgetbakers_wallet_data_annotation_currency",
+          "friendlyName": "BudgetBakers Wallet Data Annotation Currency",
+          "cSharpName": "BudgetbakersWalletDataAnnotationCurrency"
+        },
+        {
+          "id": "sensor.budgetbakers_wallet_data_annotation_last_record_date",
+          "friendlyName": "BudgetBakers Wallet Data Annotation Last Record Date",
+          "cSharpName": "BudgetbakersWalletDataAnnotationLastRecordDate"
+        },
+        {
+          "id": "sensor.budgetbakers_wallet_data_annotation_record_count",
+          "friendlyName": "BudgetBakers Wallet Data Annotation Record Count",
+          "cSharpName": "BudgetbakersWalletDataAnnotationRecordCount"
+        },
+        {
+          "id": "sensor.budgetbakers_wallet_gotyme_balance",
+          "friendlyName": "BudgetBakers Wallet GoTyme Balance",
+          "cSharpName": "BudgetbakersWalletGotymeBalance"
+        },
+        {
+          "id": "sensor.budgetbakers_wallet_gotyme_currency",
+          "friendlyName": "BudgetBakers Wallet GoTyme Currency",
+          "cSharpName": "BudgetbakersWalletGotymeCurrency"
+        },
+        {
+          "id": "sensor.budgetbakers_wallet_gotyme_last_record_date",
+          "friendlyName": "BudgetBakers Wallet GoTyme Last Record Date",
+          "cSharpName": "BudgetbakersWalletGotymeLastRecordDate"
+        },
+        {
+          "id": "sensor.budgetbakers_wallet_gotyme_record_count",
+          "friendlyName": "BudgetBakers Wallet GoTyme Record Count",
+          "cSharpName": "BudgetbakersWalletGotymeRecordCount"
+        },
+        {
+          "id": "sensor.budgetbakers_wallet_maribank_balance",
+          "friendlyName": "BudgetBakers Wallet Maribank Balance",
+          "cSharpName": "BudgetbakersWalletMaribankBalance"
+        },
+        {
+          "id": "sensor.budgetbakers_wallet_maribank_currency",
+          "friendlyName": "BudgetBakers Wallet Maribank Currency",
+          "cSharpName": "BudgetbakersWalletMaribankCurrency"
+        },
+        {
+          "id": "sensor.budgetbakers_wallet_maribank_last_record_date",
+          "friendlyName": "BudgetBakers Wallet Maribank Last Record Date",
+          "cSharpName": "BudgetbakersWalletMaribankLastRecordDate"
+        },
+        {
+          "id": "sensor.budgetbakers_wallet_maribank_record_count",
+          "friendlyName": "BudgetBakers Wallet Maribank Record Count",
+          "cSharpName": "BudgetbakersWalletMaribankRecordCount"
+        },
+        {
+          "id": "sensor.budgetbakers_wallet_maya_balance",
+          "friendlyName": "BudgetBakers Wallet Maya Balance",
+          "cSharpName": "BudgetbakersWalletMayaBalance"
+        },
+        {
+          "id": "sensor.budgetbakers_wallet_maya_currency",
+          "friendlyName": "BudgetBakers Wallet Maya Currency",
+          "cSharpName": "BudgetbakersWalletMayaCurrency"
+        },
+        {
+          "id": "sensor.budgetbakers_wallet_maya_last_record_date",
+          "friendlyName": "BudgetBakers Wallet Maya Last Record Date",
+          "cSharpName": "BudgetbakersWalletMayaLastRecordDate"
+        },
+        {
+          "id": "sensor.budgetbakers_wallet_maya_record_count",
+          "friendlyName": "BudgetBakers Wallet Maya Record Count",
+          "cSharpName": "BudgetbakersWalletMayaRecordCount"
+        },
+        {
+          "id": "sensor.budgetbakers_wallet_meralco_balance",
+          "friendlyName": "BudgetBakers Wallet Meralco Balance",
+          "cSharpName": "BudgetbakersWalletMeralcoBalance"
+        },
+        {
+          "id": "sensor.budgetbakers_wallet_meralco_last_record_date",
+          "friendlyName": "BudgetBakers Wallet Meralco Last Record Date",
+          "cSharpName": "BudgetbakersWalletMeralcoLastRecordDate"
+        },
+        {
+          "id": "sensor.budgetbakers_wallet_metrobank_balance",
+          "friendlyName": "BudgetBakers Wallet Metrobank Balance",
+          "cSharpName": "BudgetbakersWalletMetrobankBalance"
+        },
+        {
+          "id": "sensor.budgetbakers_wallet_seabank_balance",
+          "friendlyName": "BudgetBakers Wallet SeaBank Balance",
+          "cSharpName": "BudgetbakersWalletSeabankBalance"
+        },
+        {
+          "id": "sensor.budgetbakers_wallet_seabank_last_record_date",
+          "friendlyName": "BudgetBakers Wallet SeaBank Last Record Date",
+          "cSharpName": "BudgetbakersWalletSeabankLastRecordDate"
+        },
+        {
+          "id": "sensor.budgetbakers_wallet_spaylater_balance",
+          "friendlyName": "BudgetBakers Wallet SPaylater Balance",
+          "cSharpName": "BudgetbakersWalletSpaylaterBalance"
+        },
+        {
+          "id": "sensor.budgetbakers_wallet_spaylater_currency",
+          "friendlyName": "BudgetBakers Wallet SPaylater Currency",
+          "cSharpName": "BudgetbakersWalletSpaylaterCurrency"
+        },
+        {
+          "id": "sensor.budgetbakers_wallet_spaylater_last_record_date",
+          "friendlyName": "BudgetBakers Wallet SPaylater Last Record Date",
+          "cSharpName": "BudgetbakersWalletSpaylaterLastRecordDate"
+        },
+        {
+          "id": "sensor.budgetbakers_wallet_spaylater_record_count",
+          "friendlyName": "BudgetBakers Wallet SPaylater Record Count",
+          "cSharpName": "BudgetbakersWalletSpaylaterRecordCount"
+        },
+        {
+          "id": "sensor.budgetbakers_wallet_wise_aud_balance",
+          "friendlyName": "BudgetBakers Wallet Wise - AUD Balance",
+          "cSharpName": "BudgetbakersWalletWiseAudBalance"
+        },
+        {
+          "id": "sensor.budgetbakers_wallet_wise_aud_currency",
+          "friendlyName": "BudgetBakers Wallet Wise - AUD Currency",
+          "cSharpName": "BudgetbakersWalletWiseAudCurrency"
+        },
+        {
+          "id": "sensor.budgetbakers_wallet_wise_aud_last_record_date",
+          "friendlyName": "BudgetBakers Wallet Wise - AUD Last Record Date",
+          "cSharpName": "BudgetbakersWalletWiseAudLastRecordDate"
+        },
+        {
+          "id": "sensor.budgetbakers_wallet_wise_aud_record_count",
+          "friendlyName": "BudgetBakers Wallet Wise - AUD Record Count",
+          "cSharpName": "BudgetbakersWalletWiseAudRecordCount"
         },
         {
           "id": "sensor.buttons",
@@ -4121,7 +4741,7 @@
         },
         {
           "id": "sensor.daniel_pc_display_switch",
-          "friendlyName": "Display switch",
+          "friendlyName": "DANIEL-PC Display switch",
           "cSharpName": "DanielPcDisplaySwitch"
         },
         {
@@ -4131,13 +4751,33 @@
         },
         {
           "id": "sensor.daniel_pc_hass_agent_incognito",
-          "friendlyName": "DANIEL-PC_hass-agent Incognito",
+          "friendlyName": "DANIEL-PC_hass-agent DANIEL-PC_hass-agent_incognito",
           "cSharpName": "DanielPcHassAgentIncognito"
+        },
+        {
+          "id": "sensor.daniel_pc_hass_agent_move_mouse_status",
+          "friendlyName": "DANIEL-PC_hass-agent DANIEL-PC_hass-agent_move_mouse_status",
+          "cSharpName": "DanielPcHassAgentMoveMouseStatus"
+        },
+        {
+          "id": "sensor.daniel_pc_hass_agent_msteamsactive",
+          "friendlyName": "DANIEL-PC_hass-agent MS Teams Active",
+          "cSharpName": "DanielPcHassAgentMsteamsactive"
         },
         {
           "id": "sensor.daniel_pc_hass_agent_tv_output",
           "friendlyName": "DANIEL-PC_hass-agent TV Output",
           "cSharpName": "DanielPcHassAgentTvOutput"
+        },
+        {
+          "id": "sensor.daniel_pc_hass_agent_vpnconnected",
+          "friendlyName": "DANIEL-PC_hass-agent VPN Connected",
+          "cSharpName": "DanielPcHassAgentVpnconnected"
+        },
+        {
+          "id": "sensor.daniel_pc_ms_teams_status",
+          "friendlyName": "daniel-pc MS Teams Status",
+          "cSharpName": "DanielPcMsTeamsStatus"
         },
         {
           "id": "sensor.daniel_pc_network_interface",
@@ -4148,6 +4788,56 @@
           "id": "sensor.daniel_pc_processes",
           "friendlyName": "DANIEL-PC Processes",
           "cSharpName": "DanielPcProcesses"
+        },
+        {
+          "id": "sensor.daniel_pc_teamsstatus",
+          "friendlyName": "MS Teams Status",
+          "cSharpName": "DanielPcTeamsstatus"
+        },
+        {
+          "id": "sensor.data_annotation_last_payout",
+          "friendlyName": "Data Annotation Last Payout",
+          "cSharpName": "DataAnnotationLastPayout"
+        },
+        {
+          "id": "sensor.data_annotation_next_payout",
+          "friendlyName": "Data Annotation Next Payout",
+          "cSharpName": "DataAnnotationNextPayout"
+        },
+        {
+          "id": "sensor.data_annotation_next_withdrawal",
+          "friendlyName": "Data Annotation Next Withdrawal",
+          "cSharpName": "DataAnnotationNextWithdrawal"
+        },
+        {
+          "id": "sensor.data_annotation_project_learn_to_write_amazing_rationale_commen_2",
+          "friendlyName": "Data Annotation Project - Learn to write amazing rationale commen\u2026",
+          "cSharpName": "DataAnnotationProjectLearnToWriteAmazingRationaleCommen2"
+        },
+        {
+          "id": "sensor.data_annotation_project_raccoon_swe",
+          "friendlyName": "Data Annotation Project - Raccoon - SWE",
+          "cSharpName": "DataAnnotationProjectRaccoonSwe"
+        },
+        {
+          "id": "sensor.data_annotation_project_submit_this_task_if_you_need_the_passke",
+          "friendlyName": "Data Annotation Project - Submit this task if you need the passke\u2026",
+          "cSharpName": "DataAnnotationProjectSubmitThisTaskIfYouNeedThePasske"
+        },
+        {
+          "id": "sensor.dataannotation_daniel_rodriguez_dataannotation_profile",
+          "friendlyName": "Data Annotation Profile",
+          "cSharpName": "DataannotationDanielRodriguezDataannotationProfile"
+        },
+        {
+          "id": "sensor.dataannotation_daniel_rodriguez_dataannotation_project_count",
+          "friendlyName": "Data Annotation Project Count",
+          "cSharpName": "DataannotationDanielRodriguezDataannotationProjectCount"
+        },
+        {
+          "id": "sensor.dataannotation_projects_count",
+          "friendlyName": "DataAnnotation Projects",
+          "cSharpName": "DataannotationProjectsCount"
         },
         {
           "id": "sensor.dates",
@@ -4178,26 +4868,6 @@
           "id": "sensor.devices",
           "friendlyName": "Home Assistant Devices",
           "cSharpName": "Devices"
-        },
-        {
-          "id": "sensor.disk_proxmox_kingston_sa400s37480g_node",
-          "friendlyName": "Node",
-          "cSharpName": "DiskProxmoxKingstonSa400s37480gNode"
-        },
-        {
-          "id": "sensor.disk_proxmox_kingston_sa400s37480g_power_cycles",
-          "friendlyName": "Power cycles",
-          "cSharpName": "DiskProxmoxKingstonSa400s37480gPowerCycles"
-        },
-        {
-          "id": "sensor.disk_proxmox_pm991_nvme_samsung_256gb_node",
-          "friendlyName": "Disk proxmox: PM991 NVMe Samsung 256GB Node",
-          "cSharpName": "DiskProxmoxPm991NvmeSamsung256gbNode"
-        },
-        {
-          "id": "sensor.disk_proxmox_pm991_nvme_samsung_256gb_power_cycles",
-          "friendlyName": "Disk proxmox: PM991 NVMe Samsung 256GB Power cycles",
-          "cSharpName": "DiskProxmoxPm991NvmeSamsung256gbPowerCycles"
         },
         {
           "id": "sensor.entities",
@@ -4235,6 +4905,16 @@
           "cSharpName": "FlytrapSignalLevel2"
         },
         {
+          "id": "sensor.forecast_uv_index",
+          "friendlyName": "Forecast UV Index",
+          "cSharpName": "ForecastUvIndex"
+        },
+        {
+          "id": "sensor.front_door_operator",
+          "friendlyName": "Front Door Operator",
+          "cSharpName": "FrontDoorOperator"
+        },
+        {
           "id": "sensor.govee_to_mqtt_version",
           "friendlyName": "Govee to MQTT Version",
           "cSharpName": "GoveeToMqttVersion"
@@ -4255,6 +4935,31 @@
           "cSharpName": "GuestBatteryState"
         },
         {
+          "id": "sensor.guest_browser_id",
+          "friendlyName": "Guest Browser ID",
+          "cSharpName": "GuestBrowserId"
+        },
+        {
+          "id": "sensor.guest_browser_path",
+          "friendlyName": "Guest Browser path",
+          "cSharpName": "GuestBrowserPath"
+        },
+        {
+          "id": "sensor.guest_browser_user",
+          "friendlyName": "Guest Browser user",
+          "cSharpName": "GuestBrowserUser"
+        },
+        {
+          "id": "sensor.guest_browser_useragent",
+          "friendlyName": "Guest Browser userAgent",
+          "cSharpName": "GuestBrowserUseragent"
+        },
+        {
+          "id": "sensor.guest_browser_visibility",
+          "friendlyName": "Guest Browser visibility",
+          "cSharpName": "GuestBrowserVisibility"
+        },
+        {
           "id": "sensor.guest_bssid",
           "friendlyName": "Guest BSSID",
           "cSharpName": "GuestBssid"
@@ -4270,6 +4975,16 @@
           "cSharpName": "GuestGeocodedLocation"
         },
         {
+          "id": "sensor.guest_kiosk_brightness",
+          "friendlyName": "Guest Kiosk Brightness",
+          "cSharpName": "GuestKioskBrightness"
+        },
+        {
+          "id": "sensor.guest_kiosk_volume",
+          "friendlyName": "Guest Kiosk Volume",
+          "cSharpName": "GuestKioskVolume"
+        },
+        {
           "id": "sensor.guest_last_update_trigger",
           "friendlyName": "Guest Last Update Trigger",
           "cSharpName": "GuestLastUpdateTrigger"
@@ -4278,6 +4993,11 @@
           "id": "sensor.guest_location_permission",
           "friendlyName": "Guest Location permission",
           "cSharpName": "GuestLocationPermission"
+        },
+        {
+          "id": "sensor.guest_panel",
+          "friendlyName": "Guest Panel",
+          "cSharpName": "GuestPanel"
         },
         {
           "id": "sensor.guest_sim_1",
@@ -4293,6 +5013,11 @@
           "id": "sensor.guest_ssid",
           "friendlyName": "Guest SSID",
           "cSharpName": "GuestSsid"
+        },
+        {
+          "id": "sensor.ha_latest_version",
+          "friendlyName": "Latest version",
+          "cSharpName": "HaLatestVersion"
         },
         {
           "id": "sensor.humidifiers",
@@ -4340,113 +5065,63 @@
           "cSharpName": "Integrations"
         },
         {
-          "id": "sensor.ipad_activity",
-          "friendlyName": "iPad Activity",
-          "cSharpName": "IpadActivity"
-        },
-        {
-          "id": "sensor.ipad_app_version",
-          "friendlyName": "iPad App Version",
-          "cSharpName": "IpadAppVersion"
-        },
-        {
-          "id": "sensor.ipad_audio_output",
-          "friendlyName": "iPad Audio Output",
-          "cSharpName": "IpadAudioOutput"
-        },
-        {
-          "id": "sensor.ipad_battery_state",
-          "friendlyName": "iPad Battery State",
-          "cSharpName": "IpadBatteryState"
-        },
-        {
-          "id": "sensor.ipad_bssid",
-          "friendlyName": "iPad BSSID",
-          "cSharpName": "IpadBssid"
-        },
-        {
-          "id": "sensor.ipad_connection_type",
-          "friendlyName": "iPad Connection Type",
-          "cSharpName": "IpadConnectionType"
-        },
-        {
-          "id": "sensor.ipad_geocoded_location",
-          "friendlyName": "iPad Geocoded Location",
-          "cSharpName": "IpadGeocodedLocation"
-        },
-        {
-          "id": "sensor.ipad_last_update_trigger",
-          "friendlyName": "iPad Last Update Trigger",
-          "cSharpName": "IpadLastUpdateTrigger"
-        },
-        {
-          "id": "sensor.ipad_location_permission",
-          "friendlyName": "iPad Location permission",
-          "cSharpName": "IpadLocationPermission"
-        },
-        {
-          "id": "sensor.ipad_ssid",
-          "friendlyName": "iPad SSID",
-          "cSharpName": "IpadSsid"
-        },
-        {
           "id": "sensor.iphone_activity",
-          "friendlyName": "iPhone Activity",
+          "friendlyName": "Aenics iPhone Activity",
           "cSharpName": "IphoneActivity"
         },
         {
           "id": "sensor.iphone_app_version",
-          "friendlyName": "iPhone App Version",
+          "friendlyName": "Aenics iPhone App Version",
           "cSharpName": "IphoneAppVersion"
         },
         {
           "id": "sensor.iphone_audio_output",
-          "friendlyName": "iPhone Audio Output",
+          "friendlyName": "Aenics iPhone Audio Output",
           "cSharpName": "IphoneAudioOutput"
         },
         {
           "id": "sensor.iphone_battery_state",
-          "friendlyName": "iPhone Battery State",
+          "friendlyName": "Aenics iPhone Battery State",
           "cSharpName": "IphoneBatteryState"
         },
         {
           "id": "sensor.iphone_bssid",
-          "friendlyName": "iPhone BSSID",
+          "friendlyName": "Aenics iPhone BSSID",
           "cSharpName": "IphoneBssid"
         },
         {
           "id": "sensor.iphone_connection_type",
-          "friendlyName": "iPhone Connection Type",
+          "friendlyName": "Aenics iPhone Connection Type",
           "cSharpName": "IphoneConnectionType"
         },
         {
           "id": "sensor.iphone_geocoded_location",
-          "friendlyName": "iPhone Geocoded Location",
+          "friendlyName": "Aenics iPhone Geocoded Location",
           "cSharpName": "IphoneGeocodedLocation"
         },
         {
           "id": "sensor.iphone_last_update_trigger",
-          "friendlyName": "iPhone Last Update Trigger",
+          "friendlyName": "Aenics iPhone Last Update Trigger",
           "cSharpName": "IphoneLastUpdateTrigger"
         },
         {
           "id": "sensor.iphone_location_permission",
-          "friendlyName": "iPhone Location permission",
+          "friendlyName": "Aenics iPhone Location permission",
           "cSharpName": "IphoneLocationPermission"
         },
         {
           "id": "sensor.iphone_sim_1",
-          "friendlyName": "iPhone SIM 1",
+          "friendlyName": "Aenics iPhone SIM 1",
           "cSharpName": "IphoneSim1"
         },
         {
           "id": "sensor.iphone_sim_2",
-          "friendlyName": "iPhone SIM 2",
+          "friendlyName": "Aenics iPhone SIM 2",
           "cSharpName": "IphoneSim2"
         },
         {
           "id": "sensor.iphone_ssid",
-          "friendlyName": "iPhone SSID",
+          "friendlyName": "Aenics iPhone SSID",
           "cSharpName": "IphoneSsid"
         },
         {
@@ -4493,6 +5168,16 @@
           "id": "sensor.krzl_geocoded_location",
           "friendlyName": "KRZL \uD83D\uDC78\uD83C\uDFFB Geocoded Location",
           "cSharpName": "KrzlGeocodedLocation"
+        },
+        {
+          "id": "sensor.krzl_kiosk_brightness",
+          "friendlyName": "KRZL \uD83D\uDC78\uD83C\uDFFB Kiosk Brightness",
+          "cSharpName": "KrzlKioskBrightness"
+        },
+        {
+          "id": "sensor.krzl_kiosk_volume",
+          "friendlyName": "KRZL \uD83D\uDC78\uD83C\uDFFB Kiosk Volume",
+          "cSharpName": "KrzlKioskVolume"
         },
         {
           "id": "sensor.krzl_last_update_trigger",
@@ -4551,13 +5236,8 @@
         },
         {
           "id": "sensor.meralco_electricity_rates_rate_trend",
-          "friendlyName": "MERALCO Electricity Rates Rate Trend",
+          "friendlyName": "Meralco Electricity Rates Rate Trend",
           "cSharpName": "MeralcoElectricityRatesRateTrend"
-        },
-        {
-          "id": "sensor.meralco_electricity_rates_target_month",
-          "friendlyName": "MERALCO Electricity Rates Target Month",
-          "cSharpName": "MeralcoElectricityRatesTargetMonth"
         },
         {
           "id": "sensor.mi_watch_lite_79a6_area",
@@ -4590,6 +5270,51 @@
           "cSharpName": "MipadBrowserVisibility"
         },
         {
+          "id": "sensor.mipad_esphome_assistant_response",
+          "friendlyName": "Mipad Esphome Assistant Response",
+          "cSharpName": "MipadEsphomeAssistantResponse"
+        },
+        {
+          "id": "sensor.mipad_esphome_connected_clients",
+          "friendlyName": "Mipad Esphome Connected Clients",
+          "cSharpName": "MipadEsphomeConnectedClients"
+        },
+        {
+          "id": "sensor.mipad_esphome_female_count",
+          "friendlyName": "Mipad Esphome Female Count",
+          "cSharpName": "MipadEsphomeFemaleCount"
+        },
+        {
+          "id": "sensor.mipad_esphome_fix_status",
+          "friendlyName": "Mipad Esphome Fix Status",
+          "cSharpName": "MipadEsphomeFixStatus"
+        },
+        {
+          "id": "sensor.mipad_esphome_intent_launcher_status",
+          "friendlyName": "Mipad Esphome Intent Launcher Status",
+          "cSharpName": "MipadEsphomeIntentLauncherStatus"
+        },
+        {
+          "id": "sensor.mipad_esphome_male_count",
+          "friendlyName": "Mipad Esphome Male Count",
+          "cSharpName": "MipadEsphomeMaleCount"
+        },
+        {
+          "id": "sensor.mipad_esphome_serial_port",
+          "friendlyName": "Mipad Esphome Serial Port",
+          "cSharpName": "MipadEsphomeSerialPort"
+        },
+        {
+          "id": "sensor.mipad_esphome_tcp_port",
+          "friendlyName": "Mipad Esphome TCP Port",
+          "cSharpName": "MipadEsphomeTcpPort"
+        },
+        {
+          "id": "sensor.mipad_esphome_voice_command",
+          "friendlyName": "Mipad Esphome Voice Command",
+          "cSharpName": "MipadEsphomeVoiceCommand"
+        },
+        {
           "id": "sensor.mipad_panel",
           "friendlyName": "MiPad Panel",
           "cSharpName": "MipadPanel"
@@ -4605,34 +5330,14 @@
           "cSharpName": "Mipad5ChargerType"
         },
         {
-          "id": "sensor.node_proxmox_containers_running",
-          "friendlyName": "Node proxmox Containers running",
-          "cSharpName": "NodeProxmoxContainersRunning"
-        },
-        {
-          "id": "sensor.node_proxmox_last_boot",
-          "friendlyName": "Node proxmox Last boot",
-          "cSharpName": "NodeProxmoxLastBoot"
-        },
-        {
-          "id": "sensor.node_proxmox_total_updates",
-          "friendlyName": "Node proxmox Total updates",
-          "cSharpName": "NodeProxmoxTotalUpdates"
-        },
-        {
-          "id": "sensor.node_proxmox_virtual_machines_running",
-          "friendlyName": "Node proxmox Virtual machines running",
-          "cSharpName": "NodeProxmoxVirtualMachinesRunning"
-        },
-        {
           "id": "sensor.numbers",
           "friendlyName": "Home Assistant Numbers",
           "cSharpName": "Numbers"
         },
         {
-          "id": "sensor.oneplus13_battery_health",
-          "friendlyName": "OnePlus13 Battery health",
-          "cSharpName": "Oneplus13BatteryHealth"
+          "id": "sensor.oneplus_13_area",
+          "friendlyName": "OnePlus 13 Area",
+          "cSharpName": "Oneplus13Area"
         },
         {
           "id": "sensor.oneplus13_battery_state",
@@ -4645,24 +5350,39 @@
           "cSharpName": "Oneplus13BleTransmitter"
         },
         {
+          "id": "sensor.oneplus13_browser_id",
+          "friendlyName": "OnePlus13 Browser ID",
+          "cSharpName": "Oneplus13BrowserId"
+        },
+        {
+          "id": "sensor.oneplus13_browser_path",
+          "friendlyName": "OnePlus13 Browser path",
+          "cSharpName": "Oneplus13BrowserPath"
+        },
+        {
+          "id": "sensor.oneplus13_browser_user",
+          "friendlyName": "OnePlus13 Browser user",
+          "cSharpName": "Oneplus13BrowserUser"
+        },
+        {
+          "id": "sensor.oneplus13_browser_useragent",
+          "friendlyName": "OnePlus13 Browser userAgent",
+          "cSharpName": "Oneplus13BrowserUseragent"
+        },
+        {
+          "id": "sensor.oneplus13_browser_visibility",
+          "friendlyName": "OnePlus13 Browser visibility",
+          "cSharpName": "Oneplus13BrowserVisibility"
+        },
+        {
           "id": "sensor.oneplus13_charger_type",
           "friendlyName": "OnePlus13 Charger type",
           "cSharpName": "Oneplus13ChargerType"
         },
         {
-          "id": "sensor.oneplus13_detected_activity",
-          "friendlyName": "OnePlus13 Detected activity",
-          "cSharpName": "Oneplus13DetectedActivity"
-        },
-        {
-          "id": "sensor.oneplus13_do_not_disturb_sensor",
-          "friendlyName": "OnePlus13 Do Not Disturb sensor",
-          "cSharpName": "Oneplus13DoNotDisturbSensor"
-        },
-        {
-          "id": "sensor.oneplus13_geocoded_location",
-          "friendlyName": "OnePlus13 Geocoded location",
-          "cSharpName": "Oneplus13GeocodedLocation"
+          "id": "sensor.oneplus13_last_used_app",
+          "friendlyName": "OnePlus13 Last used app",
+          "cSharpName": "Oneplus13LastUsedApp"
         },
         {
           "id": "sensor.oneplus13_network_type",
@@ -4670,39 +5390,14 @@
           "cSharpName": "Oneplus13NetworkType"
         },
         {
-          "id": "sensor.oneplus13_next_alarm",
-          "friendlyName": "OnePlus13 Next alarm",
-          "cSharpName": "Oneplus13NextAlarm"
-        },
-        {
-          "id": "sensor.oneplus13_public_ip_address",
-          "friendlyName": "OnePlus13 Public IP address",
-          "cSharpName": "Oneplus13PublicIpAddress"
-        },
-        {
-          "id": "sensor.oneplus13_screen_brightness",
-          "friendlyName": "OnePlus13 Screen brightness",
-          "cSharpName": "Oneplus13ScreenBrightness"
-        },
-        {
-          "id": "sensor.oneplus13_screen_orientation",
-          "friendlyName": "OnePlus13 Screen orientation",
-          "cSharpName": "Oneplus13ScreenOrientation"
-        },
-        {
-          "id": "sensor.oneplus13_wi_fi_bssid",
-          "friendlyName": "OnePlus13 Wi-Fi BSSID",
-          "cSharpName": "Oneplus13WiFiBssid"
+          "id": "sensor.oneplus13_panel",
+          "friendlyName": "OnePlus13 Panel",
+          "cSharpName": "Oneplus13Panel"
         },
         {
           "id": "sensor.oneplus13_wi_fi_connection",
           "friendlyName": "OnePlus13 Wi-Fi connection",
           "cSharpName": "Oneplus13WiFiConnection"
-        },
-        {
-          "id": "sensor.oneplus13_wi_fi_ip_address",
-          "friendlyName": "OnePlus13 Wi-Fi IP address",
-          "cSharpName": "Oneplus13WiFiIpAddress"
         },
         {
           "id": "sensor.pantry_lights_signal_level_2",
@@ -4740,11 +5435,6 @@
           "cSharpName": "Persons"
         },
         {
-          "id": "sensor.poco_f4_gt_ble_area",
-          "friendlyName": "Poco F4 GT BLE Area",
-          "cSharpName": "PocoF4GtBleArea"
-        },
-        {
           "id": "sensor.poco_f4_gt_ble_transmitter",
           "friendlyName": "POCO F4 GT BLE transmitter",
           "cSharpName": "PocoF4GtBleTransmitter"
@@ -4780,21 +5470,6 @@
           "cSharpName": "PocoF4GtScreenBrightness"
         },
         {
-          "id": "sensor.qemu_homeassistant_local_100_last_boot",
-          "friendlyName": "QEMU homeassistant.local (100) Last boot",
-          "cSharpName": "QemuHomeassistantLocal100LastBoot"
-        },
-        {
-          "id": "sensor.qemu_homeassistant_local_100_node",
-          "friendlyName": "QEMU homeassistant.local (100) Node",
-          "cSharpName": "QemuHomeassistantLocal100Node"
-        },
-        {
-          "id": "sensor.qemu_homeassistant_local_100_status",
-          "friendlyName": "QEMU homeassistant.local (100) Status",
-          "cSharpName": "QemuHomeassistantLocal100Status"
-        },
-        {
           "id": "sensor.real_debrid_download_link",
           "friendlyName": "Real Debrid Download Link",
           "cSharpName": "RealDebridDownloadLink"
@@ -4806,7 +5481,7 @@
         },
         {
           "id": "sensor.recent_entity_updates",
-          "friendlyName": "Recent Entity Updates",
+          "friendlyName": "System Monitor Recent Entity Updates",
           "cSharpName": "RecentEntityUpdates"
         },
         {
@@ -4818,11 +5493,6 @@
           "id": "sensor.rgb_light_strip_signal_level",
           "friendlyName": "RGB Light Strip Signal level",
           "cSharpName": "RgbLightStripSignalLevel"
-        },
-        {
-          "id": "sensor.rice_cooker_total_energy",
-          "friendlyName": "Rice Cooker Total energy",
-          "cSharpName": "RiceCookerTotalEnergy"
         },
         {
           "id": "sensor.sala_lights_2_signal_level_2",
@@ -4895,16 +5565,6 @@
           "cSharpName": "Sonoff100238104eAction"
         },
         {
-          "id": "sensor.storage_proxmox_local_lvm_node",
-          "friendlyName": "Storage proxmox/local-lvm Node",
-          "cSharpName": "StorageProxmoxLocalLvmNode"
-        },
-        {
-          "id": "sensor.storage_proxmox_local_node",
-          "friendlyName": "Storage proxmox/local Node",
-          "cSharpName": "StorageProxmoxLocalNode"
-        },
-        {
           "id": "sensor.stt",
           "friendlyName": "Home Assistant Speech-to-text",
           "cSharpName": "Stt"
@@ -4951,7 +5611,7 @@
         },
         {
           "id": "sensor.system_monitor_last_boot",
-          "friendlyName": "System Monitor Last boot",
+          "friendlyName": "System Monitor Uptime",
           "cSharpName": "SystemMonitorLastBoot"
         },
         {
@@ -4960,74 +5620,14 @@
           "cSharpName": "Texts"
         },
         {
-          "id": "sensor.thinkpadt14_4009a504_e767_4f6a_bf1a_b11fda26d5b9_display1",
-          "friendlyName": "ThinkpadT14 DISPLAY1",
-          "cSharpName": "Thinkpadt144009a504E7674f6aBf1aB11fda26d5b9Display1"
-        },
-        {
-          "id": "sensor.thinkpadt14_4009a504_e767_4f6a_bf1a_b11fda26d5b9_display11",
-          "friendlyName": "ThinkpadT14 DISPLAY11",
-          "cSharpName": "Thinkpadt144009a504E7674f6aBf1aB11fda26d5b9Display11"
-        },
-        {
-          "id": "sensor.thinkpadt14_4009a504_e767_4f6a_bf1a_b11fda26d5b9_display12",
-          "friendlyName": "ThinkpadT14 DISPLAY12",
-          "cSharpName": "Thinkpadt144009a504E7674f6aBf1aB11fda26d5b9Display12"
-        },
-        {
-          "id": "sensor.thinkpadt14_4009a504_e767_4f6a_bf1a_b11fda26d5b9_display2",
-          "friendlyName": "ThinkpadT14 DISPLAY2",
-          "cSharpName": "Thinkpadt144009a504E7674f6aBf1aB11fda26d5b9Display2"
-        },
-        {
-          "id": "sensor.thinkpadt14_4009a504_e767_4f6a_bf1a_b11fda26d5b9_display6",
-          "friendlyName": "ThinkpadT14 DISPLAY6",
-          "cSharpName": "Thinkpadt144009a504E7674f6aBf1aB11fda26d5b9Display6"
-        },
-        {
-          "id": "sensor.thinkpadt14_4009a504_e767_4f6a_bf1a_b11fda26d5b9_windisc",
-          "friendlyName": "ThinkpadT14 WinDisc",
-          "cSharpName": "Thinkpadt144009a504E7674f6aBf1aB11fda26d5b9Windisc"
-        },
-        {
-          "id": "sensor.thinkpadt14_battery_charge_remaining",
-          "friendlyName": "ThinkpadT14 Charge Remaining",
-          "cSharpName": "Thinkpadt14BatteryChargeRemaining"
-        },
-        {
-          "id": "sensor.thinkpadt14_battery_charge_status",
-          "friendlyName": "ThinkpadT14 Charge Status",
-          "cSharpName": "Thinkpadt14BatteryChargeStatus"
-        },
-        {
-          "id": "sensor.thinkpadt14_battery_full_charge_lifetime",
-          "friendlyName": "ThinkpadT14 Full Charge Lifetime",
-          "cSharpName": "Thinkpadt14BatteryFullChargeLifetime"
-        },
-        {
-          "id": "sensor.thinkpadt14_battery_powerline_status",
-          "friendlyName": "ThinkpadT14 Powerline Status",
-          "cSharpName": "Thinkpadt14BatteryPowerlineStatus"
-        },
-        {
-          "id": "sensor.thinkpadt14_display_display_count",
-          "friendlyName": "ThinkpadT14 Display Count",
-          "cSharpName": "Thinkpadt14DisplayDisplayCount"
-        },
-        {
-          "id": "sensor.thinkpadt14_display_primary_display",
-          "friendlyName": "ThinkpadT14 Primary Display",
-          "cSharpName": "Thinkpadt14DisplayPrimaryDisplay"
-        },
-        {
-          "id": "sensor.thinkpadt14_sessionstate",
-          "friendlyName": "ThinkpadT14 sessionstate",
-          "cSharpName": "Thinkpadt14Sessionstate"
-        },
-        {
           "id": "sensor.times",
           "friendlyName": "Home Assistant Times",
           "cSharpName": "Times"
+        },
+        {
+          "id": "sensor.todos",
+          "friendlyName": "Home Assistant To-do lists",
+          "cSharpName": "Todos"
         },
         {
           "id": "sensor.tts",
@@ -5113,7 +5713,12 @@
       "attributes": [
         {
           "jsonName": "friendly_name",
-          "cSharpName": "FriendlyName",
+          "cSharpName": "FriendlyName_0",
+          "clrType": "System.String"
+        },
+        {
+          "jsonName": "friendlyName",
+          "cSharpName": "FriendlyName_1",
           "clrType": "System.String"
         },
         {
@@ -5343,7 +5948,12 @@
         },
         {
           "jsonName": "Types",
-          "cSharpName": "Types",
+          "cSharpName": "Types_0",
+          "clrType": "System.Collections.Generic.IReadOnlyList\u00601[System.String]"
+        },
+        {
+          "jsonName": "types",
+          "cSharpName": "Types_1",
           "clrType": "System.Collections.Generic.IReadOnlyList\u00601[System.String]"
         },
         {
@@ -5920,6 +6530,256 @@
           "jsonName": "updates_list",
           "cSharpName": "UpdatesList",
           "clrType": "System.Collections.Generic.IReadOnlyList\u00601[System.String]"
+        },
+        {
+          "jsonName": "running",
+          "cSharpName": "Running",
+          "clrType": "System.Double"
+        },
+        {
+          "jsonName": "trigger",
+          "cSharpName": "Trigger",
+          "clrType": "System.String"
+        },
+        {
+          "jsonName": "lastAttemptedSyncAt",
+          "cSharpName": "LastAttemptedSyncAt",
+          "clrType": "System.String"
+        },
+        {
+          "jsonName": "lastSuccessfulSyncAt",
+          "cSharpName": "LastSuccessfulSyncAt",
+          "clrType": "System.String"
+        },
+        {
+          "jsonName": "lastError",
+          "cSharpName": "LastError",
+          "clrType": null
+        },
+        {
+          "jsonName": "lastDataChangeAt",
+          "cSharpName": "LastDataChangeAt",
+          "clrType": "System.String"
+        },
+        {
+          "jsonName": "lastDataChangeRevision",
+          "cSharpName": "LastDataChangeRevision",
+          "clrType": "System.String"
+        },
+        {
+          "jsonName": "syncInProgress",
+          "cSharpName": "SyncInProgress",
+          "clrType": "System.Boolean"
+        },
+        {
+          "jsonName": "rateLimitRemaining",
+          "cSharpName": "RateLimitRemaining",
+          "clrType": "System.Double"
+        },
+        {
+          "jsonName": "rateLimitLimit",
+          "cSharpName": "RateLimitLimit",
+          "clrType": "System.Double"
+        },
+        {
+          "jsonName": "count",
+          "cSharpName": "Count",
+          "clrType": "System.Double"
+        },
+        {
+          "jsonName": "names",
+          "cSharpName": "Names",
+          "clrType": "System.Collections.Generic.IReadOnlyList\u00601[System.String]"
+        },
+        {
+          "jsonName": "archivedCount",
+          "cSharpName": "ArchivedCount",
+          "clrType": "System.Double"
+        },
+        {
+          "jsonName": "fetchedAt",
+          "cSharpName": "FetchedAt",
+          "clrType": "System.String"
+        },
+        {
+          "jsonName": "latestRecordDate",
+          "cSharpName": "LatestRecordDate",
+          "clrType": "System.String"
+        },
+        {
+          "jsonName": "latestUpdatedAt",
+          "cSharpName": "LatestUpdatedAt",
+          "clrType": "System.String"
+        },
+        {
+          "jsonName": "categories",
+          "cSharpName": "Categories",
+          "clrType": "System.Collections.Generic.IReadOnlyList\u00601[System.String]"
+        },
+        {
+          "jsonName": "slug",
+          "cSharpName": "Slug",
+          "clrType": "System.String"
+        },
+        {
+          "jsonName": "accountType",
+          "cSharpName": "AccountType",
+          "clrType": "System.String"
+        },
+        {
+          "jsonName": "archived",
+          "cSharpName": "Archived",
+          "clrType": "System.Boolean"
+        },
+        {
+          "jsonName": "excludeFromStats",
+          "cSharpName": "ExcludeFromStats",
+          "clrType": "System.Boolean"
+        },
+        {
+          "jsonName": "recordCount",
+          "cSharpName": "RecordCount",
+          "clrType": "System.Double"
+        },
+        {
+          "jsonName": "lastRecordDate",
+          "cSharpName": "LastRecordDate",
+          "clrType": "System.String"
+        },
+        {
+          "jsonName": "balance",
+          "cSharpName": "Balance",
+          "clrType": "System.Double"
+        },
+        {
+          "jsonName": "currencyCode",
+          "cSharpName": "CurrencyCode",
+          "clrType": "System.String"
+        },
+        {
+          "jsonName": "balanceSource",
+          "cSharpName": "BalanceSource",
+          "clrType": "System.String"
+        },
+        {
+          "jsonName": "balanceAsOf",
+          "cSharpName": "BalanceAsOf",
+          "clrType": "System.String"
+        },
+        {
+          "jsonName": "tasks",
+          "cSharpName": "Tasks",
+          "clrType": "System.Double"
+        },
+        {
+          "jsonName": "pay",
+          "cSharpName": "Pay",
+          "clrType": "System.String"
+        },
+        {
+          "jsonName": "base_pay",
+          "cSharpName": "BasePay",
+          "clrType": "System.String"
+        },
+        {
+          "jsonName": "priority_pay",
+          "cSharpName": "PriorityPay",
+          "clrType": "System.String"
+        },
+        {
+          "jsonName": "tags",
+          "cSharpName": "Tags",
+          "clrType": "System.Collections.Generic.IReadOnlyList\u00601[System.String]"
+        },
+        {
+          "jsonName": "created",
+          "cSharpName": "Created",
+          "clrType": "System.String"
+        },
+        {
+          "jsonName": "currency",
+          "cSharpName": "Currency",
+          "clrType": "System.String"
+        },
+        {
+          "jsonName": "exchange_rate",
+          "cSharpName": "ExchangeRate",
+          "clrType": "System.Double"
+        },
+        {
+          "jsonName": "base_currency",
+          "cSharpName": "BaseCurrency",
+          "clrType": "System.String"
+        },
+        {
+          "jsonName": "scraped_at",
+          "cSharpName": "ScrapedAt",
+          "clrType": "System.String"
+        },
+        {
+          "jsonName": "next_withdrawal_amount",
+          "cSharpName": "NextWithdrawalAmount",
+          "clrType": "System.Double"
+        },
+        {
+          "jsonName": "next_withdrawal_amount_cents",
+          "cSharpName": "NextWithdrawalAmountCents",
+          "clrType": "System.Double"
+        },
+        {
+          "jsonName": "next_withdrawal_amount_formatted",
+          "cSharpName": "NextWithdrawalAmountFormatted",
+          "clrType": "System.String"
+        },
+        {
+          "jsonName": "next_payout_amount",
+          "cSharpName": "NextPayoutAmount",
+          "clrType": "System.String"
+        },
+        {
+          "jsonName": "next_payout_at_human",
+          "cSharpName": "NextPayoutAtHuman",
+          "clrType": "System.String"
+        },
+        {
+          "jsonName": "next_payout_confidence",
+          "cSharpName": "NextPayoutConfidence",
+          "clrType": "System.String"
+        },
+        {
+          "jsonName": "next_payout_entries",
+          "cSharpName": "NextPayoutEntries",
+          "clrType": "System.Collections.Generic.IReadOnlyList\u00601[System.Object]"
+        },
+        {
+          "jsonName": "next_payout_entries_count",
+          "cSharpName": "NextPayoutEntriesCount",
+          "clrType": "System.Double"
+        },
+        {
+          "jsonName": "next_payout_source",
+          "cSharpName": "NextPayoutSource",
+          "clrType": "System.String"
+        },
+        {
+          "jsonName": "next_withdrawal_at",
+          "cSharpName": "NextWithdrawalAt",
+          "clrType": "System.String"
+        },
+        {
+          "jsonName": "last_payout_amount",
+          "cSharpName": "LastPayoutAmount",
+          "clrType": "System.Double"
+        },
+        {
+          "jsonName": "last_payout_amount_cents",
+          "cSharpName": "LastPayoutAmountCents",
+          "clrType": "System.Double"
+        },
+        {
+          "jsonName": "last_payout_amount_formatted",
+          "cSharpName": "LastPayoutAmountFormatted",
+          "clrType": "System.String"
         }
       ]
     },
@@ -5928,24 +6788,9 @@
       "isNumeric": true,
       "entities": [
         {
-          "id": "sensor.030398d2_a1ca_4557_a88f_a2c37859e60f_100_40004_estimated_distance",
-          "friendlyName": "030398d2-a1ca-4557-a88f-a2c37859e60f_100_40004 Estimated distance",
-          "cSharpName": "_030398d2A1ca4557A88fA2c37859e60f10040004EstimatedDistance"
-        },
-        {
           "id": "sensor.0xa4c1380c17faffff_linkquality",
           "friendlyName": "Zigbee Contact Sensor (Bedroom) Linkquality",
           "cSharpName": "_0xa4c1380c17faffffLinkquality"
-        },
-        {
-          "id": "sensor.887216f5_c9c0_4901_bf59_51c6e940bf11_100_40004_estimated_distance",
-          "friendlyName": "Estimated distance",
-          "cSharpName": "_887216f5C9c04901Bf5951c6e940bf1110040004EstimatedDistance"
-        },
-        {
-          "id": "sensor.887216f5_c9c0_4901_bf59_51c6e940bf11_100_40004_power",
-          "friendlyName": "Power",
-          "cSharpName": "_887216f5C9c04901Bf5951c6e940bf1110040004Power"
         },
         {
           "id": "sensor.ac_outside_temperature",
@@ -6041,6 +6886,11 @@
           "id": "sensor.adguard_home_safe_searches_enforced_2",
           "friendlyName": "AdGuard Home Safe searches enforced",
           "cSharpName": "AdguardHomeSafeSearchesEnforced2"
+        },
+        {
+          "id": "sensor.aud_to_php_exchange_rate",
+          "friendlyName": "AUD to PHP Exchange Rate",
+          "cSharpName": "AudToPhpExchangeRate"
         },
         {
           "id": "sensor.baby_camera_rssi",
@@ -6154,8 +7004,28 @@
         },
         {
           "id": "sensor.battery_rechargable",
-          "friendlyName": "Battery (Rechargable)",
+          "friendlyName": "Front Door Battery (Rechargable)",
           "cSharpName": "BatteryRechargable"
+        },
+        {
+          "id": "sensor.bedroom_lasco_dual_plug_current",
+          "friendlyName": "Lasco Dual Plug Current",
+          "cSharpName": "BedroomLascoDualPlugCurrent"
+        },
+        {
+          "id": "sensor.bedroom_lasco_dual_plug_power",
+          "friendlyName": "Lasco Dual Plug Power",
+          "cSharpName": "BedroomLascoDualPlugPower"
+        },
+        {
+          "id": "sensor.bedroom_lasco_dual_plug_total_energy",
+          "friendlyName": "Lasco Dual Plug Total energy",
+          "cSharpName": "BedroomLascoDualPlugTotalEnergy"
+        },
+        {
+          "id": "sensor.bedroom_lasco_dual_plug_voltage",
+          "friendlyName": "Lasco Dual Plug Voltage",
+          "cSharpName": "BedroomLascoDualPlugVoltage"
         },
         {
           "id": "sensor.bedroom_motion_sensor_g0_move_energy",
@@ -6268,9 +7138,14 @@
           "cSharpName": "BedroomMotionSensorXiaomiMiScaleWeight"
         },
         {
-          "id": "sensor.bermuda_030398d2a1ca4557a88fa2c37859e60f_100_40004_distance",
-          "friendlyName": "OnePlus 13 Distance",
-          "cSharpName": "Bermuda030398d2a1ca4557a88fa2c37859e60f10040004Distance"
+          "id": "sensor.browser_mod_d407d4ae_c3026b27_browser_height",
+          "friendlyName": "browser_mod_d407d4ae_c3026b27 Browser height",
+          "cSharpName": "BrowserModD407d4aeC3026b27BrowserHeight"
+        },
+        {
+          "id": "sensor.browser_mod_d407d4ae_c3026b27_browser_width",
+          "friendlyName": "browser_mod_d407d4ae_c3026b27 Browser width",
+          "cSharpName": "BrowserModD407d4aeC3026b27BrowserWidth"
         },
         {
           "id": "sensor.cloudflared_cpu_percent",
@@ -6299,17 +7174,17 @@
         },
         {
           "id": "sensor.daniel_pc_free_disk_space_d",
-          "friendlyName": "Free disk space D:",
+          "friendlyName": "DANIEL-PC Free disk space D:",
           "cSharpName": "DanielPcFreeDiskSpaceD"
         },
         {
           "id": "sensor.daniel_pc_free_disk_space_e",
-          "friendlyName": "Free disk space E:",
+          "friendlyName": "DANIEL-PC Free disk space E:",
           "cSharpName": "DanielPcFreeDiskSpaceE"
         },
         {
           "id": "sensor.daniel_pc_free_disk_space_f",
-          "friendlyName": "Free disk space F:",
+          "friendlyName": "DANIEL-PC Free disk space F:",
           "cSharpName": "DanielPcFreeDiskSpaceF"
         },
         {
@@ -6323,14 +7198,49 @@
           "cSharpName": "DanielPcHassAgentCpuload"
         },
         {
-          "id": "sensor.daniel_pc_hass_agent_cpuload_2",
-          "friendlyName": "DANIEL-PC_hass-agent Cpuload",
-          "cSharpName": "DanielPcHassAgentCpuload2"
-        },
-        {
           "id": "sensor.daniel_pc_temperature",
           "friendlyName": "DANIEL-PC Temperature",
           "cSharpName": "DanielPcTemperature"
+        },
+        {
+          "id": "sensor.data_annotation_available_funds",
+          "friendlyName": "Data Annotation Available Funds",
+          "cSharpName": "DataAnnotationAvailableFunds"
+        },
+        {
+          "id": "sensor.data_annotation_best_month",
+          "friendlyName": "Data Annotation Best Month",
+          "cSharpName": "DataAnnotationBestMonth"
+        },
+        {
+          "id": "sensor.data_annotation_pending_approval",
+          "friendlyName": "Data Annotation Pending Approval",
+          "cSharpName": "DataAnnotationPendingApproval"
+        },
+        {
+          "id": "sensor.data_annotation_this_month",
+          "friendlyName": "Data Annotation This Month",
+          "cSharpName": "DataAnnotationThisMonth"
+        },
+        {
+          "id": "sensor.data_annotation_total_earnings",
+          "friendlyName": "Data Annotation Total Earnings",
+          "cSharpName": "DataAnnotationTotalEarnings"
+        },
+        {
+          "id": "sensor.data_annotation_total_paid_out",
+          "friendlyName": "Data Annotation Total Paid Out",
+          "cSharpName": "DataAnnotationTotalPaidOut"
+        },
+        {
+          "id": "sensor.data_annotation_total_tasks",
+          "friendlyName": "Data Annotation Total Tasks",
+          "cSharpName": "DataAnnotationTotalTasks"
+        },
+        {
+          "id": "sensor.data_annotation_usd_to_php_rate",
+          "friendlyName": "Data Annotation USD to PHP Rate",
+          "cSharpName": "DataAnnotationUsdToPhpRate"
         },
         {
           "id": "sensor.delta_monthly_energy_reading",
@@ -6438,51 +7348,6 @@
           "cSharpName": "DeskMotionSensorUptimeSensor"
         },
         {
-          "id": "sensor.disk_proxmox_kingston_sa400s37480g_life_left",
-          "friendlyName": "Life left",
-          "cSharpName": "DiskProxmoxKingstonSa400s37480gLifeLeft"
-        },
-        {
-          "id": "sensor.disk_proxmox_kingston_sa400s37480g_power_on_hours",
-          "friendlyName": "Power-on hours",
-          "cSharpName": "DiskProxmoxKingstonSa400s37480gPowerOnHours"
-        },
-        {
-          "id": "sensor.disk_proxmox_kingston_sa400s37480g_size",
-          "friendlyName": "Size",
-          "cSharpName": "DiskProxmoxKingstonSa400s37480gSize"
-        },
-        {
-          "id": "sensor.disk_proxmox_kingston_sa400s37480g_temperature",
-          "friendlyName": "Temperature",
-          "cSharpName": "DiskProxmoxKingstonSa400s37480gTemperature"
-        },
-        {
-          "id": "sensor.disk_proxmox_kingston_sa400s37480g_wearout",
-          "friendlyName": "Wearout",
-          "cSharpName": "DiskProxmoxKingstonSa400s37480gWearout"
-        },
-        {
-          "id": "sensor.disk_proxmox_pm991_nvme_samsung_256gb_power_on_hours",
-          "friendlyName": "Disk proxmox: PM991 NVMe Samsung 256GB Power-on hours",
-          "cSharpName": "DiskProxmoxPm991NvmeSamsung256gbPowerOnHours"
-        },
-        {
-          "id": "sensor.disk_proxmox_pm991_nvme_samsung_256gb_size",
-          "friendlyName": "Disk proxmox: PM991 NVMe Samsung 256GB Size",
-          "cSharpName": "DiskProxmoxPm991NvmeSamsung256gbSize"
-        },
-        {
-          "id": "sensor.disk_proxmox_pm991_nvme_samsung_256gb_temperature",
-          "friendlyName": "Disk proxmox: PM991 NVMe Samsung 256GB Temperature",
-          "cSharpName": "DiskProxmoxPm991NvmeSamsung256gbTemperature"
-        },
-        {
-          "id": "sensor.disk_proxmox_pm991_nvme_samsung_256gb_wearout",
-          "friendlyName": "Disk proxmox: PM991 NVMe Samsung 256GB Wearout",
-          "cSharpName": "DiskProxmoxPm991NvmeSamsung256gbWearout"
-        },
-        {
           "id": "sensor.energy_bathroom_lights",
           "friendlyName": "Energy (Bathroom Lights)",
           "cSharpName": "EnergyBathroomLights"
@@ -6494,7 +7359,7 @@
         },
         {
           "id": "sensor.energy_bed_fan",
-          "friendlyName": "Energy (Bed Fan)",
+          "friendlyName": "Energy (Fan \u002B Charger)",
           "cSharpName": "EnergyBedFan"
         },
         {
@@ -6594,7 +7459,7 @@
         },
         {
           "id": "sensor.energy_rice_cooker",
-          "friendlyName": "Energy (Rice Cooker)",
+          "friendlyName": "Energy (Pressure Cooker)",
           "cSharpName": "EnergyRiceCooker"
         },
         {
@@ -6649,23 +7514,18 @@
         },
         {
           "id": "sensor.energy_washing_machine",
-          "friendlyName": "Energy (Washing Machine)",
+          "friendlyName": "Smart Plug 2 Energy (Washing Machine)",
           "cSharpName": "EnergyWashingMachine"
         },
         {
           "id": "sensor.energy_water_dispenser",
-          "friendlyName": "Energy (Water Dispenser)",
+          "friendlyName": "Energy (Water DIspenser)",
           "cSharpName": "EnergyWaterDispenser"
         },
         {
           "id": "sensor.energy_water_dispenser_cost_2",
           "friendlyName": "sensor Cost",
           "cSharpName": "EnergyWaterDispenserCost2"
-        },
-        {
-          "id": "sensor.energy_work_laptop",
-          "friendlyName": "Energy (Work Laptop)",
-          "cSharpName": "EnergyWorkLaptop"
         },
         {
           "id": "sensor.energy_work_laptop_cost",
@@ -6683,9 +7543,14 @@
           "cSharpName": "EsphomeMemoryPercent"
         },
         {
-          "id": "sensor.estimated_monthly_energy_reading",
-          "friendlyName": "Estimated Monthly Energy Reading",
-          "cSharpName": "EstimatedMonthlyEnergyReading"
+          "id": "sensor.fa81a3f9_1759_480c_9a23_9defdca9aa14_100_40004_estimated_distance",
+          "friendlyName": "fa81a3f9-1759-480c-9a23-9defdca9aa14_100_40004 Estimated distance",
+          "cSharpName": "Fa81a3f91759480c9a239defdca9aa1410040004EstimatedDistance"
+        },
+        {
+          "id": "sensor.front_door_battery",
+          "friendlyName": "Front Door Battery",
+          "cSharpName": "FrontDoorBattery"
         },
         {
           "id": "sensor.front_door_battery_2",
@@ -6698,9 +7563,24 @@
           "cSharpName": "FrontDoorBatteryVoltage"
         },
         {
+          "id": "sensor.front_door_signal_strength",
+          "friendlyName": "Front Door Signal strength",
+          "cSharpName": "FrontDoorSignalStrength"
+        },
+        {
           "id": "sensor.guest_battery_level",
           "friendlyName": "Guest Battery Level",
           "cSharpName": "GuestBatteryLevel"
+        },
+        {
+          "id": "sensor.guest_browser_height",
+          "friendlyName": "Guest Browser height",
+          "cSharpName": "GuestBrowserHeight"
+        },
+        {
+          "id": "sensor.guest_browser_width",
+          "friendlyName": "Guest Browser width",
+          "cSharpName": "GuestBrowserWidth"
         },
         {
           "id": "sensor.guest_storage",
@@ -6728,48 +7608,38 @@
           "cSharpName": "IgnoredIssues"
         },
         {
-          "id": "sensor.ipad_battery_level",
-          "friendlyName": "iPad Battery Level",
-          "cSharpName": "IpadBatteryLevel"
-        },
-        {
-          "id": "sensor.ipad_storage",
-          "friendlyName": "iPad Storage",
-          "cSharpName": "IpadStorage"
-        },
-        {
           "id": "sensor.iphone_average_active_pace",
-          "friendlyName": "iPhone Average Active Pace",
+          "friendlyName": "Aenics iPhone Average Active Pace",
           "cSharpName": "IphoneAverageActivePace"
         },
         {
           "id": "sensor.iphone_battery_level",
-          "friendlyName": "iPhone Battery Level",
+          "friendlyName": "Aenics iPhone Battery Level",
           "cSharpName": "IphoneBatteryLevel"
         },
         {
           "id": "sensor.iphone_distance",
-          "friendlyName": "iPhone Distance",
+          "friendlyName": "Aenics iPhone Distance",
           "cSharpName": "IphoneDistance"
         },
         {
           "id": "sensor.iphone_floors_ascended",
-          "friendlyName": "iPhone Floors Ascended",
+          "friendlyName": "Aenics iPhone Floors Ascended",
           "cSharpName": "IphoneFloorsAscended"
         },
         {
           "id": "sensor.iphone_floors_descended",
-          "friendlyName": "iPhone Floors Descended",
+          "friendlyName": "Aenics iPhone Floors Descended",
           "cSharpName": "IphoneFloorsDescended"
         },
         {
           "id": "sensor.iphone_steps",
-          "friendlyName": "iPhone Steps",
+          "friendlyName": "Aenics iPhone Steps",
           "cSharpName": "IphoneSteps"
         },
         {
           "id": "sensor.iphone_storage",
-          "friendlyName": "iPhone Storage",
+          "friendlyName": "Aenics iPhone Storage",
           "cSharpName": "IphoneStorage"
         },
         {
@@ -6903,18 +7773,18 @@
           "cSharpName": "MatterServerMemoryPercent"
         },
         {
-          "id": "sensor.meralco_electricity_rates_rate",
-          "friendlyName": "MERALCO Electricity Rates Rate",
-          "cSharpName": "MeralcoElectricityRatesRate"
+          "id": "sensor.meralco_electricity_rates_rate_2",
+          "friendlyName": "Meralco Electricity Rates Rate",
+          "cSharpName": "MeralcoElectricityRatesRate2"
         },
         {
           "id": "sensor.meralco_electricity_rates_rate_change",
-          "friendlyName": "MERALCO Electricity Rates Rate Change",
+          "friendlyName": "Meralco Electricity Rates Rate Change",
           "cSharpName": "MeralcoElectricityRatesRateChange"
         },
         {
           "id": "sensor.meralco_electricity_rates_rate_change_percent",
-          "friendlyName": "MERALCO Electricity Rates Rate Change Percent",
+          "friendlyName": "Meralco Electricity Rates Rate Change Percent",
           "cSharpName": "MeralcoElectricityRatesRateChangePercent"
         },
         {
@@ -6953,39 +7823,29 @@
           "cSharpName": "MipadChargerTotalEnergy"
         },
         {
+          "id": "sensor.mipad_esphome_baudrate",
+          "friendlyName": "Mipad Esphome Baudrate",
+          "cSharpName": "MipadEsphomeBaudrate"
+        },
+        {
+          "id": "sensor.mipad_esphome_bytes_received",
+          "friendlyName": "Mipad Esphome Bytes Received",
+          "cSharpName": "MipadEsphomeBytesReceived"
+        },
+        {
+          "id": "sensor.mipad_esphome_bytes_sent",
+          "friendlyName": "Mipad Esphome Bytes Sent",
+          "cSharpName": "MipadEsphomeBytesSent"
+        },
+        {
           "id": "sensor.mipad5_battery_level",
           "friendlyName": "MiPad5 Battery level",
           "cSharpName": "Mipad5BatteryLevel"
         },
         {
-          "id": "sensor.node_proxmox_cpu_used",
-          "friendlyName": "Node proxmox CPU used",
-          "cSharpName": "NodeProxmoxCpuUsed"
-        },
-        {
-          "id": "sensor.node_proxmox_disk_used_percentage",
-          "friendlyName": "Node proxmox Disk used percentage",
-          "cSharpName": "NodeProxmoxDiskUsedPercentage"
-        },
-        {
-          "id": "sensor.node_proxmox_memory_free",
-          "friendlyName": "Node proxmox Memory free",
-          "cSharpName": "NodeProxmoxMemoryFree"
-        },
-        {
-          "id": "sensor.node_proxmox_memory_used",
-          "friendlyName": "Node proxmox Memory used",
-          "cSharpName": "NodeProxmoxMemoryUsed"
-        },
-        {
-          "id": "sensor.node_proxmox_memory_used_percentage",
-          "friendlyName": "Node proxmox Memory used percentage",
-          "cSharpName": "NodeProxmoxMemoryUsedPercentage"
-        },
-        {
-          "id": "sensor.oneplus13_active_calories_burned",
-          "friendlyName": "OnePlus13 Active calories burned",
-          "cSharpName": "Oneplus13ActiveCaloriesBurned"
+          "id": "sensor.oneplus_13_distance",
+          "friendlyName": "OnePlus 13 Distance",
+          "cSharpName": "Oneplus13Distance"
         },
         {
           "id": "sensor.oneplus13_battery_level",
@@ -6993,59 +7853,39 @@
           "cSharpName": "Oneplus13BatteryLevel"
         },
         {
-          "id": "sensor.oneplus13_battery_temperature",
-          "friendlyName": "OnePlus13 Battery temperature",
-          "cSharpName": "Oneplus13BatteryTemperature"
+          "id": "sensor.oneplus13_browser_battery",
+          "friendlyName": "OnePlus13 Browser battery",
+          "cSharpName": "Oneplus13BrowserBattery"
         },
         {
-          "id": "sensor.oneplus13_daily_distance",
-          "friendlyName": "OnePlus13 Daily distance",
-          "cSharpName": "Oneplus13DailyDistance"
+          "id": "sensor.oneplus13_browser_height",
+          "friendlyName": "OnePlus13 Browser height",
+          "cSharpName": "Oneplus13BrowserHeight"
         },
         {
-          "id": "sensor.oneplus13_daily_steps",
-          "friendlyName": "OnePlus13 Daily steps",
-          "cSharpName": "Oneplus13DailySteps"
+          "id": "sensor.oneplus13_browser_width",
+          "friendlyName": "OnePlus13 Browser width",
+          "cSharpName": "Oneplus13BrowserWidth"
         },
         {
-          "id": "sensor.oneplus13_remaining_charge_time",
-          "friendlyName": "OnePlus13 Remaining charge time",
-          "cSharpName": "Oneplus13RemainingChargeTime"
+          "id": "sensor.pantry_lasco_dual_plug_current",
+          "friendlyName": "Lasco Dual Plug Current",
+          "cSharpName": "PantryLascoDualPlugCurrent"
         },
         {
-          "id": "sensor.oneplus13_screen_off_timeout",
-          "friendlyName": "OnePlus13 Screen off timeout",
-          "cSharpName": "Oneplus13ScreenOffTimeout"
+          "id": "sensor.pantry_lasco_dual_plug_power",
+          "friendlyName": "Lasco Dual Plug Power",
+          "cSharpName": "PantryLascoDualPlugPower"
         },
         {
-          "id": "sensor.oneplus13_sleep_confidence",
-          "friendlyName": "OnePlus13 Sleep confidence",
-          "cSharpName": "Oneplus13SleepConfidence"
+          "id": "sensor.pantry_lasco_dual_plug_total_energy",
+          "friendlyName": "Lasco Dual Plug Total energy",
+          "cSharpName": "PantryLascoDualPlugTotalEnergy"
         },
         {
-          "id": "sensor.oneplus13_sleep_segment",
-          "friendlyName": "OnePlus13 Sleep segment",
-          "cSharpName": "Oneplus13SleepSegment"
-        },
-        {
-          "id": "sensor.oneplus13_steps_sensor",
-          "friendlyName": "OnePlus13 Steps sensor",
-          "cSharpName": "Oneplus13StepsSensor"
-        },
-        {
-          "id": "sensor.oneplus13_total_calories_burned",
-          "friendlyName": "OnePlus13 Total calories burned",
-          "cSharpName": "Oneplus13TotalCaloriesBurned"
-        },
-        {
-          "id": "sensor.oneplus13_wi_fi_frequency",
-          "friendlyName": "OnePlus13 Wi-Fi frequency",
-          "cSharpName": "Oneplus13WiFiFrequency"
-        },
-        {
-          "id": "sensor.oneplus13_wi_fi_link_speed",
-          "friendlyName": "OnePlus13 Wi-Fi link speed",
-          "cSharpName": "Oneplus13WiFiLinkSpeed"
+          "id": "sensor.pantry_lasco_dual_plug_voltage",
+          "friendlyName": "Lasco Dual Plug Voltage",
+          "cSharpName": "PantryLascoDualPlugVoltage"
         },
         {
           "id": "sensor.pantry_motion_sensor_g0_move_energy",
@@ -7153,31 +7993,6 @@
           "cSharpName": "PocoF4GtSleepConfidence"
         },
         {
-          "id": "sensor.qemu_homeassistant_local_100_cpu_used",
-          "friendlyName": "QEMU homeassistant.local (100) CPU used",
-          "cSharpName": "QemuHomeassistantLocal100CpuUsed"
-        },
-        {
-          "id": "sensor.qemu_homeassistant_local_100_disk_used_percentage",
-          "friendlyName": "QEMU homeassistant.local (100) Disk used percentage",
-          "cSharpName": "QemuHomeassistantLocal100DiskUsedPercentage"
-        },
-        {
-          "id": "sensor.qemu_homeassistant_local_100_memory_free",
-          "friendlyName": "QEMU homeassistant.local (100) Memory free",
-          "cSharpName": "QemuHomeassistantLocal100MemoryFree"
-        },
-        {
-          "id": "sensor.qemu_homeassistant_local_100_memory_used",
-          "friendlyName": "QEMU homeassistant.local (100) Memory used",
-          "cSharpName": "QemuHomeassistantLocal100MemoryUsed"
-        },
-        {
-          "id": "sensor.qemu_homeassistant_local_100_memory_used_percentage",
-          "friendlyName": "QEMU homeassistant.local (100) Memory used percentage",
-          "cSharpName": "QemuHomeassistantLocal100MemoryUsedPercentage"
-        },
-        {
           "id": "sensor.real_debrid_remaining_days",
           "friendlyName": "Real Debrid Remaining Days",
           "cSharpName": "RealDebridRemainingDays"
@@ -7191,6 +8006,11 @@
           "id": "sensor.rice_cooker_power",
           "friendlyName": "Rice Cooker Power",
           "cSharpName": "RiceCookerPower"
+        },
+        {
+          "id": "sensor.rice_cooker_total_energy",
+          "friendlyName": "Rice Cooker Total energy",
+          "cSharpName": "RiceCookerTotalEnergy"
         },
         {
           "id": "sensor.rice_cooker_voltage",
@@ -7353,16 +8173,6 @@
           "cSharpName": "SpeedtestUpload"
         },
         {
-          "id": "sensor.storage_proxmox_local_disk_used_percentage",
-          "friendlyName": "Storage proxmox/local Disk used percentage",
-          "cSharpName": "StorageProxmoxLocalDiskUsedPercentage"
-        },
-        {
-          "id": "sensor.storage_proxmox_local_lvm_disk_used_percentage",
-          "friendlyName": "Storage proxmox/local-lvm Disk used percentage",
-          "cSharpName": "StorageProxmoxLocalLvmDiskUsedPercentage"
-        },
-        {
           "id": "sensor.sun_solar_azimuth",
           "friendlyName": "Sun Solar azimuth",
           "cSharpName": "SunSolarAzimuth"
@@ -7389,7 +8199,7 @@
         },
         {
           "id": "sensor.system_monitor_processor_temperature",
-          "friendlyName": "Processor temperature",
+          "friendlyName": "System Monitor Processor temperature",
           "cSharpName": "SystemMonitorProcessorTemperature"
         },
         {
@@ -7399,7 +8209,7 @@
         },
         {
           "id": "sensor.temperature_bedroom",
-          "friendlyName": "Temperature (Bedroom)",
+          "friendlyName": "AC Temperature (Bedroom)",
           "cSharpName": "TemperatureBedroom"
         },
         {
@@ -7408,14 +8218,9 @@
           "cSharpName": "TemperatureWeather"
         },
         {
-          "id": "sensor.thinkpadt14_battery_charge_remaining_percentage",
-          "friendlyName": "ThinkpadT14 Charge Remaining Percentage",
-          "cSharpName": "Thinkpadt14BatteryChargeRemainingPercentage"
-        },
-        {
-          "id": "sensor.thinkpadt14_currentvolume",
-          "friendlyName": "ThinkpadT14 currentvolume",
-          "cSharpName": "Thinkpadt14Currentvolume"
+          "id": "sensor.usd_to_php_exchange_rate",
+          "friendlyName": "USD to PHP Exchange Rate",
+          "cSharpName": "UsdToPhpExchangeRate"
         },
         {
           "id": "sensor.watchman_missing_actions",
@@ -7429,7 +8234,7 @@
         },
         {
           "id": "sensor.watchman_missing_services",
-          "friendlyName": "watchman_missing_services",
+          "friendlyName": "Watchman watchman_missing_services",
           "cSharpName": "WatchmanMissingServices"
         },
         {
@@ -7489,7 +8294,7 @@
         },
         {
           "id": "sensor.wattage_projector",
-          "friendlyName": "Wattage (Projector)",
+          "friendlyName": "Projector Wattage (Projector)",
           "cSharpName": "WattageProjector"
         },
         {
@@ -7503,14 +8308,14 @@
           "cSharpName": "WattageTclTv"
         },
         {
+          "id": "sensor.wattage_total",
+          "friendlyName": "Wattage (Total)",
+          "cSharpName": "WattageTotal"
+        },
+        {
           "id": "sensor.wattage_unaccounted_estimate",
           "friendlyName": "Wattage (Unaccounted Estimate)",
           "cSharpName": "WattageUnaccountedEstimate"
-        },
-        {
-          "id": "sensor.wattage_work_laptop",
-          "friendlyName": "Wattage (Work Laptop)",
-          "cSharpName": "WattageWorkLaptop"
         },
         {
           "id": "sensor.xiaomi_sg_753990712_cpa4_filter_left_time_p_4_4",
@@ -7546,6 +8351,26 @@
           "id": "sensor.zigbee_contact_sensor_bedroom_voltage",
           "friendlyName": "Zigbee Contact Sensor (Bedroom) Voltage",
           "cSharpName": "ZigbeeContactSensorBedroomVoltage"
+        },
+        {
+          "id": "sensor.zigbee_hygrometer_battery",
+          "friendlyName": "Zigbee Hygrometer Battery",
+          "cSharpName": "ZigbeeHygrometerBattery"
+        },
+        {
+          "id": "sensor.zigbee_hygrometer_humidity",
+          "friendlyName": "Zigbee Hygrometer Humidity",
+          "cSharpName": "ZigbeeHygrometerHumidity"
+        },
+        {
+          "id": "sensor.zigbee_hygrometer_temperature",
+          "friendlyName": "Zigbee Hygrometer Temperature",
+          "cSharpName": "ZigbeeHygrometerTemperature"
+        },
+        {
+          "id": "sensor.zigbee_hygrometer_voltage",
+          "friendlyName": "Zigbee Hygrometer Voltage",
+          "cSharpName": "ZigbeeHygrometerVoltage"
         }
       ],
       "attributes": [
@@ -7753,6 +8578,86 @@
           "jsonName": "sources",
           "cSharpName": "Sources",
           "clrType": "System.Collections.Generic.IReadOnlyList\u00601[System.String]"
+        },
+        {
+          "jsonName": "excluded_project_count",
+          "cSharpName": "ExcludedProjectCount",
+          "clrType": "System.Double"
+        },
+        {
+          "jsonName": "excluded_project_names",
+          "cSharpName": "ExcludedProjectNames",
+          "clrType": "System.Collections.Generic.IReadOnlyList\u00601[System.String]"
+        },
+        {
+          "jsonName": "new_task_count",
+          "cSharpName": "NewTaskCount",
+          "clrType": "System.Double"
+        },
+        {
+          "jsonName": "new_task_detected",
+          "cSharpName": "NewTaskDetected",
+          "clrType": "System.Boolean"
+        },
+        {
+          "jsonName": "new_task_detected_at",
+          "cSharpName": "NewTaskDetectedAt",
+          "clrType": null
+        },
+        {
+          "jsonName": "new_task_project_name",
+          "cSharpName": "NewTaskProjectName",
+          "clrType": null
+        },
+        {
+          "jsonName": "new_task_project_url",
+          "cSharpName": "NewTaskProjectUrl",
+          "clrType": null
+        },
+        {
+          "jsonName": "new_tasks",
+          "cSharpName": "NewTasks",
+          "clrType": "System.Collections.Generic.IReadOnlyList\u00601[System.Object]"
+        },
+        {
+          "jsonName": "next_withdrawal_at",
+          "cSharpName": "NextWithdrawalAt",
+          "clrType": "System.String"
+        },
+        {
+          "jsonName": "pending_payout_entries",
+          "cSharpName": "PendingPayoutEntries",
+          "clrType": "System.Collections.Generic.IReadOnlyList\u00601[System.Object]"
+        },
+        {
+          "jsonName": "base",
+          "cSharpName": "Base",
+          "clrType": "System.String"
+        },
+        {
+          "jsonName": "quote",
+          "cSharpName": "Quote",
+          "clrType": "System.String"
+        },
+        {
+          "jsonName": "rate",
+          "cSharpName": "Rate",
+          "clrType": "System.Double"
+        },
+        {
+          "jsonName": "date",
+          "cSharpName": "Date",
+          "clrType": "System.String"
+        },
+        {
+          "jsonName": "fetched_at",
+          "cSharpName": "FetchedAt",
+          "clrType": "System.String"
+        },
+        {
+          "jsonName": "scraped_at",
+          "cSharpName": "ScrapedAt",
+          "clrType": "System.String"
         }
       ]
     },
@@ -7839,9 +8744,9 @@
       "domain": "switch",
       "entities": [
         {
-          "id": "switch.65c755_mute",
+          "id": "switch.65c755_mute_2",
           "friendlyName": "65C755 Mute",
-          "cSharpName": "_65c755Mute"
+          "cSharpName": "_65c755Mute2"
         },
         {
           "id": "switch.ac_8degc_heat",
@@ -7975,28 +8880,8 @@
         },
         {
           "id": "switch.air_fryer_toggle",
-          "friendlyName": "Air Fryer Toggle",
+          "friendlyName": "Xiaomi Smart Air Fryer Pro 4L Air Fryer Toggle",
           "cSharpName": "AirFryerToggle"
-        },
-        {
-          "id": "switch.as104068_isbackgroundblurred",
-          "friendlyName": "as104068 isbackgroundblurred",
-          "cSharpName": "As104068Isbackgroundblurred"
-        },
-        {
-          "id": "switch.as104068_ishandraised",
-          "friendlyName": "as104068 ishandraised",
-          "cSharpName": "As104068Ishandraised"
-        },
-        {
-          "id": "switch.as104068_ismuted",
-          "friendlyName": "as104068 ismuted",
-          "cSharpName": "As104068Ismuted"
-        },
-        {
-          "id": "switch.as104068_isvideoon",
-          "friendlyName": "as104068 isvideoon",
-          "cSharpName": "As104068Isvideoon"
         },
         {
           "id": "switch.auto_calibrate",
@@ -8007,6 +8892,11 @@
           "id": "switch.baby_camera_auto_track",
           "friendlyName": "Baby Camera Auto Track",
           "cSharpName": "BabyCameraAutoTrack"
+        },
+        {
+          "id": "switch.baby_camera_automatic_reboot",
+          "friendlyName": "Baby Camera Automatic Reboot",
+          "cSharpName": "BabyCameraAutomaticReboot"
         },
         {
           "id": "switch.baby_camera_automatically_upgrade_firmware",
@@ -8159,6 +9049,16 @@
           "cSharpName": "BedroomFanAutomation"
         },
         {
+          "id": "switch.bedroom_lasco_dual_plug_charger",
+          "friendlyName": "Charger",
+          "cSharpName": "BedroomLascoDualPlugCharger"
+        },
+        {
+          "id": "switch.bedroom_lasco_dual_plug_child_lock",
+          "friendlyName": "Lasco Dual Plug Child lock",
+          "cSharpName": "BedroomLascoDualPlugChildLock"
+        },
+        {
           "id": "switch.bedroom_motion_sensor",
           "friendlyName": "Bedroom Motion Sensor",
           "cSharpName": "BedroomMotionSensor"
@@ -8180,7 +9080,7 @@
         },
         {
           "id": "switch.big_picture_mode",
-          "friendlyName": "Big Picture Mode",
+          "friendlyName": "DANIEL-PC_hass-agent Big Picture Mode",
           "cSharpName": "BigPictureMode"
         },
         {
@@ -8210,7 +9110,7 @@
         },
         {
           "id": "switch.clean_air",
-          "friendlyName": "Clean Air",
+          "friendlyName": "Xiaomi Smart Air Purifier 4 Compact Clean Air",
           "cSharpName": "CleanAir"
         },
         {
@@ -8249,24 +9149,64 @@
           "cSharpName": "CookingAutomation"
         },
         {
-          "id": "switch.cozylife_2ac9",
-          "friendlyName": "Soundbar",
-          "cSharpName": "Cozylife2ac9"
-        },
-        {
-          "id": "switch.cozylife_955f",
-          "friendlyName": "Exhaust Fan",
-          "cSharpName": "Cozylife955f"
-        },
-        {
-          "id": "switch.cozylife_b38e",
-          "friendlyName": "Cozylife Switch Sala Stand Fan",
-          "cSharpName": "CozylifeB38e"
-        },
-        {
           "id": "switch.daniel_pc",
           "friendlyName": "Daniel-PC",
           "cSharpName": "DanielPc"
+        },
+        {
+          "id": "switch.daniel_pc_isbackgroundblurred",
+          "friendlyName": "daniel-pc isbackgroundblurred",
+          "cSharpName": "DanielPcIsbackgroundblurred"
+        },
+        {
+          "id": "switch.daniel_pc_ishandraised",
+          "friendlyName": "daniel-pc ishandraised",
+          "cSharpName": "DanielPcIshandraised"
+        },
+        {
+          "id": "switch.daniel_pc_ismuted",
+          "friendlyName": "daniel-pc ismuted",
+          "cSharpName": "DanielPcIsmuted"
+        },
+        {
+          "id": "switch.daniel_pc_isvideoon",
+          "friendlyName": "daniel-pc isvideoon",
+          "cSharpName": "DanielPcIsvideoon"
+        },
+        {
+          "id": "switch.data_annotation_auto_accept",
+          "friendlyName": "Data Annotation Auto Accept",
+          "cSharpName": "DataAnnotationAutoAccept"
+        },
+        {
+          "id": "switch.data_annotation_auto_withdraw",
+          "friendlyName": "Data Annotation Auto Withdraw",
+          "cSharpName": "DataAnnotationAutoWithdraw"
+        },
+        {
+          "id": "switch.data_annotation_claim_projects_locked",
+          "friendlyName": "Data Annotation Claim Projects Locked",
+          "cSharpName": "DataAnnotationClaimProjectsLocked"
+        },
+        {
+          "id": "switch.data_annotation_currency_to_php",
+          "friendlyName": "Data Annotation Currency to PHP",
+          "cSharpName": "DataAnnotationCurrencyToPhp"
+        },
+        {
+          "id": "switch.data_annotation_fast_polling",
+          "friendlyName": "Data Annotation Fast Polling",
+          "cSharpName": "DataAnnotationFastPolling"
+        },
+        {
+          "id": "switch.data_annotation_notifications",
+          "friendlyName": "Data Annotation Notifications",
+          "cSharpName": "DataAnnotationNotifications"
+        },
+        {
+          "id": "switch.data_annotation_withdraw_locked",
+          "friendlyName": "Data Annotation Withdraw Locked",
+          "cSharpName": "DataAnnotationWithdrawLocked"
         },
         {
           "id": "switch.desk_motion_sensor_auto_calibrate",
@@ -8285,7 +9225,7 @@
         },
         {
           "id": "switch.display_pc",
-          "friendlyName": "Display PC",
+          "friendlyName": "LG webOS Smart TV Display PC",
           "cSharpName": "DisplayPc"
         },
         {
@@ -8339,34 +9279,34 @@
           "cSharpName": "KitchenMotionSensorEngineeringMode"
         },
         {
-          "id": "switch.laptop",
-          "friendlyName": "Laptop",
-          "cSharpName": "Laptop"
-        },
-        {
           "id": "switch.laptop_charger_child_lock",
           "friendlyName": "Mipad Charger Child lock",
           "cSharpName": "LaptopChargerChildLock"
         },
         {
           "id": "switch.lg_screen",
-          "friendlyName": "Lg Screen",
+          "friendlyName": "LG webOS Smart TV Lg Screen",
           "cSharpName": "LgScreen"
         },
         {
           "id": "switch.lg_tv",
-          "friendlyName": "LG TV",
+          "friendlyName": "LG webOS Smart TV LG TV",
           "cSharpName": "LgTv"
         },
         {
           "id": "switch.lg_tv_motion_sensor",
-          "friendlyName": "LG TV Motion Sensor",
+          "friendlyName": "LG webOS Smart TV LG TV Motion Sensor",
           "cSharpName": "LgTvMotionSensor"
         },
         {
           "id": "switch.lg_webos_tv_fe94_mute",
           "friendlyName": "LG webOS TV FE94 Mute",
           "cSharpName": "LgWebosTvFe94Mute"
+        },
+        {
+          "id": "switch.living_room_baby_camera_preset_patrol_mode",
+          "friendlyName": "Baby Camera Preset Patrol Mode",
+          "cSharpName": "LivingRoomBabyCameraPresetPatrolMode"
         },
         {
           "id": "switch.lock_2",
@@ -8394,14 +9334,64 @@
           "cSharpName": "MipadChargerSocket1"
         },
         {
+          "id": "switch.mipad_esphome_baby_cam",
+          "friendlyName": "Mipad Esphome Baby Cam",
+          "cSharpName": "MipadEsphomeBabyCam"
+        },
+        {
+          "id": "switch.mipad_esphome_browser_display",
+          "friendlyName": "Mipad Esphome Browser Display",
+          "cSharpName": "MipadEsphomeBrowserDisplay"
+        },
+        {
+          "id": "switch.mipad_esphome_mute_microphone",
+          "friendlyName": "Mipad Esphome Mute Microphone",
+          "cSharpName": "MipadEsphomeMuteMicrophone"
+        },
+        {
+          "id": "switch.mipad_esphome_screen_toggle",
+          "friendlyName": "Mipad Esphome Screen Toggle",
+          "cSharpName": "MipadEsphomeScreenToggle"
+        },
+        {
+          "id": "switch.mipad_esphome_screensaver_display",
+          "friendlyName": "Mipad Esphome Screensaver Display",
+          "cSharpName": "MipadEsphomeScreensaverDisplay"
+        },
+        {
+          "id": "switch.mipad_esphome_start_recording",
+          "friendlyName": "Mipad Esphome Start Recording",
+          "cSharpName": "MipadEsphomeStartRecording"
+        },
+        {
+          "id": "switch.mipad_esphome_wake_sound",
+          "friendlyName": "Mipad Esphome Wake Sound",
+          "cSharpName": "MipadEsphomeWakeSound"
+        },
+        {
           "id": "switch.motion_sensors",
           "friendlyName": "Motion Sensors",
           "cSharpName": "MotionSensors"
         },
         {
           "id": "switch.night_vision",
-          "friendlyName": "Night Vision",
+          "friendlyName": "Baby Camera Night Vision",
           "cSharpName": "NightVision"
+        },
+        {
+          "id": "switch.pantry_lasco_dual_plug_child_lock",
+          "friendlyName": "Lasco Dual Plug Child lock",
+          "cSharpName": "PantryLascoDualPlugChildLock"
+        },
+        {
+          "id": "switch.pantry_lasco_dual_plug_socket_1",
+          "friendlyName": "Lasco Dual Plug Socket 1",
+          "cSharpName": "PantryLascoDualPlugSocket1"
+        },
+        {
+          "id": "switch.pantry_lasco_dual_plug_socket_2",
+          "friendlyName": "Lasco Dual Plug Socket 2",
+          "cSharpName": "PantryLascoDualPlugSocket2"
         },
         {
           "id": "switch.pantry_lights_auto_update_enabled",
@@ -8570,8 +9560,13 @@
         },
         {
           "id": "switch.sonoff_100238104e_1",
-          "friendlyName": "EWeLink Plug Bedroom 1",
+          "friendlyName": "Fan",
           "cSharpName": "Sonoff100238104e1"
+        },
+        {
+          "id": "switch.sonoff_100238104e_1_original",
+          "friendlyName": "EWeLink Plug Bedroom 1",
+          "cSharpName": "Sonoff100238104e1Original"
         },
         {
           "id": "switch.sonoff_100238104e_detach",
@@ -8590,12 +9585,12 @@
         },
         {
           "id": "switch.tablet_light",
-          "friendlyName": "Tablet Light",
+          "friendlyName": "MiPad5 Tablet Light",
           "cSharpName": "TabletLight"
         },
         {
           "id": "switch.tv_automation",
-          "friendlyName": "TV Automation",
+          "friendlyName": "65C755 TV Automation",
           "cSharpName": "TvAutomation"
         },
         {
@@ -8833,12 +9828,12 @@
         },
         {
           "id": "update.apexcharts_card_update",
-          "friendlyName": "apexcharts-card update",
+          "friendlyName": "apexcharts-card Update",
           "cSharpName": "ApexchartsCardUpdate"
         },
         {
           "id": "update.attribute_as_sensor_update",
-          "friendlyName": "Attribute as Sensor update",
+          "friendlyName": "Attribute as Sensor Update",
           "cSharpName": "AttributeAsSensorUpdate"
         },
         {
@@ -8858,28 +9853,48 @@
         },
         {
           "id": "update.bermuda_ble_trilateration_update",
-          "friendlyName": "Bermuda BLE Trilateration update",
+          "friendlyName": "Bermuda BLE Trilateration Update",
           "cSharpName": "BermudaBleTrilaterationUpdate"
         },
         {
           "id": "update.browser_mod_update",
-          "friendlyName": "browser_mod update",
+          "friendlyName": "browser_mod Update",
           "cSharpName": "BrowserModUpdate"
         },
         {
+          "id": "update.budgetbakers_wallet_update",
+          "friendlyName": "BudgetBakers Wallet Update",
+          "cSharpName": "BudgetbakersWalletUpdate"
+        },
+        {
           "id": "update.button_card_update",
-          "friendlyName": "button-card update",
+          "friendlyName": "button-card Update",
           "cSharpName": "ButtonCardUpdate"
         },
         {
           "id": "update.card_mod_update",
-          "friendlyName": "card-mod update",
+          "friendlyName": "card-mod Update",
           "cSharpName": "CardModUpdate"
         },
         {
           "id": "update.cloudflared_update",
           "friendlyName": "Cloudflared Update",
           "cSharpName": "CloudflaredUpdate"
+        },
+        {
+          "id": "update.codex_conversation_update",
+          "friendlyName": "Codex Conversation Update",
+          "cSharpName": "CodexConversationUpdate"
+        },
+        {
+          "id": "update.codex_conversation_update_2",
+          "friendlyName": "Codex Conversation Update",
+          "cSharpName": "CodexConversationUpdate2"
+        },
+        {
+          "id": "update.dataannotation_projects_update",
+          "friendlyName": "Data Annotation Update",
+          "cSharpName": "DataannotationProjectsUpdate"
         },
         {
           "id": "update.desk_motion_sensor_firmware",
@@ -8893,7 +9908,7 @@
         },
         {
           "id": "update.frosted_glass_theme_update",
-          "friendlyName": "Frosted Glass Theme update",
+          "friendlyName": "Frosted Glass Theme Update",
           "cSharpName": "FrostedGlassThemeUpdate"
         },
         {
@@ -8918,12 +9933,12 @@
         },
         {
           "id": "update.gree_a_c_update",
-          "friendlyName": "Gree A/C update",
+          "friendlyName": "Gree A/C Update",
           "cSharpName": "GreeACUpdate"
         },
         {
           "id": "update.hacs_update",
-          "friendlyName": "HACS update",
+          "friendlyName": "HACS Update",
           "cSharpName": "HacsUpdate"
         },
         {
@@ -8953,7 +9968,7 @@
         },
         {
           "id": "update.home_assistant_swipe_navigation_update",
-          "friendlyName": "Home Assistant Swipe Navigation update",
+          "friendlyName": "Home Assistant Swipe Navigation Update",
           "cSharpName": "HomeAssistantSwipeNavigationUpdate"
         },
         {
@@ -8963,17 +9978,22 @@
         },
         {
           "id": "update.iphone_device_tracker_update",
-          "friendlyName": "iPhone Device Tracker update",
+          "friendlyName": "iPhone Device Tracker Update",
           "cSharpName": "IphoneDeviceTrackerUpdate"
         },
         {
           "id": "update.kiosk_mode_update",
-          "friendlyName": "Kiosk Mode update",
+          "friendlyName": "Kiosk Mode Update",
           "cSharpName": "KioskModeUpdate"
         },
         {
+          "id": "update.linked_cards_update",
+          "friendlyName": "Linked Cards Update",
+          "cSharpName": "LinkedCardsUpdate"
+        },
+        {
           "id": "update.material_rounded_theme_based_on_material_you_by_google_on_android_update",
-          "friendlyName": "Material You Theme - A Fully Featured Implementation of Material Design 3 update",
+          "friendlyName": "Material You Theme - A Fully Featured Implementation of Material Design 3 Update",
           "cSharpName": "MaterialRoundedThemeBasedOnMaterialYouByGoogleOnAndroidUpdate"
         },
         {
@@ -8982,9 +10002,9 @@
           "cSharpName": "MatterServerUpdate"
         },
         {
-          "id": "update.meralco_electricity_rates_update",
-          "friendlyName": "MERALCO Electricity Rates Update",
-          "cSharpName": "MeralcoElectricityRatesUpdate"
+          "id": "update.meralco_ph_update",
+          "friendlyName": "MERALCO PH Update",
+          "cSharpName": "MeralcoPhUpdate"
         },
         {
           "id": "update.mosquitto_broker_update",
@@ -8993,7 +10013,7 @@
         },
         {
           "id": "update.mushroom_update",
-          "friendlyName": "Mushroom update",
+          "friendlyName": "Mushroom Update",
           "cSharpName": "MushroomUpdate"
         },
         {
@@ -9003,12 +10023,12 @@
         },
         {
           "id": "update.navbar_card_update",
-          "friendlyName": "Navbar card update",
+          "friendlyName": "Navbar card Update",
           "cSharpName": "NavbarCardUpdate"
         },
         {
           "id": "update.netdaemon_update",
-          "friendlyName": "NetDaemon update",
+          "friendlyName": "NetDaemon Update",
           "cSharpName": "NetdaemonUpdate"
         },
         {
@@ -9023,7 +10043,7 @@
         },
         {
           "id": "update.node_red_companion_update",
-          "friendlyName": "Node-RED Companion update",
+          "friendlyName": "Node-RED Companion Update",
           "cSharpName": "NodeRedCompanionUpdate"
         },
         {
@@ -9033,7 +10053,7 @@
         },
         {
           "id": "update.openrouter_fixed_update",
-          "friendlyName": "OpenRouter Fixed update",
+          "friendlyName": "OpenRouter Fixed Update",
           "cSharpName": "OpenrouterFixedUpdate"
         },
         {
@@ -9043,13 +10063,8 @@
         },
         {
           "id": "update.passive_ble_monitor_integration_update",
-          "friendlyName": "Passive BLE monitor integration update",
+          "friendlyName": "Passive BLE monitor integration Update",
           "cSharpName": "PassiveBleMonitorIntegrationUpdate"
-        },
-        {
-          "id": "update.proxmox_ve_update",
-          "friendlyName": "Proxmox VE update",
-          "cSharpName": "ProxmoxVeUpdate"
         },
         {
           "id": "update.sala_motion_sensor_firmware",
@@ -9083,12 +10098,12 @@
         },
         {
           "id": "update.sonoff_lan_update",
-          "friendlyName": "Sonoff LAN update",
+          "friendlyName": "Sonoff LAN Update",
           "cSharpName": "SonoffLanUpdate"
         },
         {
           "id": "update.spook_your_homie_update",
-          "friendlyName": "Spook \uD83D\uDC7B Your homie update",
+          "friendlyName": "Spook \uD83D\uDC7B Your homie Update",
           "cSharpName": "SpookYourHomieUpdate"
         },
         {
@@ -9098,7 +10113,7 @@
         },
         {
           "id": "update.ssh_update",
-          "friendlyName": "SSH update",
+          "friendlyName": "SSH Update",
           "cSharpName": "SshUpdate"
         },
         {
@@ -9113,7 +10128,7 @@
         },
         {
           "id": "update.tapo_cameras_control_update",
-          "friendlyName": "Tapo: Cameras Control update",
+          "friendlyName": "Tapo: Cameras Control Update",
           "cSharpName": "TapoCamerasControlUpdate"
         },
         {
@@ -9123,28 +10138,33 @@
         },
         {
           "id": "update.watchman_update",
-          "friendlyName": "Watchman update",
+          "friendlyName": "Watchman Update",
           "cSharpName": "WatchmanUpdate"
         },
         {
           "id": "update.webrtc_camera_update",
-          "friendlyName": "WebRTC Camera update",
+          "friendlyName": "WebRTC Camera Update",
           "cSharpName": "WebrtcCameraUpdate"
         },
         {
           "id": "update.xiaomi_home_update",
-          "friendlyName": "Xiaomi Home update",
+          "friendlyName": "Xiaomi Home Update",
           "cSharpName": "XiaomiHomeUpdate"
         },
         {
           "id": "update.xiaomi_miot_auto_update",
-          "friendlyName": "Xiaomi Miot update",
+          "friendlyName": "Xiaomi Miot Update",
           "cSharpName": "XiaomiMiotAutoUpdate"
         },
         {
           "id": "update.zigbee_contact_sensor_bedroom",
           "friendlyName": "Zigbee Contact Sensor (Bedroom)",
           "cSharpName": "ZigbeeContactSensorBedroom"
+        },
+        {
+          "id": "update.zigbee_hygrometer",
+          "friendlyName": "Zigbee Hygrometer",
+          "cSharpName": "ZigbeeHygrometer"
         },
         {
           "id": "update.zigbee2mqtt_update",
@@ -9401,6 +10421,11 @@
           "id": "camera.baby_camera_sd_stream_direct",
           "friendlyName": "Baby Camera SD Stream (Direct)",
           "cSharpName": "BabyCameraSdStreamDirect"
+        },
+        {
+          "id": "camera.mipad_esphome_device_recording",
+          "friendlyName": "Mipad Esphome Device Recording",
+          "cSharpName": "MipadEsphomeDeviceRecording"
         }
       ],
       "attributes": [
@@ -9585,9 +10610,34 @@
       "domain": "notify",
       "entities": [
         {
-          "id": "notify.xiaomi_cn_729136202_rd08_emit_virtual_event_a_7_1",
-          "friendlyName": "Xiaomi_770B  Virtual Service Emit Virtual Event",
-          "cSharpName": "XiaomiCn729136202Rd08EmitVirtualEventA71"
+          "id": "notify.aenics",
+          "friendlyName": "Aenics",
+          "cSharpName": "Aenics"
+        },
+        {
+          "id": "notify.guest",
+          "friendlyName": "Guest",
+          "cSharpName": "Guest"
+        },
+        {
+          "id": "notify.krzl",
+          "friendlyName": "KRZL \uD83D\uDC78\uD83C\uDFFB",
+          "cSharpName": "Krzl"
+        },
+        {
+          "id": "notify.mipad5",
+          "friendlyName": "MiPad5",
+          "cSharpName": "Mipad5"
+        },
+        {
+          "id": "notify.oneplus13",
+          "friendlyName": "OnePlus13",
+          "cSharpName": "Oneplus13"
+        },
+        {
+          "id": "notify.poco_f4_gt",
+          "friendlyName": "POCO F4 GT",
+          "cSharpName": "PocoF4Gt"
         }
       ],
       "attributes": [
@@ -9611,6 +10661,16 @@
     {
       "domain": "text",
       "entities": [
+        {
+          "id": "text.mipad_esphome_remote_browser_url",
+          "friendlyName": "Mipad Esphome Remote Browser URL",
+          "cSharpName": "MipadEsphomeRemoteBrowserUrl"
+        },
+        {
+          "id": "text.mipad_esphome_screensaver_url",
+          "friendlyName": "Mipad Esphome Screensaver URL",
+          "cSharpName": "MipadEsphomeScreensaverUrl"
+        },
         {
           "id": "text.watchman_ignored_labels",
           "friendlyName": "Watchman Ignored Labels",
@@ -9641,7 +10701,7 @@
         {
           "jsonName": "pattern",
           "cSharpName": "Pattern",
-          "clrType": null
+          "clrType": "System.String"
         },
         {
           "jsonName": "friendly_name",
@@ -9790,6 +10850,28 @@
           "jsonName": "friendly_name",
           "cSharpName": "FriendlyName",
           "clrType": "System.String"
+        }
+      ]
+    },
+    {
+      "domain": "assist_satellite",
+      "entities": [
+        {
+          "id": "assist_satellite.mipad_esphome_assist_satellite",
+          "friendlyName": "Mipad Esphome Assist satellite",
+          "cSharpName": "MipadEsphomeAssistSatellite"
+        }
+      ],
+      "attributes": [
+        {
+          "jsonName": "friendly_name",
+          "cSharpName": "FriendlyName",
+          "clrType": "System.String"
+        },
+        {
+          "jsonName": "supported_features",
+          "cSharpName": "SupportedFeatures",
+          "clrType": "System.Double"
         }
       ]
     }

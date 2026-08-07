@@ -7,6 +7,11 @@ $appSettings = Join-Path $projectDir "appsettings.json"
 $appSettingsDev = Join-Path $projectDir "appsettings.Development.json"
 
 $settings = (Get-Content $appSettings | ConvertFrom-Json)
+$settingsDev = (Get-Content $appSettingsDev | ConvertFrom-Json)
+
+if ([string]::IsNullOrWhiteSpace($settings.HomeAssistant.Host)) {
+    $settings = $settingsDev
+}
 
 #CHANGE ME
 $slug = 'c6a2317c_netdaemon6' # the slug can be found in the url of the browser when navigating to the NetDaemon addon
@@ -16,7 +21,7 @@ $json = '{"addon": "' + $slug + '"}'
 $ip = $settings.HomeAssistant.Host
 $port = $settings.HomeAssistant.Port
 
-$token = (Get-Content $appSettingsDev | ConvertFrom-Json).HomeAssistant.Token
+$token = $settingsDev.HomeAssistant.Token
 
 # Point to the HA PowerShell Module
 

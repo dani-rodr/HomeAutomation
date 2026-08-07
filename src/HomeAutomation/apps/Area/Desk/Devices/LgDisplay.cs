@@ -94,7 +94,7 @@ public class LgDisplay(ILgDisplayEntities entities, IServices services, ILogger<
 
     private void UpdateLightValues(int value)
     {
-        _lightDisplay.TurnOn(brightness: value);
+        _lightDisplay.TurnOn(brightnessPct: value);
         _brightness = value;
     }
 
