@@ -121,22 +121,6 @@ jobs:
             echo "changed=true" >> $GITHUB_OUTPUT
           fi
 
-      - name: Notify mobile app of that no changed were detected
-        if: steps.changes.outputs.changed == 'false'
-        run: |
-          curl -s -X POST \
-            -H "Authorization: Bearer ${{ secrets.HA_TOKEN }}" \
-            -H "Content-Type: application/json" \
-            --location https://${{ secrets.HA_DOMAIN_NAME }}/api/services/notify/mobile_app_poco_f4_gt \
-            --data '{
-              "message": "Deployment skipped – no changes detected.",
-              "title": "✅ GitHub Actions Success",
-              "data": {
-                  "notification_icon": "mdi:source-branch-check",
-                  "tag": "github-action"
-              }
-          }'
-
       - name: Download build artifact
         if: steps.changes.outputs.changed == 'true'
         uses: actions/download-artifact@v4
